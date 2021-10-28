@@ -9,12 +9,10 @@
 
 #include <array>
 #include <string>
-#include "log4cxx/logger.h"
 
 class Particle {
 
 private:
-    static log4cxx::LoggerPtr particleLogger;
 
   /**
    * Position of the particle
