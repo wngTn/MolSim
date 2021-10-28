@@ -5,9 +5,6 @@
 #include "utils/ArrayUtils.h"
 #include "ParticleContainer.h"
 #include "Particle.h"
-#include "log4cxx/logger.h"
-#include "log4cxx/basicconfigurator.h"
-#include "log4cxx/propertyconfigurator.h"
 
 
 #include <iostream>
@@ -41,14 +38,11 @@ static double end_time = 1000;
 static double delta_t = 0.014;
 
 
-log4cxx::LoggerPtr logger(log4cxx::Logger::getLogger("MolSim"));
-
 int main(int argc, char *argv[]) {
-    log4cxx::BasicConfigurator::configure();
-    LOG4CXX_INFO(logger, "Hello from MolSim for PSE!");
-    if (argc < 2 || argc > 5) {
-        LOG4CXX_INFO(logger,"Erroneous programme call!");
-        LOG4CXX_INFO(logger,"./MolSim filename [t_end] [delta_t] [configuration_file]");
+    std::cout<<"Hello from MolSim for PSE!"<<std::endl;
+    if (argc < 2 || argc > 4) {
+        std::cout<<"Erroneous programme call!"<<std::endl;
+        std::cout<<"./MolSim filename [t_end] [delta_t]"<<std::endl;
     }
 
     if (argc == 3) {
@@ -56,11 +50,8 @@ int main(int argc, char *argv[]) {
     } else if (argc == 4) {
         end_time = std::stod(argv[2]);
         delta_t = std::stod(argv[3]);
-    } else if (argc == 5) {
-        end_time = std::stod(argv[2]);
-        delta_t = std::stod(argv[3]);
-        log4cxx::PropertyConfigurator::configure(argv[4]);
     }
+
     ParticleContainer particles;
 
     FileReader::readFile(particles, argv[1]);
@@ -78,12 +69,12 @@ int main(int argc, char *argv[]) {
         if (iteration % 10 == 0) {
             plotParticles(iteration, 1, particles);
         }
-        LOG4CXX_INFO(logger, "Iteration " << iteration << " finished");
+
+        std::cout<<"Iteration " << iteration << " finished"<<std::endl;
 
         current_time += delta_t;
     }
 
-    LOG4CXX_INFO(logger, "output written. Terminating...");
     return 0;
 }
 
