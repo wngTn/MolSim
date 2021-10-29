@@ -1,4 +1,3 @@
-
 #include "FileReader.h"
 #include "outputWriter/XYZWriter.h"
 #include "outputWriter/VTKWriter.h"
@@ -14,8 +13,9 @@
 
 /**
  * calculate the force, position and velocity for all particles
+ * @param ParticleContainer&: the container containing the particles
  */
-void calculateFXV(ParticleContainer&);
+void calculateXFV(ParticleContainer &particles);
 
 /**
  * plot the particles to a xyz-file or vtk-file
@@ -23,28 +23,38 @@ void calculateFXV(ParticleContainer&);
  */
 void plotParticles(int iteration, int type, const ParticleContainer&);
 
-/// Returns the square of a number
+/**
+ * Returns the square of a number
+ * @param T: the number
+ */
 template<typename T>
 T sqr(T);
 
-/// Computes the gravitational force between two particles for the first particle
-///
-/// @param p1 first particle
-/// @param p2 second particle
+/** Computes the gravitational force between two particles for the first particle
+ *
+ * @param p1 first particle
+ * @param p2 second particle
+ */
 void grav_force(Particle & p1, const Particle & p2);
 
+// default end_time and delta_t
 static double start_time = 0;
 static double end_time = 1000;
 static double delta_t = 0.014;
 
+// default dimensions
+static int DIM = 3;
+
 
 int main(int argc, char *argv[]) {
     std::cout<<"Hello from MolSim for PSE!"<<std::endl;
+
     if (argc < 2 || argc > 4) {
         std::cout<<"Erroneous programme call!"<<std::endl;
         std::cout<<"./MolSim filename [t_end] [delta_t]"<<std::endl;
     }
 
+    // if no t_end or delta_t is provided, we use the defaults
     if (argc == 3) {
         end_time = std::stod(argv[2]);
     } else if (argc == 4) {
@@ -63,7 +73,7 @@ int main(int argc, char *argv[]) {
     // for this loop, we assume: current x, current f and current v are known
     while (current_time < end_time) {
         // calculate new x, f and v
-        calculateFXV(particles);
+        calculateXFV(particles);
 
         iteration++;
         if (iteration % 10 == 0) {
@@ -78,7 +88,20 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-void calculateFXV(ParticleContainer& particles) {
+void calculateXFV(ParticleContainer& particles) {
+
+    // calculate new positions
+    for (auto &p : particles) { // loop over every particle
+        // go through all three dimensions
+        for (int i = 0; i < DIM; ++i) {
+            // calculates new position
+            double new_X = p.getX().at(i) + delta_t * (p.getV().at(i) + .5 / p.getM() * p.getF().at(i) * delta_t);
+            p.setX(i, new_X);
+            // set new force
+            p.setF(i, p.getOldF().at(i));
+        }
+    }
+
     // calculates new force
     for (auto &p1 : particles) {
         for (auto &p2 : particles) {
@@ -88,40 +111,49 @@ void calculateFXV(ParticleContainer& particles) {
         }
     }
 
-    for (auto &p : particles) {
+    // calculate new velocities
+    for (auto &p : particles) { // loop over every particle
         // go through all three dimensions
-        for (int i = 0; i < 3; ++i) {
-            // calculates new position
-            p.setX(i, p.getX().at(i) + delta_t * p.getV().at(i) + delta_t * delta_t * p.getF().at(i) * 0.5 / p.getM());
-
+        for (int i = 0; i < DIM; ++i) {
             // calculates new velocity
             p.setV(i, p.getV().at(i) + delta_t * 0.5 * (p.getF().at(i) + p.getOldF().at(i)) / p.getM());
         }
     }
+
 }
 
 void grav_force(Particle &p1, const Particle &p2) {
-    double distance{};
-    for (int i = 0; i < 3; ++i) {
-        distance += sqr(p1.getX().at(i) - p2.getX().at(i));
-        p1.setOldF(p1.getF());
-        p1.setF(i, (p1.getM() * p2.getM() / (sqrt(distance) * distance)) * (p1.getX().at(i) - p2.getX().at(i)));
+    double sqrd_dist = 0;
+    // calculate the squared distance
+    for (int i = 0; i < DIM; ++i) {
+        sqrd_dist += sqr(p2.getX().at(i) - p1.getX().at(i));
+    }
+    // left side of the term
+    double var = p1.getM() * p2.getM() / (sqrt(sqrd_dist) * sqrd_dist);
+    // multiplying with (p2 - p1) and setting the force
+    for (int i = 0; i < DIM; ++i) {
+        p1.setF(i, var * (p2.getX().at(i) - p1.getX().at(i)));
     }
 }
 
 
 void plotParticles(int iteration, int type, const ParticleContainer& particles) {
+    // The name of the files
     std::string out_name("MD_vtk");
     // vtk
     if (type) {
+        // initializing the VTKWriter
         outputWriter::VTKWriter vtkWriter = outputWriter::VTKWriter{};
+        // initializing the Output
         vtkWriter.initializeOutput(static_cast<int>(particles.size()));
+        // plotting for every particle
         for (const Particle& p : particles) {
             vtkWriter.plotParticle(p);
         }
+        // writes the file
         vtkWriter.writeFile(out_name, iteration);
     }
-        // xyz
+    // xyz
     else {
         outputWriter::XYZWriter::plotParticles(particles, out_name, iteration);
     }

@@ -1,7 +1,3 @@
-//
-// Created by tony on 8/22/21.
-//
-
 #include "ParticleContainer.h"
 
 #include <iostream>
@@ -36,8 +32,10 @@ size_t ParticleContainer::size() const noexcept {
 }
 
 void ParticleContainer::print() {
+    int i{};
     for (const auto & p : particles) {
-        std::cout<<p.toString()<<std::endl;
+        std::cout<<"Particle "<<i<<": "<<p.toString()<<std::endl;
+        i++;
     }
 }
 

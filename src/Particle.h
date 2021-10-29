@@ -1,10 +1,3 @@
-/*
- * Particle.h
- *
- *  Created on: 23.02.2010
- *      Author: eckhardw
- */
-
 #pragma once
 
 #include <array>
@@ -14,89 +7,137 @@ class Particle {
 
 private:
 
-  /**
-   * Position of the particle
-   */
-  std::array<double, 3> x{};
+    /**
+     * Position of the particle
+     */
+    std::array<double, 3> x{};
 
-  /**
-   * Velocity of the particle
-   */
-  std::array<double, 3> v{};
+    /**
+     * Velocity of the particle
+     */
+    std::array<double, 3> v{};
 
-  /**
-   * Force effective on this particle
-   */
-  std::array<double, 3> f{};
+    /**
+     * Force effective on this particle
+     */
+    std::array<double, 3> f{};
 
-  /**
-   * Force which was effective on this particle
-   */
-  std::array<double, 3> old_f{};
+    /**
+     * Force which was effective on this particle
+     */
+    std::array<double, 3> old_f{};
 
-  /**
-   * Mass of this particle
-   */
-  double m{};
+    /**
+     * Mass of this particle
+     */
+    double m{};
 
-  /**
-   * Type of the particle. Use it for whatever you want (e.g. to separate
-   * molecules belonging to different bodies, matters, and so on)
-   */
-  int type;
+    /**
+     * Type of the particle. Use it for whatever you want (e.g. to separate
+     * molecules belonging to different bodies, matters, and so on)
+     */
+    int type;
 
 public:
-  explicit Particle(int type = 0);
 
-  // copy constructor
-  Particle(const Particle &other);
+    /**
+     * Normal constructor
+     * @param type_arg type of the particle
+     */
+    explicit Particle(int type = 0);
 
-  // copy assignment
-  Particle& operator=(const Particle &other);
+    /**
+     * Copy constructor
+     * @param other object it is copied from
+     */
+    Particle(const Particle &other);
+
+    /**
+     * Copy assignment operator
+     * @param other object it is copied from
+     * @return returning the copy
+     */
+    Particle &operator=(const Particle &other);
 
 
+    /**
+     * Overloaded constructor
+     * @param x_arg position
+     * @param v_arg velocity
+     * @param m_arg mass
+     * @param type_arg type
+     */
+    Particle(
+            // for visualization, we need always 3 coordinates
+            // -> in case of 2d, we use only the first and the second
+            std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg,
+            int type = 0);
 
-  Particle(
-      // for visualization, we need always 3 coordinates
-      // -> in case of 2d, we use only the first and the second
-      std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg,
-      int type = 0);
+    virtual ~Particle();
 
-  virtual ~Particle();
+    [[nodiscard]] const std::array<double, 3> &getX() const;
 
-  [[nodiscard]] const std::array<double, 3> &getX() const;
+    [[nodiscard]] const std::array<double, 3> &getV() const;
 
-  [[nodiscard]] const std::array<double, 3> &getV() const;
+    [[nodiscard]] const std::array<double, 3> &getF() const;
 
-  [[nodiscard]] const std::array<double, 3> &getF() const;
+    [[nodiscard]] const std::array<double, 3> &getOldF() const;
 
-  [[nodiscard]] const std::array<double, 3> &getOldF() const;
+    [[nodiscard]] double getM() const;
 
-  [[nodiscard]] double getM() const;
+    [[nodiscard]] int getType() const;
 
-  [[nodiscard]] int getType() const;
+    /**
+     * @param int: dimension
+     * @param double: value
+     */
+    void setX(int, double);
 
-  /**
-   * @input int: dimension
-   * @input double: value
-   */
-  void setX(int, double);
+    /**
+     * @param int: dimension
+     * @param double: value
+     */
+    void setV(int, double);
 
-  void setV(int, double);
+    /**
+     * @param int: dimension
+     * @param double: value
+     */
+    void setF(int, double);
 
-  void setF(int, double);
+    /**
+     * @param array the old force array
+     */
+    void setOldF(const std::array<double, 3> &);
 
-  void setOldF(const std::array<double, 3> &);
+    void setM(double);
 
-  void setM(double);
+    void setType(int);
 
-  void setType(int);
+    /**
+     * Class-specific equals operator
+     * @return true if equal, false if not
+     */
+    bool operator==(Particle &other);
 
-  bool operator==(Particle &other);
+    /**
+     * Class-specific not-equals operator
+     * @param other object it is compared to
+     * @return true if not equal, false if equal
+     */
+    bool operator!=(Particle &other);
 
-  bool operator!=(Particle &other);
-
-  [[nodiscard]] std::string toString() const;
+    /**
+     * Turns the particle into a string
+     * @return the string
+     */
+    [[nodiscard]] std::string toString() const;
 };
 
+/**
+ * Overloaded << operator for easy console prints
+ * @param stream the stream the content is pushed into into
+ * @param p the particle
+ * @return the stream reference for further pushing into to stream
+ */
 std::ostream &operator<<(std::ostream &stream, Particle &p);

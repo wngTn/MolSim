@@ -1,10 +1,3 @@
-/*
- * Particle.cpp
- *
- *  Created on: 23.02.2010
- *      Author: eckhardw
- */
-
 #include "Particle.h"
 
 #include <iostream>
@@ -12,6 +5,12 @@
 
 Particle::Particle(int type_arg) : type{type_arg}, f{std::array<double, 3>{}}, old_f(std::array<double, 3>{}) {
     std::cout<<"Particle generated with type!"<<std::endl;
+}
+
+Particle::Particle(std::array<double, 3> x_arg, std::array<double, 3> v_arg,
+                   double m_arg, int type_arg) : x{x_arg}, v{v_arg}, m{m_arg}, type{type_arg},
+                                                 f{std::array<double, 3>{}}, old_f{std::array<double, 3>{}}{
+    std::cout<<"Particle generated!"<<std::endl;
 }
 
 Particle::Particle(const Particle &other) : x{other.x}, v{other.v}, f{other.f}, old_f{other.old_f},
@@ -29,12 +28,6 @@ Particle &Particle::operator=(const Particle &other) {
     m = other.m;
     type = other.type;
     return (*this);
-}
-
-Particle::Particle(std::array<double, 3> x_arg, std::array<double, 3> v_arg,
-                   double m_arg, int type_arg) : x{x_arg}, v{v_arg}, m{m_arg}, type{type_arg},
-                   f{std::array<double, 3>{}}, old_f{std::array<double, 3>{}}{
-    std::cout<<"Particle generated!"<<std::endl;
 }
 
 Particle::~Particle() { std::cout<<"Particle destructed!"<<std::endl; }
@@ -77,7 +70,7 @@ void Particle::setType(int val) {
 
 std::string Particle::toString() const {
   std::stringstream stream;
-  stream << "Particle: X:" << x << " v: " << v << " f: " << f
+  stream << "Particle: X:" << x << " v: " << v << " f: " << f << " m: " << m
          << " old_f: " << old_f << " type: " << type;
   return stream.str();
 }
@@ -90,7 +83,6 @@ bool Particle::operator==(Particle &other) {
 bool Particle::operator!=(Particle &other) {
     return !((*this) == other);
 }
-
 
 std::ostream &operator<<(std::ostream &stream, Particle &p) {
   stream << p.toString();
