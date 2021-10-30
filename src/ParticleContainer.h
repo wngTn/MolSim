@@ -1,12 +1,9 @@
-//
-// Created by tony on 8/22/21.
-//
-
 #pragma once
 
-#include <list>
 #include <vector>
 #include "Particle.h"
+
+//TODO: describe the wrapper pattern (Adapter Pattern?)
 
 class ParticleContainer {
 public:

@@ -39,7 +39,10 @@ void FileReader::readFile(ParticleContainer &particles, char *filename) {
     std::istringstream numstream(tmp_string);
     numstream >> num_particles;
     std::cout << "Reading " << num_particles << "." << std::endl;
+
+    // already allocates the number of particles
     particles.reserve(num_particles);
+
     getline(input_file, tmp_string);
     std::cout << "Read line: " << tmp_string << std::endl;
 
