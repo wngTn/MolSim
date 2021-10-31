@@ -7,7 +7,9 @@
 
 class ParticleContainer {
 public:
-
+    /**
+     * Constructor
+     */
     ParticleContainer();
 
     /**
@@ -31,6 +33,8 @@ public:
      */
     std::vector<Particle>::iterator end();
 
+    //TODO Severin, iterator für Particle Pairs
+
     /**
      * Provides the const iterator for the start of the collection
      * @return const iterator
@@ -51,9 +55,9 @@ public:
 
     /**
      * Adds a particle to the container
-     * @param Particle The particle that should be added
+     * @param p The particle that should be added
      */
-    void push_back(const Particle&);
+    void push_back(const Particle& p);
 
     /**
      * Prints the content of the container
@@ -62,13 +66,13 @@ public:
 
     /**
      * Allocates the vector size so it doesn't resize automatically
-     * @param size_t The size of the vector
+     * @param size The size of the vector
      */
-    void reserve(size_t);
+    void reserve(size_t size);
 
 private:
     /**
-     * vector that contains the particles
+     * Vector that contains the particles
      */
     std::vector<Particle> particles;
 };

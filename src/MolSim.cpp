@@ -12,23 +12,25 @@
 /**** forward declaration of the calculation functions ****/
 
 /**
- * calculate the force, position and velocity for all particles
- * @param ParticleContainer&: the container containing the particles
+ * Calculate the force, position and velocity for all particles
+ * @param particles: the container containing the particles
  */
 void calculateXFV(ParticleContainer &particles);
 
 /**
- * plot the particles to a xyz-file or vtk-file
+ * Plot the particles to a xyz-file or vtk-file
+ * @param iteration the iteration
  * @param type 0 == xyz, 1 == vtk
+ * @param particles the container with the particles
  */
-void plotParticles(int iteration, int type, const ParticleContainer&);
+void plotParticles(int iteration, int type, const ParticleContainer& particles);
 
 /**
  * Returns the square of a number
- * @param T: the number
+ * @param x: the number
  */
 template<typename T>
-T sqr(T);
+T sqr(T x);
 
 /** Computes the gravitational force between two particles for the first particle
  *

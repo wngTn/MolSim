@@ -1,4 +1,5 @@
-MolSim
-===
+@mainpage PSE Molecular Dynamics
 
-Group project for the practical course: PSE Molecular Dynamic WS 21/22.
+Implementation for the practical course PSE Molecular Dynamics by group C.
+
+- Lukas, Severin, Tony
