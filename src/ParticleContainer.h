@@ -1,16 +1,25 @@
 #pragma once
 
 #include <vector>
+#include <cmath> /* sqrt */
 #include "Particle.h"
+
 
 //TODO: describe the wrapper pattern (Adapter Pattern?)
 
 class ParticleContainer {
 public:
     /**
-     * Constructor
+     * Default constructor
      */
     ParticleContainer();
+
+/**
+     * Constructor
+     * @param DIM the dimension we are in
+     * @param delta_t the delta_t given over the command line
+     */
+    ParticleContainer(int DIM, double delta_t);
 
     /**
      * Moves an object to the collection, i.e. uses one of the constructor of the Particle class
@@ -57,7 +66,7 @@ public:
      * Adds a particle to the container
      * @param p The particle that should be added
      */
-    void push_back(const Particle& p);
+    void push_back(const Particle &p);
 
     /**
      * Prints the content of the container
@@ -70,16 +79,55 @@ public:
      */
     void reserve(size_t size);
 
+    /**
+     * Calculates the forces between the particles
+     */
+    void calculateF();
+
+    /**
+     * Calculates the positions of the particles
+     */
+    void calculateX();
+
+    /**
+     * Calculates the velocities of the particles
+     */
+     void calculateV();
+
+    /**
+* Returns the square of a number
+* @param x: the number
+*/
+    template<typename T>
+    T sqr(T x);
+
 private:
     /**
      * Vector that contains the particles
      */
     std::vector<Particle> particles;
+
+    /** Computes the gravitational force between two particles for the first particle
+     *
+     * @param p1 first particle
+     * @param p2 second particle
+     */
+    void grav_force(Particle & p1, const Particle & p2);
+
+    // default dimensions
+    int DIM = 3;
+
+    double delta_t{};
 };
+
 
 template<typename... Args>
 void ParticleContainer::emplace_back(Args &&... args) {
     particles.emplace_back(std::forward<Args>(args)...);
 }
 
+template<typename T>
+T ParticleContainer::sqr(T x) {
+    return x * x;
+}
 

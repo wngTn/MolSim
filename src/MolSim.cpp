@@ -1,7 +1,6 @@
 #include "FileReader.h"
 #include "outputWriter/XYZWriter.h"
 #include "outputWriter/VTKWriter.h"
-#include "utils/ArrayUtils.h"
 #include "ParticleContainer.h"
 #include "Particle.h"
 
@@ -12,12 +11,6 @@
 /**** forward declaration of the calculation functions ****/
 
 /**
- * Calculate the force, position and velocity for all particles
- * @param particles: the container containing the particles
- */
-void calculateXFV(ParticleContainer &particles);
-
-/**
  * Plot the particles to a xyz-file or vtk-file
  * @param iteration the iteration
  * @param type 0 == xyz, 1 == vtk
@@ -25,26 +18,13 @@ void calculateXFV(ParticleContainer &particles);
  */
 void plotParticles(int iteration, int type, const ParticleContainer& particles);
 
-/**
- * Returns the square of a number
- * @param x: the number
- */
-template<typename T>
-T sqr(T x);
-
-/** Computes the gravitational force between two particles for the first particle
- *
- * @param p1 first particle
- * @param p2 second particle
- */
-void grav_force(Particle & p1, const Particle & p2);
 
 // default end_time and delta_t
 static double start_time = 0;
 static double end_time = 1000;
 static double delta_t = 0.014;
 
-// default dimensions
+// default dimension
 static int DIM = 3;
 
 
@@ -64,7 +44,7 @@ int main(int argc, char *argv[]) {
         delta_t = std::stod(argv[3]);
     }
 
-    ParticleContainer particles;
+    ParticleContainer particles = ParticleContainer(DIM, delta_t);
 
     FileReader::readFile(particles, argv[1]);
 
@@ -72,10 +52,16 @@ int main(int argc, char *argv[]) {
 
     int iteration = 0;
 
+    particles.calculateF();
+
     // for this loop, we assume: current x, current f and current v are known
     while (current_time < end_time) {
-        // calculate new x, f and v
-        calculateXFV(particles);
+
+        particles.calculateX();
+
+        particles.calculateF();
+
+        particles.calculateV();
 
         iteration++;
         if (iteration % 10 == 0) {
@@ -88,54 +74,6 @@ int main(int argc, char *argv[]) {
     }
 
     return 0;
-}
-
-void calculateXFV(ParticleContainer& particles) {
-
-    // calculate new positions
-    for (auto &p : particles) { // loop over every particle
-        // go through all three dimensions
-        for (int i = 0; i < DIM; ++i) {
-            // calculates new position
-            double new_X = p.getX().at(i) + delta_t * (p.getV().at(i) + .5 / p.getM() * p.getF().at(i) * delta_t);
-            p.setX(i, new_X);
-            // set new force
-            p.setF(i, p.getOldF().at(i));
-        }
-    }
-
-    // calculates new force
-    for (auto &p1 : particles) {
-        for (auto &p2 : particles) {
-            if (p1 != p2) {
-                grav_force(p1, p2);
-            }
-        }
-    }
-
-    // calculate new velocities
-    for (auto &p : particles) { // loop over every particle
-        // go through all three dimensions
-        for (int i = 0; i < DIM; ++i) {
-            // calculates new velocity
-            p.setV(i, p.getV().at(i) + delta_t * 0.5 * (p.getF().at(i) + p.getOldF().at(i)) / p.getM());
-        }
-    }
-
-}
-
-void grav_force(Particle &p1, const Particle &p2) {
-    double sqrd_dist = 0;
-    // calculate the squared distance
-    for (int i = 0; i < DIM; ++i) {
-        sqrd_dist += sqr(p2.getX().at(i) - p1.getX().at(i));
-    }
-    // left side of the term
-    double var = p1.getM() * p2.getM() / (sqrt(sqrd_dist) * sqrd_dist);
-    // multiplying with (p2 - p1) and setting the force
-    for (int i = 0; i < DIM; ++i) {
-        p1.setF(i, var * (p2.getX().at(i) - p1.getX().at(i)));
-    }
 }
 
 
@@ -159,10 +97,4 @@ void plotParticles(int iteration, int type, const ParticleContainer& particles) 
     else {
         outputWriter::XYZWriter::plotParticles(particles, out_name, iteration);
     }
-
-}
-
-template<typename T>
-T sqr(T x) {
-    return x * x;
 }
