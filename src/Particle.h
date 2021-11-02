@@ -8,14 +8,10 @@ class Particle {
 private:
 
     /**
-     * Position of the particle
+     * Type of the particle. Use it for whatever you want (e.g. to separate
+     * molecules belonging to different bodies, matters, and so on)
      */
-    std::array<double, 3> x{};
-
-    /**
-     * Velocity of the particle
-     */
-    std::array<double, 3> v{};
+    int type;
 
     /**
      * Force effective on this particle
@@ -28,21 +24,25 @@ private:
     std::array<double, 3> old_f{};
 
     /**
+     * Position of the particle
+     */
+    std::array<double, 3> x{};
+
+    /**
+     * Velocity of the particle
+     */
+    std::array<double, 3> v{};
+
+    /**
      * Mass of this particle
      */
     double m{};
-
-    /**
-     * Type of the particle. Use it for whatever you want (e.g. to separate
-     * molecules belonging to different bodies, matters, and so on)
-     */
-    int type;
 
 public:
 
     /**
      * Normal constructor
-     * @param type_arg type of the particle
+     * @param type type of the particle
      */
     explicit Particle(int type = 0);
 
@@ -65,7 +65,7 @@ public:
      * @param x_arg position
      * @param v_arg velocity
      * @param m_arg mass
-     * @param type_arg type
+     * @param type type
      */
     Particle(
             // for visualization, we need always 3 coordinates
@@ -88,27 +88,27 @@ public:
     [[nodiscard]] int getType() const;
 
     /**
-     * @param int: dimension
-     * @param double: value
+     * @param d: dimension
+     * @param v: value
      */
-    void setX(int, double);
+    void setX(int d, double v);
 
     /**
-     * @param int: dimension
-     * @param double: value
+     * @param d: dimension
+     * @param v: value
      */
-    void setV(int, double);
+    void setV(int d, double v);
 
     /**
-     * @param int: dimension
-     * @param double: value
+     * @param d: dimension
+     * @param v: value
      */
-    void setF(int, double);
+    void setF(int d, double v);
 
     /**
-     * @param array the old force array
+     * @param val the old force array
      */
-    void setOldF(const std::array<double, 3> &);
+    void setOldF(const std::array<double, 3> & val);
 
     void setM(double);
 
