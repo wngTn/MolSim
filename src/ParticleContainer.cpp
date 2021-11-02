@@ -5,8 +5,8 @@
 
 ParticleContainer::ParticleContainer() : particles{std::vector<Particle>{}} {}
 
-ParticleContainer::ParticleContainer(int DIM, double delta_t) : DIM{DIM}, delta_t{delta_t},
-    particles{std::vector<Particle>{}}  {}
+ParticleContainer::ParticleContainer(int DIM, double delta_t) : particles{std::vector<Particle>{}},
+                        DIM{DIM}, delta_t{delta_t}  {}
 
 std::vector<Particle>::iterator ParticleContainer::begin() {
     return particles.begin();
