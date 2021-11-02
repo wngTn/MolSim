@@ -9,21 +9,32 @@
 
 #include "Particle.h"
 #include "ParticleContainer.h"
+#include "IOWriter.h"
 
 #include <fstream>
 #include <vector>
 
 namespace outputWriter {
 
-class XYZWriter {
+class XYZWriter: public IOWriter{
 
 public:
   XYZWriter();
 
   virtual ~XYZWriter();
 
-  static void plotParticles(const ParticleContainer & particles, const std::string &filename,
-                     int iteration);
+  /**
+   * override of function IOWRriter::write for VTK
+   * @param container the ParticleContainer containg all particles that should be output
+   * @param filename custom filename
+   * @param iteration current iteration, used for unique filenames
+   */
+  void write(const ParticleContainer &container, const std::string &filename,  int iteration) override;
+
+private:
+    static void plotParticles(const ParticleContainer & particles, const std::string &filename,
+                              int iteration);
+
 };
 
 } // namespace outputWriter

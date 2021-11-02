@@ -48,6 +48,9 @@ int main(int argc, char *argv[]) {
 
     FileReader::readFile(particles, argv[1]);
 
+    outputWriter::VTKWriter vtk{};
+    IOWriter& io = vtk;
+
     double current_time = start_time;
 
     int iteration = 0;
@@ -65,7 +68,8 @@ int main(int argc, char *argv[]) {
 
         iteration++;
         if (iteration % 10 == 0) {
-            plotParticles(iteration, 1, particles);
+            io.write(particles, "output" , iteration);
+            // plotParticles(iteration, 1, particles);
         }
 
         std::cout<<"Iteration " << iteration << " finished"<<std::endl;
@@ -76,7 +80,7 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-
+/* obsolete, can be removed
 void plotParticles(int iteration, int type, const ParticleContainer& particles) {
     // The name of the files
     std::string out_name("MD_vtk");
@@ -98,3 +102,4 @@ void plotParticles(int iteration, int type, const ParticleContainer& particles) 
         outputWriter::XYZWriter::plotParticles(particles, out_name, iteration);
     }
 }
+*/

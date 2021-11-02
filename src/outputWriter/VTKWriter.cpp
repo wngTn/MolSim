@@ -97,4 +97,13 @@ void VTKWriter::plotParticle(const Particle &p) {
   pointsIterator->push_back(p.getX()[2]);
 }
 
+void VTKWriter::write(const ParticleContainer &container, const std::string &filename, int iteration) {
+    // currently just using the already implemented methods, could be combined
+    this->initializeOutput(static_cast<int>(container.size())); //assuming there are not more than int.MAX_VAL particles
+    for(const Particle &p : container){
+        this->plotParticle(p);
+    }
+    this->writeFile(filename, iteration);
+}
+
 } // namespace outputWriter
