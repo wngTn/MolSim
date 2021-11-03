@@ -74,8 +74,7 @@ int main(int argc, char *argv[]) {
 
     FileReader::readFile(particles, filename);
 
-    outputWriter::VTKWriter vtk{};
-    IOWriter& io = vtk;
+    const IOWriter& io = outputWriter::VTKWriter{};
 
     double current_time = start_time;
 
@@ -105,27 +104,3 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
-
-/* obsolete, can be removed
-void plotParticles(int iteration, int type, const ParticleContainer& particles) {
-    // The name of the files
-    std::string out_name("MD_vtk");
-    // vtk
-    if (type) {
-        // initializing the VTKWriter
-        outputWriter::VTKWriter vtkWriter = outputWriter::VTKWriter{};
-        // initializing the Output
-        vtkWriter.initializeOutput(static_cast<int>(particles.size()));
-        // plotting for every particle
-        for (const Particle& p : particles) {
-            vtkWriter.plotParticle(p);
-        }
-        // writes the file
-        vtkWriter.writeFile(out_name, iteration);
-    }
-    // xyz
-    else {
-        outputWriter::XYZWriter::plotParticles(particles, out_name, iteration);
-    }
-}
-*/

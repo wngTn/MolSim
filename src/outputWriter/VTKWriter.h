@@ -34,21 +34,21 @@ public:
    * @param filename custom filename
    * @param iteration current iteration, used for unique filenames
    */
-  void write(const ParticleContainer &container, const std::string &filename,  int iteration) override;
+  void write(const ParticleContainer &container, const std::string &filename,  int iteration) const override;
 
 private:
 
     /**
    * set up internal data structures and prepare to plot a particle.
    */
-    void initializeOutput(int numParticles);
+    void initializeOutput(int numParticles) const;
 
     /**
      * plot type, mass, position, velocity and force of a particle.
      *
      * @note: initializeOutput() must have been called before.
      */
-    void plotParticle(const Particle &p);
+    void plotParticle(const Particle &p) const;
 
     /**
      * writes the final output file.
@@ -57,7 +57,7 @@ private:
      * @param iteration the number of the current iteration,
      *        which is used to generate an unique filename
      */
-    void writeFile(const std::string &filename, int iteration);
+    void writeFile(const std::string &filename, int iteration) const;
 
   VTKFile_t *vtkFile;
 };

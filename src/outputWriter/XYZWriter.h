@@ -29,12 +29,12 @@ public:
    * @param filename custom filename
    * @param iteration current iteration, used for unique filenames
    */
-  void write(const ParticleContainer &container, const std::string &filename,  int iteration) override;
+  void write(const ParticleContainer &container, const std::string &filename,  int iteration) const override;
 
 private:
-    static void plotParticles(const ParticleContainer & particles, const std::string &filename,
-                              int iteration);
-
+   /* void plotParticles(const ParticleContainer & particles, const std::string &filename,
+                              int iteration) const;
+*/
 };
 
 } // namespace outputWriter

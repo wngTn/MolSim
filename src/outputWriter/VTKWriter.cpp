@@ -22,7 +22,7 @@ VTKWriter::~VTKWriter() {
     delete vtkFile;
 }
 
-void VTKWriter::initializeOutput(int numParticles) {
+void VTKWriter::initializeOutput(int numParticles) const{
   // per point, we add type, position, velocity and force
   PointData pointData;
   DataArray_t mass(type::Float32, "mass", 1);
@@ -52,7 +52,7 @@ void VTKWriter::initializeOutput(int numParticles) {
   vtkFile->UnstructuredGrid(unstructuredGrid);
 }
 
-void VTKWriter::writeFile(const std::string &filename, int iteration) {
+void VTKWriter::writeFile(const std::string &filename, int iteration) const{
   std::stringstream strstr;
   strstr << filename << "_" << std::setfill('0') << std::setw(4) << iteration << ".vtu";
 
@@ -60,7 +60,7 @@ void VTKWriter::writeFile(const std::string &filename, int iteration) {
   VTKFile(file, *vtkFile);
 }
 
-void VTKWriter::plotParticle(const Particle &p) {
+void VTKWriter::plotParticle(const Particle &p) const {
   if (vtkFile->UnstructuredGrid().present()) {
     std::cout << "UnstructuredGrid is present" << std::endl;
   } else {
@@ -97,7 +97,7 @@ void VTKWriter::plotParticle(const Particle &p) {
   pointsIterator->push_back(p.getX()[2]);
 }
 
-void VTKWriter::write(const ParticleContainer &container, const std::string &filename, int iteration) {
+void VTKWriter::write(const ParticleContainer &container, const std::string &filename, int iteration) const {
     // currently just using the already implemented methods, could be combined
     this->initializeOutput(static_cast<int>(container.size())); //assuming there are not more than int.MAX_VAL particles
     for(const Particle &p : container){
