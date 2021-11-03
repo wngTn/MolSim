@@ -18,5 +18,5 @@ public:
   FileReader();
   virtual ~FileReader();
 
-  static void readFile(ParticleContainer &particles, char *filename);
+  static void readFile(ParticleContainer &particles, const std::string &filename);
 };
