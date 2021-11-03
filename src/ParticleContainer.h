@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <cmath> /* sqrt */
+#include <functional>
 #include "Particle.h"
 
 
@@ -94,6 +95,68 @@ public:
      */
      void calculateV();
 
+     // custom Iterator iterating over all distinct pairs in the Container
+    struct PairIterator {
+        using iterator_category = std::forward_iterator_tag;
+        using difference_type = std::ptrdiff_t;
+        using value_type = std::pair<std::reference_wrapper<Particle>, std::reference_wrapper<Particle>>;
+        using pointer = value_type*;
+        using reference = value_type;
+
+        reference operator*() {
+            return std::make_pair<std::reference_wrapper<Particle>, std::reference_wrapper<Particle>>(vec[i], vec[j]);
+        }
+
+        // prefix
+        PairIterator& operator++() {
+
+            if(j == vec.size()-1){
+                i++;
+                j = i+1;
+            }else{
+                j++;
+            }
+            return *this;
+        }
+
+        // postfix
+        // CLang tidy bug?
+        PairIterator operator++(int) {
+            PairIterator tmp = *this;
+            ++(*this);
+            return tmp;
+        }
+
+        bool operator== (const PairIterator& b) {
+            const size_t max = vec.size();
+            if((this->i >= max || this->j >= max) && (b.i >= max || b.j >= max)){
+                return true;
+            }
+            return this->i == b.i && this->j == b.j;
+        }
+
+        bool operator!= (const PairIterator& b) {
+            return !(*this == b);
+        }
+
+    private:
+        PairIterator(std::vector<Particle>& vec, size_t i, size_t j) : vec(vec), i(i), j(j) {}
+
+        std::vector<Particle>& vec;
+        size_t i;
+        size_t j;
+        friend class ParticleContainer;
+    };
+
+    PairIterator pair_begin(){
+        // ++ to skip pair (0,0)
+        return {particles, 0, 1};
+    }
+
+    PairIterator pair_end(){
+        return {particles, particles.size(), particles.size()};
+    }
+
     /**
 * Returns the square of a number
 * @param x: the number
@@ -112,7 +175,7 @@ private:
      * @param p1 first particle
      * @param p2 second particle
      */
-    void grav_force(Particle & p1, const Particle & p2);
+    void grav_force(Particle & p1, Particle & p2);
 
     // default dimensions
     int DIM = 3;

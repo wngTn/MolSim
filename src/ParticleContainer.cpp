@@ -24,7 +24,6 @@ std::vector<Particle>::const_iterator ParticleContainer::end() const {
     return particles.end();
 }
 
-
 void ParticleContainer::push_back(const Particle& p) {
     particles.push_back(p);
 }
@@ -54,18 +53,24 @@ void ParticleContainer::calculateF() {
         }
     }
     // calculates new force
-    for (auto &p1 : particles) {
+    /*for (auto &p1 : particles) {
         for (auto &p2 : particles) {
             if (p1 != p2) {
                 grav_force(p1, p2);
             }
         }
+    }*/
+    // constructs more objects but it is nice and easier to only calculate every pair once like this
+    for(auto it = pair_begin(); it != pair_end(); ++it){
+        auto [p1, p2] = *it;
+        grav_force(p1, p2);
     }
 }
 
-void ParticleContainer::grav_force(Particle &p1, const Particle &p2) {
+void ParticleContainer::grav_force(Particle &p1, Particle &p2) {
     double sqrd_dist = 0;
-    double result;
+    double result1;
+    double result2;
     // calculate the squared distance
     for (int i = 0; i < DIM; ++i) {
         sqrd_dist += ParticleContainer::sqr(p2.getX().at(i) - p1.getX().at(i));
@@ -74,8 +79,10 @@ void ParticleContainer::grav_force(Particle &p1, const Particle &p2) {
     double var = p1.getM() * p2.getM() / (sqrt(sqrd_dist) * sqrd_dist);
     // multiplying with (p2 - p1) and setting the force
     for (int i = 0; i < DIM; ++i) {
-        result = p1.getF().at(i) + (var * (p2.getX().at(i) - p1.getX().at(i)));
-        p1.setF(i, result);
+        result1 = p1.getF().at(i) + (var * (p2.getX().at(i) - p1.getX().at(i)));
+        result2 = p2.getF().at(i) - result1;
+        p1.setF(i, result1);
+        p2.setF(i, result2);
     }
 }
 
@@ -107,6 +114,7 @@ void ParticleContainer::calculateV() {
         }
     }
 }
+
 
 
 
