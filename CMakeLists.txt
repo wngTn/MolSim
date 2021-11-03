@@ -32,7 +32,7 @@ target_compile_features(MolSim
         cxx_std_17
         )
 
-target_include_directories(MolSim
+target_include_directories(MolSim SYSTEM
         PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/libs/libxsd
         PRIVATE
@@ -49,7 +49,7 @@ target_link_libraries(MolSim
 # depending on the compiler different flags are used
 target_compile_options(MolSim
         PRIVATE
-        $<$<CXX_COMPILER_ID:GNU>:-Wall>
+        $<$<CXX_COMPILER_ID:GNU>:-Wall -Wextra -Wpedantic>
         # disable some spam warnings for icpc...
         $<$<CXX_COMPILER_ID:Intel>:-w3 -wd383,981,1418,1572,2259>
         )

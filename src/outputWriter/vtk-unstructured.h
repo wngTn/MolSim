@@ -736,6 +736,9 @@ class DataArrayList_t: public ::xml_schema::simple_type,
                    ::xml_schema::flags f = 0,
                    ::xml_schema::container* c = 0);
 
+  //added by sev to remove warning
+    DataArrayList_t& operator=(const DataArrayList_t&) = default;
+
   /**
    * @brief Copy the instance polymorphically.
    *
