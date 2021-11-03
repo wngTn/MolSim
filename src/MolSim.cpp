@@ -112,21 +112,8 @@ int main(int argc, char *argv[]) {
     FileReader::readFile(particles, filename);
 
     // set IO Method according to io_type flag obtained from cmd line args
-    // which type exactly it is not important here
-
-    //std::unique_ptr<IOWriter> io;
+    // which type exactly it is, is not important here bc of polymorphy
     auto io = get_io_type();
-    /* switch(io_type){
-        case IOWriter::vtk:
-            io = std::make_unique<outputWriter::VTKWriter>();
-            break;
-        case IOWriter::xyz:
-            io = std::make_unique<outputWriter::XYZWriter>();
-            break;
-        default:
-            io = std::make_unique<outputWriter::VTKWriter>();
-            break;
-    } */
 
     double current_time = start_time;
 
