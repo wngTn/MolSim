@@ -1,19 +1,12 @@
+import getopt
 import random
+import sys
 
 MAX_V = 1.0
 MIN_V = -1.
 MAX_COORD = 50.
 MIN_COORD = -50.
 MAX_MASS = 1.
-
-
-def get_input():
-    file = input("enter the output filename (with file extension like .txt)\n")
-
-    part_s = input("enter the amount of particles (max 128)\n")
-    particle_count = min(128, int(part_s))
-
-    return file, particle_count
 
 
 def cs():
@@ -55,10 +48,40 @@ def generate_values(count):
         ms.append(m())
     return crds, velos, ms
 
+def get_input():
+    file = input("enter the output filename (with file extension like .txt)\n")
+
+    part_s = input("enter the amount of particles (max 128)\n")
+    particle_count = min(128, int(part_s))
+
+    return file, particle_count
+
+def help():
+    print('usage: python generate_input.py [-n <particle_count>] [-o <outputfile>]')
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    file, particle_count = get_input()
+    file = ''
+    particle_count = 50
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], 'hn:o:', ['help', 'output='])
+    except getopt.GetoptError as err:
+        print(err)
+        help()
+        sys.exit()
+    for opt, arg in opts:
+        if opt == '-h':
+            help()
+            sys.exit()
+        elif opt == '-n':
+            particle_count = int(arg)
+        elif opt in ('-o', '--output'):
+            file = arg
+
+    if file == '':
+        file = 'output.txt'
+
+    # file, particle_count = get_input()
     coords, vels, masses = generate_values(particle_count)
     zipped = list(zip(coords, vels, masses))
     with open(file, "x") as f:

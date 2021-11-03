@@ -3,8 +3,8 @@
 #include "outputWriter/VTKWriter.h"
 #include "ParticleContainer.h"
 #include "Particle.h"
-
-
+#include <unistd.h>
+#include <string>
 #include <iostream>
 
 
@@ -31,22 +31,38 @@ static int DIM = 3;
 int main(int argc, char *argv[]) {
     std::cout<<"Hello from MolSim for PSE!"<<std::endl;
 
-    if (argc < 2 || argc > 4) {
-        std::cout<<"Erroneous programme call!"<<std::endl;
-        std::cout<<"./MolSim filename [t_end] [delta_t]"<<std::endl;
+    int opt;
+    std::string filename;
+    while((opt = getopt(argc, argv, "i:e:d:")) != -1){
+        switch(opt){
+            case 'i':
+                filename = optarg;
+                break;
+            case 'e':
+                end_time = std::stod(optarg);
+                break;
+            case 'd':
+                delta_t = std::stod(optarg);
+                break;
+            case '?':
+                std::cerr <<"Unknown option: " << optopt << "\n";
+                break;
+            default:
+                break;
+        }
+
     }
 
-    // if no t_end or delta_t is provided, we use the defaults
-    if (argc == 3) {
-        end_time = std::stod(argv[2]);
-    } else if (argc == 4) {
-        end_time = std::stod(argv[2]);
-        delta_t = std::stod(argv[3]);
+    // if no input file has been specified, generate random input using python script
+    if(filename.empty()){
+        std::cout << "Generating random input (this needs python to be installed)\n";
+        std::system("python ../generate_input.py -n 50 -o input.txt");
+        filename = "input.txt";
     }
 
     ParticleContainer particles = ParticleContainer(DIM, delta_t);
 
-    FileReader::readFile(particles, argv[1]);
+    FileReader::readFile(particles, filename);
 
     outputWriter::VTKWriter vtk{};
     IOWriter& io = vtk;
