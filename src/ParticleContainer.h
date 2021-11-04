@@ -76,28 +76,6 @@ public:
      */
     void reserve(size_t size);
 
-    /**
-     * @brief Calculates the forces between the particles
-     */
-    void calculateF();
-
-    /**
-     * @brief Calculates the positions of the particles
-     */
-    void calculateX();
-
-    /**
-     * @brief Calculates the velocities of the particles
-     */
-    void calculateV();
-
-    /**
-     * @brief Returns the square of a number
-     * @param x: the number
-     */
-    template<typename T>
-    T sqr(T x);
-
 
     /*
      * @brief Custom Iterator iterating over all distinct pairs in the Container
@@ -198,10 +176,5 @@ private:
 template<typename... Args>
 void ParticleContainer::emplace_back(Args &&... args) {
     particles.emplace_back(std::forward<Args>(args)...);
-}
-
-template<typename T>
-T ParticleContainer::sqr(T x) {
-    return x * x;
 }
 

@@ -3,6 +3,8 @@
 #include "outputWriter/VTKWriter.h"
 #include "ParticleContainer.h"
 #include "Particle.h"
+#include "PhysicsCalc.h"
+#include "StoermerVerlet.h"
 #include <unistd.h>
 #include <memory>
 #include <string>
@@ -21,8 +23,11 @@ static std::string filename;
 /// Default dimension
 static int DIM = 3;
 
-/// Which IO methode to use
+/// Which IO method to use
 static IOWriter::iotype io_type;
+
+/// Which Physics calculation method to use
+static PhysicsCalc::calctype calc_type;
 
 /**
  * @brief Parse command line arguments and set static values accordingly
@@ -31,14 +36,15 @@ static IOWriter::iotype io_type;
  * @param argv argv from main
  */
 void get_arguments(int argc, char *argv[]){
-    const std::string help = "Usage: ./MolSim [-i <input_file>] [-e <end_time>] [-d <delta_t>] [-v | -x]\n"
-                             "\tuse -v to enable vtk output and -x to enable xyz output (default vtk)\n"
+    const std::string help = "Usage: ./MolSim [-i <input_file>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calc>] \n"
+                             "\tuse -w to choose an output writer: v/vtk for VTKWriter (default) or x/xyz for XYZWriter\n"
+                             "\tuse -c to choose a physics calculator: sv/stoermerverlet for StoermerVerlet (default)\n"
                              "\twhen leaving out -e/-d default values are used (1000/0.014)\n"
                              "\twhen leaving out -i a random input file is generated automatically \n"
                              "\tcall with flag -h to display this message\n";
 
     int opt;
-    while((opt = getopt(argc, argv, "hi:e:d:vx")) != -1){
+    while((opt = getopt(argc, argv, "hi:e:d:w")) != -1){
         switch(opt){
             case 'h':
                 std::cout << help;
@@ -52,11 +58,18 @@ void get_arguments(int argc, char *argv[]){
             case 'd':
                 delta_t = std::stod(optarg);
                 break;
-            case 'v':
-                io_type = IOWriter::vtk;
+            case 'w':
+                if(std::string("vtk") == optarg || std::string("v") == optarg){
+                    io_type = IOWriter::vtk;
+                }
+                if(std::string("xyz") == optarg || std::string("x") == optarg){
+                    io_type = IOWriter::xyz;
+                }
                 break;
-            case 'x':
-                io_type = IOWriter::xyz;
+            case 'c':
+                if(std::string("sv") == optarg || std::string("stoermerverlet") == optarg){
+                    calc_type = PhysicsCalc::stoermerVerlet;
+                }
                 break;
             case '?':
                 std::cerr << "Unknown option: " << optopt << "\n";
@@ -92,6 +105,17 @@ static std::unique_ptr<IOWriter> get_io_type(){
     }
 }
 
+static std::unique_ptr<PhysicsCalc> get_calculator(){
+    //atm this is unnecessary and CLang tidy (rightfully) complains,
+    // but when we add more calc methods in the future this will make sense
+    switch(calc_type){
+        case PhysicsCalc::stoermerVerlet:
+            return std::make_unique<calculator::StoermerVerlet>();
+        default:
+            return std::make_unique<calculator::StoermerVerlet>();
+    }
+}
+
 int main(int argc, char *argv[]) {
     // parse cmd line args and set static values accordingly
     get_arguments(argc, argv);
@@ -105,21 +129,23 @@ int main(int argc, char *argv[]) {
     // which type exactly it is, is not important here bc of polymorphy
     auto io = get_io_type();
 
+    auto calc = get_calculator();
+
     double current_time = start_time;
 
     int iteration = 0;
 
     std::cout<<"Currently processing your request..."<<std::endl;
 
-    particles.calculateF();
+    calc->calcF(particles);
     // for this loop, we assume: current x, current f and current v are known
     while (current_time < end_time) {
-
-        particles.calculateX();
-
-        particles.calculateF();
-
-        particles.calculateV();
+        // particles.calculateX();
+        //particles.calculateF();
+        //particles.calculateV();
+        calc->calcX(particles);
+        calc->calcF(particles);
+        calc->calcV(particles);
 
         iteration++;
         if (iteration % 10 == 0) {

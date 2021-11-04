@@ -45,6 +45,7 @@ void ParticleContainer::reserve(size_t size) {
     particles.reserve(size);
 }
 
+/*
 void ParticleContainer::calculateF() {
     // set Force for all particles to zero
     for (auto &p : particles) {
@@ -107,6 +108,7 @@ void ParticleContainer::calculateV() {
         }
     }
 }
+*/
 
 ParticleContainer::PairIterator ParticleContainer::pair_begin() {
     // ++ to skip pair (0,0)
