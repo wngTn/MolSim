@@ -133,7 +133,7 @@ int main(int argc, char *argv[]) {
 
 
     // create particle container
-    ParticleContainer particles = ParticleContainer(DIM, delta_t);
+    ParticleContainer particles = ParticleContainer();
     // read input file
     FileReader::readFile(particles, filename);
 

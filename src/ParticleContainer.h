@@ -13,13 +13,6 @@ public:
      */
     ParticleContainer();
 
-/**
-     * @brief Constructor
-     * @param DIM the dimension we are in
-     * @param delta_t the delta_t given over the command line
-     */
-    ParticleContainer(int DIM, double delta_t);
-
     /**
      * @brief Moves an object to the collection, i.e. uses one of the constructor of the Particle class
      * and creates an object directly
