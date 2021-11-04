@@ -41,19 +41,19 @@ private:
 public:
 
     /**
-     * Normal constructor
+     * @brief Normal constructor
      * @param type type of the particle
      */
     explicit Particle(int type = 0);
 
     /**
-     * Copy constructor
+     * @brief Copy constructor
      * @param other object it is copied from
      */
     Particle(const Particle &other);
 
     /**
-     * Copy assignment operator
+     * @brief Copy assignment operator
      * @param other object it is copied from
      * @return returning the copy
      */
@@ -61,7 +61,7 @@ public:
 
 
     /**
-     * Overloaded constructor
+     * @brief Overloaded constructor
      * @param x_arg position
      * @param v_arg velocity
      * @param m_arg mass
@@ -115,27 +115,27 @@ public:
     void setType(int);
 
     /**
-     * Class-specific equals operator
+     * @brief Class-specific equals operator
      * @return true if equal, false if not
      */
     bool operator==(Particle &other);
 
     /**
-     * Class-specific not-equals operator
+     * @brief Class-specific not-equals operator
      * @param other object it is compared to
      * @return true if not equal, false if equal
      */
     bool operator!=(Particle &other);
 
     /**
-     * Turns the particle into a string
+     * @brief Turns the particle into a string
      * @return the string
      */
     [[nodiscard]] std::string toString() const;
 };
 
 /**
- * Overloaded << operator for easy console prints
+ * @brief Overloaded << operator for easy console prints
  * @param stream the stream the content is pushed into into
  * @param p the particle
  * @return the stream reference for further pushing into to stream

@@ -29,22 +29,22 @@ void FileReader::readFile(ParticleContainer &particles, const std::string &filen
   if (input_file.is_open()) {
 
     getline(input_file, tmp_string);
-    std::cout << "Read line: " << tmp_string << std::endl;
+    // std::cout << "Read line: " << tmp_string << std::endl;
 
     while (tmp_string.empty() or tmp_string[0] == '#') {
       getline(input_file, tmp_string);
-      std::cout << "Read line: " << tmp_string << std::endl;
+      // std::cout << "Read line: " << tmp_string << std::endl;
     }
 
     std::istringstream numstream(tmp_string);
     numstream >> num_particles;
-    std::cout << "Reading " << num_particles << "." << std::endl;
+    // std::cout << "Reading " << num_particles << "." << std::endl;
 
     // already allocates the number of particles
     particles.reserve(num_particles);
 
     getline(input_file, tmp_string);
-    std::cout << "Read line: " << tmp_string << std::endl;
+    // std::cout << "Read line: " << tmp_string << std::endl;
 
     for (int i = 0; i < num_particles; i++) {
       std::istringstream datastream(tmp_string);
@@ -65,7 +65,7 @@ void FileReader::readFile(ParticleContainer &particles, const std::string &filen
       particles.emplace_back(x, v, m);
 
       getline(input_file, tmp_string);
-      std::cout << "Read line: " << tmp_string << std::endl;
+      // std::cout << "Read line: " << tmp_string << std::endl;
     }
   } else {
     std::cout << "Error: could not open file " << filename << std::endl;
