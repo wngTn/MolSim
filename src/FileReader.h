@@ -15,8 +15,9 @@
 class FileReader {
 
 public:
-  FileReader();
-  virtual ~FileReader();
+    FileReader();
 
-  static void readFile(ParticleContainer &particles, const std::string &filename);
+    virtual ~FileReader();
+
+    static void readFile(ParticleContainer &particles, const std::string &filename);
 };

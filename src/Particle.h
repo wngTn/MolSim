@@ -108,7 +108,7 @@ public:
     /**
      * @param val the old force array
      */
-    void setOldF(const std::array<double, 3> & val);
+    void setOldF(const std::array<double, 3> &val);
 
     void setM(double);
 
