@@ -2,9 +2,9 @@
 #include "outputWriter/XYZWriter.h"
 #include "outputWriter/VTKWriter.h"
 #include "ParticleContainer.h"
-#include "Particle.h"
 #include "PhysicsCalc.h"
 #include "StoermerVerlet.h"
+
 #include <unistd.h>
 #include <memory>
 #include <string>
@@ -35,7 +35,7 @@ static PhysicsCalc::calctype calc_type;
  * @param argc argc from main
  * @param argv argv from main
  */
-void get_arguments(int argc, char *argv[]){
+void get_arguments(int argc, char *argv[]) {
     const std::string help = "Usage: ./MolSim [-i <input_file>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calc>] \n"
                              "\tuse -w to choose an output writer: v/vtk for VTKWriter (default) or x/xyz for XYZWriter\n"
                              "\tuse -c to choose a physics calculator: sv/stoermerverlet for StoermerVerlet (default)\n"
@@ -44,11 +44,11 @@ void get_arguments(int argc, char *argv[]){
                              "\tcall with flag -h to display this message\n";
 
     int opt;
-    while((opt = getopt(argc, argv, "hi:e:d:w")) != -1){
-        switch(opt){
+    while ((opt = getopt(argc, argv, "hi:e:d:w:c:")) != -1) {
+        switch (opt) {
             case 'h':
                 std::cout << help;
-                return;
+                exit(1);
             case 'i':
                 filename = optarg;
                 break;
@@ -59,15 +59,15 @@ void get_arguments(int argc, char *argv[]){
                 delta_t = std::stod(optarg);
                 break;
             case 'w':
-                if(std::string("vtk") == optarg || std::string("v") == optarg){
+                if (std::string("vtk") == optarg || std::string("v") == optarg) {
                     io_type = IOWriter::vtk;
                 }
-                if(std::string("xyz") == optarg || std::string("x") == optarg){
+                if (std::string("xyz") == optarg || std::string("x") == optarg) {
                     io_type = IOWriter::xyz;
                 }
                 break;
             case 'c':
-                if(std::string("sv") == optarg || std::string("stoermerverlet") == optarg){
+                if (std::string("sv") == optarg || std::string("stoermerverlet") == optarg) {
                     calc_type = PhysicsCalc::stoermerVerlet;
                 }
                 break;
@@ -81,8 +81,8 @@ void get_arguments(int argc, char *argv[]){
     }
 
     // if no input file has been specified, generate random input using python script
-    if(filename.empty()){
-        std::cout << "Generating random input (this needs python to be installed)\n";
+    if (filename.empty()) {
+        std::cout << "No input file specified, generating random input... (this needs python to be installed)\n";
         // maybe change particle amount
         std::system("python ../generate_input.py -n 24 -o input.txt");
         filename = "input.txt";
@@ -94,22 +94,27 @@ void get_arguments(int argc, char *argv[]){
  * if (somehow) io_type is not set returns VTK
  * @return a pointer to an Writer of the choosen IO Method
  */
-static std::unique_ptr<IOWriter> get_io_type(){
-    switch(io_type){
+static std::unique_ptr<IOWriter> get_io_type() {
+    std::cout << "\tWriter: ";
+    switch (io_type) {
         case IOWriter::vtk:
+            std::cout << "VTK-Writer (Default)" << std::endl;
             return std::make_unique<outputWriter::VTKWriter>();
         case IOWriter::xyz:
+            std::cout << "XYZ-Writer" << std::endl;
             return std::make_unique<outputWriter::XYZWriter>();
         default:
             return std::make_unique<outputWriter::VTKWriter>();
     }
 }
 
-static std::unique_ptr<PhysicsCalc> get_calculator(){
-    //atm this is unnecessary and CLang tidy (rightfully) complains,
+static std::unique_ptr<PhysicsCalc> get_calculator() {
+    // atm this is unnecessary and CLang tidy (rightfully) complains,
     // but when we add more calc methods in the future this will make sense
-    switch(calc_type){
+    std::cout << "\tCalculator: ";
+    switch (calc_type) {
         case PhysicsCalc::stoermerVerlet:
+            std::cout << "Stoermer-Verlet (Default)" << std::endl;
             return std::make_unique<calculator::StoermerVerlet>();
         default:
             return std::make_unique<calculator::StoermerVerlet>();
@@ -117,8 +122,15 @@ static std::unique_ptr<PhysicsCalc> get_calculator(){
 }
 
 int main(int argc, char *argv[]) {
+
     // parse cmd line args and set static values accordingly
     get_arguments(argc, argv);
+
+    std::cout << "Your configurations are:" << std::endl;
+    std::cout << "\tFilename: " << filename << std::endl;
+    std::cout << "\tEnd_time: " << end_time << (end_time == 1000 ? "(Default)" : "") << std::endl;
+    std::cout << "\tDelta_t: " << delta_t << (delta_t == 0.014 ? "(Default)" : "") << std::endl;
+
 
     // create particle container
     ParticleContainer particles = ParticleContainer(DIM, delta_t);
@@ -135,14 +147,11 @@ int main(int argc, char *argv[]) {
 
     int iteration = 0;
 
-    std::cout<<"Currently processing your request..."<<std::endl;
+    std::cout << "Currently processing your request..." << std::endl;
 
     calc->calcF(particles);
     // for this loop, we assume: current x, current f and current v are known
     while (current_time < end_time) {
-        // particles.calculateX();
-        //particles.calculateF();
-        //particles.calculateV();
         calc->calcX(particles);
         calc->calcF(particles);
         calc->calcV(particles);
@@ -150,7 +159,7 @@ int main(int argc, char *argv[]) {
         iteration++;
         if (iteration % 10 == 0) {
             // uses abstract write method overwritten by specific IO method
-            io->write(particles, "output" , iteration);
+            io->write(particles, "output", iteration);
         }
 
         // std::cout<<"Iteration " << iteration << " finished"<<std::endl;
@@ -158,7 +167,7 @@ int main(int argc, char *argv[]) {
         current_time += delta_t;
     }
 
-    std::cout<<"All files have been written!"<<std::endl;
+    std::cout << "All files have been written!" << std::endl;
 
     return 0;
 }

@@ -1,6 +1,5 @@
-
-
 #include "StoermerVerlet.h"
+
 namespace calculator {
 
     void StoermerVerlet::calcF(ParticleContainer &particles) {
@@ -65,5 +64,4 @@ namespace calculator {
             p2.setF(i, result2);
         }
     }
-
 }
