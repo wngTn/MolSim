@@ -1,22 +1,18 @@
-
-#ifndef PSEMOLDYN_GROUPC_STOERMERVERLET_H
-#define PSEMOLDYN_GROUPC_STOERMERVERLET_H
-
+#pragma once
 
 #include "PhysicsCalc.h"
 #include "ParticleContainer.h"
 
 namespace calculator {
 
-
     class StoermerVerlet : public PhysicsCalc {
 
 
-        void calcF(ParticleContainer &parts) override;
+        void calcF(ParticleContainer &particles) override;
 
-        void calcV(ParticleContainer &parts) override;
+        void calcV(ParticleContainer &particles) override;
 
-        void calcX(ParticleContainer &parts) override;
+        void calcX(ParticleContainer &particles) override;
 
         /**
         * Returns the square of a number
@@ -43,4 +39,3 @@ namespace calculator {
     }
 
 }
-#endif //PSEMOLDYN_GROUPC_STOERMERVERLET_H
