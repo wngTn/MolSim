@@ -4,6 +4,7 @@
 #include <cmath> /* sqrt */
 #include <functional>
 #include "Particle.h"
+#include "PhysicsCalc.h"
 
 
 //TODO: describe the wrapper pattern (Adapter Pattern?)
@@ -21,6 +22,7 @@ public:
      * @param delta_t the delta_t given over the command line
      */
     ParticleContainer(int DIM, double delta_t);
+
 
     /**
      * Moves an object to the collection, i.e. uses one of the constructor of the Particle class
@@ -42,8 +44,6 @@ public:
      * @return iterator
      */
     std::vector<Particle>::iterator end();
-
-    //TODO Severin, iterator für Particle Pairs
 
     /**
      * Provides the const iterator for the start of the collection
@@ -81,21 +81,10 @@ public:
     void reserve(size_t size);
 
     /**
-     * Calculates the forces between the particles
+     * Custom Iterator iterating over all disctinc pairs in the Container
+     * Can't be used in for range loops, because .begin() and .end() can only be overloaded once
+     * Use container.pair_begin() and container.pair_end()
      */
-    void calculateF();
-
-    /**
-     * Calculates the positions of the particles
-     */
-    void calculateX();
-
-    /**
-     * Calculates the velocities of the particles
-     */
-     void calculateV();
-
-     // custom Iterator iterating over all distinct pairs in the Container
     struct PairIterator {
         using iterator_category = std::forward_iterator_tag;
         using difference_type = std::ptrdiff_t;
@@ -148,39 +137,35 @@ public:
         friend class ParticleContainer;
     };
 
+    /**
+     * provides the begin() Iterator for the custom PairIterator
+     * @return PairIterator for start of collection
+     */
     PairIterator pair_begin(){
         // ++ to skip pair (0,0)
         return {particles, 0, 1};
     }
 
+    /**
+    * provides the end() Iterator for the custom PairIterator
+    * points to an invalid element after the last element
+    * @return PairIterator for end of collection
+    */
     PairIterator pair_end(){
         return {particles, particles.size(), particles.size()};
     }
 
-    /**
-* Returns the square of a number
-* @param x: the number
-*/
-    template<typename T>
-    T sqr(T x);
+
 
 private:
     /**
      * Vector that contains the particles
      */
     std::vector<Particle> particles;
-
-    /** Computes the gravitational force between two particles for the first particle
-     *
-     * @param p1 first particle
-     * @param p2 second particle
-     */
-    void grav_force(Particle & p1, Particle & p2);
-
     // default dimensions
     int DIM = 3;
-
     double delta_t{};
+
 };
 
 
@@ -189,8 +174,4 @@ void ParticleContainer::emplace_back(Args &&... args) {
     particles.emplace_back(std::forward<Args>(args)...);
 }
 
-template<typename T>
-T ParticleContainer::sqr(T x) {
-    return x * x;
-}
 
