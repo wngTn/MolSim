@@ -131,6 +131,9 @@ int main(int argc, char *argv[]) {
 
     auto calc = get_calculator();
 
+    calc->setDim(DIM);
+    calc->setDeltaT(delta_t);
+
     double current_time = start_time;
 
     int iteration = 0;

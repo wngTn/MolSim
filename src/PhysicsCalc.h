@@ -11,7 +11,7 @@ class PhysicsCalc {
 public:
     enum calctype{stoermerVerlet};
 
-    PhysicsCalc() : delta_t(0.1), DIM(3){}
+    PhysicsCalc()= default;
     PhysicsCalc(double delta_t, int DIM) : delta_t(delta_t), DIM(DIM){}
     PhysicsCalc(const PhysicsCalc&) = default;
 
@@ -30,9 +30,17 @@ public:
     */
     virtual void calcX(ParticleContainer& parts) = 0;
 
+    void setDeltaT(double dt){
+        delta_t = dt;
+    }
+
+    void setDim(int d){
+        DIM = d;
+    }
+
 protected:
-    const double delta_t;
-    const int DIM;
+    double delta_t{0.1};
+    int DIM{3};
 
 };
 
