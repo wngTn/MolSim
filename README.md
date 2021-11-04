@@ -1,4 +1,4 @@
-@mainpage PSE Molecular Dynamics
+cd @mainpage PSE Molecular Dynamics
 
 # Group X #
 Members:
@@ -61,10 +61,15 @@ This will generate both the html as well as the latex output in the `build/doxys
 
 # Media #
 ## Task - Halleys Comet ##
-TODO
+Here you can see a simulation of the comets' orbit around our sun. We used eingabe-sonne.txt as our starting point and calculated the movement of the planets (and the comet).
+
+![](doc_pages/colored_planets.gif)
+
 
 ## Task - Cool Photos ##
-TODO
+Assuming the center of the system is our sun, we can compare the mass with other celestial objects to identify them. We even got a photo of them!
+
+![](doc_pages/planets_named.png)
 
 # Misc #
 The `generate_input.py` is the first step of automating our input-files. In future weeks this script can be extended to generate configurations for each environment or scenario respectively. These environments can range from planets over photons to water molecules.
