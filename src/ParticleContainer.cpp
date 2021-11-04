@@ -52,14 +52,7 @@ void ParticleContainer::calculateF() {
             p.setF(i, 0);
         }
     }
-    // calculates new force
-    /*for (auto &p1 : particles) {
-        for (auto &p2 : particles) {
-            if (p1 != p2) {
-                grav_force(p1, p2);
-            }
-        }
-    }*/
+
     // constructs more objects but it is nice and easier to only calculate every pair once like this
     for(auto it = pair_begin(); it != pair_end(); ++it){
         auto [p1, p2] = *it;
@@ -114,6 +107,17 @@ void ParticleContainer::calculateV() {
         }
     }
 }
+
+ParticleContainer::PairIterator ParticleContainer::pair_begin() {
+    // ++ to skip pair (0,0)
+    return {particles, 0, 1};
+}
+
+ParticleContainer::PairIterator ParticleContainer::pair_end() {
+    return {particles, particles.size(), particles.size()};
+}
+
+
 
 
 

@@ -8,31 +8,24 @@
 #include <string>
 #include <iostream>
 
-
-/**** forward declaration of the calculation functions ****/
-
-/**
- * Plot the particles to a xyz-file or vtk-file
- * @param iteration the iteration
- * @param type 0 == xyz, 1 == vtk
- * @param particles the container with the particles
- */
-void plotParticles(int iteration, int type, const ParticleContainer& particles);
-
-
-// default end_time and delta_t
+/// Default start_time (end_time - start_time = total_runtime)
 static double start_time = 0;
+/// Default end_time (when to stop the simulation)
 static double end_time = 1000;
+/// Default delta t
 static double delta_t = 0.014;
+
+/// File name used for the input/output file(s)
 static std::string filename;
-// default dimension
+
+/// Default dimension
 static int DIM = 3;
 
-// which IO methode to use
+/// Which IO methode to use
 static IOWriter::iotype io_type;
 
 /**
- * parse command line arguments and set static values accordingly
+ * @brief Parse command line arguments and set static values accordingly
  * also generates random input if no input file specified
  * @param argc argc from main
  * @param argv argv from main
@@ -72,20 +65,19 @@ void get_arguments(int argc, char *argv[]){
             default:
                 break;
         }
-
     }
 
     // if no input file has been specified, generate random input using python script
     if(filename.empty()){
         std::cout << "Generating random input (this needs python to be installed)\n";
         // maybe change particle amount
-        std::system("python ../generate_input.py -n 50 -o input.txt");
+        std::system("python ../generate_input.py -n 24 -o input.txt");
         filename = "input.txt";
     }
 }
 
 /**
- * returns the (by cmd line arg) selected IO Methode
+ * @brief Returns the (by cmd line arg) selected IO Methode
  * if (somehow) io_type is not set returns VTK
  * @return a pointer to an Writer of the choosen IO Method
  */
@@ -101,8 +93,6 @@ static std::unique_ptr<IOWriter> get_io_type(){
 }
 
 int main(int argc, char *argv[]) {
-    std::cout<<"Hello from MolSim for PSE!"<<std::endl;
-
     // parse cmd line args and set static values accordingly
     get_arguments(argc, argv);
 
@@ -118,6 +108,8 @@ int main(int argc, char *argv[]) {
     double current_time = start_time;
 
     int iteration = 0;
+
+    std::cout<<"Currently processing your request..."<<std::endl;
 
     particles.calculateF();
     // for this loop, we assume: current x, current f and current v are known
@@ -135,10 +127,12 @@ int main(int argc, char *argv[]) {
             io->write(particles, "output" , iteration);
         }
 
-        std::cout<<"Iteration " << iteration << " finished"<<std::endl;
+        // std::cout<<"Iteration " << iteration << " finished"<<std::endl;
 
         current_time += delta_t;
     }
+
+    std::cout<<"All files have been written!"<<std::endl;
 
     return 0;
 }
