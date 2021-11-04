@@ -84,7 +84,7 @@ if __name__ == '__main__':
     # file, particle_count = get_input()
     coords, vels, masses = generate_values(particle_count)
     zipped = list(zip(coords, vels, masses))
-    with open(file, "x") as f:
+    with open(file, "w") as f:
         f.write("# xyz coord    velocity    mass\n")
         f.write(str(particle_count) + "\n")
         f.writelines([f'{x} {y} {z}    {v1} {v2} {v3}    {m}\n' for ((x, y, z), (v1, v2, v3), m) in zipped])
