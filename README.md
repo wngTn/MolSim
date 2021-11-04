@@ -1,4 +1,4 @@
-cd @mainpage PSE Molecular Dynamics
+@mainpage PSE Molecular Dynamics
 
 # Group C #
 Members:
@@ -13,7 +13,7 @@ Members:
 
 # Run Instructions #
 
-In this project we have used the compiler `GNU 11.1.0`.
+In this project we have used the compiler `g++ 11.1.0`.
 
 ## Task - Run simulation ##
 You can run the program with different flags and configuration, tailored to your convenience.
