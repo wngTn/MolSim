@@ -159,19 +159,7 @@ private:
      */
     std::vector<Particle> particles;
 
-    /** Computes the gravitational force between two particles for the first particle
-     *
-     * @param p1 first particle
-     * @param p2 second particle
-     */
-    void grav_force(Particle &p1, Particle &p2);
-
-    // default dimensions
-    int DIM = 3;
-
-    double delta_t{};
 };
-
 
 template<typename... Args>
 void ParticleContainer::emplace_back(Args &&... args) {
