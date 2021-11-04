@@ -1,4 +1,4 @@
-cd @mainpage PSE Molecular Dynamics
+@mainpage PSE Molecular Dynamics
 
 # Group C #
 Members:
