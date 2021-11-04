@@ -1,17 +1,20 @@
 cd @mainpage PSE Molecular Dynamics
 
-# Group X #
+# Group C #
 Members:
-* Lukas
-* Severin
-* Tony
+* Lukas Baader
+* Severin Schmidmeier
+* Tony Wang
 
 # Code #
 * Link:     https://github.com/wngTn/MolSim
 * Branch:   main
-* Revision: TODO
+* Revision: -
 
 # Run Instructions #
+
+In this project we have used the compiler `GNU 11.1.0`.
+
 ## Task - Run simulation ##
 You can run the program with different flags and configuration, tailored to your convenience.
 
