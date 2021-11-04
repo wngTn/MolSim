@@ -36,19 +36,25 @@ static PhysicsCalc::calctype calc_type;
  * @param argv argv from main
  */
 void get_arguments(int argc, char *argv[]) {
-    const std::string help = "Usage: ./MolSim [-i <input_file>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calc>] \n"
+    const std::string help = "Usage: ./MolSim [-i <input_file>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calc>] [-r] \n"
+                             "\tuse -i to specify an input file\n"
                              "\tuse -w to choose an output writer: v/vtk for VTKWriter (default) or x/xyz for XYZWriter\n"
                              "\tuse -c to choose a physics calculator: sv/stoermerverlet for StoermerVerlet (default)\n"
+                             "\tuse -r to enable random input generation (not used if -i is used)\n"
                              "\twhen leaving out -e/-d default values are used (1000/0.014)\n"
-                             "\twhen leaving out -i a random input file is generated automatically \n"
                              "\tcall with flag -h to display this message\n";
 
     int opt;
-    while ((opt = getopt(argc, argv, "hi:e:d:w:c:")) != -1) {
+    bool random = false;
+    if(argc == 1){
+        std::cout << help;
+        exit(0);
+    }
+    while ((opt = getopt(argc, argv, "hi:e:d:w:c:r")) != -1) {
         switch (opt) {
             case 'h':
                 std::cout << help;
-                exit(1);
+                exit(0);
             case 'i':
                 filename = optarg;
                 break;
@@ -71,6 +77,9 @@ void get_arguments(int argc, char *argv[]) {
                     calc_type = PhysicsCalc::stoermerVerlet;
                 }
                 break;
+            case 'r':
+                random = true;
+                break;
             case '?':
                 std::cerr << "Unknown option: " << optopt << "\n";
                 std::cerr << help;
@@ -81,7 +90,7 @@ void get_arguments(int argc, char *argv[]) {
     }
 
     // if no input file has been specified, generate random input using python script
-    if (filename.empty()) {
+    if (random && filename.empty()) {
         std::cout << "No input file specified, generating random input... (this needs python to be installed)\n";
         // maybe change particle amount
         std::system("python ../generate_input.py -n 24 -o input.txt");
