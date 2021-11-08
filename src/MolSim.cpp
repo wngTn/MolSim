@@ -2,8 +2,10 @@
 #include "outputWriter/XYZWriter.h"
 #include "outputWriter/VTKWriter.h"
 #include "ParticleContainer.h"
-#include "PhysicsCalc.h"
-#include "StoermerVerlet.h"
+#include "physicsCalculator/PhysicsCalc.h"
+#include "physicsCalculator/StoermerVerlet.h"
+#include "physicsCalculator/LennardJones.h"
+#include "utils/ParticleGenerator.h"
 
 #include <unistd.h>
 #include <memory>
@@ -29,6 +31,10 @@ static IOWriter::iotype io_type;
 /// Which Physics calculation method to use
 static PhysicsCalc::calctype calc_type;
 
+/// Whether a particle generator getting parameters from the input file (for e.g. cuboids) should be used
+static bool generate = false;
+static bool randomGen = false;
+static bool brownianMotion = false;
 /**
  * @brief Parse command line arguments and set static values accordingly
  * also generates random input if no input file specified
@@ -36,27 +42,36 @@ static PhysicsCalc::calctype calc_type;
  * @param argv argv from main
  */
 void get_arguments(int argc, char *argv[]) {
-    const std::string help = "Usage: ./MolSim [-i <input_file>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calc>] [-r] \n"
+    const std::string help = "Usage: ./MolSim [-i <input_file>] [-t <input type>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calc>] [-r] \n"
                              "\tuse -i to specify an input file\n"
+                             "\tuse -t to specify an input type: 'g'/'generate' to generate based on values from input_file, 'r'/'random' for random input (-i discarded for random)\n"
                              "\tuse -w to choose an output writer: v/vtk for VTKWriter (default) or x/xyz for XYZWriter\n"
-                             "\tuse -c to choose a physics calculator: sv/stoermerverlet for StoermerVerlet (default)\n"
-                             "\tuse -r to enable random input generation (not used if -i is used)\n"
+                             "\tuse -c to choose a physics calculator: sv/stoermerverlet for StoermerVerlet (default), lj/lennardjones for LennardJonesPotential\n"
+                             "\tuse -b to initialize particle movement with Brownian Motion (MaxwellBoltzmann) (used by default if LennardJonesPotential is used)\n"
+                            // "\tuse -r to enable random input generation (not used if -i is used)\n"
                              "\twhen leaving out -e/-d default values are used (1000/0.014)\n"
                              "\tcall with flag -h to display this message\n";
 
     int opt;
-    bool random = false;
+
     if(argc == 1){
         std::cout << help;
         exit(0);
     }
-    while ((opt = getopt(argc, argv, "hi:e:d:w:c:r")) != -1) {
+    while ((opt = getopt(argc, argv, "hi:t:e:d:w:c:rb")) != -1) {
         switch (opt) {
             case 'h':
                 std::cout << help;
                 exit(0);
             case 'i':
                 filename = optarg;
+                break;
+            case 't':
+                if (std::string("g") == optarg || std::string("generate") == optarg) {
+                    generate = true;
+                }else if (std::string("r") == optarg || std::string("random") == optarg) {
+                    randomGen = true;
+                }
                 break;
             case 'e':
                 end_time = std::stod(optarg);
@@ -67,18 +82,23 @@ void get_arguments(int argc, char *argv[]) {
             case 'w':
                 if (std::string("vtk") == optarg || std::string("v") == optarg) {
                     io_type = IOWriter::vtk;
-                }
-                if (std::string("xyz") == optarg || std::string("x") == optarg) {
+                }else if (std::string("xyz") == optarg || std::string("x") == optarg) {
                     io_type = IOWriter::xyz;
                 }
                 break;
             case 'c':
-                if (std::string("sv") == optarg || std::string("stoermerverlet") == optarg) {
+                if (std::string("lj") == optarg || std::string("lennardjones") == optarg) {
+                    calc_type = PhysicsCalc::lennardJones;
+                    brownianMotion = true; //always use brownianMotion of LJP is used
+                }else if (std::string("sv") == optarg || std::string("stoermerverlet") == optarg) {
                     calc_type = PhysicsCalc::stoermerVerlet;
                 }
                 break;
-            case 'r':
-                random = true;
+    //        case 'r':
+    //            random = true;
+    //            break;
+            case 'b':
+                brownianMotion = true;
                 break;
             case '?':
                 std::cerr << "Unknown option: " << optopt << "\n";
@@ -89,13 +109,6 @@ void get_arguments(int argc, char *argv[]) {
         }
     }
 
-    // if no input file has been specified, generate random input using python script
-    if (random && filename.empty()) {
-        std::cout << "No input file specified, generating random input... (this needs python to be installed)\n";
-        // maybe change particle amount
-        std::system("python ../generate_input.py -n 24 -o input.txt");
-        filename = "input.txt";
-    }
 }
 
 /**
@@ -118,15 +131,35 @@ static std::unique_ptr<IOWriter> get_io_type() {
 }
 
 static std::unique_ptr<PhysicsCalc> get_calculator() {
-    // atm this is unnecessary and CLang tidy (rightfully) complains,
-    // but when we add more calc methods in the future this will make sense
     std::cout << "\tCalculator: ";
     switch (calc_type) {
         case PhysicsCalc::stoermerVerlet:
             std::cout << "Stoermer-Verlet (Default)" << std::endl;
             return std::make_unique<calculator::StoermerVerlet>();
+        case PhysicsCalc::lennardJones:
+            std::cout << "Lennard-Jones-Potential" << std::endl;
+            return std::make_unique<calculator::LennardJones>();
         default:
             return std::make_unique<calculator::StoermerVerlet>();
+    }
+}
+
+void initializeParticles(ParticleContainer &particles) {
+    // if generate flag is set and input for generator is specified, use ParticleGenerator
+    if (generate && !filename.empty()) {
+        ParticleGenerator::generateParticles(particles, filename, brownianMotion);
+
+    // if no input file has been specified, generate random input using python script
+    }else if (randomGen && filename.empty()) {
+        std::cout << "No input file specified, generating random input... (this needs python to be installed)\n";
+        // maybe change particle amount
+        std::system("python ../generate_input.py -n 24 -o input.txt");
+        filename = "input.txt";
+    }else if (filename.empty()){
+        std::cout << "Please specify an input file" << std::endl;
+    }else{
+        // read input file
+        FileReader::readFile(particles, filename);
     }
 }
 
@@ -143,11 +176,9 @@ int main(int argc, char *argv[]) {
 
     // create particle container
     ParticleContainer particles = ParticleContainer();
-    // read input file
-    FileReader::readFile(particles, filename);
 
-    // set IO Method according to io_type flag obtained from cmd line args
-    // which type exactly it is, is not important here bc of polymorphy
+    initializeParticles(particles);
+
     auto io = get_io_type();
 
     auto calc = get_calculator();
