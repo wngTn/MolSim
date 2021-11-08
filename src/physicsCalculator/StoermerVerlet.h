@@ -1,6 +1,6 @@
 #pragma once
 
-#include "PhysicsCalc.h"
+#include "physicsCalculator/PhysicsCalc.h"
 #include "ParticleContainer.h"
 
 namespace calculator {

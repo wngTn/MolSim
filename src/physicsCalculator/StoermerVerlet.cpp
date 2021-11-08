@@ -48,8 +48,9 @@ namespace calculator {
 
     void StoermerVerlet::grav_force(Particle &p1, Particle &p2) {
         double sqrd_dist = 0;
-        double result1;
-        double result2;
+        double force;
+
+        // std::array<double, 3> temp{};
         // calculate the squared distance
         for (int i = 0; i < DIM; ++i) {
             sqrd_dist += StoermerVerlet::sqr(p2.getX().at(i) - p1.getX().at(i));
@@ -57,11 +58,12 @@ namespace calculator {
         // left side of the term
         double var = p1.getM() * p2.getM() / (sqrt(sqrd_dist) * sqrd_dist);
         // multiplying with (p2 - p1) and setting the force
+
         for (int i = 0; i < DIM; ++i) {
-            result1 = p1.getF().at(i) + (var * (p2.getX().at(i) - p1.getX().at(i)));
-            result2 = p2.getF().at(i) - result1;
-            p1.setF(i, result1);
-            p2.setF(i, result2);
+            force = (var * (p2.getX()[i] - p1.getX()[i]));
+            // temp[i] = force;
+            p1.setF(i, p1.getF()[i] + force);
+            p2.setF(i, p2.getF()[i]- force);
         }
     }
 }
