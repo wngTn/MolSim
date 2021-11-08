@@ -23,6 +23,11 @@ file(GLOB_RECURSE MY_SRC
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
         )
 
+# add the needed subdirectories
+add_subdirectory(googletest)
+add_subdirectory(test)
+
+
 # create make target
 add_executable(MolSim ${MY_SRC})
 
@@ -39,6 +44,7 @@ target_include_directories(MolSim SYSTEM
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         # is this correct?
         ${CMAKE_CURRENT_SOURCE_DIR}/src/*
+        ${CMAKE_CURRENT_SOURCE_DIR}/test
         )
 
 target_link_libraries(MolSim
