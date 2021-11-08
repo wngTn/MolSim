@@ -50,7 +50,6 @@ namespace calculator {
         double sqrd_dist = 0;
         double force;
 
-        // std::array<double, 3> temp{};
         // calculate the squared distance
         for (int i = 0; i < DIM; ++i) {
             sqrd_dist += StoermerVerlet::sqr(p2.getX().at(i) - p1.getX().at(i));
@@ -58,10 +57,8 @@ namespace calculator {
         // left side of the term
         double var = p1.getM() * p2.getM() / (sqrt(sqrd_dist) * sqrd_dist);
         // multiplying with (p2 - p1) and setting the force
-
         for (int i = 0; i < DIM; ++i) {
             force = (var * (p2.getX()[i] - p1.getX()[i]));
-            // temp[i] = force;
             p1.setF(i, p1.getF()[i] + force);
             p2.setF(i, p2.getF()[i]- force);
         }
