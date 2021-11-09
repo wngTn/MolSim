@@ -1,4 +1,5 @@
 #include "LennardJones.h"
+#include "utils/ArrayUtils.h"
 
 namespace calculator {
 
@@ -11,17 +12,16 @@ namespace calculator {
 
     void LennardJones::ljforce(Particle &p1, Particle &p2) {
         double sqrd_dist = 0;
-        double force;
+
         for (int i = 0; i < DIM; i++) {
             sqrd_dist += LennardJones::sqr(p2.getX().at(i) - p1.getX().at(i));
         }
         double s = LennardJones::sqr(sigma) / sqrd_dist;
         s = s * s * s; // s = sqr(s) * s
         double f = 24 * epsilon * s / sqrd_dist * (1 - 2 * s);
-        for (int i = 0; i < DIM; i++) {
-            force = f * (p2.getX().at(i) - p1.getX().at(i));
-            p1.setF(i, p1.getF().at(i) + force);
-            p2.setF(i, p2.getF().at(i) - force);
-        }
+
+        auto force = f * (p2.getX() - p1.getX());
+        p1.setF(p1.getF() + force);
+        p2.setF(p2.getF() - force);
     }
 }

@@ -1,4 +1,5 @@
 #include "ParticleGenerator.h"
+#include "utils/ArrayUtils.h"
 
 #include <cstdlib>
 #include <fstream>
@@ -76,13 +77,7 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles) {
                 Particle part;
                 // TODO check if this is correct
                 // add browian motion
-                auto tempVel = vel;
-                auto brownMot = maxwellBoltzmannDistributedVelocity(brownianMotionMean, 3);
-                // auto oldV = part.getV();
-                for(int i = 0; i < 3; i++){
-                    tempVel[i] += brownMot[i];
-                    // part.setV(i,oldV[i]+brownMot[i]);
-                }
+                auto tempVel = vel + maxwellBoltzmannDistributedVelocity(brownianMotionMean, 3);
                 part = Particle{currentPos, tempVel, mass};
 
                 particles.emplace_back(part);

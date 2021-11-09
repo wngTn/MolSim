@@ -94,16 +94,34 @@ public:
     void setX(int d, double v);
 
     /**
+     * set the position vector to some other vector
+     * @param x the new position vector
+     */
+    void setX(std::array<double, 3> x);
+
+    /**
      * @param d: dimension
      * @param v: value
      */
     void setV(int d, double v);
 
     /**
+     * set the velocity vector to some other vector
+     * @param v the new velocity vector
+     */
+    void setV(std::array<double, 3> v);
+
+    /**
      * @param d: dimension
      * @param v: value
      */
     void setF(int d, double v);
+
+    /**
+     * set the force vector to some other vector
+     * @param f the new force vector
+     */
+    void setF(std::array<double, 3> f);
 
     /**
      * @param val the old force array

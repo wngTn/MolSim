@@ -1,4 +1,5 @@
 #include "Gravitation.h"
+#include "utils/ArrayUtils.h"
 
 namespace calculator {
 
@@ -18,7 +19,6 @@ namespace calculator {
 
     void Gravitation::grav_force(Particle &p1, Particle &p2) {
         double sqrd_dist = 0;
-        double force;
 
         // calculate the squared distance
         for (int i = 0; i < DIM; ++i) {
@@ -27,10 +27,15 @@ namespace calculator {
         // left side of the term
         double var = p1.getM() * p2.getM() / (sqrt(sqrd_dist) * sqrd_dist);
         // multiplying with (p2 - p1) and setting the force
-        for (int i = 0; i < DIM; ++i) {
+
+        auto force = var * (p2.getX() - p1.getX());
+        p1.setF(p1.getF() + force);
+        p2.setF(p2.getF() - force);
+
+        /* for (int i = 0; i < DIM; ++i) {
             force = (var * (p2.getX()[i] - p1.getX()[i]));
             p1.setF(i, p1.getF()[i] + force);
             p2.setF(i, p2.getF()[i]- force);
-        }
+        }*/
     }
 }
