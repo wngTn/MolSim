@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - run: npm install xerces-c
+    - run: npm install libxerces-c-dev
     
     - uses: actions/checkout@v2
 
