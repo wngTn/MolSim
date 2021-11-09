@@ -10,6 +10,15 @@ option(BUILD_DOC "Build documentation" ON)
 # let ccmake and cmake-gui offer the default build type options
 set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug;Release;RelWithDebInfo;MinSizeRel")
 
+# we use the release 1.11.0
+include(FetchContent)
+FetchContent_Declare(
+        googletest
+        URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
+)
+
+FetchContent_MakeAvailable(googletest)
+
 # set Release as the default build type if it is not yet set.
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING
@@ -24,7 +33,6 @@ file(GLOB_RECURSE MY_SRC
         )
 
 # add the needed subdirectories
-add_subdirectory(googletest)
 add_subdirectory(test)
 
 
