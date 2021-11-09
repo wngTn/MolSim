@@ -1,5 +1,6 @@
 #include "ParticleGenerator.h"
 #include "utils/ArrayUtils.h"
+#include "MaxwellBoltzmannDistribution.h"
 
 #include <cstdlib>
 #include <fstream>
