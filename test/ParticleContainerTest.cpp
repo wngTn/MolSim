@@ -1,5 +1,8 @@
 #include <gtest/gtest.h>
 #include <ctime>
+#include <set>
+#include <iostream>
+
 #include "ParticleContainer.h"
 
 /**
@@ -37,6 +40,11 @@ class ParameterizedContainerTest : public testing::TestWithParam<size_t> {
 protected:
     ParticleContainer p1;
 
+    /**
+     * Implictly also tests whether emplace back does its job
+     * Every particle can be identified by its mass
+     * @param size the size of the container
+     */
     void setSize(size_t size) {
         for (int i = 0; i < size; ++i) {
             p1.emplace_back(std::array<double, 3>{0.1, 0.2, 0.3},
@@ -45,20 +53,52 @@ protected:
                             i);
         }
     }
+
+    static unsigned int fact(unsigned int x) {
+        unsigned int result{1};
+        for (unsigned int i = 2; i <= x; ++i) {
+            result *= i;
+        }
+        return result;
+    }
 };
 
+/**
+ * Tests whether the size of the container is correct after the emplace backs
+ */
 TEST_P(ParameterizedContainerTest, ContainerSize) {
     size_t size = GetParam();
     setSize(size);
     ASSERT_EQ(p1.size(), size);
 }
 
+/**
+ * Tests whether the ParticlePairIterator correctly parses over every particle pair
+ */
+TEST_P(ParameterizedContainerTest, ParticlePairIterator) {
+    size_t size = GetParam();
+    setSize(size);
+    // Set of mass-pairs (masses identify the particles)
+    std::set<std::pair<double, double>> s;
+    // Inserts every particle pair
+    for (auto it = p1.pair_begin(); it != p1.pair_end(); ++it) {
+        s.insert({(*it).first.get().getM(), (*it).second.get().getM()});
+    }
+    // The reference size which is combination(size, 2)
+    size_t refSize = (size == 1) ? 0 : fact(size)/(fact(2)*fact(size-2));
+    ASSERT_EQ(s.size(), refSize);
+
+}
+
+/**
+ * Instantiates the parameterized tests with the to testing value
+ */
 INSTANTIATE_TEST_SUITE_P(
         ContainerSizeTest,
         ParameterizedContainerTest,
         ::testing::Values(
-            1u, 10u, 20u, 100u, 200u
-                )
-        );
+                1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 10u, 11u, 12u
+        )
+);
 
 

@@ -3,8 +3,8 @@ set(This ${CMAKE_PROJECT_NAME}_test)
 # collect all cpp files in the test directory
 set(Test_Sources
         ParticleContainerTest.cpp
-        main.cpp
-        )
+        LennardJonesTest.cpp
+        main.cpp)
 
 enable_testing()
 
@@ -33,28 +33,8 @@ target_include_directories(${This} PRIVATE
 target_link_libraries(${This}
         PUBLIC
         gtest_main
-        xerces-c
-        log4cxx)
+        xerces-c)
 
-# adds the test
-add_test(NAME ${This} COMMAND ${This})
+include(GoogleTest)
 
-#set(This ${CMAKE_PROJECT_NAME}_test)
-#
-## collect all cpp files
-#set(Sources
-#        main.cpp
-#        ParticleContainerTest.cpp)
-#
-#enable_testing()
-#
-#set(SRC_COPY ${MY_SRC})
-#
-#list(REMOVE_ITEM SRC_COPY "${CMAKE_SOURCE_DIR}/src/MolSim.cpp")
-#
-#add_executable(${This} ${Sources} ${SRC_COPY})
-#
-#target_link_libraries(${This} PUBLIC
-#        gtest_main)
-#
-#add_test(NAME ${This} COMMAND ${This})
+gtest_discover_tests(${This})

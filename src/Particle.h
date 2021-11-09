@@ -116,6 +116,7 @@ public:
 
     /**
      * @brief Class-specific equals operator
+     * @param other object it is compared to
      * @return true if equal, false if not
      */
     bool operator==(Particle &other);
