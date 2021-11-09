@@ -8,7 +8,9 @@ class IOWriter {
 
 public:
     enum iotype {
-        vtk, xyz
+        vtk,
+        xyz,
+        unknown
     };
 
     /**

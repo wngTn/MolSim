@@ -5,7 +5,7 @@
 
 namespace calculator {
 
-    class StoermerVerlet : public PhysicsCalc {
+    class Gravitation : public PhysicsCalc {
 
 
         void calcF(ParticleContainer &particles) override;
@@ -30,7 +30,7 @@ namespace calculator {
     };
 
     template<typename T>
-    T StoermerVerlet::sqr(T x) {
+    T Gravitation::sqr(T x) {
         return x * x;
     }
 

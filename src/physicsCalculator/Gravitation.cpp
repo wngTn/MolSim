@@ -1,8 +1,8 @@
-#include "StoermerVerlet.h"
+#include "Gravitation.h"
 
 namespace calculator {
 
-    void StoermerVerlet::calcF(ParticleContainer &particles) {
+    void Gravitation::calcF(ParticleContainer &particles) {
         for (auto &p: particles) {
             for (int i = 0; i < DIM; ++i) {
                 p.setF(i, 0);
@@ -16,13 +16,13 @@ namespace calculator {
 
     }
 
-    void StoermerVerlet::grav_force(Particle &p1, Particle &p2) {
+    void Gravitation::grav_force(Particle &p1, Particle &p2) {
         double sqrd_dist = 0;
         double force;
 
         // calculate the squared distance
         for (int i = 0; i < DIM; ++i) {
-            sqrd_dist += StoermerVerlet::sqr(p2.getX().at(i) - p1.getX().at(i));
+            sqrd_dist += Gravitation::sqr(p2.getX().at(i) - p1.getX().at(i));
         }
         // left side of the term
         double var = p1.getM() * p2.getM() / (sqrt(sqrd_dist) * sqrd_dist);

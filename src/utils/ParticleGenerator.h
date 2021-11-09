@@ -5,7 +5,7 @@
 
 class ParticleGenerator {
 public:
-    static void generateParticles(ParticleContainer &particles, const std::string &file, bool brownianM);
+    static void generateParticles(ParticleContainer &particles, const std::string &file);
 
 private:
 
@@ -32,8 +32,6 @@ private:
      * @param particles the ParticleContainer the created sphere is stored in
      */
     static void generateSphere(ParticleContainer &particles);
-
-    static bool useBrownianMotion;
 
     // for sphere AND cuboid
     // C: lower left front side corner, S: center

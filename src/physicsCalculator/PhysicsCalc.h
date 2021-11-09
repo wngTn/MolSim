@@ -8,8 +8,9 @@
 class PhysicsCalc {
 public:
     enum calctype {
-        stoermerVerlet,
-        lennardJones
+        gravitation,
+        lennardJones,
+        unknown
     };
 
     /**

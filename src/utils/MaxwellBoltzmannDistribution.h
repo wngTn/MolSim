@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "ParticleContainer.h"
+
 #include <random>
 #include <array>
 
@@ -30,4 +32,15 @@ static std::array<double, 3> maxwellBoltzmannDistributedVelocity(double averageV
     randomVelocity[i] = averageVelocity * normalDistribution(randomEngine);
   }
   return randomVelocity;
+}
+
+static void initializeBrownianMotion(ParticleContainer &particles, double brownianMotionMean){
+    int DIM = 3;
+    for(auto &p : particles){
+        const auto brownMot = maxwellBoltzmannDistributedVelocity(brownianMotionMean, DIM);
+        // TODO maybe use vector addition
+        for(int i = 0; i < DIM; i++){
+            p.setV(i, p.getV()[i] + brownMot[i]);
+        }
+    }
 }

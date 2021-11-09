@@ -4,7 +4,6 @@
 #include <fstream>
 #include <iostream>
 
-bool ParticleGenerator::useBrownianMotion;
 std::array<double, 3> ParticleGenerator::pos;
 double ParticleGenerator::distance;
 double ParticleGenerator::mass;
@@ -13,9 +12,8 @@ double ParticleGenerator::brownianMotionMean;
 std::array<int,3> ParticleGenerator::noParts;
 double ParticleGenerator::radius;
 
-void ParticleGenerator::generateParticles(ParticleContainer &particles, const std::string &file, bool brownianM) {
+void ParticleGenerator::generateParticles(ParticleContainer &particles, const std::string &file) {
     geometric_type type = readFile(file);
-    useBrownianMotion = brownianM;
     switch (type){
         case cuboid:
             generateCuboid(particles);
@@ -76,19 +74,17 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles) {
         for(int y = 0; y < noParts[1]; y++){
             for(int x = 0; x < noParts[0]; x++){
                 Particle part;
-                if(useBrownianMotion){
-                    // TODO check if this is correct
-                    auto tempVel = vel;
-                    auto brownMot = maxwellBoltzmannDistributedVelocity(brownianMotionMean, 3);
-                    // auto oldV = part.getV();
-                    for(int i = 0; i < 3; i++){
-                        tempVel[i] += brownMot[i];
-                        // part.setV(i,oldV[i]+brownMot[i]);
-                    }
-                    part = Particle{currentPos, tempVel, mass};
-                }else{
-                    part = Particle{currentPos, vel, mass};
+                // TODO check if this is correct
+                // add browian motion
+                auto tempVel = vel;
+                auto brownMot = maxwellBoltzmannDistributedVelocity(brownianMotionMean, 3);
+                // auto oldV = part.getV();
+                for(int i = 0; i < 3; i++){
+                    tempVel[i] += brownMot[i];
+                    // part.setV(i,oldV[i]+brownMot[i]);
                 }
+                part = Particle{currentPos, tempVel, mass};
+
                 particles.emplace_back(part);
                 currentPos[0] += distance;
             }
@@ -106,3 +102,40 @@ void ParticleGenerator::generateSphere(ParticleContainer &particles) {
     // dummy particle so anything shows up
     particles.emplace_back(Particle{pos, vel, mass});
 }
+
+// JSON format for when the above garbage is replaced
+/* {
+   "shapes":[
+            {
+                "type": "cuboid"
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0,
+                "v1": 1.0,
+                "v2": 1.0,
+                "v3": 1.0,
+                "n1": 1.0,
+                "n2": 1.0,
+                "n3": 1.0,
+                "distance": 1.0,
+                "mass": 1.0,
+                "brownianFactor": 1.0
+            },
+            {   "type": "sphere"
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0,
+                "v1": 1.0,
+                "v2": 1.0,
+                "v3": 1.0,
+                "radius": 1.0,
+                "distance": 1.0,
+                "mass": 1.0,
+                "brownianFactor": 1.0
+            },
+            {
+                // potentially more shapes
+            }
+   ]
+}
+*/
