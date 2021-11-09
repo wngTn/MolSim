@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - run: npm install git+https://github.com/apache/xerces-c.git
+    - run: npm install node-xerces
     
     - uses: actions/checkout@v2
 
