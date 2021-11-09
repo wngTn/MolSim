@@ -9,10 +9,6 @@ namespace calculator {
 
         void calcF(ParticleContainer &particles) override;
 
-        void calcV(ParticleContainer &particles) override;
-
-        void calcX(ParticleContainer &particles) override;
-
         /**
         * Returns the square of a number
         * @param x: the number

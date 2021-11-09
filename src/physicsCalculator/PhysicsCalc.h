@@ -32,17 +32,19 @@ public:
      */
     virtual void calcF(ParticleContainer &particles) = 0;
 
+    // since calcV and calcX are the same for all calc methods, they are not virtual and implemented in PhysicsCalc.cpp
+
     /**
      * @brief Calculates the velocities of the particles
      * @param particles the container with the particles
      */
-    virtual void calcV(ParticleContainer &particles) = 0;
+    void calcX(ParticleContainer &particles) const;
 
     /**
-    * @brief Calculates the positions of the particles
+     * @brief Calculates the positions of the particles
      * @param particles the container with the particles
-    */
-    virtual void calcX(ParticleContainer &particles) = 0;
+     */
+    void calcV(ParticleContainer &particles) const;
 
     void setDeltaT(double dt) {
         delta_t = dt;
