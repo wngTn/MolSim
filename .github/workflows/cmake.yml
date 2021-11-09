@@ -19,7 +19,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - run: npm install node-xerces
+    - name: Install xerces
+      run: sudo apt install -y libxerces-c-dev
     
     - uses: actions/checkout@v2
 
