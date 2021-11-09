@@ -19,6 +19,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - run: npm install xerces-c
+    
     - uses: actions/checkout@v2
 
     - name: Configure CMake
