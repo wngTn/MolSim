@@ -14,7 +14,7 @@ namespace calculator {
         double sqrd_dist = 0;
 
         for (int i = 0; i < DIM; i++) {
-            sqrd_dist += LennardJones::sqr(p2.getX().at(i) - p1.getX().at(i));
+            sqrd_dist += LennardJones::sqr(p2.getX()[i] - p1.getX()[i]);
         }
         double s = LennardJones::sqr(sigma) / sqrd_dist;
         s = s * s * s; // s = sqr(s) * s
