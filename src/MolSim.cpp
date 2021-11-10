@@ -12,6 +12,8 @@
 #include <memory>
 #include <string>
 #include <iostream>
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/basic_file_sink.h>
 
 /// Default start_time (end_time - start_time = total_runtime)
 static double start_time = 0;
@@ -102,7 +104,7 @@ void get_arguments(int argc, char *argv[]) {
                 brownianMotionMean = std::stod(optarg);
                 break;
             case '?':
-                std::cerr << "Unknown option: " << optopt << "\n";
+                std::cerr << "Unknown option: " << static_cast<char>(optopt) << "\n";
                 std::cerr << help;
                 break;
             default:
@@ -171,7 +173,15 @@ void initializeParticles(ParticleContainer &particles) {
     }
 }
 
+static void init_logger() {
+    // Creates a logger, which writes everthing logged with spdlog::info() into build/logs/*
+    auto logger = spdlog::basic_logger_mt("molsim_logger", "./logs/molsim.log");
+    spdlog::set_default_logger(logger);
+    spdlog::set_level(spdlog::level::info);
+}
+
 int main(int argc, char *argv[]) {
+    init_logger();
 
     // parse cmd line args and set static values accordingly
     get_arguments(argc, argv);
@@ -195,17 +205,21 @@ int main(int argc, char *argv[]) {
     calc->setDeltaT(delta_t);
 
     double current_time = start_time;
-
     int iteration = 0;
 
     std::cout << "Currently processing your request..." << std::endl;
+    spdlog::info("Start calculating particles with\n\tIO type:\t\t{:<15}\n\tcalculator type:\t{:<15}\n\tend time:\t\t{:<15}\n\ttimestep:\t\t{:<15}", io->toString(), calc->toString(), end_time, delta_t);
 
     calc->calcF(particles);
     // for this loop, we assume: current x, current f and current v are known
     while (current_time < end_time) {
+        spdlog::info("Iteration {}: ", iteration);
+        // want to log like this: Moved x y z with velocity = {v} and force = {f}
+
         calc->calcX(particles);
         calc->calcF(particles);
         calc->calcV(particles);
+        // want to log like this:  To   x y z with velocity = {v} and force = {f}
 
         iteration++;
         if (iteration % 10 == 0) {
@@ -213,12 +227,11 @@ int main(int argc, char *argv[]) {
             io->write(particles, "output", iteration);
         }
 
-        // std::cout<<"Iteration " << iteration << " finished"<<std::endl;
-
         current_time += delta_t;
     }
 
     std::cout << "All files have been written!" << std::endl;
+    spdlog::info("All files have been written!");
 
     return 0;
 }

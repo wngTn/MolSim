@@ -57,7 +57,7 @@ namespace outputWriter {
          *        which is used to generate an unique filename
          */
         void writeFile(const std::string &filename, int iteration) const;
-
+        std::string toString() override;
         VTKFile_t *vtkFile;
     };
 
