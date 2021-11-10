@@ -48,15 +48,27 @@ double Particle::getM() const { return m; }
 int Particle::getType() const { return type; }
 
 void Particle::setX(int d, double val) {
-    x.at(d) = val;
+    x[d] = val;
+}
+
+void Particle::setX(std::array<double, 3> pos) {
+    x = pos;
 }
 
 void Particle::setV(int d, double val) {
-    v.at(d) = val;
+    v[d] = val;
+}
+
+void Particle::setV(std::array<double, 3> vel) {
+    v = vel;
 }
 
 void Particle::setF(int d, double val) {
-    f.at(d) = val;
+    f[d] = val;
+}
+
+void Particle::setF(std::array<double, 3> force) {
+    f = force;
 }
 
 void Particle::setOldF(const std::array<double, 3> &val) {
@@ -86,6 +98,7 @@ bool Particle::operator==(Particle &other) {
 bool Particle::operator!=(Particle &other) {
     return !((*this) == other);
 }
+
 
 std::ostream &operator<<(std::ostream &stream, Particle &p) {
     stream << p.toString();

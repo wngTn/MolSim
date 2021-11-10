@@ -1,19 +1,16 @@
 #pragma once
 
-#include "PhysicsCalc.h"
+#include "physicsCalculator/PhysicsCalc.h"
 #include "ParticleContainer.h"
 
 namespace calculator {
 
-    class StoermerVerlet : public PhysicsCalc {
+    class Gravitation : public PhysicsCalc {
 
 
         void calcF(ParticleContainer &particles) override;
 
-        void calcV(ParticleContainer &particles) override;
-
-        void calcX(ParticleContainer &particles) override;
-
+        std::string toString() override;
         /**
         * Returns the square of a number
         * @param x: the number
@@ -34,7 +31,7 @@ namespace calculator {
     };
 
     template<typename T>
-    T StoermerVerlet::sqr(T x) {
+    T Gravitation::sqr(T x) {
         return x * x;
     }
 
