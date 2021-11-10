@@ -3,21 +3,16 @@ cmake_minimum_required(VERSION 3.20)
 # define project name, version
 project(PSEMolDyn_GroupC)
 
+set(This MolSim)
+
+set(ThisLib MolSim_Lib)
+
 # indicate the documentation build as an option and set it to ON by default
 # to disable write cmake -D BUILD_DOC=OFF
 option(BUILD_DOC "Build documentation" ON)
 
 # let ccmake and cmake-gui offer the default build type options
 set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug;Release;RelWithDebInfo;MinSizeRel")
-
-# we use the release 1.11.0
-include(FetchContent)
-FetchContent_Declare(
-        googletest
-        URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
-)
-
-FetchContent_MakeAvailable(googletest)
 
 # set Release as the default build type if it is not yet set.
 if (NOT CMAKE_BUILD_TYPE)
@@ -32,20 +27,15 @@ file(GLOB_RECURSE MY_SRC
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
         )
 
-# add the needed subdirectories
-add_subdirectory(test)
+# create library for the tests
+add_library(${ThisLib} STATIC ${MY_SRC})
 
-
-# create make target
-add_executable(MolSim ${MY_SRC})
-
-# set cxx standard. You may raise this if you want.
-target_compile_features(MolSim
+target_compile_features(${ThisLib}
         PRIVATE
         cxx_std_17
         )
 
-target_include_directories(MolSim SYSTEM
+target_include_directories(${ThisLib} SYSTEM
         PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/libs/libxsd
         PRIVATE
@@ -53,7 +43,33 @@ target_include_directories(MolSim SYSTEM
         ${CMAKE_CURRENT_SOURCE_DIR}/test
         )
 
-target_link_libraries(MolSim
+#target_link_libraries(${ThisLib}
+#        # stuff that is used in headers and source files
+#        PUBLIC
+#        xerces-c
+#        )
+
+# add the needed subdirectories
+add_subdirectory(test)
+
+# create make target
+add_executable(${This} ${MY_SRC})
+
+# set cxx standard. You may raise this if you want.
+target_compile_features(${This}
+        PRIVATE
+        cxx_std_17
+        )
+
+target_include_directories(${This} SYSTEM
+        PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/libs/libxsd
+        PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/test
+        )
+
+target_link_libraries(${This}
         # stuff that is used in headers and source files
         PUBLIC
         xerces-c
@@ -61,7 +77,7 @@ target_link_libraries(MolSim
 
 # activate all compiler warnings. Clean up your code :P
 # depending on the compiler different flags are used
-target_compile_options(MolSim
+target_compile_options(${This}
         PRIVATE
         $<$<CXX_COMPILER_ID:GNU>:-Wall -Wextra -Wpedantic>
         # disable some spam warnings for icpc...
