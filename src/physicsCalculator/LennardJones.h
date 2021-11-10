@@ -7,6 +7,9 @@ namespace calculator {
 
     class LennardJones : public PhysicsCalc {
 
+    public:
+        LennardJones(double sigma, double epsilon) : sigma(sigma), epsilon(epsilon) {};
+
         void calcF(ParticleContainer &particles) override;
 
         /**

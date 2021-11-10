@@ -5,9 +5,10 @@ namespace calculator {
 
     void Gravitation::calcF(ParticleContainer &particles) {
         for (auto &p: particles) {
-            for (int i = 0; i < DIM; ++i) {
-                p.setF(i, 0);
-            }
+            p.setOldF(p.getF());
+
+            p.setF(std::array<double,3>{0.,0.,0.});
+
         }
 
         for (auto it = particles.pair_begin(); it != particles.pair_end(); ++it) {
@@ -27,6 +28,7 @@ namespace calculator {
         double var = p1.getM() * p2.getM() / (sqrt(sqrd_dist) * sqrd_dist);
         // multiplying with (p2 - p1) and setting the force
         auto force = var * (p2.getX() - p1.getX());
+
         p1.setF(p1.getF() + force);
         p2.setF(p2.getF() - force);
     }
