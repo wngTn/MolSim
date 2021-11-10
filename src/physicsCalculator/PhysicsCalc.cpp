@@ -2,7 +2,6 @@
 #include "utils/ArrayUtils.h"
 
 void PhysicsCalc::calcV(ParticleContainer &particles) const {
-    double new_V;
     // calculate new velocities
     for (auto &p: particles) { // loop over every particle
         // go through all three dimensions
@@ -18,7 +17,6 @@ void PhysicsCalc::calcV(ParticleContainer &particles) const {
 }
 
 void PhysicsCalc::calcX(ParticleContainer &particles) const {
-    double new_X;
     // calculate new positions
     for (auto &p: particles) { // loop over every particle
         // go through all three dimensions

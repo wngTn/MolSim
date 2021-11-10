@@ -143,11 +143,11 @@ static std::unique_ptr<PhysicsCalc> get_calculator() {
             return std::make_unique<calculator::Gravitation>();
         case PhysicsCalc::lennardJones:
             std::cout << "Lennard-Jones-Potential" << std::endl;
-            return std::make_unique<calculator::LennardJones>();
+            return std::make_unique<calculator::LennardJones>(1.,5.);
         case PhysicsCalc::unknown:
         default:
             std::cout << "Lennard-Jones-Potential (Default)" << std::endl;
-            return std::make_unique<calculator::LennardJones>();
+            return std::make_unique<calculator::LennardJones>(1.,5.);
     }
 }
 

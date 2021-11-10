@@ -4,6 +4,10 @@
 namespace calculator {
 
     void LennardJones::calcF(ParticleContainer &particles) {
+        for(auto &p : particles){
+            p.setF({0.,0.,0.});
+        }
+
         for (auto it = particles.pair_begin(); it != particles.pair_end(); ++it) {
             auto[p1, p2] = *it;
             ljforce(p1, p2);

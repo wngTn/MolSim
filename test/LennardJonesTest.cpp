@@ -5,9 +5,9 @@
 
 
 void ljforceNaive(Particle &p1, Particle &p2, double sigma, double eps){
-    auto Fij = (24*eps)/(pow(ArrayUtils::L2Norm(p1.getX() - p2.getX()), 2)) *
+    auto Fij = -(24*eps)/(pow(ArrayUtils::L2Norm(p1.getX() - p2.getX()), 2)) *
                (pow((sigma / (ArrayUtils::L2Norm(p1.getX() - p2.getX()))),6) -
-                2 * (pow((sigma / (ArrayUtils::L2Norm(p1.getX() - p2.getX()))),12))) * (p2.getX() - p1.getX());
+                2 * (pow((sigma / (ArrayUtils::L2Norm(p1.getX() - p2.getX()))),12))) * (p1.getX() - p2.getX());
     std::cout << "Fij: " << Fij << std::endl;
     p1.setF(p1.getF() + Fij);
     p2.setF(p2.getF() - Fij);
@@ -27,6 +27,7 @@ TEST(HelloTest, BasicAssertions) {
     double EPS = 5.;
 
     ParticleContainer p;
+    // TODO make good test case
     for (int i = 0; i < 10; ++i) {
         p.emplace_back(std::array<double, 3>{0.1 + i, 0.2 + i, 0.3},
                         std::array<double, 3>{0., 0., 0.},
@@ -43,6 +44,8 @@ TEST(HelloTest, BasicAssertions) {
 
 
     for(auto it1 = p.begin(), it2 = p2.begin(); it1 != p.end() && it2 != p2.end(); it1++, it2++){
-        EXPECT_EQ( (*it1).getF(), (*it2).getF());
+        for(int i = 0; i < 3; i++){
+            ASSERT_DOUBLE_EQ(it1->getX()[i], it2->getX()[i]);
+        }
     }
 }
