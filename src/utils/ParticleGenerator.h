@@ -13,43 +13,53 @@ private:
         sphere
     };
 
+    struct ShapeInfo {
+        geometric_type type;
+        // for sphere AND cuboid
+        // C: lower left front side corner, S: center
+        std::array<double,3> pos;
+        // initial velocity of the particles
+        std::array<double,3> vel;
+        // mass of particles
+        double mass;
+        // distance between particles
+        double distance;
+        // mean velocity of brownian motion
+        double brownianFactor;
+        int brownianDIM;
+        // only used for sphere
+        double radius;
+        // only used for cuboid
+        std::array<int,3> N;
+    };
+
+    /**
+     * parses a JSON file and returns the content (if well formed) as a vector of ShapeInfo object
+     * @param file the path to the input file
+     * @return a vector containing ShapeInfo Objects for all shapes that should be generated
+     */
+    static std::vector<ShapeInfo> readJSON(const std::string &file);
+
     /**
      * reads an input file and sets the static variables accordingly
      * @param file the filename of the input file
      * @return the type of the geometric shape to generate
      */
-     static ParticleGenerator::geometric_type readFile(const std::string &file) ;
+     static ParticleGenerator::ShapeInfo readFile(const std::string &file) ;
 
     /**
      * generates a cuboid specified by the passed parameters
      * @param particles the ParticleContainer the created cube is stored in
+     * @param info the ShapeInfo struct containing the parameters
      */
-    static void generateCuboid(ParticleContainer &particles);
+    static void generateCuboid(ParticleContainer &particles, const ShapeInfo &info);
 
     /**
      * generates a sphere specified by the passed parameters
      * @param particles the ParticleContainer the created sphere is stored in
+     * @param info the ShapeInfo struct containing the parameters
      */
-    static void generateSphere(ParticleContainer &particles);
+    static void generateSphere(ParticleContainer &particles, const ShapeInfo &info);
 
-    // for sphere AND cuboid
-    // C: lower left front side corner, S: center
-    static std::array<double, 3> pos;
-    // distance between particles
-    static double distance;
-    // mass of particles
-    static double mass;
-    // initial velocity of the particles
-    static std::array<double, 3> vel;
-    // mean velocity of brownian motion
-    static double brownianMotionMean;
-
-    // for cuboid only
-    // the number of particles per dimension (N1 x N2 x N3)
-    static std::array<int,3> noParts;
-
-    // for sphere only
-    // radius
-    static double radius;
 };
 
