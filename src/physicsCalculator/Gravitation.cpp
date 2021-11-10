@@ -30,4 +30,8 @@ namespace calculator {
         p1.setF(p1.getF() + force);
         p2.setF(p2.getF() - force);
     }
+
+    std::string Gravitation::toString(){
+        return "Gravitation";
+    }
 }

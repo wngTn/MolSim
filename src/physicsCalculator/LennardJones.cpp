@@ -24,4 +24,8 @@ namespace calculator {
         p1.setF(p1.getF() + force);
         p2.setF(p2.getF() - force);
     }
+
+    std::string LennardJones::toString(){
+        return "LennardJones";
+    }
 }

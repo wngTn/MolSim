@@ -10,6 +10,7 @@ namespace calculator {
 
         void calcF(ParticleContainer &particles) override;
 
+        std::string toString() override;
         /**
         * Returns the square of a number
         * @param x: the number

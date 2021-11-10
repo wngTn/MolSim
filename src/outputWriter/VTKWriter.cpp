@@ -107,4 +107,8 @@ namespace outputWriter {
         this->writeFile(filename, iteration);
     }
 
+std::string VTKWriter::toString() {
+    return "vtk";
+}
+
 } // namespace outputWriter

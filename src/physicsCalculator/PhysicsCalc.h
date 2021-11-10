@@ -32,6 +32,7 @@ public:
      * @param particles the container with the particles
      */
     virtual void calcF(ParticleContainer &particles) = 0;
+    virtual std::string toString() = 0;
 
     // since calcV and calcX are the same for all calc methods, they are not virtual and implemented in PhysicsCalc.cpp
 

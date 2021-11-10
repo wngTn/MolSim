@@ -59,6 +59,7 @@ target_link_libraries(MolSim
         # stuff that is used in headers and source files
         PUBLIC
         xerces-c
+        spdlog
         )
 
 # activate all compiler warnings. Clean up your code :P
@@ -73,3 +74,7 @@ target_compile_options(MolSim
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 
 include(doxygen)
+
+if (NOT TARGET spdlog)
+    find_package(spdlog REQUIRED)
+endif ()
