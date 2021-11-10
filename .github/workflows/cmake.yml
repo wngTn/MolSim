@@ -21,6 +21,9 @@ jobs:
     steps:
     - name: Install xerces
       run: sudo apt install -y libxerces-c-dev
+      
+    - name: Install spdlog
+      run: sudo apt install -y libspdlog-dev
     
     - uses: actions/checkout@v2
 
