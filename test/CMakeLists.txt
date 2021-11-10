@@ -2,7 +2,6 @@ if(BUILD_TEST)
 
     set(This MolSim_test)
     # we use the release 1.11.0
-    include(FetchContent)
     FetchContent_Declare(
             googletest
             URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip

@@ -25,6 +25,16 @@ if (NOT CMAKE_BUILD_TYPE)
             "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif (NOT CMAKE_BUILD_TYPE)
 
+include(FetchContent)
+FetchContent_Declare(
+        spdlog
+        URL https://github.com/gabime/spdlog/archive/refs/tags/v1.9.2.zip
+)
+
+FetchContent_MakeAvailable(spdlog)
+
+
+
 # collect all cpp files
 file(GLOB_RECURSE MY_SRC
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
@@ -50,6 +60,7 @@ target_link_libraries(${ThisLib}
         # stuff that is used in headers and source files
         PUBLIC
         xerces-c
+        spdlog::spdlog
         )
 # set c++ to 17
 target_compile_features(${ThisLib}
