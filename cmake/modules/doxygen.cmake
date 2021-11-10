@@ -1,5 +1,21 @@
-# make doc_doxygen optional if someone does not have / like doxygen
+# Following 19 lines of code snippet inspired by https://vicrucann.github.io/tutorials/quick-cmake-doxygen/
+if (BUILD_DOC)
+    find_package(Doxygen)
+    if (DOXYGEN_FOUND)
+        # set input and output files
+        set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile)
+        set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
 
-# TODO: create CMake build option for the target.
+        # request to configure the file
+        configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
+        message("-- Doxygen build started")
 
-# TODO: Add a custom target for building the documentation.
+        add_custom_target(doc_doxygen
+                COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
+                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                COMMENT "Generating API documentation with Doxygen"
+                VERBATIM)
+    else (DOXYGEN_FOUND)
+        message("Doxygen need to be installed to generate the doxygen documentation")
+    endif (DOXYGEN_FOUND)
+endif ()

@@ -3,13 +3,18 @@ cmake_minimum_required(VERSION 3.20)
 # define project name, version
 project(PSEMolDyn_GroupC)
 
+# indicate the documentation build as an option and set it to ON by default
+# to disable write cmake -D BUILD_DOC=OFF
+option(BUILD_DOC "Build documentation" ON)
+
+# indicate the test build as an option and set it to ON by default
+# to disable write cmake -D BUILD_TEST=OFF
+option(BUILD_TEST "Build tests" ON)
+
 set(This MolSim)
 
 set(ThisLib MolSim_Lib)
 
-# indicate the documentation build as an option and set it to ON by default
-# to disable write cmake -D BUILD_DOC=OFF
-option(BUILD_DOC "Build documentation" ON)
 
 # let ccmake and cmake-gui offer the default build type options
 set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug;Release;RelWithDebInfo;MinSizeRel")
@@ -27,53 +32,35 @@ file(GLOB_RECURSE MY_SRC
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
         )
 
-# create library for the tests
+# create a library with all our files
 add_library(${ThisLib} STATIC ${MY_SRC})
+# set an alias for distinct library identification
+add_library(lib::${ThisLib} ALIAS ${ThisLib})
 
-target_compile_features(${ThisLib}
-        PRIVATE
-        cxx_std_17
-        )
-
+# include our necessary directories
 target_include_directories(${ThisLib} SYSTEM
         PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/libs/libxsd
-        PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/test
         )
 
-#target_link_libraries(${ThisLib}
-#        # stuff that is used in headers and source files
-#        PUBLIC
-#        xerces-c
-#        )
-
-# add the needed subdirectories
-add_subdirectory(test)
-
-# create make target
-add_executable(${This} ${MY_SRC})
-
-# set cxx standard. You may raise this if you want.
-target_compile_features(${This}
-        PRIVATE
-        cxx_std_17
-        )
-
-target_include_directories(${This} SYSTEM
-        PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/libxsd
-        PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
-        ${CMAKE_CURRENT_SOURCE_DIR}/test
-        )
-
-target_link_libraries(${This}
+# link other libraries to our library
+target_link_libraries(${ThisLib}
         # stuff that is used in headers and source files
         PUBLIC
         xerces-c
         )
+# set c++ to 17
+target_compile_features(${ThisLib}
+        PUBLIC
+        cxx_std_17
+        )
+
+# create our executable main target
+add_executable(${This} ${CMAKE_CURRENT_SOURCE_DIR}/src/MolSim.cpp)
+# link our libraries to that target
+target_link_libraries(${This} lib::${ThisLib})
 
 # activate all compiler warnings. Clean up your code :P
 # depending on the compiler different flags are used
@@ -84,30 +71,16 @@ target_compile_options(${This}
         $<$<CXX_COMPILER_ID:Intel>:-w3 -wd383,981,1418,1572,2259>
         )
 
+target_compile_options(${ThisLib}
+        PRIVATE
+        $<$<CXX_COMPILER_ID:GNU>:-Wall -Wextra -Wpedantic>
+        # disable some spam warnings for icpc...
+        $<$<CXX_COMPILER_ID:Intel>:-w3 -wd383,981,1418,1572,2259>
+        )
+
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 
 include(doxygen)
 
-# check if Doxygen is installed
-
-# Following 19 lines of code snippet inspired by https://vicrucann.github.io/tutorials/quick-cmake-doxygen/
-if (BUILD_DOC)
-    find_package(Doxygen)
-    if (DOXYGEN_FOUND)
-        # set input and output files
-        set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile)
-        set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
-
-        # request to configure the file
-        configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
-        message("Doxygen build started")
-
-        add_custom_target(doc_doxygen
-                COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
-                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-                COMMENT "Generating API documentation with Doxygen"
-                VERBATIM)
-    else (DOXYGEN_FOUND)
-        message("Doxygen need to be installed to generate the doxygen documentation")
-    endif (DOXYGEN_FOUND)
-endif ()
+# add the needed subdirectories
+add_subdirectory(test)
