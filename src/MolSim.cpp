@@ -9,6 +9,8 @@
 #include <memory>
 #include <string>
 #include <iostream>
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/basic_file_sink.h>
 
 /// Default start_time (end_time - start_time = total_runtime)
 static double start_time = 0;
@@ -44,7 +46,7 @@ void get_arguments(int argc, char *argv[]){
                              "\tcall with flag -h to display this message\n";
 
     int opt;
-    while((opt = getopt(argc, argv, "hi:e:d:w")) != -1){
+    while((opt = getopt(argc, argv, "hi:e:d:w:")) != -1){
         switch(opt){
             case 'h':
                 std::cout << help;
@@ -72,7 +74,7 @@ void get_arguments(int argc, char *argv[]){
                 }
                 break;
             case '?':
-                std::cerr << "Unknown option: " << optopt << "\n";
+                std::cerr << "Unknown option: " << static_cast<char>(optopt) << "\n";
                 std::cerr << help;
                 break;
             default:
@@ -82,7 +84,7 @@ void get_arguments(int argc, char *argv[]){
 
     // if no input file has been specified, generate random input using python script
     if(filename.empty()){
-        std::cout << "Generating random input (this needs python to be installed)\n";
+        spdlog::info("Generating random input (this needs python to be installed)");
         // maybe change particle amount
         std::system("python ../generate_input.py -n 24 -o input.txt");
         filename = "input.txt";
@@ -116,10 +118,17 @@ static std::unique_ptr<PhysicsCalc> get_calculator(){
     }
 }
 
+static void init_logger() {
+    // Creates a logger, which writes everthing logged with spdlog::info() into build/logs/*
+    auto logger = spdlog::basic_logger_mt("molsim_logger", "./logs/molsim.log");
+    spdlog::set_default_logger(logger);
+    spdlog::set_level(spdlog::level::info);
+}
+
 int main(int argc, char *argv[]) {
+    init_logger();
     // parse cmd line args and set static values accordingly
     get_arguments(argc, argv);
-
     // create particle container
     ParticleContainer particles = ParticleContainer(DIM, delta_t);
     // read input file
@@ -132,33 +141,31 @@ int main(int argc, char *argv[]) {
     auto calc = get_calculator();
 
     double current_time = start_time;
-
     int iteration = 0;
 
-    std::cout<<"Currently processing your request..."<<std::endl;
+    spdlog::info("Start calculating particles with\n\tIO type:\t\t{:<15}\n\tcalculator type:\t{:<15}\n\tend time:\t\t{:<15}\n\ttimestep:\t\t{:<15}", io->toString(), calc->toString(), end_time, delta_t);
 
     calc->calcF(particles);
     // for this loop, we assume: current x, current f and current v are known
     while (current_time < end_time) {
+        spdlog::info("Iteration {}: ", iteration);
+        // want to log like this: Moved x y z with velocity = {v} and force = {f}
         // particles.calculateX();
         //particles.calculateF();
         //particles.calculateV();
         calc->calcX(particles);
         calc->calcF(particles);
         calc->calcV(particles);
-
+        // want to log like this:  To   x y z with velocity = {v} and force = {f}
         iteration++;
         if (iteration % 10 == 0) {
             // uses abstract write method overwritten by specific IO method
             io->write(particles, "output" , iteration);
         }
 
-        // std::cout<<"Iteration " << iteration << " finished"<<std::endl;
-
         current_time += delta_t;
     }
-
-    std::cout<<"All files have been written!"<<std::endl;
+    spdlog::info("All files have been written!");
 
     return 0;
 }

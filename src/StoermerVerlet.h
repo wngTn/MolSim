@@ -18,6 +18,8 @@ namespace calculator {
 
         void calcX(ParticleContainer &parts) override;
 
+        std::string toString() override;
+
         /**
         * Returns the square of a number
         * @param x: the number

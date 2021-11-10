@@ -106,4 +106,8 @@ void VTKWriter::write(const ParticleContainer &container, const std::string &fil
     this->writeFile(filename, iteration);
 }
 
+std::string VTKWriter::toString() {
+    return "vtk";
+}
+
 } // namespace outputWriter

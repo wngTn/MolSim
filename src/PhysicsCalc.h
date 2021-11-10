@@ -30,6 +30,11 @@ public:
     */
     virtual void calcX(ParticleContainer& parts) = 0;
 
+    /**
+     * @return string representation of calculator type
+     */
+     virtual std::string toString() = 0;
+
 protected:
     const double delta_t;
     const int DIM;

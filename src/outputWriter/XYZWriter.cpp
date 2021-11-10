@@ -70,4 +70,8 @@ XYZWriter::~XYZWriter() = default;
         file.close();
     }
 
+    std::string XYZWriter::toString(){
+        return "xyz";
+    }
+
 } // namespace outputWriter

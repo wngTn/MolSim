@@ -35,6 +35,7 @@ public:
    * @param iteration current iteration, used for unique filenames
    */
   void write(const ParticleContainer &container, const std::string &filename,  int iteration) const override;
+  std::string toString() override;
 
 private:
 

@@ -66,4 +66,8 @@ namespace calculator {
         }
     }
 
+    std::string StoermerVerlet::toString(){
+        return "StroermerVerlet";
+    }
+
 }

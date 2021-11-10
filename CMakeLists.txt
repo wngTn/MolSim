@@ -43,6 +43,7 @@ target_link_libraries(MolSim
         # stuff that is used in headers and source files
         PUBLIC
         xerces-c
+        spdlog
         )
 
 # activate all compiler warnings. Clean up your code :P
@@ -80,4 +81,8 @@ if (BUILD_DOC)
     else (DOXYGEN_FOUND)
         message("Doxygen need to be installed to generate the doxygen documentation")
     endif (DOXYGEN_FOUND)
+endif ()
+
+if (NOT TARGET spdlog)
+    find_package(spdlog REQUIRED)
 endif ()
