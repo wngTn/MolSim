@@ -7,23 +7,33 @@ project(PSEMolDyn_GroupC)
 # to disable write cmake -D BUILD_DOC=OFF
 option(BUILD_DOC "Build documentation" ON)
 
+# indicate the test build as an option and set it to ON by default
+# to disable write cmake -D BUILD_TEST=OFF
+option(BUILD_TEST "Build tests" ON)
+
+set(This MolSim)
+
+set(ThisLib MolSim_Lib)
+
+
 # let ccmake and cmake-gui offer the default build type options
 set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug;Release;RelWithDebInfo;MinSizeRel")
-
-# we use the release 1.11.0
-include(FetchContent)
-FetchContent_Declare(
-        googletest
-        URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
-)
-
-FetchContent_MakeAvailable(googletest)
 
 # set Release as the default build type if it is not yet set.
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING
             "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif (NOT CMAKE_BUILD_TYPE)
+
+include(FetchContent)
+FetchContent_Declare(
+        spdlog
+        URL https://github.com/gabime/spdlog/archive/refs/tags/v1.9.2.zip
+)
+
+FetchContent_MakeAvailable(spdlog)
+
+
 
 # collect all cpp files
 file(GLOB_RECURSE MY_SRC
@@ -32,39 +42,47 @@ file(GLOB_RECURSE MY_SRC
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
         )
 
-# add the needed subdirectories
-add_subdirectory(test)
+# create a library with all our files
+add_library(${ThisLib} STATIC ${MY_SRC})
+# set an alias for distinct library identification
+add_library(lib::${ThisLib} ALIAS ${ThisLib})
 
-
-# create make target
-add_executable(MolSim ${MY_SRC})
-
-# set cxx standard. You may raise this if you want.
-target_compile_features(MolSim
-        PRIVATE
-        cxx_std_17
-        )
-
-target_include_directories(MolSim SYSTEM
+# include our necessary directories
+target_include_directories(${ThisLib} SYSTEM
         PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/libs/libxsd
-        PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
-        # is this correct?
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/*
         ${CMAKE_CURRENT_SOURCE_DIR}/test
         )
 
-target_link_libraries(MolSim
+# link other libraries to our library
+target_link_libraries(${ThisLib}
         # stuff that is used in headers and source files
         PUBLIC
         xerces-c
-        spdlog
+        spdlog::spdlog
         )
+# set c++ to 17
+target_compile_features(${ThisLib}
+        PUBLIC
+        cxx_std_17
+        )
+
+# create our executable main target
+add_executable(${This} ${CMAKE_CURRENT_SOURCE_DIR}/src/MolSim.cpp)
+# link our libraries to that target
+target_link_libraries(${This} lib::${ThisLib})
 
 # activate all compiler warnings. Clean up your code :P
 # depending on the compiler different flags are used
-target_compile_options(MolSim
+target_compile_options(${This}
+        PRIVATE
+        $<$<CXX_COMPILER_ID:GNU>:-Wall -Wextra -Wpedantic>
+        # disable some spam warnings for icpc...
+        $<$<CXX_COMPILER_ID:Intel>:-w3 -wd383,981,1418,1572,2259>
+        )
+
+target_compile_options(${ThisLib}
         PRIVATE
         $<$<CXX_COMPILER_ID:GNU>:-Wall -Wextra -Wpedantic>
         # disable some spam warnings for icpc...
@@ -75,6 +93,5 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 
 include(doxygen)
 
-if (NOT TARGET spdlog)
-    find_package(spdlog REQUIRED)
-endif ()
+# add the needed subdirectories
+add_subdirectory(test)

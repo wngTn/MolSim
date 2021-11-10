@@ -1,6 +1,3 @@
-# make doc_doxygen optional if someone does not have / like doxygen
-# check if Doxygen is installed
-
 # Following 19 lines of code snippet inspired by https://vicrucann.github.io/tutorials/quick-cmake-doxygen/
 if (BUILD_DOC)
     find_package(Doxygen)
@@ -11,7 +8,7 @@ if (BUILD_DOC)
 
         # request to configure the file
         configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
-        message("Doxygen build started")
+        message("-- Doxygen build started")
 
         add_custom_target(doc_doxygen
                 COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}

@@ -1,40 +1,38 @@
-set(This ${CMAKE_PROJECT_NAME}_test)
+if(BUILD_TEST)
 
-# collect all cpp files in the test directory
-set(Test_Sources
-        ParticleContainerTest.cpp
-        LennardJonesTest.cpp
-        main.cpp)
+    set(This MolSim_test)
+    # we use release 1.11.0
+    FetchContent_Declare(
+            googletest
+            URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
+    )
 
-enable_testing()
+    FetchContent_MakeAvailable(googletest)
 
-# collect all source files
-set(SRC_COPY ${MY_SRC})
+    # collect all cpp files in the test directory
+    set(Test_Sources
+            ParticleContainerTest.cpp
+            LennardJonesTest.cpp
+            main.cpp)
 
-# exclude the _MAIN FILE_ so we don't have two main files
-list(REMOVE_ITEM SRC_COPY "${CMAKE_SOURCE_DIR}/src/MolSim.cpp")
+    enable_testing()
 
-# adds the executable with both file lists
-add_executable(${This} ${Test_Sources} ${SRC_COPY})
+    # add the files to our executable
+    add_executable(${This} ${Test_Sources})
 
-# use c++ 17
-target_compile_features(${This}
-        PRIVATE
-        cxx_std_17
-        )
+    # use c++ 17
+    target_compile_features(${This}
+            PRIVATE
+            cxx_std_17
+            )
 
-# include the necessary directories
-target_include_directories(${This} PRIVATE
-        "${CMAKE_SOURCE_DIR}/src"
-        "${CMAKE_SOURCE_DIR}/libs/libxsd"
-        )
+    # links the necessary libraries (we have our source files as libraries)
+    target_link_libraries(${This}
+            PUBLIC
+            gtest_main
+            ${ThisLib})
 
-# links the necessary libraries (especially gtest_main)
-target_link_libraries(${This}
-        PUBLIC
-        gtest_main
-        xerces-c)
+    include(GoogleTest)
 
-include(GoogleTest)
-
-gtest_discover_tests(${This})
+    gtest_discover_tests(${This})
+endif()
