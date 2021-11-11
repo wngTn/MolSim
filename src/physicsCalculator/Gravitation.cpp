@@ -28,7 +28,6 @@ namespace calculator {
         double var = p1.getM() * p2.getM() / (sqrt(sqrd_dist) * sqrd_dist);
         // multiplying with (p2 - p1) and setting the force
         auto force = var * (p2.getX() - p1.getX());
-
         p1.setF(p1.getF() + force);
         p2.setF(p2.getF() - force);
     }

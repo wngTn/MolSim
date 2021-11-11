@@ -21,7 +21,7 @@ void PhysicsCalc::calcX(ParticleContainer &particles) const {
     for (auto &p: particles) { // loop over every particle
         // go through all three dimensions
 
-        auto newX = p.getX() + delta_t * ( p.getV() + delta_t * 0.5 * p.getF());
+        auto newX = p.getX() + delta_t * ( p.getV() + delta_t * 0.5 / p.getM() * p.getF());
         p.setX(newX);
         /* for (int i = 0; i < DIM; ++i) {
             // calculates new position
