@@ -22,8 +22,6 @@ static double end_time = 1000;
 /// Default delta t
 static double delta_t = 0.014;
 
-// THIS IS A TEST
-
 /// File name used for the input/output file(s)
 static std::string filename;
 
