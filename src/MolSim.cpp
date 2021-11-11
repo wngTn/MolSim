@@ -56,9 +56,7 @@ void get_arguments(int argc, char *argv[]) {
                              // "\tuse -r to enable random input generation (not used if -i is used)\n"
                              "\twhen leaving out -e/-d default values are used (1000/0.014)\n"
                              "\tcall with flag -h to display this message\n";
-
     int opt;
-
     if(argc == 1){
         std::cout << help;
         exit(0);
@@ -139,7 +137,7 @@ static std::unique_ptr<PhysicsCalc> get_calculator() {
     std::cout << "\tCalculator: ";
     switch (calc_type) {
         case PhysicsCalc::gravitation:
-            std::cout << "Stoermer-Verlet" << std::endl;
+            std::cout << "Gravitation" << std::endl;
             return std::make_unique<calculator::Gravitation>();
         case PhysicsCalc::lennardJones:
             std::cout << "Lennard-Jones-Potential" << std::endl;
