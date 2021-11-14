@@ -41,25 +41,25 @@ private:
     static std::vector<ShapeInfo> readJSON(const std::string &file);
 
     /**
-     * reads an input file and sets the static variables accordingly
-     * @param file the filename of the input file
-     * @return the type of the geometric shape to generate
-     */
-     static ParticleGenerator::ShapeInfo readFile(const std::string &file) ;
-
-    /**
      * generates a cuboid specified by the passed parameters
      * @param particles the ParticleContainer the created cube is stored in
      * @param info the ShapeInfo struct containing the parameters
      */
     static void generateCuboid(ParticleContainer &particles, const ShapeInfo &info);
 
+
+    // this creates a cube and cuts the sphere out of it. not very cool sphere but min distance is kept
     /**
      * generates a sphere specified by the passed parameters
      * @param particles the ParticleContainer the created sphere is stored in
      * @param info the ShapeInfo struct containing the parameters
      */
     static void generateSphere(ParticleContainer &particles, const ShapeInfo &info);
+
+    // currently not used, testing other methods for sphere generation
+    // this produces veeeery smooth & nice spheres, but the minimum distance is not kept, so not suited for LJP
+    // also not optimized at all bc still WIP
+    static void generateSphere2(ParticleContainer &particles, const ShapeInfo & info);
 
 };
 
