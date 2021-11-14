@@ -45,6 +45,7 @@ TEST(HelloTest, BasicAssertions) {
 
     for(auto it1 = p.begin(), it2 = p2.begin(); it1 != p.end() && it2 != p2.end(); it1++, it2++){
         for(int i = 0; i < 3; i++){
+            // If one element does not match we can basically stop testing and get out of the loop
             ASSERT_DOUBLE_EQ(it1->getX()[i], it2->getX()[i]);
         }
     }

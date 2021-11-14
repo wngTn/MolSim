@@ -26,6 +26,7 @@ if (NOT CMAKE_BUILD_TYPE)
 endif (NOT CMAKE_BUILD_TYPE)
 
 include(FetchContent)
+
 FetchContent_Declare(
         spdlog
         URL https://github.com/gabime/spdlog/archive/refs/tags/v1.9.2.zip
