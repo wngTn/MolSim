@@ -185,7 +185,7 @@ int main(int argc, char *argv[]) {
     get_arguments(argc, argv);
 
     std::cout << "Your configurations are:" << std::endl;
-    std::cout << "\tFilename: " << filename << std::endl;
+    std::cout << (randomGen?"\tRandom":"\tFilename: ") << filename << (generate?" (generator)":"") << std::endl;
     std::cout << "\tEnd_time: " << end_time << (end_time == 1000 ? "(Default)" : "") << std::endl;
     std::cout << "\tDelta_t: " << delta_t << (delta_t == 0.014 ? "(Default)" : "") << std::endl;
 
@@ -209,6 +209,7 @@ int main(int argc, char *argv[]) {
     spdlog::info("Start calculating particles with\n\tIO type:\t\t{:<15}\n\tcalculator type:\t{:<15}\n\tend time:\t\t{:<15}\n\ttimestep:\t\t{:<15}", io->toString(), calc->toString(), end_time, delta_t);
 
     calc->calcF(particles);
+    io->write(particles, "output", iteration);
     // for this loop, we assume: current x, current f and current v are known
     while (current_time < end_time) {
         spdlog::info("Iteration {}: ", iteration);
