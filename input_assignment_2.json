@@ -1,0 +1,48 @@
+{
+  "shapes": [
+    {
+      "type": "cuboid",
+      "pos": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "vel": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "N": [
+        40,
+        8,
+        1
+      ],
+      "distance": 1.1225,
+      "mass": 1.0,
+      "brownianFactor": 0.1,
+      "brownianDIM": 3
+    },
+    {
+      "type": "cuboid",
+      "pos": [
+        15.0,
+        15.0,
+        0.0
+      ],
+      "vel": [
+        0.0,
+        -10.0,
+        0.0
+      ],
+      "N": [
+        8,
+        8,
+        1
+      ],
+      "distance": 1.1225,
+      "mass": 1.0,
+      "brownianFactor": 0.1,
+      "brownianDIM": 3
+    }
+  ]
+}

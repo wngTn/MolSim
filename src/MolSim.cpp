@@ -39,6 +39,7 @@ static bool generate = false;
 static bool randomGen = false;
 static bool brownianMotion = false;
 static double brownianMotionMean;
+
 /**
  * @brief Parse command line arguments and set static values accordingly
  * also generates random input if no input file specified
@@ -57,7 +58,7 @@ void get_arguments(int argc, char *argv[]) {
                              "\twhen leaving out -e/-d default values are used (1000/0.014)\n"
                              "\tcall with flag -h to display this message\n";
     int opt;
-    if(argc == 1){
+    if (argc == 1) {
         std::cout << help;
         exit(0);
     }
@@ -72,7 +73,7 @@ void get_arguments(int argc, char *argv[]) {
             case 't':
                 if (std::string("g") == optarg || std::string("generate") == optarg) {
                     generate = true;
-                }else if (std::string("r") == optarg || std::string("random") == optarg) {
+                } else if (std::string("r") == optarg || std::string("random") == optarg) {
                     randomGen = true;
                 }
                 break;
@@ -85,15 +86,15 @@ void get_arguments(int argc, char *argv[]) {
             case 'w':
                 if (std::string("vtk") == optarg || std::string("v") == optarg) {
                     io_type = IOWriter::vtk;
-                }else if (std::string("xyz") == optarg || std::string("x") == optarg) {
+                } else if (std::string("xyz") == optarg || std::string("x") == optarg) {
                     io_type = IOWriter::xyz;
                 }
                 break;
             case 'c':
                 if (std::string("lj") == optarg || std::string("lennardjones") == optarg) {
                     calc_type = PhysicsCalc::lennardJones;
-                }else if (std::string("g") == optarg || std::string("grav") == optarg
-                                                        || std::string("gravitation") == optarg) {
+                } else if (std::string("g") == optarg || std::string("grav") == optarg
+                           || std::string("gravitation") == optarg) {
                     calc_type = PhysicsCalc::gravitation;
                 }
                 break;
@@ -141,11 +142,11 @@ static std::unique_ptr<PhysicsCalc> get_calculator() {
             return std::make_unique<calculator::Gravitation>();
         case PhysicsCalc::lennardJones:
             std::cout << "Lennard-Jones-Potential" << std::endl;
-            return std::make_unique<calculator::LennardJones>(1.,5.);
+            return std::make_unique<calculator::LennardJones>(1., 5.);
         case PhysicsCalc::unknown:
         default:
             std::cout << "Lennard-Jones-Potential (Default)" << std::endl;
-            return std::make_unique<calculator::LennardJones>(1.,5.);
+            return std::make_unique<calculator::LennardJones>(1., 5.);
     }
 }
 
@@ -154,20 +155,21 @@ void initializeParticles(ParticleContainer &particles) {
     if (generate && !filename.empty()) {
         ParticleGenerator::generateParticles(particles, filename);
         return;
-    // if no input file has been specified, generate random input using python script
-    }else if (randomGen && filename.empty()) {
+        // if no input file has been specified, generate random input using python script
+    } else if (randomGen && filename.empty()) {
         std::cout << "No input file specified, generating random input... (this needs python to be installed)\n";
         // maybe change particle amount
         std::system("python ../generate_input.py -n 24 -o input.txt");
         filename = "input.txt";
-    }else if (filename.empty()){
+    } else if (filename.empty()) {
         std::cout << "Please specify an input file" << std::endl;
-    }else{
+    } else {
         // read input file
         FileReader::readFile(particles, filename);
     }
-    if(brownianMotion){
+    if (brownianMotion) {
         initializeBrownianMotion(particles, brownianMotionMean);
+        std::cout<<"\tBrownianMotion: "<<brownianMotionMean<<std::endl;
     }
 }
 
@@ -206,7 +208,9 @@ int main(int argc, char *argv[]) {
     int iteration = 0;
 
     std::cout << "Currently processing your request..." << std::endl;
-    spdlog::info("Start calculating particles with\n\tIO type:\t\t{:<15}\n\tcalculator type:\t{:<15}\n\tend time:\t\t{:<15}\n\ttimestep:\t\t{:<15}", io->toString(), calc->toString(), end_time, delta_t);
+    spdlog::info(
+            "Start calculating particles with\n\tIO type:\t\t{:<15}\n\tcalculator type:\t{:<15}\n\tend time:\t\t{:<15}\n\ttimestep:\t\t{:<15}",
+            io->toString(), calc->toString(), end_time, delta_t);
 
     calc->calcF(particles);
     // for this loop, we assume: current x, current f and current v are known

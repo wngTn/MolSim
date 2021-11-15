@@ -13,7 +13,7 @@ Members:
 
 In this assignment we have used the compiler `g++ 11.1.0`.
 
-#Warning # 
+# Warning # 
 
 > ⚠️ **If you have slow internet**: We fetch three packages with *FetchContent*,
 > thus the initial CMake-build may take some time (~1min)
@@ -62,6 +62,54 @@ cmake .. -DBUILD_TEST=OFF # Makefile won't build the tests anymore
 
 
 ## Task - Lennard Jones Potential ##
+
+The input format is [JSON](https://www.json.org/json-en.html). 
+**You can declare several shapes in an array.** 
+For every shape of those you have to specify the following:
+
+| Property   | Possible Values  
+|----------|:-------------:|
+| type |  "cuboid", "sphere" |
+| pos |  [\<double>, \<double>, \<double>]   | 
+| vel |  [\<double>, \<double>, \<double>] |
+| N | [\<int>, \<int>, \<int>] |
+| distance | \<double> |
+| mass | \<double> |
+| brownian factor | \<double> |
+| brownianDIM | \<int> |
+
+> 🚧 **The type "sphere" is still work in progress, i.e. it does not do anything.**
+
+Here is an example for an input file, which creates two "cuboid" shapes:
+```json
+{
+  "shapes":[
+    {
+      "type": "cuboid",
+      "pos": [0.0,0.0,0.0],
+      "vel": [0.0,0.0,0.0],
+      "N": [40,8,1],
+      "distance": 1.1225,
+      "mass": 1.0,
+      "brownianFactor": 0.1,
+      "brownianDIM": 3
+    },
+    {
+      "type": "cuboid",
+      "pos": [15.0,15.0, 0.0],
+      "vel": [0.0,-10.0,0.0],
+      "N": [8,8,1],
+      "distance": 1.1225,
+      "mass": 1.0,
+      "brownianFactor": 0.1,
+      "brownianDIM": 3
+    }
+  ]
+}
+```
+
+
+
 
 ## Benchmarking ##
 

@@ -29,7 +29,7 @@ PROJECT_NAME           = MolSim
 
 PROJECT_BRIEF		   = "Project for Practical"
 
-PROJECT_LOGO           = ../doc_pages/logo.png
+PROJECT_LOGO           = ../media/logo.png
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number.
 # This could be handy for archiving the generated documentation or
@@ -772,8 +772,8 @@ IGNORE_PREFIX          =
 GENERATE_HTML          = YES
 
 HTML_COLORSTYLE_HUE    = 335
-HTML_COLORSTYLE_SAT    = 97
-HTML_COLORSTYLE_GAMMA  = 20
+HTML_COLORSTYLE_SAT    = 95
+HTML_COLORSTYLE_GAMMA  = 60
 
 
 # The HTML_OUTPUT tag is used to specify where the HTML docs will be put.
@@ -1025,7 +1025,7 @@ COMPACT_LATEX          = NO
 # by the printer. Possible values are: a4, a4wide, letter, legal and
 # executive. If left blank a4wide will be used.
 
-PAPER_TYPE             = a4wide
+PAPER_TYPE             = a4
 
 # The EXTRA_PACKAGES tag can be to specify one or more names of LaTeX
 # packages that should be included in the LaTeX output.
@@ -1376,7 +1376,7 @@ HAVE_DOT               = NO
 # DOTFONTPATH environment variable or by setting DOT_FONTPATH to the directory
 # containing the font.
 
-DOT_FONTNAME           = FreeSans
+DOT_FONTNAME           =
 
 # The DOT_FONTSIZE tag can be used to set the size of the font of dot graphs.
 # The default size is 10pt.

@@ -28,7 +28,7 @@ public:
     PhysicsCalc(const PhysicsCalc &) = default;
 
     /**
-     * @brief Calculates the forces between the particles
+     * @brief Calculates the forces between the particles according to the specification
      * @param particles the container with the particles
      */
     virtual void calcF(ParticleContainer &particles) = 0;
