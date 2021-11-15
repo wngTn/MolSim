@@ -47,7 +47,7 @@ static double brownianMotionMean;
  * @param argv argv from main
  */
 void get_arguments(int argc, char *argv[]) {
-    const std::string help = "Usage: ./MolSim [-i <input_file>] [-t <input type>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calc>] [-b <brownian_motion_velocity_mean>]\n"
+    const std::string help = "Usage: ./MolSim [-i <input_file>] [-t <input_type>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calc>] [-b <brownian_motion_velocity_mean>]\n"
                              "\tuse -i to specify an input file\n"
                              "\tuse -t to specify an input type: 'g'/'generate' to generate based on values from input_file, 'r'/'random' for random input (-i discarded for random)\n"
                              "\tuse -w to choose an output writer: v/vtk for VTKWriter (default) or x/xyz for XYZWriter\n"
@@ -119,7 +119,7 @@ void get_arguments(int argc, char *argv[]) {
  * @return a pointer to an Writer of the choosen IO Method
  */
 static std::unique_ptr<IOWriter> get_io_type() {
-    std::cout << "\tWriter: ";
+    std::cout << "\u001b[36m\tWriter:\u001b[0m ";
     switch (io_type) {
         case IOWriter::vtk:
             std::cout << "VTK-Writer" << std::endl;
@@ -135,7 +135,7 @@ static std::unique_ptr<IOWriter> get_io_type() {
 }
 
 static std::unique_ptr<PhysicsCalc> get_calculator() {
-    std::cout << "\tCalculator: ";
+    std::cout << "\u001b[36m\tCalculator:\u001b[0m ";
     switch (calc_type) {
         case PhysicsCalc::gravitation:
             std::cout << "Gravitation" << std::endl;
@@ -174,7 +174,7 @@ void initializeParticles(ParticleContainer &particles) {
 }
 
 static void init_logger() {
-    // Creates a logger, which writes everthing logged with spdlog::info() into build/logs/*
+    // Creates a logger, which writes everything logged with spdlog::info() into build/logs/*
     auto logger = spdlog::basic_logger_mt("molsim_logger", "./logs/molsim.log");
     spdlog::set_default_logger(logger);
     spdlog::set_level(spdlog::level::info);
@@ -187,9 +187,11 @@ int main(int argc, char *argv[]) {
     get_arguments(argc, argv);
 
     std::cout << "Your configurations are:" << std::endl;
-    std::cout << "\tFilename: " << filename << std::endl;
-    std::cout << "\tEnd_time: " << end_time << (end_time == 1000 ? "(Default)" : "") << std::endl;
-    std::cout << "\tDelta_t: " << delta_t << (delta_t == 0.014 ? "(Default)" : "") << std::endl;
+    std::cout << "\u001b[36m\tFilename:\u001b[0m " << filename << std::endl;
+    std::cout << "\u001b[36m\tType_input:\u001b[0m " << ((randomGen) ? "Random values" : (generate) ?
+        "Values from json file" : "Values from ordinary file") << std::endl;
+    std::cout << "\u001b[36m\tEnd_time:\u001b[0m " << end_time << (end_time == 1000 ? "(Default)" : "") << std::endl;
+    std::cout << "\u001b[36m\tDelta_t:\u001b[0m " << delta_t << (delta_t == 0.014 ? "(Default)" : "") << std::endl;
 
 
     // create particle container
