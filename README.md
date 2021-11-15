@@ -2,13 +2,14 @@
 
 <!-- PROJECT LOGO -->
 <div style="text-align: center">
-<h1>Practical Course: Molecular Dynamics</h1>
-<a style="font-size: 4rem">📜</a>
-
+<h1>📜: Practical Course: Molecular Dynamics</h1>
   <p>
     Project for the Practical Course: PSE Molecular Dynamics by Group C: Lukas, Severin, Tony.
   </p>
 </div>
+
+> **NOTE**: This is not the README of the assignment. It is simply a README for the whole project. The READMEs
+> for the assignments can be found in the `./doc_pages` directory.
 
 
 <!-- GETTING STARTED -->
@@ -58,6 +59,53 @@ Also, you need the xerces-c library for the parsers we use in the program:
 
 <!-- USAGE EXAMPLES -->
 ## Usage
+
+The general program call is:
+
+```shell
+./MolSim [-i <input_file>] [-t <input type>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calculator>] [-b <brownian_motion_velocity_mean>]
+```
+
+| Flag   | Possible Values | Explanation | Default |
+|----------|:-------------:|-------------| ------- |
+| `i` |  `path/to/file` | This is the relative or absolute path to your `input_file`. | *None*
+| `t` |  g, generate, r, random, *\<omit>* | Indicates the input type: <tt> g/generate</tt> if you input a `JSON` file, and <tt>r/random</tt> if you want to generate a random input file, with the input format from assignment 1. If you omit this flag, the input file format of assignment 1 will be chosen. | *None*
+| `e` |  \<double> | The end_time value | 1000
+| `d` | \<double> | The delta_t value | 0.14
+| `w` | v, vtk, x, xyz | Specifies the output writer, consequently also the output file format | v (vtk)
+| `c` | g, grav, gravitation, lj, lennardjones | Declares what forces between the particles should be calculated | lj (lennardjones)
+| `b` | \<double> | The <tt>brownian motion velocity mean</tt>. **Will be overwritten by the JSON file generated particles** | *None*
+
+> ⚠️ **Random generated files (t flag)** only support the input file format of assignment 1. Also, you will need Python 3 to use it.
+
+Example:
+
+```shell
+./MolSim -i ../input_assignment_2.json -t g -e 5 -d 0.0002
+```
+
+This will use:
+- <tt>input_assignment_2.json</tt> as `input_file`
+- <tt>generate</tt> as `input_type` (uses JSON-file to setup the particles)
+- <tt>5</tt> as `end_time`,
+- <tt>0.0002</tt> as `delta_t`
+- <tt>vtk</tt> as `writer` (default)
+- <tt>lennardjones</tt> as `calculator` (default)
+- <tt>0.1</tt> as `brownian motion velocity mean` (set in the input_file)
+
+Another example:
+
+```shell
+,/MolSim -i ../eingabe-sonne.txt -c grav
+```
+This will use:
+- <tt>eingabe-sonne.txt</tt> as `input_file`
+- *because file format of assignment 1 is used, the t flag is omitted*
+- <tt>1000</tt> as `end_time` (default)
+- <tt>0.14</tt> as `delta_t` default)
+- <tt>vtk</tt> as `writer` (default)
+- <tt>gravitation</tt> as `calculator`
+- No `brownian motion velocity mean`
 
 
 

@@ -10,8 +10,8 @@ void PhysicsCalc::calcV(ParticleContainer &particles) const {
         p.setV(newV);
         /* for (int i = 0; i < DIM; ++i) {
             // calculates new velocity
-            new_V = p.getV().at(i) + (delta_t * 0.5 / p.getM() * (p.getF().at(i) + p.getOldF().at(i)));
-            p.setV(i, new_V);
+            new_V = p_result.getV().at(i) + (delta_t * 0.5 / p_result.getM() * (p_result.getF().at(i) + p_result.getOldF().at(i)));
+            p_result.setV(i, new_V);
         } */
     }
 }
@@ -25,9 +25,9 @@ void PhysicsCalc::calcX(ParticleContainer &particles) const {
         p.setX(newX);
         /* for (int i = 0; i < DIM; ++i) {
             // calculates new position
-            new_X = p.getX().at(i) + (delta_t * (p.getV().at(i) + delta_t * .5 / p.getM() * p.getF().at(i)));
+            new_X = p_result.getX().at(i) + (delta_t * (p_result.getV().at(i) + delta_t * .5 / p_result.getM() * p_result.getF().at(i)));
             // set new position
-            p.setX(i, new_X);
+            p_result.setX(i, new_X);
         } */
 
     }
