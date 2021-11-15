@@ -7,6 +7,7 @@
 
 /**
  * Fixture test
+ * Before every TEST_F, the SetUp() override and TearDown() override test will be executed
  */
 class ContainerTest : public testing::Test {
 protected:
@@ -69,11 +70,13 @@ protected:
 TEST_P(ParameterizedContainerTest, ContainerSize) {
     size_t size = GetParam();
     setSize(size);
-    ASSERT_EQ(p1.size(), size);
+    // Here it does not matter whether we use ASSERT or EQUAL, since the test ends here anyway
+    EXPECT_EQ(p1.size(), size);
+    // ASSERT_EQ(p1.size(), size + 1);
 }
 
 /**
- * Tests whether the ParticlePairIterator correctly parses over every particle pair
+ * Tests whether the ParticlePairIterator correctly parses over every distinct particle pair
  */
 TEST_P(ParameterizedContainerTest, ParticlePairIterator) {
     size_t size = GetParam();
@@ -86,12 +89,12 @@ TEST_P(ParameterizedContainerTest, ParticlePairIterator) {
     }
     // The reference size which is combination(size, 2)
     size_t refSize = (size == 1) ? 0 : fact(size)/(fact(2)*fact(size-2));
+    // Theoretically it doesn't matter again whether we use ASSERT or EXPECT, since the test ends here
     ASSERT_EQ(s.size(), refSize);
-
 }
 
 /**
- * Instantiates the parameterized tests with the to testing value
+ * Instantiates the parameterized tests with the to testing values
  */
 INSTANTIATE_TEST_SUITE_P(
         ContainerSizeTest,
