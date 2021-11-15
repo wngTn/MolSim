@@ -5,22 +5,64 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <typeinfo>
+
+#include <nlohmann/json.hpp>
 
 void ParticleGenerator::generateParticles(ParticleContainer &particles, const std::string &file) {
-    ShapeInfo info = readFile(file);
-    switch (info.type){
-        case cuboid:
-            generateCuboid(particles, info);
-            break;
-        case sphere:
-            generateSphere(particles, info);
-            break;
+    std::vector<ShapeInfo> infovec = readJSON(file);
+    for(auto &info : infovec){
+        switch (info.type){
+            case cuboid:
+                generateCuboid(particles, info);
+                break;
+            case sphere:
+                generateSphere(particles, info);
+                break;
+        }
     }
 }
 
 std::vector<ParticleGenerator::ShapeInfo> ParticleGenerator::readJSON(const std::string &file){
-    // TODO add json parser
-    return std::vector<ParticleGenerator::ShapeInfo> {};
+    std::ifstream input_file(file);
+    nlohmann::json j;
+    std::vector<ParticleGenerator::ShapeInfo> vec{};
+    // load json from file to json object
+    input_file >> j;
+
+    for (auto &shape : j["shapes"]){
+        std::cout << "ELEM: " << shape << std::endl;
+        std::string type = shape["type"];
+        ShapeInfo i{};
+        if(type == "cuboid"){
+            i.type = ParticleGenerator::cuboid;
+            i.pos = shape["pos"];
+            i.vel = shape["vel"];
+            i.distance = shape["distance"];
+            i.mass = shape["mass"];
+            i.brownianFactor = shape["brownianFactor"];
+            i.brownianDIM = shape["brownianDIM"];
+
+            i.N = shape["N"];
+        }else if(type == "sphere"){
+            i.type = ParticleGenerator::cuboid;
+            i.pos = shape["pos"];
+            i.vel = shape["vel"];
+            i.distance = shape["distance"];
+            i.mass = shape["mass"];
+            i.brownianFactor = shape["brownianFactor"];
+            i.brownianDIM = shape["brownianDIM"];
+
+            i.radius = shape["radius"];
+        }else{
+            std::cerr << "Invalid Shape type" << std::endl;
+            continue;
+        }
+        // add parsed sphere to vector
+        vec.emplace_back(i);
+    }
+
+    return vec;
 }
 
 // this is not very nice and could/should be replaced by e.g. a good JSON parser

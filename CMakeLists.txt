@@ -26,14 +26,19 @@ if (NOT CMAKE_BUILD_TYPE)
 endif (NOT CMAKE_BUILD_TYPE)
 
 include(FetchContent)
+
 FetchContent_Declare(
         spdlog
         URL https://github.com/gabime/spdlog/archive/refs/tags/v1.9.2.zip
 )
 
-FetchContent_MakeAvailable(spdlog)
+FetchContent_Declare(
+        json
+        GIT_REPOSITORY https://github.com/nlohmann/json
+        GIT_TAG fec56a1a16c6e1c1b1f4e116a20e79398282626c
+)
 
-
+FetchContent_MakeAvailable(spdlog json)
 
 # collect all cpp files
 file(GLOB_RECURSE MY_SRC
@@ -61,6 +66,7 @@ target_link_libraries(${ThisLib}
         PUBLIC
         xerces-c
         spdlog::spdlog
+        nlohmann_json::nlohmann_json
         )
 # set c++ to 17
 target_compile_features(${ThisLib}

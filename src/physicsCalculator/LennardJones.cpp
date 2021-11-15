@@ -1,6 +1,7 @@
 #include "LennardJones.h"
 #include "utils/ArrayUtils.h"
 
+
 namespace calculator {
 
     void LennardJones::calcF(ParticleContainer &particles) {
