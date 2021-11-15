@@ -34,6 +34,9 @@ static IOWriter::iotype io_type{IOWriter::unknown};
 /// Which Physics calculation method to use
 static PhysicsCalc::calctype calc_type{PhysicsCalc::unknown};
 
+/// Whether to disable logging and IO operations
+static bool benchmarking = false;
+
 /// Whether a particle generator getting parameters from the input file (for e.g. cuboids) should be used
 static bool generate = false;
 static bool randomGen = false;
@@ -54,6 +57,7 @@ void get_arguments(int argc, char *argv[]) {
                              "\tuse -c to choose a physics calculator: g/grav/gravitation for Gravitation, lj/lennardjones for LennardJonesPotential (default)\n"
                              // the situation with the generator is not very nice, but I want BrownianMotion optional for the generator but optional flag arguments are not supported
                              "\tuse -b to initialize particle movement with Brownian Motion (MaxwellBoltzmann) (not used for Generator generated particles)\n"
+                             "\tuse -m to change execution mode: benchmark to disable logging and IO operations, debug to write logs\n"
                              // "\tuse -r to enable random input generation (not used if -i is used)\n"
                              "\twhen leaving out -e/-d default values are used (1000/0.014)\n"
                              "\tcall with flag -h to display this message\n";
@@ -62,7 +66,7 @@ void get_arguments(int argc, char *argv[]) {
         std::cout << help;
         exit(0);
     }
-    while ((opt = getopt(argc, argv, "hi:t:e:d:w:c:rb:")) != -1) {
+    while ((opt = getopt(argc, argv, "hi:t:e:d:w:c:rb:m:")) != -1) {
         switch (opt) {
             case 'h':
                 std::cout << help;
@@ -101,6 +105,14 @@ void get_arguments(int argc, char *argv[]) {
             case 'b':
                 brownianMotion = true;
                 brownianMotionMean = std::stod(optarg);
+                break;
+            case 'm':
+                if(std::string("benchmark") == optarg){
+                    spdlog::set_level(spdlog::level::off);
+                    benchmarking = true;
+                }else if(std::string("debug") == optarg){
+                    spdlog::set_level(spdlog::level::debug);
+                }
                 break;
             case '?':
                 std::cerr << "Unknown option: " << static_cast<char>(optopt) << "\n";
@@ -173,15 +185,34 @@ void initializeParticles(ParticleContainer &particles) {
     }
 }
 
-static void init_logger() {
-    // Creates a logger, which writes everything logged with spdlog::info() into build/logs/*
+void logParticle(ParticleContainer &particles){
+    spdlog::info("-----------------------------------------------------------------------------------------------"
+                 "---------------------------------------------------------------");
+    for(auto &p : particles){
+        auto x = p.getX()[0];
+        auto y = p.getX()[1];
+        auto z = p.getX()[2];
+        auto v0 = p.getV()[0];
+        auto v1 = p.getV()[1];
+        auto v2 = p.getV()[2];
+        auto f0 = p.getF()[0];
+        auto f1 = p.getF()[1];
+        auto f2 = p.getF()[2];
+        spdlog::info("Moved particle ({} {} {}) with velocity ({} {} {}) and force ({} {} {})", x, y, z, v0, v1, v2, f0, f1, f2);
+    }
+}
+
+/**
+ *  @brief Creates a logger, which writes everything logged with spdlog::info() into build/logs/
+ */
+static void initializeLogger() {
     auto logger = spdlog::basic_logger_mt("molsim_logger", "./logs/molsim.log");
     spdlog::set_default_logger(logger);
-    spdlog::set_level(spdlog::level::info);
+    spdlog::set_level(spdlog::level::off);
 }
 
 int main(int argc, char *argv[]) {
-    init_logger();
+    initializeLogger();
 
     // parse cmd line args and set static values accordingly
     get_arguments(argc, argv);
@@ -218,12 +249,13 @@ int main(int argc, char *argv[]) {
     // for this loop, we assume: current x, current f and current v are known
     while (current_time < end_time) {
         spdlog::info("Iteration {}: ", iteration);
-        // want to log like this: Moved x y z with velocity = {v} and force = {f}
+        logParticle(particles);
 
         calc->calcX(particles);
         calc->calcF(particles);
         calc->calcV(particles);
-        // want to log like this:  To   x y z with velocity = {v} and force = {f}
+
+        logParticle(particles);
 
         iteration++;
         if (iteration % 10 == 0) {
