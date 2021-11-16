@@ -57,7 +57,7 @@ void get_arguments(int argc, char *argv[]) {
                              "\tuse -c to choose a physics calculator: g/grav/gravitation for Gravitation, lj/lennardjones for LennardJonesPotential (default)\n"
                              // the situation with the generator is not very nice, but I want BrownianMotion optional for the generator but optional flag arguments are not supported
                              "\tuse -b to initialize particle movement with Brownian Motion (MaxwellBoltzmann) (not used for Generator generated particles)\n"
-                             "\tuse -m to change execution mode: benchmark to disable logging and IO operations, debug to write logs\n"
+                             "\tuse -m to change execution mode: benchmark to disable logging and IO operations, debug to write logs, normal to only write output files\n"
                              // "\tuse -r to enable random input generation (not used if -i is used)\n"
                              "\twhen leaving out -e/-d default values are used (1000/0.014)\n"
                              "\tcall with flag -h to display this message\n";
@@ -171,7 +171,10 @@ void initializeParticles(ParticleContainer &particles) {
     } else if (randomGen && filename.empty()) {
         std::cout << "No input file specified, generating random input... (this needs python to be installed)\n";
         // maybe change particle amount
-        std::system("python ../generate_input.py -n 24 -o input.txt");
+        if(std::system("python ../generate_input.py -n 24 -o input.txt")){
+            spdlog::critical("Error while generating random input.");
+            exit(EXIT_FAILURE);
+        }
         filename = "input.txt";
     } else if (filename.empty()) {
         std::cout << "Please specify an input file" << std::endl;
@@ -203,7 +206,7 @@ void logParticle(ParticleContainer &particles){
 }
 
 /**
- *  @brief Creates a logger, which writes everything logged with spdlog::info() into build/logs/
+ *  @brief Creates a logger, which writes everything logged with spdlog into build/logs/molsim.log
  */
 static void initializeLogger() {
     auto logger = spdlog::basic_logger_mt("molsim_logger", "./logs/molsim.log");
