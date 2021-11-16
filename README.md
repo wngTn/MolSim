@@ -98,7 +98,7 @@ This will use:
 Another example:
 
 ```shell
-,/MolSim -i ../eingabe-sonne.txt -c grav -m debug
+./MolSim -i ../eingabe-sonne.txt -c grav -m debug
 ```
 This will use:
 - <tt>eingabe-sonne.txt</tt> as `input_file`
