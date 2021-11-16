@@ -126,7 +126,7 @@ void get_arguments(int argc, char *argv[]) {
 }
 
 /**
- * @brief Returns the (by cmd line arg) selected IO Methode
+ * @brief Returns the (by cmd line arg) selected IO Method
  * if (somehow) io_type is not set returns VTK
  * @return a pointer to an Writer of the choosen IO Method
  */
@@ -146,6 +146,10 @@ static std::unique_ptr<IOWriter> get_io_type() {
     }
 }
 
+/**
+ * @brief Returns the (by cmd line arg) selected Calculation Method
+ * @return a pointer to an PhysicsCalc of the choosen Calculation Method
+ */
 static std::unique_ptr<PhysicsCalc> get_calculator() {
     std::cout << "\u001b[36m\tCalculator:\u001b[0m ";
     switch (calc_type) {
