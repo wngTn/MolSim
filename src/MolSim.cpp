@@ -228,13 +228,11 @@ int main(int argc, char *argv[]) {
     std::cout << "\u001b[36m\tDelta_t:\u001b[0m " << delta_t << (delta_t == 0.014 ? "(Default)" : "") << std::endl;
 
 
-    // create particle container
+    // ------ setup ------ //
     ParticleContainer particles = ParticleContainer();
-
     initializeParticles(particles);
 
     auto io = get_io_type();
-
     auto calc = get_calculator();
 
     calc->setDim(DIM);
@@ -242,12 +240,14 @@ int main(int argc, char *argv[]) {
 
     double current_time = start_time;
     int iteration = 0;
+    // ------ end setup ------ //
 
     std::cout << "Currently processing your request..." << std::endl;
     spdlog::info(
             "Start calculating particles with\n\tIO type:\t\t{:<15}\n\tcalculator type:\t{:<15}\n\tend time:\t\t{:<15}\n\ttimestep:\t\t{:<15}",
             io->toString(), calc->toString(), end_time, delta_t);
 
+    // ------ calculation ------ //
     calc->calcF(particles);
     if (!benchmarking){
         io->write(particles, "output", iteration);
@@ -271,6 +271,7 @@ int main(int argc, char *argv[]) {
 
         current_time += delta_t;
     }
+    // ------ end calculation ------ //
 
     std::cout << "All files have been written!" << std::endl;
     spdlog::info("All files have been written!");

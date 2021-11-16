@@ -159,6 +159,4 @@ void ParticleGenerator::generateSphere2(ParticleContainer &particles, const Shap
         double z = p.getX()[2] * sqrt(1 - (x2 + y2) / 2 + (x2 * y2) / 3);
         p.setX({x*info.radius,y*info.radius,z*info.radius});
     }
-    std::cout << "generated sphere\n";
-
 }
