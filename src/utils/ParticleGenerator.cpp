@@ -16,7 +16,7 @@ void ParticleGenerator::generateParticles(ParticleContainer &particles, const st
                 generateCuboid(particles, info);
                 break;
             case sphere:
-                generateSphere2(particles, info);
+                generateSphere(particles, info);
                 break;
         }
     }
