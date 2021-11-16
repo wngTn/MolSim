@@ -16,7 +16,7 @@ void ParticleGenerator::generateParticles(ParticleContainer &particles, const st
                 generateCuboid(particles, info);
                 break;
             case sphere:
-                generateSphere(particles, info);
+                generateSphere2(particles, info);
                 break;
         }
     }
@@ -147,9 +147,9 @@ void ParticleGenerator::generateSphere2(ParticleContainer &particles, const Shap
 
 
     for(Particle &p : particles){
-        std::cout << "X before scaling: " << p.getX();
+        // std::cout << "X before scaling: " << p.getX();
         p.setX((1/(height * info.distance)) * p.getX());
-        std::cout << "X after scaling: " << p.getX() << std::endl;
+        // std::cout << "X after scaling: " << p.getX() << std::endl;
         double x2 = p.getX()[0] * p.getX()[0];
         double y2 = p.getX()[1] * p.getX()[1];
         double z2 = p.getX()[2] * p.getX()[2];

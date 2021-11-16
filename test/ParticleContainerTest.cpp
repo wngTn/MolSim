@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-#include <ctime>
 #include <set>
 #include <iostream>
 
@@ -42,6 +41,7 @@ protected:
     ParticleContainer p1;
 
     /**
+     * Populates the PartcleContainer with size
      * Implictly also tests whether emplace back does its job
      * Every particle can be identified by its mass
      * @param size the size of the container

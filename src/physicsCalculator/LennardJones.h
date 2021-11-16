@@ -21,6 +21,11 @@ namespace calculator {
         T sqr(T x);
 
     private:
+        /**
+         * Calculates the Lennard-Jones potential between to particles
+         * @param p1 The first particle
+         * @param p2 The second particle
+         */
         void ljforce(Particle &p1, Particle &p2);
 
         double sigma = 1;

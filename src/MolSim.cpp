@@ -34,11 +34,15 @@ static IOWriter::iotype io_type{IOWriter::unknown};
 /// Which Physics calculation method to use
 static PhysicsCalc::calctype calc_type{PhysicsCalc::unknown};
 
+/// Whether to disable logging and IO operations
+static bool benchmarking = false;
+
 /// Whether a particle generator getting parameters from the input file (for e.g. cuboids) should be used
 static bool generate = false;
 static bool randomGen = false;
 static bool brownianMotion = false;
 static double brownianMotionMean;
+
 /**
  * @brief Parse command line arguments and set static values accordingly
  * also generates random input if no input file specified
@@ -46,22 +50,23 @@ static double brownianMotionMean;
  * @param argv argv from main
  */
 void get_arguments(int argc, char *argv[]) {
-    const std::string help = "Usage: ./MolSim [-i <input_file>] [-t <input type>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calc>] [-b <brownian_motion_velocity_mean>]\n"
+    const std::string help = "Usage: ./MolSim [-i <input_file>] [-t <input_type>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calc>] [-b <brownian_motion_velocity_mean>]\n"
                              "\tuse -i to specify an input file\n"
                              "\tuse -t to specify an input type: 'g'/'generate' to generate based on values from input_file, 'r'/'random' for random input (-i discarded for random)\n"
                              "\tuse -w to choose an output writer: v/vtk for VTKWriter (default) or x/xyz for XYZWriter\n"
                              "\tuse -c to choose a physics calculator: g/grav/gravitation for Gravitation, lj/lennardjones for LennardJonesPotential (default)\n"
                              // the situation with the generator is not very nice, but I want BrownianMotion optional for the generator but optional flag arguments are not supported
                              "\tuse -b to initialize particle movement with Brownian Motion (MaxwellBoltzmann) (not used for Generator generated particles)\n"
+                             "\tuse -m to change execution mode: benchmark to disable logging and IO operations, debug to write logs\n"
                              // "\tuse -r to enable random input generation (not used if -i is used)\n"
                              "\twhen leaving out -e/-d default values are used (1000/0.014)\n"
                              "\tcall with flag -h to display this message\n";
     int opt;
-    if(argc == 1){
+    if (argc == 1) {
         std::cout << help;
         exit(0);
     }
-    while ((opt = getopt(argc, argv, "hi:t:e:d:w:c:rb:")) != -1) {
+    while ((opt = getopt(argc, argv, "hi:t:e:d:w:c:rb:m:")) != -1) {
         switch (opt) {
             case 'h':
                 std::cout << help;
@@ -72,7 +77,7 @@ void get_arguments(int argc, char *argv[]) {
             case 't':
                 if (std::string("g") == optarg || std::string("generate") == optarg) {
                     generate = true;
-                }else if (std::string("r") == optarg || std::string("random") == optarg) {
+                } else if (std::string("r") == optarg || std::string("random") == optarg) {
                     randomGen = true;
                 }
                 break;
@@ -85,21 +90,29 @@ void get_arguments(int argc, char *argv[]) {
             case 'w':
                 if (std::string("vtk") == optarg || std::string("v") == optarg) {
                     io_type = IOWriter::vtk;
-                }else if (std::string("xyz") == optarg || std::string("x") == optarg) {
+                } else if (std::string("xyz") == optarg || std::string("x") == optarg) {
                     io_type = IOWriter::xyz;
                 }
                 break;
             case 'c':
                 if (std::string("lj") == optarg || std::string("lennardjones") == optarg) {
                     calc_type = PhysicsCalc::lennardJones;
-                }else if (std::string("g") == optarg || std::string("grav") == optarg
-                                                        || std::string("gravitation") == optarg) {
+                } else if (std::string("g") == optarg || std::string("grav") == optarg
+                           || std::string("gravitation") == optarg) {
                     calc_type = PhysicsCalc::gravitation;
                 }
                 break;
             case 'b':
                 brownianMotion = true;
                 brownianMotionMean = std::stod(optarg);
+                break;
+            case 'm':
+                if(std::string("benchmark") == optarg){
+                    spdlog::set_level(spdlog::level::off);
+                    benchmarking = true;
+                }else if(std::string("debug") == optarg){
+                    spdlog::set_level(spdlog::level::debug);
+                }
                 break;
             case '?':
                 std::cerr << "Unknown option: " << static_cast<char>(optopt) << "\n";
@@ -118,7 +131,7 @@ void get_arguments(int argc, char *argv[]) {
  * @return a pointer to an Writer of the choosen IO Method
  */
 static std::unique_ptr<IOWriter> get_io_type() {
-    std::cout << "\tWriter: ";
+    std::cout << "\u001b[36m\tWriter:\u001b[0m ";
     switch (io_type) {
         case IOWriter::vtk:
             std::cout << "VTK-Writer" << std::endl;
@@ -134,18 +147,18 @@ static std::unique_ptr<IOWriter> get_io_type() {
 }
 
 static std::unique_ptr<PhysicsCalc> get_calculator() {
-    std::cout << "\tCalculator: ";
+    std::cout << "\u001b[36m\tCalculator:\u001b[0m ";
     switch (calc_type) {
         case PhysicsCalc::gravitation:
             std::cout << "Gravitation" << std::endl;
             return std::make_unique<calculator::Gravitation>();
         case PhysicsCalc::lennardJones:
             std::cout << "Lennard-Jones-Potential" << std::endl;
-            return std::make_unique<calculator::LennardJones>(1.,5.);
+            return std::make_unique<calculator::LennardJones>(1., 5.);
         case PhysicsCalc::unknown:
         default:
             std::cout << "Lennard-Jones-Potential (Default)" << std::endl;
-            return std::make_unique<calculator::LennardJones>(1.,5.);
+            return std::make_unique<calculator::LennardJones>(1., 5.);
     }
 }
 
@@ -154,40 +167,62 @@ void initializeParticles(ParticleContainer &particles) {
     if (generate && !filename.empty()) {
         ParticleGenerator::generateParticles(particles, filename);
         return;
-    // if no input file has been specified, generate random input using python script
-    }else if (randomGen && filename.empty()) {
+        // if no input file has been specified, generate random input using python script
+    } else if (randomGen && filename.empty()) {
         std::cout << "No input file specified, generating random input... (this needs python to be installed)\n";
         // maybe change particle amount
         std::system("python ../generate_input.py -n 24 -o input.txt");
         filename = "input.txt";
-    }else if (filename.empty()){
+    } else if (filename.empty()) {
         std::cout << "Please specify an input file" << std::endl;
-    }else{
+    } else {
         // read input file
         FileReader::readFile(particles, filename);
     }
-    if(brownianMotion){
+    if (brownianMotion) {
         initializeBrownianMotion(particles, brownianMotionMean);
+        std::cout<<"\tBrownianMotion: "<<brownianMotionMean<<std::endl;
     }
 }
 
-static void init_logger() {
-    // Creates a logger, which writes everthing logged with spdlog::info() into build/logs/*
+void logParticle(ParticleContainer &particles){
+    spdlog::info("-----------------------------------------------------------------------------------------------"
+                 "---------------------------------------------------------------");
+    for(auto &p : particles){
+        auto x = p.getX()[0];
+        auto y = p.getX()[1];
+        auto z = p.getX()[2];
+        auto v0 = p.getV()[0];
+        auto v1 = p.getV()[1];
+        auto v2 = p.getV()[2];
+        auto f0 = p.getF()[0];
+        auto f1 = p.getF()[1];
+        auto f2 = p.getF()[2];
+        spdlog::info("Moved particle ({} {} {}) with velocity ({} {} {}) and force ({} {} {})", x, y, z, v0, v1, v2, f0, f1, f2);
+    }
+}
+
+/**
+ *  @brief Creates a logger, which writes everything logged with spdlog::info() into build/logs/
+ */
+static void initializeLogger() {
     auto logger = spdlog::basic_logger_mt("molsim_logger", "./logs/molsim.log");
     spdlog::set_default_logger(logger);
-    spdlog::set_level(spdlog::level::info);
+    spdlog::set_level(spdlog::level::off);
 }
 
 int main(int argc, char *argv[]) {
-    init_logger();
+    initializeLogger();
 
     // parse cmd line args and set static values accordingly
     get_arguments(argc, argv);
 
     std::cout << "Your configurations are:" << std::endl;
-    std::cout << (randomGen?"\tRandom":"\tFilename: ") << filename << (generate?" (generator)":"") << std::endl;
-    std::cout << "\tEnd_time: " << end_time << (end_time == 1000 ? "(Default)" : "") << std::endl;
-    std::cout << "\tDelta_t: " << delta_t << (delta_t == 0.014 ? "(Default)" : "") << std::endl;
+    std::cout << "\u001b[36m\tFilename:\u001b[0m " << filename << std::endl;
+    std::cout << "\u001b[36m\tType_input:\u001b[0m " << ((randomGen) ? "Random values" : (generate) ?
+        "Values from json file" : "Values from ordinary file") << std::endl;
+    std::cout << "\u001b[36m\tEnd_time:\u001b[0m " << end_time << (end_time == 1000 ? "(Default)" : "") << std::endl;
+    std::cout << "\u001b[36m\tDelta_t:\u001b[0m " << delta_t << (delta_t == 0.014 ? "(Default)" : "") << std::endl;
 
 
     // create particle container
@@ -206,22 +241,27 @@ int main(int argc, char *argv[]) {
     int iteration = 0;
 
     std::cout << "Currently processing your request..." << std::endl;
-    spdlog::info("Start calculating particles with\n\tIO type:\t\t{:<15}\n\tcalculator type:\t{:<15}\n\tend time:\t\t{:<15}\n\ttimestep:\t\t{:<15}", io->toString(), calc->toString(), end_time, delta_t);
+    spdlog::info(
+            "Start calculating particles with\n\tIO type:\t\t{:<15}\n\tcalculator type:\t{:<15}\n\tend time:\t\t{:<15}\n\ttimestep:\t\t{:<15}",
+            io->toString(), calc->toString(), end_time, delta_t);
 
     calc->calcF(particles);
-    io->write(particles, "output", iteration);
+    if (!benchmarking){
+        io->write(particles, "output", iteration);
+    }
     // for this loop, we assume: current x, current f and current v are known
     while (current_time < end_time) {
         spdlog::info("Iteration {}: ", iteration);
-        // want to log like this: Moved x y z with velocity = {v} and force = {f}
+        logParticle(particles);
 
         calc->calcX(particles);
         calc->calcF(particles);
         calc->calcV(particles);
-        // want to log like this:  To   x y z with velocity = {v} and force = {f}
+
+        logParticle(particles);
 
         iteration++;
-        if (iteration % 10 == 0) {
+        if (!benchmarking && iteration % 10 == 0) {
             // uses abstract write method overwritten by specific IO method
             io->write(particles, "output", iteration);
         }

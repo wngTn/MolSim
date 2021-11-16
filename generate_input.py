@@ -48,6 +48,7 @@ def generate_values(count):
         ms.append(m())
     return crds, velos, ms
 
+
 def get_input():
     file = input("enter the output filename (with file extension like .txt)\n")
 
@@ -56,8 +57,10 @@ def get_input():
 
     return file, particle_count
 
+
 def help():
     print('usage: python generate_input.py [-n <particle_count>] [-o <outputfile>]')
+
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
@@ -88,4 +91,3 @@ if __name__ == '__main__':
         f.write("# xyz coord    velocity    mass\n")
         f.write(str(particle_count) + "\n")
         f.writelines([f'{x} {y} {z}    {v1} {v2} {v3}    {m}\n' for ((x, y, z), (v1, v2, v3), m) in zipped])
-
