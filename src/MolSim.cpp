@@ -14,7 +14,6 @@
 #include <iostream>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/basic_file_sink.h>
-#include <filesystem>
 
 /// Default start_time (end_time - start_time = total_runtime)
 static double start_time = 0;
@@ -25,6 +24,9 @@ static double delta_t = 0.014;
 
 /// File name used for the input/output file(s)
 static std::string filename;
+
+/// File name of the input to the ParticleGenerator
+static std::string generator_file;
 
 /// Default dimension
 static int DIM = 3;
@@ -50,16 +52,17 @@ static double brownianMotionMean;
  * @param argc argc from main
  * @param argv argv from main
  */
-void get_arguments(int argc, char *argv[]) {
-    const std::string help = "Usage: ./MolSim [-i <input_file>] [-t <input_type>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calc>] [-b <brownian_motion_velocity_mean>]\n"
+static void get_arguments(int argc, char *argv[]) {
+    const std::string help = "Usage: ./MolSim [-i <input_file>] [-g <generator_input>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calc>] [-b <brownian_motion_velocity_mean>] [-r]\n"
                              "\tuse -i to specify an input file\n"
-                             "\tuse -t to specify an input type: 'g'/'generate' to generate based on values from input_file, 'r'/'random' for random input (-i discarded for random)\n"
+                             "\tuse -g to specify a generator input file\n"
+                             //"\tuse -t to specify an input type: 'g'/'generate' to generate based on values from input_file, 'r'/'random' for random input (-i discarded for random)\n"
                              "\tuse -w to choose an output writer: v/vtk for VTKWriter (default) or x/xyz for XYZWriter\n"
                              "\tuse -c to choose a physics calculator: g/grav/gravitation for Gravitation, lj/lennardjones for LennardJonesPotential (default)\n"
                              // the situation with the generator is not very nice, but I want BrownianMotion optional for the generator but optional flag arguments are not supported
                              "\tuse -b to initialize particle movement with Brownian Motion (MaxwellBoltzmann) (not used for Generator generated particles)\n"
-                             "\tuse -m to change execution mode: benchmark to disable logging and IO operations, debug to write logs\n"
-                             // "\tuse -r to enable random input generation (not used if -i is used)\n"
+                             "\tuse -r for randomly generated particles\n"
+                             "\tuse -m to change execution mode: benchmark to disable logging and IO operations, debug to write logs, normal to only write output files\n"
                              "\twhen leaving out -e/-d default values are used (1000/0.014)\n"
                              "\tcall with flag -h to display this message\n";
     int opt;
@@ -67,7 +70,7 @@ void get_arguments(int argc, char *argv[]) {
         std::cout << help;
         exit(0);
     }
-    while ((opt = getopt(argc, argv, "hi:t:e:d:w:c:rb:m:")) != -1) {
+    while ((opt = getopt(argc, argv, "hi:g:e:d:w:c:rb:m:")) != -1) {
         switch (opt) {
             case 'h':
                 std::cout << help;
@@ -75,12 +78,9 @@ void get_arguments(int argc, char *argv[]) {
             case 'i':
                 filename = optarg;
                 break;
-            case 't':
-                if (std::string("g") == optarg || std::string("generate") == optarg) {
-                    generate = true;
-                } else if (std::string("r") == optarg || std::string("random") == optarg) {
-                    randomGen = true;
-                }
+            case 'g':
+                generate = true;
+                generator_file = optarg;
                 break;
             case 'e':
                 end_time = std::stod(optarg);
@@ -107,6 +107,9 @@ void get_arguments(int argc, char *argv[]) {
                 brownianMotion = true;
                 brownianMotionMean = std::stod(optarg);
                 break;
+            case 'r':
+                randomGen = true;
+                break;
             case 'm':
                 if(std::string("benchmark") == optarg){
                     spdlog::set_level(spdlog::level::off);
@@ -123,11 +126,16 @@ void get_arguments(int argc, char *argv[]) {
                 break;
         }
     }
-
+    std::cout << "Your configurations are:" << std::endl;
+    if(!filename.empty()) std::cout << "\u001b[36m\tFilename:\u001b[0m " << filename << std::endl;
+    if(generate) std::cout << "\u001b[36m\tGenerator Input:\u001b[0m " << generator_file << std::endl;
+    if(randomGen) std::cout << "\u001b[36m\tRandom Generation\u001b[0m\n";
+    std::cout << "\u001b[36m\tEnd_time:\u001b[0m " << end_time << (end_time == 1000 ? "(Default)" : "") << std::endl;
+    std::cout << "\u001b[36m\tDelta_t:\u001b[0m " << delta_t << (delta_t == 0.014 ? "(Default)" : "") << std::endl;
 }
 
 /**
- * @brief Returns the (by cmd line arg) selected IO Methode
+ * @brief Returns the (by cmd line arg) selected IO Method
  * if (somehow) io_type is not set returns VTK
  * @return a pointer to an Writer of the choosen IO Method
  */
@@ -147,6 +155,10 @@ static std::unique_ptr<IOWriter> get_io_type() {
     }
 }
 
+/**
+ * @brief Returns the (by cmd line arg) selected Calculation Method
+ * @return a pointer to an PhysicsCalc of the choosen Calculation Method
+ */
 static std::unique_ptr<PhysicsCalc> get_calculator() {
     std::cout << "\u001b[36m\tCalculator:\u001b[0m ";
     switch (calc_type) {
@@ -164,25 +176,28 @@ static std::unique_ptr<PhysicsCalc> get_calculator() {
 }
 
 void initializeParticles(ParticleContainer &particles) {
-    // if generate flag is set and input for generator is specified, use ParticleGenerator
-    if (generate && !filename.empty()) {
-        ParticleGenerator::generateParticles(particles, filename);
-        return;
-        // if no input file has been specified, generate random input using python script
-    } else if (randomGen && filename.empty()) {
-        // std::cout << "No input file specified, generating random input... (this needs python to be installed)\n";
-        // maybe change particle amount
-        std::system("python ../input/generate_input.py -n 24 -o auto_gen_input.txt");
-        filename = "../input/files/auto_gen_input.txt";
-    } else if (filename.empty()) {
-        std::cout << "Please specify an input file" << std::endl;
-    } else {
-        // read input file
+    // read normal input file
+    if (!filename.empty()) {
         FileReader::readFile(particles, filename);
     }
+    // if -r flag is set, generate random input using python script
+    if (randomGen) {
+        std::cout << "Generating random input... (this needs python to be installed)\n";
+        // maybe change particle amount
+        if (std::system("python ../generate_input.py -n 24 -o input.txt")) {
+            spdlog::critical("Error while generating random input.");
+            exit(EXIT_FAILURE);
+        }
+        FileReader::readFile(particles, "input.txt");
+    }
+    // apply brownian motion for everything except the particles generated by the ParticleGenerator
     if (brownianMotion) {
         initializeBrownianMotion(particles, brownianMotionMean);
-        std::cout<<"\tBrownianMotion: "<<brownianMotionMean<<std::endl;
+        std::cout<<"\u001b[36m\tBrownianMotion:\u001b[0m "<<brownianMotionMean<<std::endl;
+    }
+    // if generate flag is set and input for generator is specified, use ParticleGenerator
+    if (generate && !generator_file.empty()) {
+        ParticleGenerator::generateParticles(particles, generator_file);
     }
 }
 
@@ -204,7 +219,7 @@ void logParticle(ParticleContainer &particles){
 }
 
 /**
- *  @brief Creates a logger, which writes everything logged with spdlog::info() into build/logs/
+ *  @brief Creates a logger, which writes everything logged with spdlog into build/logs/molsim.log
  */
 static void initializeLogger() {
     auto logger = spdlog::basic_logger_mt("molsim_logger", "./logs/molsim.log");
@@ -215,25 +230,16 @@ static void initializeLogger() {
 int main(int argc, char *argv[]) {
     initializeLogger();
 
+    auto start_setup = std::chrono::steady_clock::now();
+
     // parse cmd line args and set static values accordingly
     get_arguments(argc, argv);
 
-    std::cout << "Your configurations are:" << std::endl;
-    std::cout << "\u001b[36m\tFilename:\u001b[0m " << filename << std::endl;
-    std::cout << "\u001b[36m\tType_input:\u001b[0m " << ((randomGen) ? "Random values are generated "
-                                                                       "(needs Python3)" : (generate) ?
-        "Values from json file" : "Values from ordinary file") << std::endl;
-    std::cout << "\u001b[36m\tEnd_time:\u001b[0m " << end_time << (end_time == 1000 ? "(Default)" : "") << std::endl;
-    std::cout << "\u001b[36m\tDelta_t:\u001b[0m " << delta_t << (delta_t == 0.014 ? "(Default)" : "") << std::endl;
-
-
-    // create particle container
+    // ------ setup ------ //
     ParticleContainer particles = ParticleContainer();
-
     initializeParticles(particles);
 
     auto io = get_io_type();
-
     auto calc = get_calculator();
 
     calc->setDim(DIM);
@@ -241,13 +247,26 @@ int main(int argc, char *argv[]) {
 
     double current_time = start_time;
     int iteration = 0;
+    // ------ end setup ------ //
+    if(benchmarking){
+        std::cout
+        << "Elapsed setup time [microseconds]: "
+        << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start_setup).count()
+        << std::endl;
+    }
 
     std::cout << "Currently processing your request..." << std::endl;
     spdlog::info(
             "Start calculating particles with\n\tIO type:\t\t{:<15}\n\tcalculator type:\t{:<15}\n\tend time:\t\t{:<15}\n\ttimestep:\t\t{:<15}",
             io->toString(), calc->toString(), end_time, delta_t);
 
+    // ------ calculation ------ //
+    auto start_calc = std::chrono::steady_clock::now();
+
     calc->calcF(particles);
+    if (!benchmarking){
+        io->write(particles, "output", iteration);
+    }
     // for this loop, we assume: current x, current f and current v are known
     while (current_time < end_time) {
         spdlog::info("Iteration {}: ", iteration);
@@ -260,15 +279,23 @@ int main(int argc, char *argv[]) {
         logParticle(particles);
 
         iteration++;
-        if (iteration % 10 == 0) {
+        if (!benchmarking && iteration % 10 == 0) {
             // uses abstract write method overwritten by specific IO method
             io->write(particles, "output", iteration);
         }
 
         current_time += delta_t;
     }
+    // ------ end calculation ------ //
+    if(benchmarking){
+        std::cout
+                << "Elapsed calculation time [milliseconds]: "
+                << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start_calc).count()
+                << std::endl;
+    }else{
+        std::cout << "All files have been written!" << std::endl;
+    }
 
-    std::cout << "All files have been written!" << std::endl;
     spdlog::info("All files have been written!");
 
     return 0;

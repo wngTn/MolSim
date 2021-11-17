@@ -63,7 +63,7 @@ Also, you need the xerces-c library for the parsers we use in the program:
 The general program call is:
 
 ```shell
-./MolSim [-i <input_file>] [-t <input type>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calculator>] [-b <brownian_motion_velocity_mean>]
+./MolSim [-i <input_file>] [-t <input type>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calculator>] [-b <brownian_motion_velocity_mean>] [-m <execution_mode>]
 ```
 
 | Flag   | Possible Values | Explanation | Default |
@@ -75,6 +75,7 @@ The general program call is:
 | `w` | v, vtk, x, xyz | Specifies the output writer, consequently also the output file format | v (vtk)
 | `c` | g, grav, gravitation, lj, lennardjones | Declares what forces between the particles should be calculated | lj (lennardjones)
 | `b` | \<double> | The <tt>brownian motion velocity mean</tt>. **Will be overwritten by the JSON file generated particles** | *None*
+| `m` | normal, debug, benchmark | Specifies which execution mode should be used. **Debug** to enable logging, **normal** to disable logging or **benchmark** to disable all output files | normal
 
 > ⚠️ **Random generated files (t flag)** only support the input file format of assignment 1. Also, you will need Python 3 to use it.
 
@@ -92,11 +93,12 @@ This will use:
 - <tt>vtk</tt> as `writer` (default)
 - <tt>lennardjones</tt> as `calculator` (default)
 - <tt>0.1</tt> as `brownian motion velocity mean` (set in the input_file)
+- <tt>normal</tt> execution mode (default)
 
 Another example:
 
 ```shell
-,/MolSim -i ../eingabe-sonne.txt -c grav
+./MolSim -i ../eingabe-sonne.txt -c grav -m debug
 ```
 This will use:
 - <tt>eingabe-sonne.txt</tt> as `input_file`
@@ -106,6 +108,7 @@ This will use:
 - <tt>vtk</tt> as `writer` (default)
 - <tt>gravitation</tt> as `calculator`
 - No `brownian motion velocity mean`
+- <tt>debug</tt> execution mode
 
 
 

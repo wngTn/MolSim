@@ -5,7 +5,6 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
-#include <typeinfo>
 
 #include <nlohmann/json.hpp>
 
@@ -27,83 +26,34 @@ std::vector<ParticleGenerator::ShapeInfo> ParticleGenerator::readJSON(const std:
     std::ifstream input_file(file);
     nlohmann::json j;
     std::vector<ParticleGenerator::ShapeInfo> vec{};
-    // load json from file to json object
+    // load data from file to json object
     input_file >> j;
 
     for (auto &shape : j["shapes"]){
-        std::cout << "ELEM: " << shape << std::endl;
         std::string type = shape["type"];
         ShapeInfo i{};
+
+        i.pos = shape["pos"];
+        i.vel = shape["vel"];
+        i.distance = shape["distance"];
+        i.mass = shape["mass"];
+        i.brownianFactor = shape["brownianFactor"];
+        i.brownianDIM = shape["brownianDIM"];
+
         if(type == "cuboid"){
             i.type = ParticleGenerator::cuboid;
-            i.pos = shape["pos"];
-            i.vel = shape["vel"];
-            i.distance = shape["distance"];
-            i.mass = shape["mass"];
-            i.brownianFactor = shape["brownianFactor"];
-            i.brownianDIM = shape["brownianDIM"];
-
             i.N = shape["N"];
         }else if(type == "sphere"){
-            i.type = ParticleGenerator::cuboid;
-            i.pos = shape["pos"];
-            i.vel = shape["vel"];
-            i.distance = shape["distance"];
-            i.mass = shape["mass"];
-            i.brownianFactor = shape["brownianFactor"];
-            i.brownianDIM = shape["brownianDIM"];
-
+            i.type = ParticleGenerator::sphere;
             i.radius = shape["radius"];
         }else{
             std::cerr << "Invalid Shape type" << std::endl;
             continue;
         }
-        // add parsed sphere to vector
+        // add parsed shape info to vector
         vec.emplace_back(i);
     }
-
     return vec;
-}
-
-// this is not very nice and could/should be replaced by e.g. a good JSON parser
-ParticleGenerator::ShapeInfo ParticleGenerator::readFile(const std::string &file) {
-    ShapeInfo info{};
-
-    std::ifstream input_file(file);
-    std::string tmp_string;
-
-    if(input_file.is_open()){
-        getline(input_file, tmp_string);
-        // read input specific to one form
-        if(tmp_string == "CUBOID"){
-            info.type = cuboid;
-            int n1, n2, n3;
-            input_file >> n1 >> n2 >> n3;
-            // std::cout << "N: " << n1 << ", " << n2 << ", " << n3 << std::endl;
-            info.N = std::array<int, 3>{n1,n2,n3};
-        }else if(tmp_string == "SPHERE"){
-            info.type = sphere;
-            input_file >> info.radius;
-        }else{
-            std::cout << "Error: Invalid generator file format" << std::endl;
-            exit(-1);
-            // TODO Fehlerbehandlung
-        }
-        // read input all forms have
-        double x,y,z,v1,v2,v3;
-        input_file >> x >> y >> z >> v1 >> v2 >> v3 >> info.distance >> info.mass >> info.brownianFactor >> info.brownianDIM;
-        std::cout << "pos and v: " << x << ", " << y << ", "<< z << ", "<< v1 << ", "<< v2 << ", " << v3 << std::endl;
-        std::cout << "d,m,brown: " << info.distance << ", " << info.mass << ", " << info.brownianFactor << std::endl;
-        info.pos = std::array<double,3>{x,y,z};
-        info.vel = std::array<double,3>{v1,v2,v3};
-
-        return info;
-
-    } else {
-        std::cout << "Error: could not open file " << file << std::endl;
-        exit(-1);
-    }
-
 }
 
 void ParticleGenerator::generateCuboid(ParticleContainer &particles, const ShapeInfo &info) {
@@ -117,11 +67,9 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles, const Shape
         for(int y = 0; y < info.N[1]; y++){
             for(int x = 0; x < info.N[0]; x++){
                 Particle part;
-                // TODO check if this is correct
                 // add browian motion
                 auto tempVel = info.vel + maxwellBoltzmannDistributedVelocity(info.brownianFactor, info.brownianDIM);
                 part = Particle{currentPos, tempVel, info.mass};
-
                 particles.emplace_back(part);
                 currentPos[0] += info.distance;
             }
@@ -134,45 +82,81 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles, const Shape
     }
 }
 
-// TODO
 void ParticleGenerator::generateSphere(ParticleContainer &particles, const ShapeInfo &info) {
-    // dummy particle so anything shows up
-    particles.emplace_back(Particle{info.pos, info.vel, info.mass});
+    // how many particles fit on the radius between center and edge
+    int height = floor(info.radius / info.distance);
+    // get parameters for cube generation
+    std::vector<int> edges = {2*height + 1,2 * height + 1,2 * height + 1};
+    std::array<double,3> cubeCorner = {info.pos[0]-(height*info.distance),
+                                       info.pos[1]-(height*info.distance),
+                                       info.pos[2]-(height*info.distance)};
+    auto currentPos{cubeCorner};
+
+    // ratio of volume of maximum inscribed sphere to cube is pi/6 ~= 0.523...
+    int count = floor(pow((2*height+1),3) * 0.523598775598f);
+    particles.reserve(count);
+
+    for(int z = 0; z < edges[2]; z++){
+        for(int y = 0; y < edges[1]; y++){
+            for(int x = 0; x < edges[0]; x++){
+                double delta_x = currentPos[0] - info.pos[0];
+                double delta_y = currentPos[1] - info.pos[1];
+                double delta_z = currentPos[2] - info.pos[2];
+                double distance = std::abs(sqrt(delta_x * delta_x + delta_y * delta_y + delta_z * delta_z));
+                // only add if distance to center is less or equal the radius
+                if(distance <= info.radius){
+                    Particle part;
+                    auto tempVel = info.vel + maxwellBoltzmannDistributedVelocity(info.brownianFactor, info.brownianDIM);
+                    part = Particle{currentPos, tempVel, info.mass};
+                    particles.emplace_back(part);
+                }
+                currentPos[0] += info.distance;
+            }
+            currentPos[0] = cubeCorner[0];
+            currentPos[1] += info.distance;
+        }
+        currentPos[0] = cubeCorner[0];
+        currentPos[1] = cubeCorner[1];
+        currentPos[2] += info.distance;
+    }
+
 }
 
-// JSON format for when the above garbage is replaced
-/* {
-   "shapes":[
-            {
-                "type": "cuboid"
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0,
-                "v1": 1.0,
-                "v2": 1.0,
-                "v3": 1.0,
-                "n1": 1.0,
-                "n2": 1.0,
-                "n3": 1.0,
-                "distance": 1.0,
-                "mass": 1.0,
-                "brownianFactor": 1.0
-            },
-            {   "type": "sphere"
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0,
-                "v1": 1.0,
-                "v2": 1.0,
-                "v3": 1.0,
-                "radius": 1.0,
-                "distance": 1.0,
-                "mass": 1.0,
-                "brownianFactor": 1.0
-            },
-            {
-                // potentially more shapes
-            }
-   ]
+void ParticleGenerator::generateSphere2(ParticleContainer &particles, const ShapeInfo &info) {
+    // center
+    // particles.emplace_back(Particle{info.pos, info.vel, info.mass});
+    /* int rings = floor(info.radius / info.distance);
+    float degrees = 60.0;
+    for(int i = 1; i <= rings; i++){
+        // generate beams from center degrees = (60/i) degree apart
+    } */
+
+    ShapeInfo i{info};
+    i.type = cuboid;
+
+    // how many particles fit on the radius between center and edge
+    int height = floor(info.radius / info.distance);
+
+    i.N = {2*height + 1,2 * height + 1,2 * height + 1};
+    i.distance = info.distance;
+    i.pos = {-(height*info.distance),
+             -(height*info.distance),
+             -(height*info.distance)};
+    generateCuboid(particles, i);
+
+
+
+    for(Particle &p : particles){
+        // std::cout << "X before scaling: " << p.getX();
+        p.setX((1/(height * info.distance)) * p.getX());
+        // std::cout << "X after scaling: " << p.getX() << std::endl;
+        double x2 = p.getX()[0] * p.getX()[0];
+        double y2 = p.getX()[1] * p.getX()[1];
+        double z2 = p.getX()[2] * p.getX()[2];
+
+        double x = p.getX()[0] * sqrt(1 - (y2 + z2) / 2 + (y2 * z2) / 3);
+        double y = p.getX()[1] * sqrt(1 - (z2 + x2) / 2 + (z2 * x2) / 3);
+        double z = p.getX()[2] * sqrt(1 - (x2 + y2) / 2 + (x2 * y2) / 3);
+        p.setX({x*info.radius,y*info.radius,z*info.radius});
+    }
 }
-*/
