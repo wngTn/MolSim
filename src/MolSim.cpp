@@ -255,8 +255,8 @@ int main(int argc, char *argv[]) {
     // ------ end setup ------ //
     if(benchmarking){
         std::cout
-        << "Elapsed calculation time: "
-        << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start_setup).count()
+        << "Elapsed setup time [ns]:"
+        << std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now() - start_setup).count()
         << std::endl;
     }
 
@@ -294,7 +294,7 @@ int main(int argc, char *argv[]) {
     // ------ end calculation ------ //
     if(benchmarking){
         std::cout
-                << "Elapsed calculation time: "
+                << "Elapsed calculation time [ms]: "
                 << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start_calc).count()
                 << std::endl;
     }else{
