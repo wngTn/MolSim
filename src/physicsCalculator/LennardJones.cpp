@@ -10,14 +10,21 @@ namespace calculator {
         }
 
         for (auto it = particles.pair_begin(); it != particles.pair_end(); ++it) {
-            auto[p1, p2] = *it;
+            auto [p1, p2] = *it;
             ljforce(p1, p2);
         }
+        // this (sadly) is a little faster, but as performance is not extremely critical atm we use the cooler version
+        // when requiring optimal performance this has to be replaced,
+        // but currently wasting the time spent on the PairIterator makes me too sad
+        /* for(auto it = particles.begin(); it != particles.end(); ++it){
+            for(auto it2 = it; it2 != particles.end(); ++it2){
+                ljforce(*it,*it2);
+            }
+        } */
     }
 
     void LennardJones::ljforce(Particle &p1, Particle &p2) {
         double sqrd_dist = 0;
-
         for (int i = 0; i < DIM; i++) {
             sqrd_dist += LennardJones::sqr(p2.getX()[i] - p1.getX()[i]);
         }
