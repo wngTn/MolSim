@@ -46,15 +46,13 @@ static bool randomGen = false;
 static bool brownianMotion = false;
 static double brownianMotionMean;
 
-static
-
 /**
  * @brief Parse command line arguments and set static values accordingly
  * also generates random input if no input file specified
  * @param argc argc from main
  * @param argv argv from main
  */
-void get_arguments(int argc, char *argv[]) {
+static void get_arguments(int argc, char *argv[]) {
     const std::string help = "Usage: ./MolSim [-i <input_file>] [-g <generator_input>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calc>] [-b <brownian_motion_velocity_mean>] [-r]\n"
                              "\tuse -i to specify an input file\n"
                              "\tuse -g to specify a generator input file\n"
