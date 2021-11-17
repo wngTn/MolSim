@@ -253,7 +253,7 @@ int main(int argc, char *argv[]) {
         << "\u001b[31mYou have chosen the benchmark mode!\u001b[0m" << std::endl
         << "\u001b[31mElapsed setup time [microseconds]:\u001b[0m "
         << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start_setup).count()
-        << "ms" << std::endl
+        << std::endl
         << "\u001b[31mIn total there are:\u001b[0m " << particles.size() << " particles." << std::endl;
     }
 
@@ -293,7 +293,7 @@ int main(int argc, char *argv[]) {
         std::cout
                 << "\u001b[31mElapsed calculation time [milliseconds]:\u001b[0m "
                 << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start_calc).count()
-                << "ms" << std::endl;
+                << std::endl;
     }else{
         std::cout << "All files have been written!" << std::endl;
     }

@@ -14,8 +14,8 @@ output_sizes = {
     'small': [3, 2, 10, 2],
     'm': [3, 3, 12, 4], # -> 432 particles
     'medium': [3, 3, 12, 4],
-    'l': [4, 4, 12, 4], # -> 768 particles
-    'large': [4, 4, 12, 4]
+    'l': [4, 3, 12, 4], # -> 576 particles
+    'large': [4, 3, 12, 4]
 }
 
 
@@ -80,11 +80,11 @@ if __name__ == '__main__':
 
     if file == '':
         if size in ('s', 'small'):
-            file = 'random_generated_input_s.json'
+            file = 'automatic_generated_input_s.json'
         elif size in ('m', 'medium'):
-            file = 'random_generated_input_m.json'
+            file = 'automatic_generated_input_m.json'
         elif size in ('l', 'large'):
-            file = 'random_generated_input_l.json'
+            file = 'automatic_generated_input_l.json'
 
     data = write_json(size)
 

@@ -29,11 +29,11 @@ protected:
      * Generates a small input dataset and reads it into the ParticleContainer
      */
     void readSmallData() {
-        if (std::system("python ../../input/generate_json.py --size small")) {
+        if (std::system("python ../../input/generate_json.py --size small --output small.json")) {
             FAIL()<<"There was a problem generating the input file in the tests!";
         }
 
-        ParticleGenerator::generateParticles(p1, "../../input/files/random_generated_input_s.json");
+        ParticleGenerator::generateParticles(p1, "../../input/files/small.json");
     }
 
     /**
@@ -41,22 +41,22 @@ protected:
      */
 
     void readMediumData() {
-        if (std::system("python ../../input/generate_json.py --size medium")) {
+        if (std::system("python ../../input/generate_json.py --size medium --output medium.json")) {
             FAIL()<<"There was a problem generating the input file in the tests!";
         }
 
-        ParticleGenerator::generateParticles(p1, "../../input/files/random_generated_input_m.json");
+        ParticleGenerator::generateParticles(p1, "../../input/files/medium.json");
     }
 
     /*
      * Generates a large input dataset and reads it into the ParticleContainer
      */
     void readLargeData() {
-        if (std::system("python ../../input/generate_json.py --size large")) {
+        if (std::system("python ../../input/generate_json.py --size large --output large.json")) {
             FAIL()<<"There was a problem generating the input file in the tests!";
         }
 
-        ParticleGenerator::generateParticles(p1, "../../input/files/random_generated_input_l.json");
+        ParticleGenerator::generateParticles(p1, "../../input/files/large.json");
     }
 };
 
@@ -75,7 +75,7 @@ TEST_F(ContainerTest, DefaultConstructor) {
 TEST_F(ContainerTest, SmallDataSetSize) {
     ContainerTest::readSmallData();
     ASSERT_EQ(p1.size(), 120);
-    if (std::remove("../../input/files/random_generated_input_s.json")) {
+    if (std::remove("../../input/files/small.json")) {
         FAIL()<<"There was a problem deleting the generated (small dataset) JSON file";
     }
 }
@@ -88,7 +88,7 @@ TEST_F(ContainerTest, SmallDataSetSize) {
 TEST_F(ContainerTest, MediumDataSetSize) {
     ContainerTest::readMediumData();
     EXPECT_EQ(p1.size(), 432);
-    if (std::remove("../../input/files/random_generated_input_m.json")) {
+    if (std::remove("../../input/files/medium.json")) {
         FAIL()<<"There was a problem deleting the generated (medium dataset) JSON file";
     }
 }
@@ -100,8 +100,8 @@ TEST_F(ContainerTest, MediumDataSetSize) {
  */
 TEST_F(ContainerTest, LargeDataSetSize) {
     ContainerTest::readLargeData();
-    EXPECT_EQ(p1.size(), 768);
-    if (std::remove("../../input/files/random_generated_input_l.json")) {
+    EXPECT_EQ(p1.size(), 576);
+    if (std::remove("../../input/files/large.json")) {
         FAIL()<<"There was a problem deleting the generated (large dataset) JSON file";
     }
 }
