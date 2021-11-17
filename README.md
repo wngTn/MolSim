@@ -63,31 +63,31 @@ Also, you need the xerces-c library for the parsers we use in the program:
 The general program call is:
 
 ```shell
-./MolSim [-i <input_file>] [-t <input type>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calculator>] [-b <brownian_motion_velocity_mean>] [-m <execution_mode>]
+./MolSim [-i <input_file>] [-g <generator input>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calculator>] [-b <brownian_motion_velocity_mean>] [-r] [-m <execution_mode>]
 ```
 
 | Flag   | Possible Values | Explanation | Default |
 |----------|:-------------:|-------------| ------- |
 | `i` |  `path/to/file` | This is the relative or absolute path to your `input_file`. | *None*
-| `t` |  g, generate, r, random, *\<omit>* | Indicates the input type: <tt> g/generate</tt> if you input a `JSON` file, and <tt>r/random</tt> if you want to generate a random input file, with the input format from assignment 1. If you omit this flag, the input file format of assignment 1 will be chosen. | *None*
+| `g` |  `path/to/file`| Specify an input file used for the ParticleGenerator. | *None*
 | `e` |  \<double> | The end_time value | 1000
 | `d` | \<double> | The delta_t value | 0.14
 | `w` | v, vtk, x, xyz | Specifies the output writer, consequently also the output file format | v (vtk)
 | `c` | g, grav, gravitation, lj, lennardjones | Declares what forces between the particles should be calculated | lj (lennardjones)
-| `b` | \<double> | The <tt>brownian motion velocity mean</tt>. **Will be overwritten by the JSON file generated particles** | *None*
+| `b` | \<double> | The <tt>brownian motion velocity mean</tt>. **Will be discarded for the JSON file generated particles** | *None*
+| `r` | *None* | Specifies whether random particles should be generated. | *None*
 | `m` | normal, debug, benchmark | Specifies which execution mode should be used. **Debug** to enable logging, **normal** to disable logging or **benchmark** to disable all output files | normal
 
-> ⚠️ **Random generated files (t flag)** only support the input file format of assignment 1. Also, you will need Python 3 to use it.
+> ⚠️ **Random generated files** only support the input file format of assignment 1. Also, you will need Python 3 to use it.
 
 Example:
 
 ```shell
-./MolSim -i ../input_assignment_2.json -t g -e 5 -d 0.0002
+./MolSim -g ../input_assignment_2.json -e 5 -d 0.0002
 ```
 
 This will use:
-- <tt>input_assignment_2.json</tt> as `input_file`
-- <tt>generate</tt> as `input_type` (uses JSON-file to setup the particles)
+- <tt>input_assignment_2.json</tt> as `input_file` for the ParticleGenerator
 - <tt>5</tt> as `end_time`,
 - <tt>0.0002</tt> as `delta_t`
 - <tt>vtk</tt> as `writer` (default)
@@ -102,7 +102,6 @@ Another example:
 ```
 This will use:
 - <tt>eingabe-sonne.txt</tt> as `input_file`
-- *because file format of assignment 1 is used, the t flag is omitted*
 - <tt>1000</tt> as `end_time` (default)
 - <tt>0.14</tt> as `delta_t` default)
 - <tt>vtk</tt> as `writer` (default)
