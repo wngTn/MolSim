@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "ParticleContainer.h"
+#include "utils/ParticleGenerator.h"
 
 /**
  * Fixture test
@@ -23,6 +24,40 @@ protected:
     void init() {
         p1 = ParticleContainer{};
     }
+
+    /**
+     * Generates a small input dataset and reads it into the ParticleContainer
+     */
+    void readSmallData() {
+        if (std::system("python ../../input/generate_json.py --size small")) {
+            FAIL()<<"There was a problem generating the input file in the tests!";
+        }
+
+        ParticleGenerator::generateParticles(p1, "../../input/files/random_generated_input_s.json");
+    }
+
+    /**
+     * Generates a medium input dataset and reads it into the ParticleContainer
+     */
+
+    void readMediumData() {
+        if (std::system("python ../../input/generate_json.py --size medium")) {
+            FAIL()<<"There was a problem generating the input file in the tests!";
+        }
+
+        ParticleGenerator::generateParticles(p1, "../../input/files/random_generated_input_m.json");
+    }
+
+    /*
+     * Generates a large input dataset and reads it into the ParticleContainer
+     */
+    void readLargeData() {
+        if (std::system("python ../../input/generate_json.py --size large")) {
+            FAIL()<<"There was a problem generating the input file in the tests!";
+        }
+
+        ParticleGenerator::generateParticles(p1, "../../input/files/random_generated_input_l.json");
+    }
 };
 
 /**
@@ -31,6 +66,46 @@ protected:
 TEST_F(ContainerTest, DefaultConstructor) {
     EXPECT_EQ(0u, p1.size());
 }
+
+/**
+ * Tests whether the FileReader correctly parses the JSON and
+ * whether the ParticleContainer has the correct size with a small input size
+ * Then proceeds to delete the file
+ */
+TEST_F(ContainerTest, SmallDataSetSize) {
+    ContainerTest::readSmallData();
+    ASSERT_EQ(p1.size(), 120);
+    if (std::remove("../../input/files/random_generated_input_s.json")) {
+        FAIL()<<"There was a problem deleting the generated (small dataset) JSON file";
+    }
+}
+
+/**
+ * Tests whether the FileReader correctly parses the JSON and
+ * whether the ParticleContainer has the correct size with a medium input size
+ * Then proceeds to delete the file
+ */
+TEST_F(ContainerTest, MediumDataSetSize) {
+    ContainerTest::readMediumData();
+    EXPECT_EQ(p1.size(), 432);
+    if (std::remove("../../input/files/random_generated_input_m.json")) {
+        FAIL()<<"There was a problem deleting the generated (medium dataset) JSON file";
+    }
+}
+
+/**
+ * Tests whether the FileReader correctly parses the JSON and
+ * whether the ParticleContainer has the correct size with a large input size
+ * Then proceeds to delete the file
+ */
+TEST_F(ContainerTest, LargeDataSetSize) {
+    ContainerTest::readLargeData();
+    EXPECT_EQ(p1.size(), 768);
+    if (std::remove("../../input/files/random_generated_input_l.json")) {
+        FAIL()<<"There was a problem deleting the generated (large dataset) JSON file";
+    }
+}
+
 
 
 /**
@@ -103,5 +178,11 @@ INSTANTIATE_TEST_SUITE_P(
                 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u, 10u, 11u, 12u
         )
 );
+
+/*
+ * Tests whether the Filereader correctly parses the JSON file
+ */
+
+
 
 
