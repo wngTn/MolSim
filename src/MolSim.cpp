@@ -182,7 +182,6 @@ void initializeParticles(ParticleContainer &particles) {
     }
     // if -r flag is set, generate random input using python script
     if (randomGen) {
-        std::cout << "Generating random input... (this needs python to be installed)\n";
         // maybe change particle amount
         if (std::system("python ../generate_input.py -n 24 -o input.txt")) {
             spdlog::critical("Error while generating random input.");
