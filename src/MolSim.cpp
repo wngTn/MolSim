@@ -78,12 +78,9 @@ static void get_arguments(int argc, char *argv[]) {
             case 'i':
                 filename = optarg;
                 break;
-            case 't':
-                if (std::string("g") == optarg || std::string("generate") == optarg) {
-                    generate = true;
-                } else if (std::string("r") == optarg || std::string("random") == optarg) {
-                    randomGen = true;
-                }
+            case 'g':
+                generate = true;
+                generator_file = optarg;
                 break;
             case 'e':
                 end_time = std::stod(optarg);
@@ -130,9 +127,9 @@ static void get_arguments(int argc, char *argv[]) {
         }
     }
     std::cout << "Your configurations are:" << std::endl;
-    std::cout << "\u001b[36m\tFilename:\u001b[0m " << filename << std::endl;
-    std::cout << "\u001b[36m\tType_input:\u001b[0m " << ((randomGen) ? "Random values" : (generate) ?
-                                                                                         "Values from json file" : "Values from ordinary file") << std::endl;
+    if(!filename.empty()) std::cout << "\u001b[36m\tFilename:\u001b[0m " << filename << std::endl;
+    if(generate) std::cout << "\u001b[36m\tGenerator Input:\u001b[0m " << generator_file << std::endl;
+    if(randomGen) std::cout << "\u001b[36m\tRandom Generation\u001b[0m\n";
     std::cout << "\u001b[36m\tEnd_time:\u001b[0m " << end_time << (end_time == 1000 ? "(Default)" : "") << std::endl;
     std::cout << "\u001b[36m\tDelta_t:\u001b[0m " << delta_t << (delta_t == 0.014 ? "(Default)" : "") << std::endl;
 }
@@ -253,8 +250,8 @@ int main(int argc, char *argv[]) {
     // ------ end setup ------ //
     if(benchmarking){
         std::cout
-        << "Elapsed setup time [ns]:"
-        << std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now() - start_setup).count()
+        << "Elapsed setup time [microseconds]: "
+        << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start_setup).count()
         << std::endl;
     }
 
@@ -292,7 +289,7 @@ int main(int argc, char *argv[]) {
     // ------ end calculation ------ //
     if(benchmarking){
         std::cout
-                << "Elapsed calculation time [ms]: "
+                << "Elapsed calculation time [milliseconds]: "
                 << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start_calc).count()
                 << std::endl;
     }else{
