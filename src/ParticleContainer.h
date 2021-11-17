@@ -85,7 +85,7 @@ public:
          * @return The particle pair
          */
         reference operator*() {
-            return std::make_pair<std::reference_wrapper<Particle>, std::reference_wrapper<Particle>>(vec[i], vec[j]);
+            return {vec[i], vec[j]};
         }
 
         /**
