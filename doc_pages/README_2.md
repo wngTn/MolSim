@@ -153,7 +153,7 @@ This will use:
 Another example:
 
 ```shell
-,/MolSim -i ../eingabe-sonne.txt -c grav
+./MolSim -i ../eingabe-sonne.txt -c grav -m debug
 ```
 This will use:
 - <tt>eingabe-sonne.txt</tt> as `input_file`
@@ -163,6 +163,7 @@ This will use:
 - <tt>vtk</tt> as `writer` (default)
 - <tt>gravitation</tt> as `calculator`
 - No `brownian motion velocity mean`
+- <tt>debug</tt> execution mode
 
 
 
