@@ -14,6 +14,7 @@
 #include <iostream>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/basic_file_sink.h>
+#include <filesystem>
 
 /// Default start_time (end_time - start_time = total_runtime)
 static double start_time = 0;
@@ -169,10 +170,10 @@ void initializeParticles(ParticleContainer &particles) {
         return;
         // if no input file has been specified, generate random input using python script
     } else if (randomGen && filename.empty()) {
-        std::cout << "No input file specified, generating random input... (this needs python to be installed)\n";
+        // std::cout << "No input file specified, generating random input... (this needs python to be installed)\n";
         // maybe change particle amount
-        std::system("python ../generate_input.py -n 24 -o input.txt");
-        filename = "input.txt";
+        std::system("python ../input/generate_input.py -n 24 -o auto_gen_input.txt");
+        filename = "../input/files/auto_gen_input.txt";
     } else if (filename.empty()) {
         std::cout << "Please specify an input file" << std::endl;
     } else {
@@ -219,7 +220,8 @@ int main(int argc, char *argv[]) {
 
     std::cout << "Your configurations are:" << std::endl;
     std::cout << "\u001b[36m\tFilename:\u001b[0m " << filename << std::endl;
-    std::cout << "\u001b[36m\tType_input:\u001b[0m " << ((randomGen) ? "Random values" : (generate) ?
+    std::cout << "\u001b[36m\tType_input:\u001b[0m " << ((randomGen) ? "Random values are generated "
+                                                                       "(needs Python3)" : (generate) ?
         "Values from json file" : "Values from ordinary file") << std::endl;
     std::cout << "\u001b[36m\tEnd_time:\u001b[0m " << end_time << (end_time == 1000 ? "(Default)" : "") << std::endl;
     std::cout << "\u001b[36m\tDelta_t:\u001b[0m " << delta_t << (delta_t == 0.014 ? "(Default)" : "") << std::endl;

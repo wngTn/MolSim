@@ -1,6 +1,13 @@
 import getopt
 import random
 import sys
+import os
+
+# points to input directory
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# points to where we want to save the files
+SAVE_DIR = os.path.join(ROOT_DIR, 'files')
 
 MAX_V = 1.0
 MIN_V = -1.
@@ -82,12 +89,12 @@ if __name__ == '__main__':
             file = arg
 
     if file == '':
-        file = 'output.txt'
+        file = 'random_generated_output.txt'
 
     # file, particle_count = get_input()
     coords, vels, masses = generate_values(particle_count)
     zipped = list(zip(coords, vels, masses))
-    with open(file, "w") as f:
+    with open(os.path.join(SAVE_DIR, file), "w") as f:
         f.write("# xyz coord    velocity    mass\n")
         f.write(str(particle_count) + "\n")
         f.writelines([f'{x} {y} {z}    {v1} {v2} {v3}    {m}\n' for ((x, y, z), (v1, v2, v3), m) in zipped])
