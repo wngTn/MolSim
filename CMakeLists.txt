@@ -9,7 +9,7 @@ option(BUILD_DOC "Build documentation" ON)
 
 # indicate the test build as an option and set it to ON by default
 # to disable write cmake -D BUILD_TEST=OFF
-option(BUILD_TEST "Build tests" ON)
+option(BUILD_TEST "Build tests" OFF)
 
 set(This MolSim)
 
