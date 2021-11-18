@@ -251,15 +251,32 @@ pwd
     1. Generate the small dataset: `python ../input/generate_json.py --size small`
     2. **Specify the correct `end_time` and `delta_t` value**: `./MolSim -g ../input/files/automatic_generated_input_l.json -e 5 -d 0.0002 -m benchmark`
 
-The results can be observed in our slides!
-
-
-> 📝 **Careful:** Make sure to enable the benchmark mode (-m benchmark) and specify the correct `end_time` 
+> 📝 **Careful:** Make sure to enable the benchmark mode (-m benchmark) and specify the correct `end_time`
 > and `delta_t` values.
-> 
+>
 > Also, the large dataset might take some minutes (~3-4min) to finish
-> 
+>
 > PS: Be aware to set your build type to RELEASE (not DEBUG 🙂)
+
+We have tested our benchmarks on three different machines:
+- Intel Core i5-4460  CPU @ 3.20GHz, 4 Cores - 8 GB RAM (Native Linux)
+- Intel Core i5-8265 U CPU @ 1.80GHz, 4 Cores - 8 GB RAM (Native Linux)
+- Macbook Pro (M1 Pro, 2021) - 16 GB RAM (macOS)
+
+There we compared:
+1. Compile-Time (we used `make  -j4`) 
+2. Setup-Time 
+3. Runtime
+
+### Compile-Time
+![](../media/week_2/Compile_Time.jpg)
+
+
+### Setup-Time
+![](../media/week_2/Setup_Time.jpg)
+
+### Run-Time
+![](../media/week_2/Run_Time.jpg)
 
 
 
