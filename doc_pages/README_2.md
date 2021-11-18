@@ -79,6 +79,18 @@ cmake .. # Makefile won't build the tests anymore
 
 ## Task - Logging ##
 
+As suggested we chose spdlog as our logging tool and implemented a simple logger in MolSim. We put the logging there, because we have easy access to all the data we want to log. Also, we decided against an asynchronous logger, as the basic logger is really fast already and with the execution mode flag we introduced a way to enable this time-consuming task when needed:
+
+    ./MolSim [...] -m debug
+
+The log file and all future log files are saved here:
+
+````
+build/
+└── logs/
+      ├── molsim.log
+      └── future.log
+````
 
 ## Task - Lennard Jones Potential ##
 
