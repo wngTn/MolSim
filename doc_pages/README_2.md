@@ -79,6 +79,19 @@ cmake .. # Makefile won't build the tests anymore
 
 ## Task - Logging ##
 
+As suggested we chose spdlog as our logging tool and implemented a simple logger in MolSim. We put the logging there, because we have easy access to all the data we want to log. Also, we decided against an asynchronous logger, as the basic logger is really fast already and with the execution mode flag we introduced a way to enable this task when needed:
+
+    ./MolSim [...] -m debug
+
+The log file and all future log files are saved here:
+
+````
+build/
+├── ...
+└── logs/
+    ├── molsim.log
+    └── future.log
+````
 
 ## Task - Lennard Jones Potential ##
 
@@ -261,8 +274,17 @@ The results can be observed in our slides!
 > 
 > PS: Be aware to set your build type to RELEASE (not DEBUG 🙂)
 
+# Media #
+## Fun with blocks ##
+Here is the animation of two colliding blocks from the worksheet:
 
+![](../media/week_2/velocity_blocks.gif)
 
+## Fun with spheres ##
+
+We also generated a sphere and shot a single particle with high speed into it:
+
+![](../media/week_2/sphere.gif)
 ## Miscellaneous ##
 
 In this assignment we managed to run the program on the new 
