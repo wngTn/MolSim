@@ -10,18 +10,19 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 SAVE_DIR = os.path.join(ROOT_DIR, 'files')
 
 output_sizes = {
-    's': [3, 2, 10, 2], # -> 120 particles
+    's': [3, 2, 10, 2],  # -> 120 particles
     'small': [3, 2, 10, 2],
-    'm': [3, 3, 12, 4], # -> 432 particles
+    'm': [3, 3, 12, 4],  # -> 432 particles
     'medium': [3, 3, 12, 4],
-    'l': [4, 3, 12, 4], # -> 576 particles
+    'l': [4, 3, 12, 4],  # -> 576 particles
     'large': [4, 3, 12, 4]
 }
 
 
 def write_json(size):
     if size not in ('s', 'small', 'm', 'medium', 'l', 'large'):
-        print("Didn't specify correct size, uses default (small)")
+        print("Didn't specify a vlid size, uses default (small.")
+        print("Valid sizes are: s, small, m, medium, l and large.")
 
     data = {'shapes': []}
     for x in range(output_sizes.get(size)[0]):
@@ -46,13 +47,13 @@ def write_json(size):
     #         'mass': 1.0,
     #         'brownianFactor': 0.1,
     #         'brownianDIM': 3,
-    #         'radius': 2.0
+    #         'radius': 1.0
     #     })
     return data
 
 
 def help_msg():
-    print('usage: python generate_json.py [-s <size>][-o <outputfile>]')
+    print('usage: python generate_json.py [-s <size>][-o <outfile>]')
     print('\tpossible value for size: s/small, m/medium, l/large')
 
 

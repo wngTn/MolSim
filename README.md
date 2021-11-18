@@ -8,9 +8,34 @@
   </p>
 </div>
 
-> **NOTE**: This is not the README of the assignment. It is simply a README for the whole project. The READMEs
-> for the assignments can be found in the `./doc_pages` directory.
 
+> <span style="color:red">**NOTE**: This is not the README of the assignment. It is simply a README for the whole project. The READMEs
+> for the assignments can be found in the `./doc_pages` directory.</span>.
+
+
+# Warning # 
+
+> ⚠️ **If you have slow internet**: We fetch three packages with *FetchContent*,
+> thus the initial CMake-build may take some time (~1min)
+
+> ⚠️ **File structure**: Please put the `build` directory (the directory you
+> execute `make`) directly in the root project path, else the automatically generated files
+> will not work properly. Like such:
+> ```
+> MolSim
+> .
+> ├── CMakeLists.txt
+> ├── Doxyfile
+> ├── README.md
+> ├── build/
+> ├── cmake/
+> ├── doc_pages/
+> ├── input/
+> ├── libs/
+> ├── media/
+> ├── src/
+> └── test/
+> ```
 
 <!-- GETTING STARTED -->
 ## Getting Started

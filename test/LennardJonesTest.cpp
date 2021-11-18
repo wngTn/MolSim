@@ -57,16 +57,23 @@ protected:
  * Uses different sizes, sigmas and epsilons
  */
 TEST_P(ParameterizedLennardJonesTest, LennardJonesTest) {
+    // gets the parameter that it will be tested with
     auto [size, sigma, eps] = GetParam();
     setSize(size);
 
+    // create another ParticleContainer
     ParticleContainer p_reference = ParameterizedLennardJonesTest::p_result;
+
+    // calculate our result
     calculator::LennardJones lj{sigma, eps};
     lj.calcF(p_result);
+
+    // the naive version
     ljnaive(p_reference, sigma, eps);
 
-
-    for (auto it1 = p_result.begin(), it2 = p_reference.begin(); it1 != p_result.end() && it2 != p_reference.end(); it1++, it2++) {
+    // Iterate through both container
+    for (auto it1 = p_result.begin(), it2 = p_reference.begin(); it1 != p_result.end() &&
+    it2 != p_reference.end(); it1++, it2++) {
         for (int i = 0; i < 3; i++) {
             // If one element does not match we can basically stop testing and get out of the loop
             ASSERT_DOUBLE_EQ(it1->getX()[i], it2->getX()[i]);
