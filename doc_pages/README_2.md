@@ -114,7 +114,7 @@ This is the `./input/files/input_assignment_2.json` file.
       "distance": 1.1225,
       "mass": 1.0,
       "brownianFactor": 0.1,
-      "brownianDIM": 3
+      "brownianDIM": 2
     },
     {
       "type": "cuboid",
@@ -124,7 +124,7 @@ This is the `./input/files/input_assignment_2.json` file.
       "distance": 1.1225,
       "mass": 1.0,
       "brownianFactor": 0.1,
-      "brownianDIM": 3
+      "brownianDIM": 2
     }
   ]
 }
@@ -239,17 +239,17 @@ pwd
 ```
 2. Benchmarking with the small dataset:
    1. Generate the small dataset: `python ../input/generate_json.py --size small`
-   2. **We have used 1 as `end_time` and 0.0002 as our `delta_t`**: `./MolSim -g ../input/files/automatic_generated_input_s.json -e 1 -d 0.0002 -m benchmark`
+   2. **We have used 1 as `end_time` and 0.0002 as our `delta_t`**: `./MolSim -g ../input/files/automatic_generated_input_s.json -e 5 -d 0.0002 -m benchmark`
 
 
 
 3. Benchmarking the medium dataset:
     1. Generate the medium dataset: `python ../input/generate_json.py --size medium`
-    3. **Specify the correct `end_time` and `delta_t` value**: `./MolSim -g ../input/files/automatic_generated_input_m.json -e 1 -d 0.0002 -m benchmark`
+    3. **Specify the correct `end_time` and `delta_t` value**: `./MolSim -g ../input/files/automatic_generated_input_m.json -e 5 -d 0.0002 -m benchmark`
 
 4. Benchmarking the large dataset:
     1. Generate the small dataset: `python ../input/generate_json.py --size small`
-    2. **Specify the correct `end_time` and `delta_t` value**: `./MolSim -g ../input/files/automatic_generated_input_l.json -e 1 -d 0.0002 -m benchmark`
+    2. **Specify the correct `end_time` and `delta_t` value**: `./MolSim -g ../input/files/automatic_generated_input_l.json -e 5 -d 0.0002 -m benchmark`
 
 The results can be observed in our slides!
 
@@ -257,7 +257,9 @@ The results can be observed in our slides!
 > 📝 **Careful:** Make sure to enable the benchmark mode (-m benchmark) and specify the correct `end_time` 
 > and `delta_t` values.
 > 
-> Also, the large dataset might take some minutes (~4min) to finish 
+> Also, the large dataset might take some minutes (~3-4min) to finish
+> 
+> PS: Be aware to set your build type to RELEASE (not DEBUG 🙂)
 
 
 
