@@ -18,14 +18,33 @@ In this assignment we have used the compiler `g++ 11.1.0`.
 > ⚠️ **If you have slow internet**: We fetch three packages with *FetchContent*,
 > thus the initial CMake-build may take some time (~1min)
 
+> ⚠️ **File structure**: Please put the `build` directory (the directory you 
+> execute `make`) directly in the root project path, else the automatically generated files
+> will not work properly. Like such:
+> ```
+> MolSim
+> .
+> ├── CMakeLists.txt
+> ├── Doxyfile
+> ├── README.md
+> ├── build/
+> ├── cmake/
+> ├── doc_pages/
+> ├── input/
+> ├── libs/
+> ├── media/
+> ├── src/
+> └── test/
+> ```
+
 ## Task - Googletest ##
 
 We decided to include the googletest library with CMakes *FetchContent*. Thus,
 it is required to have reasonably fast and stable internet to successfully build with CMake 
 (*Deutsche Bahn*-wifi with 20 Mb/s download speed is still enough).
 
-The CMake automatically enables building the tests. Therefore, to run the tests,
-simply execute CMake as usual, head to your `build` folder, go to the `test` subfolder
+The CMake does not automatically enable building the tests. Therefore, to run the tests,
+you have to explicitly turn on the option. Thereafter, you can head to your `build` folder, go to the `test` subfolder
 and run `ctest`. 
 
 ### Running the tests ###
@@ -34,14 +53,14 @@ and run `ctest`.
 ```shell
 mkdir build && cd build 
 ``` 
-2. Build everything, including the tests in the build directory
+2. Build everything, including the tests in the build directory by turning on the option:
 ```shell
-cmake .. # building tests is default ON
+cmake .. -DBUILD_TEST=ON
 ``` 
 
 3. Compile everything, including the tests:
 ```shell
-make # use "make -j4" for faster compilation
+make # use "make -j6" for faster compilation
 ``` 
 
 5. Change directory to `test` and run `ctest`:
@@ -52,10 +71,10 @@ cd test && ctest
 ### Disabling the tests ###
 
 If you do not want to compile the tests, you can turn off the build option
-in the CMake (Step 2):
+in the CMake by executing cmake without any arguments (Step 2):
 
 ```shell
-cmake .. -DBUILD_TEST=OFF # Makefile won't build the tests anymore
+cmake .. # Makefile won't build the tests anymore
 ```
 
 ## Task - Logging ##
@@ -72,6 +91,7 @@ For every shape of those you have to specify the following:
 | type |  "cuboid", "sphere" |
 | pos |  [\<double>, \<double>, \<double>]   | 
 | vel |  [\<double>, \<double>, \<double>] |
+| radius <br> <div style="font-size: 8pt">*Only for "spheres"*</div> | \<double> |
 | N | [\<int>, \<int>, \<int>] |
 | distance | \<double> |
 | mass | \<double> |
@@ -80,7 +100,8 @@ For every shape of those you have to specify the following:
 
 > 🚧 **There are two implementations for generating spheres, one is suited for LJP, one not. Currently the one working for LJP is used**
 
-Here is an example for an input file, which creates two "cuboid" shapes:
+Here is an example for an input file, which creates two "cuboid" shapes: \
+This is the `./input/files/input_assignment_2.json` file.
 ```json
 {
   "shapes":
@@ -108,12 +129,52 @@ Here is an example for an input file, which creates two "cuboid" shapes:
   ]
 }
 ```
+
+If you use the "sphere" type, you have to additionally provide a radius! \
+For example:
+
+```json
+{
+  "shapes":
+  [
+    {
+      "type": "sphere",
+      "pos": [0.0,0.0,0.0],
+      "vel": [0.0, 0.0,0.0],
+      "radius": 1.0,
+      "distance": 1.1225,
+      "mass": 1.0,
+      "brownianFactor": 0.0,
+      "brownianDIM": 3
+    },
+    {
+      "type": "cuboid",
+      "pos": [15.0,1.0,1.0],
+      "vel": [-175.0,-0.5,-0.5],
+      "N": [12,12,12],
+      "distance": 1.1225,
+      "mass": 50.0,
+      "brownianFactor": 0.0,
+      "brownianDIM": 3
+    }
+  ]
+}
+```
+
 > ⚠️ **If you do not comply to these specifications, it may lead to unexpected behavior**
 
 ### How to run the program ### 
 
 In this assignment, our input format has changed a little, to give you - 
 our sacred and precious user - even more functionality!
+
+First and foremost, build and Compile our program as usual:
+
+```shell
+mkdir build && cd build
+cmake ..
+make
+```
 
 The general program call is now:
 
@@ -138,7 +199,7 @@ The general program call is now:
 Example:
 
 ```shell
-./MolSim -g ../input_assignment_2.json -e 5 -d 0.0002
+./MolSim -g ../input/files/input_assignment_2.json -e 5 -d 0.0002
 ```
 
 This will use:
@@ -153,7 +214,7 @@ This will use:
 Another example:
 
 ```shell
-./MolSim -i ../eingabe-sonne.txt -c grav -m debug
+./MolSim -i ../input/files/eingabe-sonne.txt -c grav -m debug
 ```
 This will use:
 - <tt>eingabe-sonne.txt</tt> as `input_file`
@@ -168,6 +229,35 @@ This will use:
 
 
 ## Benchmarking ##
+
+### Recreating our benchmarks ###
+
+1. Build and compile the program. Your current work directory should be the build directory:
+```shell
+pwd
+/path/to/build
+```
+2. Benchmarking with the small dataset:
+   1. Generate the small dataset: `python ../input/generate_json.py --size small`
+   2. **We have used 1 as `end_time` and 0.0002 as our `delta_t`**: `./MolSim -g ../input/files/automatic_generated_input_s.json -e 1 -d 0.0002 -m benchmark`
+
+
+
+3. Benchmarking the medium dataset:
+    1. Generate the medium dataset: `python ../input/generate_json.py --size medium`
+    3. **Specify the correct `end_time` and `delta_t` value**: `./MolSim -g ../input/files/automatic_generated_input_m.json -e 1 -d 0.0002 -m benchmark`
+
+4. Benchmarking the large dataset:
+    1. Generate the small dataset: `python ../input/generate_json.py --size small`
+    2. **Specify the correct `end_time` and `delta_t` value**: `./MolSim -g ../input/files/automatic_generated_input_l.json -e 1 -d 0.0002 -m benchmark`
+
+The results can be observed in our slides!
+
+
+> 📝 **Careful:** Make sure to enable the benchmark mode (-m benchmark) and specify the correct `end_time` 
+> and `delta_t` values.
+> 
+> Also, the large dataset might take some minutes (~4min) to finish 
 
 
 
@@ -216,7 +306,7 @@ make -j
 ```
 
 ---
-**NOTE**
+**📝 NOTE**
 
 We use ANSI escape sequences for our console output. If you do not see any color and
 see seemingly random sequences, switch to a Unix operating system :).
