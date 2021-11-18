@@ -269,6 +269,12 @@ pwd
     1. Generate the small dataset: `python ../input/generate_json.py --size small`
     2. **Specify the correct `end_time` and `delta_t` value**: `./MolSim -g ../input/files/automatic_generated_input_l.json -e 5 -d 0.0002 -m benchmark`
 
+> 📝 **Careful:** Make sure to enable the benchmark mode (-m benchmark) and specify the correct `end_time`
+> and `delta_t` values.
+>
+> Also, the large dataset might take some minutes (~3-4min) to finish
+>
+> PS: Be aware to set your build type to RELEASE (not DEBUG 🙂)
 
 ### Benchmark results
 
@@ -291,15 +297,6 @@ There we compared:
 
 ### Run-Time
 ![](../media/week_2/Run_Time.jpg)
-
-
-
-> 📝 **Careful:** Make sure to enable the benchmark mode (-m benchmark) and specify the correct `end_time` 
-> and `delta_t` values.
-> 
-> Also, the large dataset might take some minutes (~3-4min) to finish
-> 
-> PS: Be aware to set your build type to RELEASE (not DEBUG 🙂)
 
 # Media #
 ## Fun with blocks ##
