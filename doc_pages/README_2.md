@@ -243,6 +243,12 @@ This will use:
 
 ## Benchmarking ##
 
+In our benchmarks we have used three datasets: a small, medium and large dataset:
+
+- Small dataset contains 120 particles
+- Medium dataset contains 432 particles
+- Large dataset contains 768 particles
+
 ### Recreating our benchmarks ###
 
 1. Build and compile the program. Your current work directory should be the build directory:
@@ -253,8 +259,7 @@ pwd
 2. Benchmarking with the small dataset:
    1. Generate the small dataset: `python ../input/generate_json.py --size small`
    2. **We have used 1 as `end_time` and 0.0002 as our `delta_t`**: `./MolSim -g ../input/files/automatic_generated_input_s.json -e 5 -d 0.0002 -m benchmark`
-
-
+   
 
 3. Benchmarking the medium dataset:
     1. Generate the medium dataset: `python ../input/generate_json.py --size medium`
