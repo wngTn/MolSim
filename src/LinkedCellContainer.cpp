@@ -1,6 +1,6 @@
 #include "LinkedCellContainer.h"
 
-const std::vector<LinkedCellContainer::Cell> &LinkedCellContainer::getGrid() const {
+std::vector<LinkedCellContainer::Cell> &LinkedCellContainer::getGrid() {
     return grid;
 }
 
@@ -38,12 +38,4 @@ void LinkedCellContainer::setZ(int z) {
 
 void LinkedCellContainer::setRCut(double rCutV) {
     LinkedCellContainer::rCut = rCutV;
-}
-
-void LinkedCellContainer::addParticle(const Particle & particle, int i) {
-    grid[i].emplace_back(particle);
-}
-
-void LinkedCellContainer::addParticle(const std::vector<Particle> &particles, int i) {
-    grid[i].setParticles(particles);
 }

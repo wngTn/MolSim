@@ -66,22 +66,10 @@ struct LinkedCellContainer {
 //    template<int i>
 //    [[nodiscard]] std::vector<Cell> getNeighbors() const;
 
-    /**
-     * Adds a particle to the grid in the cell with the index i
-     * @param particle the particle that should be added
-     * @param i the index of the cell
-     */
-    void addParticle(const Particle & particle, int i);
-
-    /**
-     * Adds a particle list to the grid in the cell with the index i
-     * @param particles the particles that should be added
-     * @param i the index of the cell
-     */
-    void addParticle(const std::vector<Particle> & particles, int i);
-
     /***** Getters *****/
-    [[nodiscard]] const std::vector<LinkedCellContainer::Cell> &getGrid() const;
+
+    /* This is not const */
+    std::vector<LinkedCellContainer::Cell> &getGrid();
 
     [[nodiscard]] int getX() const;
 
@@ -108,6 +96,7 @@ struct LinkedCellContainer {
     int X{}, Y{}, Z{};
     double rCut{};
 };
+
 
 
 //template<int i>

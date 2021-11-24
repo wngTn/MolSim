@@ -13,57 +13,79 @@ TEST(LinkedCellContainerTest, ConstructorTest) {
     int Z = 1;
     double rCut = 1;
 
-    // This particle should be in the middle
-    Particle p1 = Particle(
-            std::array<double, 3>{0, 0, 0},
-            std::array<double, 3>{0, 0, 0},
-            .5,
-            0
-            );
-    // This particle should be in two squares on top and one to the right of particle p1
-    Particle p2 = Particle(
-            std::array<double, 3>{0.6, 1.6, 0},
-            std::array<double, 3>{1, 2, 3},
-            1,
-            1
-            );
 
     LinkedCellContainer linkedCellContainer = LinkedCellContainer(X, Y, Z, rCut);
 
     // 48 elements will be reserved, however, the size is still 0 - this says the grid was constructed though
-    ASSERT_EQ(linkedCellContainer.getGrid().size(), 0);
+    ASSERT_EQ(linkedCellContainer.getGrid().size(), 7*7);
 
-    linkedCellContainer.addParticle(p1, 24);
-    linkedCellContainer.addParticle(p2, 11);
+    linkedCellContainer.getGrid()[24].emplace_back(std::array<double, 3>{0, 0, 0},
+                                                   std::array<double, 3>{0, 0, 0},
+                                                   .5,
+                                                   0);
+    linkedCellContainer.getGrid()[11].emplace_back(std::array<double, 3>{0.6, 1.6, 0},
+                                                   std::array<double, 3>{1, 2, 3},
+                                                   1,
+                                                   1);
 
     ASSERT_EQ(linkedCellContainer.getGrid()[24].getParticles().size(), 1);
     ASSERT_EQ(linkedCellContainer.getGrid()[11].getParticles().size(), 1);
 
-    EXPECT_EQ(linkedCellContainer.getGrid()[24].getParticles()[0].getX(), p1.getX());
-    EXPECT_EQ(linkedCellContainer.getGrid()[11].getParticles()[0].getX(), p2.getX());
+    auto xRef = std::array<double, 3>{0, 0, 0};
+    auto xRef2 = std::array<double, 3>{0.6, 1.6, 0};
+
+    EXPECT_EQ(linkedCellContainer.getGrid()[24].getParticles()[0].getX(), xRef);
+    EXPECT_EQ(linkedCellContainer.getGrid()[11].getParticles()[0].getX(), xRef2);
 }
 
 /**
  * More sophisticated Test to check whether the Container saves the particles
  */
 
-class ParameterizedLinkedCellTest : public testing::TestWithParam<std::tuple<double, double>> {
+class ParameterizedLinkedCellTest : public testing::TestWithParam<std::tuple<int, int, int>> {
 protected:
     LinkedCellContainer p_result;
 
-//    /**
-//     * Populates the ParticleContainer with size
-//     * @param size the size of the container
-//     */
-//    void setSize(size_t size) {
-//        for (int i = 0; i < size; ++i) {
-//            p_result.addParticle().emplace_back(std::array<double, 3>{0.1 + i, 0.2 + i, 0.3},
-//                                  std::array<double, 3>{0., 0., 0.},
-//                                  static_cast<double>(i),
-//                                  i);
-//        }
-//    }
+    /**
+     * Populates the ParticleContainer with size
+     * @param size the size of the container
+     */
+    void setSize(size_t size) {
+        for (int i = 0; i < size; ++i) {
+            p_result.getGrid()[i].emplace_back(std::array<double, 3>{0.1 + i, 0.2 + i, 0.3},
+                                            std::array<double, 3>{0., 0., 0.},
+                                            static_cast<double>(i),
+                                            i);
+        }
+    }
+
 };
+
+TEST_P(ParameterizedLinkedCellTest, CorrectDimensionsTest) {
+    auto [X, Y, Z] = GetParam();
+    p_result = LinkedCellContainer(X, Y, Z, 1.);
+
+    setSize(X*Y*Z);
+
+    ASSERT_EQ(p_result.getGrid().size(), X*Y*Z);
+
+    for (int i = 0; i < p_result.getGrid().size(); ++i) {
+        ASSERT_EQ(p_result.getGrid()[i].getParticles()[0].getType(), i);
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(
+        CorrectDimensionsTest,
+        ParameterizedLinkedCellTest,
+        ::testing::Values(
+                std::make_tuple(1, 1, 1),
+                std::make_tuple(1, 2, 3),
+                std::make_tuple(2, 3, 4),
+                std::make_tuple(4, 3, 2),
+                std::make_tuple(5, 6, 7),
+                std::make_tuple(5, 7, 8)
+        )
+);
 
 /**
  * Tests whether the getNeighbor function really gets all neighbors
