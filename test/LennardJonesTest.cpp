@@ -57,6 +57,9 @@ protected:
  * Uses different sizes, sigmas and epsilons
  */
 TEST_P(ParameterizedLennardJonesTest, LennardJonesTest) {
+    // The rounding error we allow
+    double EPSILON_VALUE = 0.00000001;
+
     // gets the parameter that it will be tested with
     auto [size, sigma, eps] = GetParam();
     setSize(size);
@@ -77,6 +80,8 @@ TEST_P(ParameterizedLennardJonesTest, LennardJonesTest) {
         for (int i = 0; i < 3; i++) {
             // If one element does not match we can basically stop testing and get out of the loop
             ASSERT_DOUBLE_EQ(it1->getX()[i], it2->getX()[i]);
+            ASSERT_LE(fabs(it1->getF()[i] - it2->getF()[i]), EPSILON_VALUE);
+            ASSERT_DOUBLE_EQ(it1->getV()[i], it2->getV()[i]);
         }
     }
 }
