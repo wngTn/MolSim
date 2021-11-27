@@ -2,6 +2,7 @@
 
 #include <Particle.h>
 #include <LinkedCellContainer.h>
+#include <physicsCalculator/LinkedCell.h>
 
 /**
 * Simple test to check whether a particle will be added to the container
@@ -19,11 +20,11 @@ TEST(LinkedCellContainerTest, ConstructorTest) {
     // 48 elements will be reserved, however, the size is still 0 - this says the grid was constructed though
     ASSERT_EQ(linkedCellContainer.getGrid().size(), 7*7);
 
-    linkedCellContainer.getGrid()[24].emplace_back(std::array<double, 3>{0, 0, 0},
+    linkedCellContainer.grid[24].emplace_back(std::array<double, 3>{0, 0, 0},
                                                    std::array<double, 3>{0, 0, 0},
                                                    .5,
                                                    0);
-    linkedCellContainer.getGrid()[11].emplace_back(std::array<double, 3>{0.6, 1.6, 0},
+    linkedCellContainer.grid[11].emplace_back(std::array<double, 3>{0.6, 1.6, 0},
                                                    std::array<double, 3>{1, 2, 3},
                                                    1,
                                                    1);
@@ -52,7 +53,7 @@ protected:
      */
     void setSize(size_t size) {
         for (int i = 0; i < size; ++i) {
-            p_result.getGrid()[i].emplace_back(std::array<double, 3>{0.1 + i, 0.2 + i, 0.3},
+            p_result.grid[i].emplace_back(std::array<double, 3>{0.1 + i, 0.2 + i, 0.3},
                                             std::array<double, 3>{0., 0., 0.},
                                             static_cast<double>(i),
                                             i);

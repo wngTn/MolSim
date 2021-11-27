@@ -13,7 +13,7 @@ if(BUILD_TEST)
     set(Test_Sources
             ParticleContainerTest.cpp
             LennardJonesTest.cpp
-            main.cpp LinkedCellContainerTest.cpp)
+            main.cpp LinkedCellContainerTest.cpp LinkedCellTest.cpp)
 
     enable_testing()
 

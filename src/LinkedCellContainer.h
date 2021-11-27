@@ -4,6 +4,8 @@
 #include <Particle.h>
 #include "utils/ArrayUtils.h"
 #include <iostream>
+#include <cmath>
+#include <iterator>
 
 struct LinkedCellContainer {
     /**
@@ -24,6 +26,31 @@ struct LinkedCellContainer {
         }
 
         /**
+         * @brief Provides the iterator for single particles at the start of the collection
+         * @return iterator
+         */
+        std::vector<Particle>::iterator begin();
+
+        /**
+         * @brief Provides the iterator for single particles at the end of the collection
+         * @return iterator
+         */
+        std::vector<Particle>::iterator end();
+
+        /**
+         * @brief Provides the _const_ iterator for single particles at the start of the collection
+         * @return const iterator
+         */
+        [[nodiscard]] std::vector<Particle>::const_iterator begin() const;
+
+        /**
+         * @brief Provides the _const_ iterator for single particles at the end of the collection
+         * @return const iterator
+         */
+        [[nodiscard]] std::vector<Particle>::const_iterator end() const;
+
+
+        /**
          * @brief Moves an object to the collection, i.e. uses one of the constructor of the Particle class
          * and creates an object directly
          * @tparam Args Parameter pack
@@ -32,8 +59,14 @@ struct LinkedCellContainer {
         template<typename... Args>
         void emplace_back(Args &&... args);
 
+        /*
+         * Removes particle at the position
+         */
+        std::vector<Particle>::iterator erase (std::vector<Particle>::const_iterator position);
 
-     private:
+        void toString();
+
+    private:
         /**
          * The Particles in each cell
          */
@@ -45,18 +78,28 @@ struct LinkedCellContainer {
 
     /**
      * Normal Constructor, which creates a grid with X*Y*Z elements
-     * @param Xv length of X-Axis of the array (not the length of the domain)
-     * @param Yv length of Y-Axis of the array (not the length of the domain)
-     * @param Zv length of Z-Axis of the array (not the length of the domain)
+     * @param Xv length of X-Axis of the array == the length of the domain
+     * @param Yv length of Y-Axis of the array == the length of the domain
+     * @param Zv length of Z-Axis of the array == the length of the domain
      * @param rCutV the r_cut value
      */
-    LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV) : grid{std::vector<LinkedCellContainer::Cell>(Xv*Yv*Zv)}, X{Xv},
-        Y{Yv}, Z{Zv}, rCut{rCutV} {};
+    LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV) :
+        grid{std::vector<LinkedCellContainer::Cell>(static_cast<int>(std::floor(Xv/rCutV))*
+                                                            static_cast<int>(std::floor(Yv/rCutV))*
+                                                            (static_cast<int>(std::floor(Zv/rCutV)) == 0 ? 1 :
+                                                    static_cast<int>(std::floor(Zv/rCutV))))},
+        dim{std::array<int, 3>{static_cast<int>(std::floor(Xv/rCutV)),
+                               static_cast<int>(std::floor(Yv/rCutV)),
+                               (static_cast<int>(std::floor(Zv/rCutV))) == 0 ? 1 :
+                               static_cast<int>(std::floor(Zv/rCutV))}},
+        lenDim{std::array<int, 3>{Xv, Yv, Zv}}, rCut{rCutV} {};
 
     /**
      * Default constructor
      */
     LinkedCellContainer() = default;
+
+    void setLenDim(const std::array<int, 3> &lenDim);
 
 //    /**
 //     * Get a list of all neighbors of a particle with index i
@@ -68,32 +111,38 @@ struct LinkedCellContainer {
 
     /***** Getters *****/
 
-    /* This is not const */
-    std::vector<LinkedCellContainer::Cell> &getGrid();
-
-    [[nodiscard]] int getX() const;
-
-    [[nodiscard]] int getY() const;
-
-    [[nodiscard]] int getZ() const;
+    [[nodiscard]] const std::vector<LinkedCellContainer::Cell> & getGrid() const;
 
     [[nodiscard]] double getRCut() const;
+
+    [[nodiscard]] const std::array<int, 3> &getDim() const;
+
+    [[nodiscard]] const std::array<int, 3> &getLenDim() const;
 
 
     /***** Setters *****/
     void setGrid(const std::vector<LinkedCellContainer::Cell> &grid);
 
-    void setX(int x);
-
-    void setY(int y);
-
-    void setZ(int z);
+    void setDim(const std::array<int, 3> &dim);
 
     void setRCut(double rCutV);
 
- private:
+    /**
+     * Has X * Y * Z many elements
+     */
     std::vector<LinkedCellContainer::Cell> grid;
-    int X{}, Y{}, Z{};
+
+ private:
+    /**
+     * The array describes the length of the respective dimensions
+     * dim[0] = X, dim[1] = Y, dim[2] = Z
+     */
+    std::array<int, 3> dim{};
+    /**
+     * The array describes how long the domain of the respective dimensions should've been
+     * lenDim[0] = X, lenDim[1] = Y, lenDim[2] = Z
+     */
+    std::array<int, 3>lenDim{};
     double rCut{};
 };
 
@@ -141,6 +190,7 @@ template<typename... Args>
 void LinkedCellContainer::Cell::emplace_back(Args &&... args) {
     particles.emplace_back(std::forward<Args>(args)...);
 }
+
 
 
 

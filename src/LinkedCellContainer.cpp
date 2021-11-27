@@ -1,41 +1,61 @@
 #include "LinkedCellContainer.h"
 
-std::vector<LinkedCellContainer::Cell> &LinkedCellContainer::getGrid() {
+const std::vector<LinkedCellContainer::Cell> & LinkedCellContainer::getGrid() const {
     return grid;
-}
-
-int LinkedCellContainer::getX() const {
-    return X;
-}
-
-int LinkedCellContainer::getY() const {
-    return Y;
-}
-
-int LinkedCellContainer::getZ() const {
-    return Z;
 }
 
 double LinkedCellContainer::getRCut() const {
     return rCut;
 }
 
-void LinkedCellContainer::setGrid(const std::vector<LinkedCellContainer::Cell> &grid) {
-    LinkedCellContainer::grid = grid;
-}
-
-void LinkedCellContainer::setX(int x) {
-    X = x;
-}
-
-void LinkedCellContainer::setY(int y) {
-    Y = y;
-}
-
-void LinkedCellContainer::setZ(int z) {
-    Z = z;
+void LinkedCellContainer::setGrid(const std::vector<LinkedCellContainer::Cell> &gridV) {
+    LinkedCellContainer::grid = gridV;
 }
 
 void LinkedCellContainer::setRCut(double rCutV) {
     LinkedCellContainer::rCut = rCutV;
+}
+
+const std::array<int, 3> &LinkedCellContainer::getDim() const {
+    return dim;
+}
+
+void LinkedCellContainer::setDim(const std::array<int, 3> &dimV) {
+    LinkedCellContainer::dim = dimV;
+}
+
+const std::array<int, 3> &LinkedCellContainer::getLenDim() const {
+    return lenDim;
+}
+
+void LinkedCellContainer::setLenDim(const std::array<int, 3> &lenDimV) {
+    LinkedCellContainer::lenDim = lenDimV;
+}
+
+std::vector<Particle>::iterator LinkedCellContainer::Cell::begin() {
+    return particles.begin();
+}
+
+std::vector<Particle>::iterator LinkedCellContainer::Cell::end() {
+    return particles.end();
+}
+
+std::vector<Particle>::const_iterator LinkedCellContainer::Cell::begin() const {
+    return particles.begin();
+}
+
+std::vector<Particle>::const_iterator LinkedCellContainer::Cell::end() const {
+    return particles.end();
+}
+
+std::vector<Particle>::iterator LinkedCellContainer::Cell::erase(std::vector<Particle>::const_iterator position) {
+    return particles.erase(position);
+}
+
+void LinkedCellContainer::Cell::toString() {
+    std::cout<<"Cell with: {";
+    for (const auto & p : particles) {
+        std::cout<<"Particle-"<<p.getType()<<", ";
+    }
+    std::cout<<"}"<<std::endl;
 }
