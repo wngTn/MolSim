@@ -119,20 +119,25 @@ TEST(LinkedCellTest, MoveMethodTest) {
 
     LinkedCellContainer linkedCellContainer1 = LinkedCellContainer{120, 80, 100, 3.};
 
-    linkedCellContainer1.grid[0].emplace_back(std::array<double, 3>{2.4, 3.4, 6.4},
+    linkedCellContainer1.grid[0].emplace_back(std::array<double, 3>{2.1, 2.8, 5.6},
+                                              std::array<double, 3>{0.1, 0.1, 0.1},
+                                              .05,
+                                              7);
+    linkedCellContainer1.grid[0].emplace_back(std::array<double, 3>{2.4, 3.2, 6.4},
                                              std::array<double, 3>{0.1, 0.1, 0.1},
                                              .05,
                                              8);
-    linkedCellContainer1.grid[0].emplace_back(std::array<double, 3>{2.9, 3.6, 7.2},
+    linkedCellContainer1.grid[0].emplace_back(std::array<double, 3>{2.7, 3.6, 7.2},
                                              std::array<double, 3>{0.1, 0.1, 0.1},
                                              .05,
                                              9);
+
 
     calculator::LinkedCell::moveParticles(linkedCellContainer1);
 
     EXPECT_EQ(linkedCellContainer1.grid[0].getParticles().size(), 0);
     EXPECT_EQ(linkedCellContainer1.grid[calculator::LinkedCell::index(std::array<int, 3>{0, 1, 2}, linkedCellContainer1.getDim())].getParticles().size(), 2);
-
+    EXPECT_EQ(linkedCellContainer1.grid[calculator::LinkedCell::index(std::array<int, 3>{0, 0, 1}, linkedCellContainer1.getDim())].getParticles().size(), 1);
 
 }
 
@@ -141,22 +146,24 @@ TEST(LinkedCellTest, MoveMethodTest) {
 */
 TEST(LinkedCellTest, LinkedCellMethodIntermediateTest) {
     // The rounding error that we allow
-    double EPSILON_VALUE = 0.001;
+    double EPSILON_VALUE = 0.009 ;
     double EPS = 5.;
-    double SIGMA = .75;
+    double SIGMA = 1.;
+    double delta_t = 0.0005;
+    double rCut = 3.0;
 
     ParticleContainer particleContainer = ParticleContainer{};
-    LinkedCellContainer linkedCellContainer = LinkedCellContainer{120, 80, 100, 4.};
+    LinkedCellContainer linkedCellContainer = LinkedCellContainer{120, 80, 100, rCut};
 
     std::cout<<"Grid size: "<<linkedCellContainer.grid.size()<<std::endl;
 
     for (int i = 0; i < 10; ++i) {
-        particleContainer.emplace_back(std::array<double, 3>{(0.1 * i) + 0.2 * i, (0.2 * i) + 0.2 * i, (0.6 * i) + 0.2 * i},
+        particleContainer.emplace_back(std::array<double, 3>{(0.1 * i) + 0.8 * i, (0.2 * i) + 0.8 * i, (0.6 * i) + 0.8 * i},
                                        std::array<double, 3>{0.1, 0.1, 0.1},
                                        .05,
                                        i);
         linkedCellContainer.grid[calculator::LinkedCell::index(std::array<int, 3>{0, 0, 0}, linkedCellContainer.getDim())]
-                .emplace_back(std::array<double, 3>{(0.1 * i) + 0.2 * i, (0.2 * i) + 0.2 * i, (0.6 * i) + 0.2 * i},
+                .emplace_back(std::array<double, 3>{(0.1 * i) + 0.8 * i, (0.2 * i) + 0.8 * i, (0.6 * i) + 0.8 * i},
                               std::array<double, 3>{0.1, 0.1, 0.1},
                               .05,
                               i);
@@ -166,9 +173,12 @@ TEST(LinkedCellTest, LinkedCellMethodIntermediateTest) {
 
     // calculate our result
     calculator::LennardJones lj{SIGMA, EPS};
+    lj.setDim(3);
+    lj.setDeltaT(delta_t);
+
     lj.calcF(particleContainer);
 
-    calculator::LinkedCell lc{SIGMA, EPS, 6., 0.1};
+    calculator::LinkedCell lc{SIGMA, EPS, rCut, 0.0005};
     lc.calcF_LC(linkedCellContainer);
 
     for (int i = 0; i < 10; ++i) {
@@ -191,9 +201,9 @@ TEST(LinkedCellTest, LinkedCellMethodIntermediateTest) {
         std::cout<<"X of P1 is: "<<p1.getX()[0]<<" X of P2 is: "<<p2.getX()[0]<<std::endl;
         std::cout<<"Y of P1 is: "<<p1.getX()[1]<<" Y of P2 is: "<<p2.getX()[1]<<std::endl;
         std::cout<<"Z of P1 is: "<<p1.getX()[2]<<" Z of P2 is: "<<p2.getX()[2]<<std::endl;
-         EXPECT_LE(fabs(p1.getX()[0] - p2.getX()[0]), EPSILON_VALUE);
-         EXPECT_LE(fabs(p1.getX()[1] - p2.getX()[1]), EPSILON_VALUE);
-         EXPECT_LE(fabs(p1.getX()[2] - p2.getX()[2]), EPSILON_VALUE);
+        EXPECT_LE(fabs(p1.getX()[0] - p2.getX()[0]), EPSILON_VALUE);
+        EXPECT_LE(fabs(p1.getX()[1] - p2.getX()[1]), EPSILON_VALUE);
+        EXPECT_LE(fabs(p1.getX()[2] - p2.getX()[2]), EPSILON_VALUE);
     }
 
     lj.calcV(particleContainer);
