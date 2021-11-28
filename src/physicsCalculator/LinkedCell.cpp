@@ -65,7 +65,7 @@ namespace calculator {
                             novelIndex[d] = static_cast<int>(std::floor(it->getX()[d] * grid.getDim()[d] / grid.getLenDim()[d]));
                         }
 
-                        if (currentIndexes[0] != novelIndex[0] || currentIndexes[1] != novelIndex[1] || currentIndexes[2] != currentIndexes[2]) {
+                        if (currentIndexes[0] != novelIndex[0] || currentIndexes[1] != novelIndex[1] || currentIndexes[2] != novelIndex[2]) {
                             std::cout<<"Moved Particle with type: "<<(*it).getType()<<" from: ("<<
                                      currentIndexes[0]<<", "<<currentIndexes[1]<<", "<<currentIndexes[2]<<") to: " <<"("<<
                                      novelIndex[0]<<", "<<novelIndex[1]<<", "<<novelIndex[2]<<")"<<std::endl;
