@@ -32,6 +32,22 @@ void LinkedCellContainer::setLenDim(const std::array<int, 3> &lenDimV) {
     LinkedCellContainer::lenDim = lenDimV;
 }
 
+std::vector<LinkedCellContainer::Cell>::iterator LinkedCellContainer::begin_cell() {
+    return grid.begin();
+}
+
+std::vector<LinkedCellContainer::Cell>::iterator LinkedCellContainer::end_cell() {
+    return grid.end();
+}
+
+std::vector<LinkedCellContainer::Cell>::const_iterator LinkedCellContainer::begin_cell() const {
+    return grid.begin();
+}
+
+std::vector<LinkedCellContainer::Cell>::const_iterator LinkedCellContainer::end_cell() const {
+    return grid.end();
+}
+
 std::vector<Particle>::iterator LinkedCellContainer::Cell::begin() {
     return particles.begin();
 }

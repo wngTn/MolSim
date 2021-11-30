@@ -15,7 +15,7 @@ namespace outputWriter {
 
     XYZWriter::~XYZWriter() = default;
 
-    void XYZWriter::write(const ParticleContainer &container, const std::string &filename, int iteration) const {
+    void XYZWriter::write(const DirectSumParticleContainer &container, const std::string &filename, int iteration) const {
 
         // just the code from the old XYZWriter::plotParticles function
         std::ofstream file;

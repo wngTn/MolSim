@@ -2,7 +2,7 @@
 #include <set>
 #include <iostream>
 
-#include "ParticleContainer.h"
+#include "DirectSumParticleContainer.h"
 #include "utils/ParticleGenerator.h"
 
 /**
@@ -12,7 +12,7 @@
 class ContainerTest : public testing::Test {
 protected:
     /* The ParticleContainer we use in this test */
-    ParticleContainer p;
+    DirectSumParticleContainer p;
 
     void SetUp() override {
         ContainerTest::init();
@@ -22,7 +22,7 @@ protected:
      * Constructs the container
      */
     void init() {
-        p = ParticleContainer{};
+        p = DirectSumParticleContainer{};
     }
 
     /**
@@ -116,7 +116,7 @@ TEST_F(ContainerTest, LargeDataSetSize) {
  */
 class ParameterizedContainerTest : public testing::TestWithParam<size_t> {
 protected:
-    ParticleContainer p;
+    DirectSumParticleContainer p;
 
     /**
      * Populates the ParticleContainer with size

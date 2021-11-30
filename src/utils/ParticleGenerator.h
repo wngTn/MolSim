@@ -1,17 +1,17 @@
 #pragma once
 
-#include "ParticleContainer.h"
+#include "DirectSumParticleContainer.h"
 
 class ParticleGenerator {
 public:
-    static void generateParticles(ParticleContainer &particles, const std::string &file);
-
-private:
+    // TODO adapt to Linked cell Container
+    static void generateParticles(DirectSumParticleContainer &particles, const std::string &file);
 
     enum geometric_type{
         cuboid,
         sphere
     };
+
 
     struct ShapeInfo {
         geometric_type type;
@@ -33,6 +33,11 @@ private:
         std::array<int,3> N;
     };
 
+private:
+
+
+
+
     /**
      * parses a JSON file and returns the content (if well formed) as a vector of ShapeInfo object
      * @param file the path to the input file
@@ -45,7 +50,7 @@ private:
      * @param particles the ParticleContainer the created cube is stored in
      * @param info the ShapeInfo struct containing the parameters
      */
-    static void generateCuboid(ParticleContainer &particles, const ShapeInfo &info);
+    static void generateCuboid(DirectSumParticleContainer &particles, const ShapeInfo &info);
 
 
     // this creates a cube and cuts the sphere out of it. not very cool sphere but min distance is kept
@@ -54,12 +59,12 @@ private:
      * @param particles the ParticleContainer the created sphere is stored in
      * @param info the ShapeInfo struct containing the parameters
      */
-    static void generateSphere(ParticleContainer &particles, const ShapeInfo &info);
+    static void generateSphere(DirectSumParticleContainer &particles, const ShapeInfo &info);
 
     // currently not used, testing other methods for sphere generation
     // this produces veeeery smooth & nice spheres, but the minimum distance is not kept, so not suited for LJP
     // also not optimized at all bc still WIP
-    static void generateSphere2(ParticleContainer &particles, const ShapeInfo & info);
+    static void generateSphere2(DirectSumParticleContainer &particles, const ShapeInfo & info);
 
 };
 

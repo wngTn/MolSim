@@ -40,13 +40,13 @@ public:
      * @brief Calculates the velocities of the particles
      * @param particles the container with the particles
      */
-    void calcX(ParticleContainer &particles) const;
+    virtual void calcX(ParticleContainer &particles) const;
 
     /**
      * @brief Calculates the positions of the particles
      * @param particles the container with the particles
      */
-    void calcV(ParticleContainer &particles) const;
+    virtual void calcV(ParticleContainer &particles) const;
 
     void setDeltaT(double dt) {
         delta_t = dt;

@@ -8,7 +8,7 @@
 #pragma once
 
 #include "Particle.h"
-#include "ParticleContainer.h"
+#include "DirectSumParticleContainer.h"
 #include "IOWriter.h"
 
 #include <fstream>
@@ -23,13 +23,14 @@ namespace outputWriter {
 
         virtual ~XYZWriter();
 
+        //TODO adapt to LinkedCellContainer
         /**
          * override of function IOWRriter::write for VTK
          * @param container the ParticleContainer containg all particles that should be output
          * @param filename custom filename
          * @param iteration current iteration, used for unique filenames
          */
-        void write(const ParticleContainer &container, const std::string &filename, int iteration) const override;
+        void write(const DirectSumParticleContainer &container, const std::string &filename, int iteration) const override;
         std::string toString() override;
 
     private:

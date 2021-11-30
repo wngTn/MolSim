@@ -37,7 +37,7 @@ TEST(LinkedCellTest, indexTest) {
 }
 
 
-Particle findParticle(const ParticleContainer &p, int type) {
+Particle findParticle(const DirectSumParticleContainer &p, int type) {
     for (auto &e: p) {
         if (e.getType() == type) return e;
     }
@@ -66,7 +66,7 @@ TEST(LinkedCellTest, LinkedCellMethodSimpleTest) {
     double EPS = 5.;
     double SIGMA = 1.;
 
-    ParticleContainer particleContainer = ParticleContainer{};
+    DirectSumParticleContainer particleContainer = DirectSumParticleContainer{};
     LinkedCellContainer linkedCellContainer = LinkedCellContainer{12, 12, 1, 3.};
 
     std::cout<<"Grid size: "<<linkedCellContainer.grid.size()<<std::endl;
@@ -152,7 +152,7 @@ TEST(LinkedCellTest, LinkedCellMethodIntermediateTest) {
     double delta_t = 0.0005;
     double rCut = 3.0;
 
-    ParticleContainer particleContainer = ParticleContainer{};
+    DirectSumParticleContainer particleContainer = DirectSumParticleContainer{};
     LinkedCellContainer linkedCellContainer = LinkedCellContainer{120, 80, 100, rCut};
 
     std::cout<<"Grid size: "<<linkedCellContainer.grid.size()<<std::endl;
@@ -207,7 +207,7 @@ TEST(LinkedCellTest, LinkedCellMethodIntermediateTest) {
     }
 
     lj.calcV(particleContainer);
-    lc.compV_LC(linkedCellContainer);
+    lc.calcV(linkedCellContainer);
 
     for (int i = 0; i < 10; ++i) {
         auto p1 = findParticle(particleContainer, i);

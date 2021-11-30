@@ -2,7 +2,7 @@
 
 namespace calculator {
 
-    void LinkedCell::calcV(LinkedCellContainer::Cell & cell) const {
+    void LinkedCell::calcVcell(LinkedCellContainer::Cell & cell) const {
         // calculate new velocities
         for (auto &p: cell) { // loop over every particle
             // go through all three dimensions
@@ -11,20 +11,18 @@ namespace calculator {
         }
     }
 
-    void LinkedCell::compV_LC(LinkedCellContainer &grid) const {
-        std::array<int, 3> currentIndexes{};
-        for (currentIndexes[0] = 0; currentIndexes[0] < grid.getDim()[0]; ++currentIndexes[0]) {
-            // iterate through the Y axis
-            for (currentIndexes[1] = 0; currentIndexes[1] < grid.getDim()[1]; ++currentIndexes[1]) {
-                // iterate through the Z axis
-                for (currentIndexes[2] = 0; currentIndexes[2] < grid.getDim()[2]; ++currentIndexes[2]) {
-                    calcV(grid.grid[index(currentIndexes, grid.getDim())]);
-                }
-            }
+    // Method only valid for LinkedCellContainer. Parameter type is ParticleContainer to override
+    // the cast is not very nice, but necessary to use the PhysicsCalc interface
+    // distinguishing between LinkedCell and other calculators would make this cast
+    // unnecessary, but would lead to lots of ugly code in every place calculators are used
+    void LinkedCell::calcV(ParticleContainer &container) const {
+        auto& gridLC = static_cast<LinkedCellContainer&>(container);
+        for(auto& c : gridLC.grid){
+            calcVcell(c);
         }
     }
 
-    void LinkedCell::calcX(LinkedCellContainer::Cell &cell) const {
+    void LinkedCell::calcXcell(LinkedCellContainer::Cell &cell) const {
         // calculate new positions
         for (auto &p: cell) { // loop over every particle
             // go through all three dimensions
@@ -33,18 +31,16 @@ namespace calculator {
         }
     }
 
-    void LinkedCell::compX_LC(LinkedCellContainer &grid) const {
-        std::array<int, 3> currentIndexes{};
-        for (currentIndexes[0] = 0; currentIndexes[0] < grid.getDim()[0]; ++currentIndexes[0]) {
-            // iterate through the Y axis
-            for (currentIndexes[1] = 0; currentIndexes[1] < grid.getDim()[1]; ++currentIndexes[1]) {
-                // iterate through the Z axis
-                for (currentIndexes[2] = 0; currentIndexes[2] < grid.getDim()[2]; ++currentIndexes[2]) {
-                    calcX(grid.grid[index(currentIndexes, grid.getDim())]);
-                }
-            }
-        }
-        moveParticles(grid);
+    // Method only valid for LinkedCellContainer. Parameter type is ParticleContainer to override
+    // the cast is not very nice, but necessary to use the PhysicsCalc interface
+    // distinguishing between LinkedCell and other calculators would make this cast
+    // unnecessary, but would lead to lots of ugly code in every place calculators are used
+    void LinkedCell::calcX(ParticleContainer &container) const {
+        auto& gridLC = static_cast<LinkedCellContainer&>(container);
+       for(auto& c : gridLC.grid){
+           calcXcell(c);
+       }
+       moveParticles(gridLC);
     }
 
     void LinkedCell::moveParticles(LinkedCellContainer &grid) {

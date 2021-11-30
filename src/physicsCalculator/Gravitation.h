@@ -1,7 +1,7 @@
 #pragma once
 
 #include "physicsCalculator/PhysicsCalc.h"
-#include "ParticleContainer.h"
+#include "DirectSumParticleContainer.h"
 
 namespace calculator {
 

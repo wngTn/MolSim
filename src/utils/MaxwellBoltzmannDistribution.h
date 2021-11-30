@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "ParticleContainer.h"
+#include "DirectSumParticleContainer.h"
 
 #include <random>
 #include <array>
@@ -21,4 +21,4 @@
  */
 std::array<double, 3> maxwellBoltzmannDistributedVelocity(double averageVelocity, size_t dimensions);
 
-void initializeBrownianMotion(ParticleContainer &particles, double brownianMotionMean);
+void initializeBrownianMotion(DirectSumParticleContainer &particles, double brownianMotionMean);

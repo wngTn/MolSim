@@ -6,14 +6,16 @@
 #include "utils/ArrayUtils.h"
 
 namespace calculator {
-    class LinkedCell {
+    class LinkedCell : public PhysicsCalc{
 
     public:
         LinkedCell(double sigma, double epsilon, double rCut, double delta_t) : sigma(sigma), epsilon(epsilon), rCut{rCut} ,delta_t{delta_t}{};
 
         void calcF_LC(LinkedCellContainer &grid);
 
-        static std::string toString();
+        void calcF(ParticleContainer &grid) override;
+
+        std::string toString() override;
 
         /**
         * Returns the square of a number
@@ -34,13 +36,13 @@ namespace calculator {
 
         static void moveParticles(LinkedCellContainer & grid);
 
-        void compX_LC(LinkedCellContainer & grid) const;
+        void calcX(ParticleContainer & grid) const override;
 
-        void calcX(LinkedCellContainer::Cell & cell) const;
+        void calcXcell(LinkedCellContainer::Cell & cell) const;
 
-        void compV_LC(LinkedCellContainer & grid) const;
+        void calcV(ParticleContainer & grid) const override;
 
-        void calcV(LinkedCellContainer::Cell & cell) const;
+        void calcVcell(LinkedCellContainer::Cell & cell) const;
 
     private:
 

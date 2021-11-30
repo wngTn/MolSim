@@ -1,12 +1,12 @@
 #include <gtest/gtest.h>
-#include "ParticleContainer.h"
+#include "DirectSumParticleContainer.h"
 #include "utils/ArrayUtils.h"
 #include "physicsCalculator/LennardJones.h"
 
 
 class ParameterizedLennardJonesTest : public testing::TestWithParam<std::tuple<size_t, double, double>> {
 protected:
-    ParticleContainer p_result;
+    DirectSumParticleContainer p_result;
 
     /**
      * Populates the ParticleContainer with size
@@ -43,7 +43,7 @@ protected:
      * @param sigma Sigma
      * @param eps Epsilon
      */
-    static void ljnaive(ParticleContainer &particles, double sigma, double eps) {
+    static void ljnaive(DirectSumParticleContainer &particles, double sigma, double eps) {
         for (auto it = particles.pair_begin(); it != particles.pair_end(); ++it) {
             auto[p1, p2] = *it;
             ljforceNaive(p1, p2, sigma, eps);
@@ -65,7 +65,7 @@ TEST_P(ParameterizedLennardJonesTest, LennardJonesTest) {
     setSize(size);
 
     // create another ParticleContainer
-    ParticleContainer p_reference = ParameterizedLennardJonesTest::p_result;
+    DirectSumParticleContainer p_reference = ParameterizedLennardJonesTest::p_result;
 
     // calculate our result
     calculator::LennardJones lj{sigma, eps};

@@ -1,13 +1,15 @@
 #pragma once
 
+#include "utils/ArrayUtils.h"
+#include "ParticleContainer.h"
+
 #include <vector>
 #include <Particle.h>
-#include "utils/ArrayUtils.h"
 #include <iostream>
 #include <cmath>
 #include <iterator>
 
-struct LinkedCellContainer {
+struct LinkedCellContainer : public ParticleContainer {
     /**
      * Each element in the grid is a cell
      */
@@ -100,6 +102,40 @@ struct LinkedCellContainer {
     LinkedCellContainer() = default;
 
     void setLenDim(const std::array<int, 3> &lenDim);
+
+
+    /**
+     * @brief Provides the iterator for single particles at the start of the collection
+     * @return iterator
+     */
+    std::vector<Cell>::iterator begin_cell();
+
+    /**
+     * @brief Provides the iterator for single particles at the end of the collection
+     * @return iterator
+     */
+    std::vector<Cell>::iterator end_cell();
+
+    /**
+     * @brief Provides the _const_ iterator for single Cells at the start of the collection
+     * @return const iterator
+     */
+    [[nodiscard]] std::vector<Cell>::const_iterator begin_cell() const;
+
+    /**
+     * @brief Provides the _const_ iterator for single Cells at the end of the collection
+     * @return const iterator
+     */
+    [[nodiscard]] std::vector<Cell>::const_iterator end_cell() const;
+
+    /*
+     * these are just here to conform to the ParticleContainer interface
+     */
+    std::vector<Particle>::iterator begin() override = 0;
+    std::vector<Particle>::iterator end() override = 0;
+
+    [[nodiscard]] std::vector<Particle>::const_iterator begin() const override = 0;
+    [[nodiscard]] std::vector<Particle>::const_iterator end() const override = 0;
 
 //    /**
 //     * Get a list of all neighbors of a particle with index i

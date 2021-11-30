@@ -97,7 +97,7 @@ namespace outputWriter {
         pointsIterator->push_back(p.getX()[2]);
     }
 
-    void VTKWriter::write(const ParticleContainer &container, const std::string &filename, int iteration) const {
+    void VTKWriter::write(const DirectSumParticleContainer &container, const std::string &filename, int iteration) const {
         // currently just using the already implemented methods, could be combined
         this->initializeOutput(
                 static_cast<int>(container.size())); //assuming there are not more than int.MAX_VAL particles

@@ -1,12 +1,14 @@
-#include "FileReader.h"
+#include "inputReader/FileReader.h"
 #include "outputWriter/XYZWriter.h"
 #include "outputWriter/VTKWriter.h"
 #include "ParticleContainer.h"
+#include "DirectSumParticleContainer.h"
 #include "physicsCalculator/PhysicsCalc.h"
 #include "physicsCalculator/Gravitation.h"
 #include "physicsCalculator/LennardJones.h"
 #include "utils/ParticleGenerator.h"
 #include "utils/MaxwellBoltzmannDistribution.h"
+#include "inputReader/XMLReader.h"
 
 #include <unistd.h>
 #include <memory>
@@ -176,7 +178,7 @@ static std::unique_ptr<PhysicsCalc> get_calculator() {
     }
 }
 
-void initializeParticles(ParticleContainer &particles) {
+void initializeParticles(DirectSumParticleContainer &particles) {
     // read normal input file
     if (!filename.empty()) {
         FileReader::readFile(particles, filename);
@@ -201,7 +203,7 @@ void initializeParticles(ParticleContainer &particles) {
     }
 }
 
-void logParticle(ParticleContainer &particles){
+void logParticle(DirectSumParticleContainer &particles){
     spdlog::info("-----------------------------------------------------------------------------------------------"
                  "---------------------------------------------------------------");
     for(auto &p : particles){
@@ -236,7 +238,7 @@ int main(int argc, char *argv[]) {
     get_arguments(argc, argv);
 
     // ------ setup ------ //
-    ParticleContainer particles = ParticleContainer();
+    DirectSumParticleContainer particles = DirectSumParticleContainer();
     initializeParticles(particles);
 
     auto io = get_io_type();

@@ -4,7 +4,8 @@
 
 namespace calculator {
 
-    void LennardJones::calcF(ParticleContainer &particles) {
+    void LennardJones::calcF(ParticleContainer &container) {
+        auto& particles = static_cast<DirectSumParticleContainer&>(container);
         for(auto &p : particles){
             p.setF({0.,0.,0.});
         }

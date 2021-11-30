@@ -8,7 +8,7 @@
 
 #include <nlohmann/json.hpp>
 
-void ParticleGenerator::generateParticles(ParticleContainer &particles, const std::string &file) {
+void ParticleGenerator::generateParticles(DirectSumParticleContainer &particles, const std::string &file) {
     std::vector<ShapeInfo> infovec = readJSON(file);
     for(auto &info : infovec){
         switch (info.type){
@@ -56,7 +56,7 @@ std::vector<ParticleGenerator::ShapeInfo> ParticleGenerator::readJSON(const std:
     return vec;
 }
 
-void ParticleGenerator::generateCuboid(ParticleContainer &particles, const ShapeInfo &info) {
+void ParticleGenerator::generateCuboid(DirectSumParticleContainer &particles, const ShapeInfo &info) {
     // reserve amount of particles we are going to create
     int total_count = info.N[0] * info.N[1] * info.N[2];
     particles.reserve(total_count);
@@ -82,7 +82,7 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles, const Shape
     }
 }
 
-void ParticleGenerator::generateSphere(ParticleContainer &particles, const ShapeInfo &info) {
+void ParticleGenerator::generateSphere(DirectSumParticleContainer &particles, const ShapeInfo &info) {
     // how many particles fit on the radius between center and edge
     int height = floor(info.radius / info.distance);
     // get parameters for cube generation
@@ -122,7 +122,7 @@ void ParticleGenerator::generateSphere(ParticleContainer &particles, const Shape
 
 }
 
-void ParticleGenerator::generateSphere2(ParticleContainer &particles, const ShapeInfo &info) {
+void ParticleGenerator::generateSphere2(DirectSumParticleContainer &particles, const ShapeInfo &info) {
     // center
     // particles.emplace_back(Particle{info.pos, info.vel, info.mass});
     /* int rings = floor(info.radius / info.distance);
