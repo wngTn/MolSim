@@ -79,6 +79,19 @@ cmake .. # Makefile won't build the tests anymore
 
 ## Task - Logging ##
 
+As suggested we chose spdlog as our logging tool and implemented a simple logger in MolSim. We put the logging there, because we have easy access to all the data we want to log. Also, we decided against an asynchronous logger, as the basic logger is really fast already and with the execution mode flag we introduced a way to enable this task when needed:
+
+    ./MolSim [...] -m debug
+
+The log file and all future log files are saved here:
+
+````
+build/
+├── ...
+└── logs/
+    ├── molsim.log
+    └── future.log
+````
 
 ## Task - Lennard Jones Potential ##
 
@@ -114,7 +127,7 @@ This is the `./input/files/input_assignment_2.json` file.
       "distance": 1.1225,
       "mass": 1.0,
       "brownianFactor": 0.1,
-      "brownianDIM": 3
+      "brownianDIM": 2
     },
     {
       "type": "cuboid",
@@ -124,7 +137,7 @@ This is the `./input/files/input_assignment_2.json` file.
       "distance": 1.1225,
       "mass": 1.0,
       "brownianFactor": 0.1,
-      "brownianDIM": 3
+      "brownianDIM": 2
     }
   ]
 }
@@ -230,6 +243,12 @@ This will use:
 
 ## Benchmarking ##
 
+In our benchmarks we have used three datasets: a small, medium and large dataset:
+
+- Small dataset contains 120 particles
+- Medium dataset contains 432 particles
+- Large dataset contains 768 particles
+
 ### Recreating our benchmarks ###
 
 1. Build and compile the program. Your current work directory should be the build directory:
@@ -239,28 +258,57 @@ pwd
 ```
 2. Benchmarking with the small dataset:
    1. Generate the small dataset: `python ../input/generate_json.py --size small`
-   2. **We have used 1 as `end_time` and 0.0002 as our `delta_t`**: `./MolSim -g ../input/files/automatic_generated_input_s.json -e 1 -d 0.0002 -m benchmark`
-
-
+   2. **We have used 1 as `end_time` and 0.0002 as our `delta_t`**: `./MolSim -g ../input/files/automatic_generated_input_s.json -e 5 -d 0.0002 -m benchmark`
+   
 
 3. Benchmarking the medium dataset:
     1. Generate the medium dataset: `python ../input/generate_json.py --size medium`
-    3. **Specify the correct `end_time` and `delta_t` value**: `./MolSim -g ../input/files/automatic_generated_input_m.json -e 1 -d 0.0002 -m benchmark`
+    3. **Specify the correct `end_time` and `delta_t` value**: `./MolSim -g ../input/files/automatic_generated_input_m.json -e 5 -d 0.0002 -m benchmark`
 
 4. Benchmarking the large dataset:
     1. Generate the small dataset: `python ../input/generate_json.py --size small`
-    2. **Specify the correct `end_time` and `delta_t` value**: `./MolSim -g ../input/files/automatic_generated_input_l.json -e 1 -d 0.0002 -m benchmark`
+    2. **Specify the correct `end_time` and `delta_t` value**: `./MolSim -g ../input/files/automatic_generated_input_l.json -e 5 -d 0.0002 -m benchmark`
 
-The results can be observed in our slides!
-
-
-> 📝 **Careful:** Make sure to enable the benchmark mode (-m benchmark) and specify the correct `end_time` 
+> 📝 **Careful:** Make sure to enable the benchmark mode (-m benchmark) and specify the correct `end_time`
 > and `delta_t` values.
-> 
-> Also, the large dataset might take some minutes (~4min) to finish 
+>
+> Also, the large dataset might take some minutes (~3-4min) to finish
+>
+> PS: Be aware to set your build type to RELEASE (not DEBUG 🙂)
+
+### Benchmark results
+
+We have tested our benchmarks on three different machines:
+- Intel Core i5-4460  CPU @ 3.20GHz, 4 Cores - 8 GB RAM (Native Linux)
+- Intel Core i5-8265 U CPU @ 1.80GHz, 4 Cores - 8 GB RAM (Native Linux)
+- Macbook Pro (M1 Pro, 2021) - 16 GB RAM (macOS)
+
+There we compared:
+1. Compile-Time (we used `make  -j4`)
+2. Setup-Time
+3. Runtime
+
+### Compile-Time
+![](../media/week_2/Compile_Time.jpg)
 
 
+### Setup-Time
+![](../media/week_2/Setup_Time.jpg)
 
+### Run-Time
+![](../media/week_2/Run_Time.jpg)
+
+# Media #
+## Fun with blocks ##
+Here is the animation of two colliding blocks from the worksheet:
+
+![](../media/week_2/velocity_blocks.gif)
+
+## Fun with spheres ##
+
+We also generated a sphere and shot a single particle with high speed into it:
+
+![](../media/week_2/sphere.gif)
 ## Miscellaneous ##
 
 In this assignment we managed to run the program on the new 

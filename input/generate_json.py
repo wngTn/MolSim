@@ -14,8 +14,8 @@ output_sizes = {
     'small': [3, 2, 10, 2],
     'm': [3, 3, 12, 4],  # -> 432 particles
     'medium': [3, 3, 12, 4],
-    'l': [4, 3, 12, 4],  # -> 576 particles
-    'large': [4, 3, 12, 4]
+    'l': [4, 4, 12, 4],  # -> 768 particles
+    'large': [4, 4, 12, 4]
 }
 
 

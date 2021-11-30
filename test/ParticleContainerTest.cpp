@@ -103,7 +103,7 @@ TEST_F(ContainerTest, MediumDataSetSize) {
  */
 TEST_F(ContainerTest, LargeDataSetSize) {
     ContainerTest::readLargeData();
-    EXPECT_EQ(p.size(), 576);
+    EXPECT_EQ(p.size(), 768);
     if (std::remove("../../input/files/large.json")) {
         FAIL()<<"There was a problem deleting the generated (large dataset) JSON file";
     }

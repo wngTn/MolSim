@@ -61,6 +61,19 @@ public:
 
 
     /**
+     * @brief Move constructor
+     * @param other object it is copied from
+     */
+    Particle (Particle&& other) noexcept;
+
+    /**
+     * @brief Move assignment operator
+     * @param other object it is copied from
+     * @return returning the copy
+     */
+    Particle& operator=(Particle&& other) noexcept;
+
+    /**
      * @brief Overloaded constructor
      * @param x_arg position
      * @param v_arg velocity
