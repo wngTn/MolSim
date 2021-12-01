@@ -32,6 +32,42 @@ void LinkedCellContainer::setLenDim(const std::array<int, 3> &lenDimV) {
     LinkedCellContainer::lenDim = lenDimV;
 }
 
+LinkedCellContainer::Border LinkedCellContainer::getBorder() const {
+    return border;
+}
+
+void LinkedCellContainer::setBorder(LinkedCellContainer::Border borderV) {
+    LinkedCellContainer::border = borderV;
+}
+
+std::vector<std::array<int, 3>> LinkedCellContainer::getNeighbors(const std::array<int, 3> &currentIndex) const {
+    // We are in 2D
+    if (LinkedCellContainer::getDim()[2] == 1) {
+        std::vector<std::array<int, 3>> neighbors(3);
+        neighbors = {
+                std::array<int, 3>{currentIndex[0], currentIndex[1] + 1, currentIndex[2]},
+                std::array<int, 3>{currentIndex[0] + 1, currentIndex[1], currentIndex[2]},
+                std::array<int, 3>{currentIndex[0] + 1, currentIndex[1] + 1, currentIndex[2]}
+        };
+        return neighbors;
+    }
+    else {
+        std::vector<std::array<int, 3>> neighbors(7);
+        neighbors = {
+                std::array<int, 3>{currentIndex[0], currentIndex[1], currentIndex[2] + 1},
+                std::array<int, 3>{currentIndex[0], currentIndex[1] + 1, currentIndex[2]},
+                std::array<int, 3>{currentIndex[0], currentIndex[1] + 1, currentIndex[2] + 1},
+                std::array<int, 3>{currentIndex[0] + 1, currentIndex[1], currentIndex[2]},
+                std::array<int, 3>{currentIndex[0] + 1, currentIndex[1], currentIndex[2] + 1},
+                std::array<int, 3>{currentIndex[0] + 1, currentIndex[1] + 1, currentIndex[2]},
+                std::array<int, 3>{currentIndex[0] + 1, currentIndex[1] + 1, currentIndex[2] + 1}
+        };
+        return neighbors;
+    }
+}
+
+
+
 std::vector<Particle>::iterator LinkedCellContainer::Cell::begin() {
     return particles.begin();
 }
@@ -59,3 +95,5 @@ void LinkedCellContainer::Cell::toString() {
     }
     std::cout<<"}"<<std::endl;
 }
+
+

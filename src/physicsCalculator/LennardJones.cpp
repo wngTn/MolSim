@@ -1,6 +1,8 @@
 #include "LennardJones.h"
 #include "utils/ArrayUtils.h"
 
+#include <iostream>
+
 
 namespace calculator {
 
@@ -40,6 +42,11 @@ namespace calculator {
 
         p1.setF(p1.getF() + force);
         p2.setF(p2.getF() - force);
+
+//        std::cout<<"LENNARD JONES: Particle with Type: "<<p1.getType()<<" after Force Calc with Particle Type: "<<
+//                 p2.getType()<<" is: ("<<p1.getF()[0]<<", "<<p1.getF()[1]<<", "<<p1.getF()[2]<<")"<<std::endl;
+//        std::cout<<"LENNARD JONES: Particle with Type: "<<p2.getType()<<" after Force Calc with Particle Type: "<<
+//                 p1.getType()<<" is: ("<<p2.getF()[0]<<", "<<p2.getF()[1]<<", "<<p2.getF()[2]<<")"<<std::endl;
     }
 
     std::string LennardJones::toString(){

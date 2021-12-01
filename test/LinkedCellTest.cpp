@@ -62,7 +62,7 @@ Particle findParticle(const LinkedCellContainer &p, int type) {
 TEST(LinkedCellTest, LinkedCellMethodSimpleTest) {
 
     // The rounding error that we allow
-    double EPSILON_VALUE = 0.01;
+    double EPSILON_VALUE = 0.000001;
     double EPS = 5.;
     double SIGMA = 1.;
 
@@ -88,9 +88,8 @@ TEST(LinkedCellTest, LinkedCellMethodSimpleTest) {
     lj.calcF(particleContainer);
 
     calculator::LinkedCell lc{SIGMA, EPS, 3., 0.1};
-
-
     lc.calcF_LC(linkedCellContainer);
+
     for (int i = 0; i < 4; ++i) {
         auto p1 = findParticle(particleContainer, i);
         auto p2 = findParticle(linkedCellContainer, i);

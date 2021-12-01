@@ -6,12 +6,13 @@
 #include "utils/ArrayUtils.h"
 
 namespace calculator {
+
     class LinkedCell {
 
     public:
         LinkedCell(double sigma, double epsilon, double rCut, double delta_t) : sigma(sigma), epsilon(epsilon), rCut{rCut} ,delta_t{delta_t}{};
 
-        void calcF_LC(LinkedCellContainer &grid);
+        void calcF_LC(LinkedCellContainer &grid, bool reflection = false);
 
         static std::string toString();
 
@@ -32,6 +33,11 @@ namespace calculator {
          */
         static inline int index(const std::array<int , 3> & currentIndexes, const std::array<int, 3> & dim);
 
+        /**
+         *
+         * @param grid
+         * @param border 0 means outflow -> particle gets deleted; 1 means cyclic -> particle goes to the other side
+         */
         static void moveParticles(LinkedCellContainer & grid);
 
         void compX_LC(LinkedCellContainer & grid) const;
@@ -42,12 +48,14 @@ namespace calculator {
 
         void calcV(LinkedCellContainer::Cell & cell) const;
 
+        void calcF(LinkedCellContainer::Cell & cell);
+
     private:
 
         inline void ljforce(Particle &p1, Particle &p2, double sqrd_dist);
 
-        void skipOutOfBoundary(LinkedCellContainer & grid, const std::array<int, 3> & neighbors,
-                               Particle & p);
+        void reflectiveBoundary(LinkedCellContainer & grid, const std::array<int, 3> & neighbors,
+                                Particle & p);
 
         void calcNeighbors(LinkedCellContainer &grid, const std::array<int, 3> & neighbors,
                            Particle &p);
@@ -77,12 +85,14 @@ namespace calculator {
 
         // set old force
         p1.setOldF(p1.getF());
-        // p2.setOldF(p2.getF());
+        p2.setOldF(p2.getF());
 
         p1.setF(p1.getF() + force);
-        // p2.setF(p2.getF() - force);
+        p2.setF(p2.getF() - force);
         std::cout<<"LINKED LIST: Particle with Type: "<<p1.getType()<<" after Force Calc with Particle Type: "<<
                  p2.getType()<<" is: ("<<p1.getF()[0]<<", "<<p1.getF()[1]<<", "<<p1.getF()[2]<<")"<<std::endl;
+        std::cout<<"LINKED LIST: Particle with Type: "<<p2.getType()<<" after Force Calc with Particle Type: "<<
+                 p1.getType()<<" is: ("<<p2.getF()[0]<<", "<<p2.getF()[1]<<", "<<p2.getF()[2]<<")"<<std::endl;
     }
 }
 
