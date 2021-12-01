@@ -101,3 +101,5 @@ include(doxygen)
 
 # add the needed subdirectories
 add_subdirectory(test)
+
+enable_testing()
