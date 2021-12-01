@@ -2,9 +2,11 @@
 #include "../outputWriter/IOWriter.h"
 #include "../physicsCalculator/PhysicsCalc.h"
 #include "../utils/ParticleGenerator.h"
+#include "../particleContainers/LinkedCellContainer.h"
 
 #include <vector>
 #include <string>
+
 
 class XMLReader {
 
@@ -32,7 +34,10 @@ public:
         std::vector<ParticleGenerator::ShapeInfo> generatorInfos;
         // input files (JSON) for the ParticleGenerator, for specifications see info about ParticleGenerator
         std::vector<std::string> generatorInputFiles;
+        //stuff used for linked cell
+        bool linkedcell;
+        std::array<LinkedCellContainer::Border, 6> boundaryConditions;
     };
 
-    XMLInfo readFile(std::string s);
+    XMLInfo readFile(const std::string& s);
 };

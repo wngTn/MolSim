@@ -2,7 +2,7 @@
 #include <set>
 #include <iostream>
 
-#include "DirectSumParticleContainer.h"
+#include "particleContainers/DirectSumParticleContainer.h"
 #include "utils/ParticleGenerator.h"
 
 /**

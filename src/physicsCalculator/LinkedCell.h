@@ -2,7 +2,7 @@
 
 #include "physicsCalculator/PhysicsCalc.h"
 #include "physicsCalculator/LennardJones.h"
-#include "LinkedCellContainer.h"
+#include "particleContainers/LinkedCellContainer.h"
 #include "utils/ArrayUtils.h"
 
 namespace calculator {

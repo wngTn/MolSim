@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:simpleType name ="geometric_t">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value ="cuboid"/>
+            <xs:enumeration value ="sphere"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="border_single_t">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value ="cyclic"/>
+            <xs:enumeration value ="reflective"/>
+            <xs:enumeration value ="outflow"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name ="border_t">
+        <xs:sequence>
+            <xs:element name="left" type="border_single_t" />
+            <xs:element name="right" type="border_single_t" />
+            <xs:element name="upper" type="border_single_t" />
+            <xs:element name="lower" type="border_single_t" />
+            <xs:element name="front" type="border_single_t" minOccurs="0" />
+            <xs:element name="back" type="border_single_t" minOccurs="0" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name ="generator_info_t">
+        <xs:sequence>
+            <xs:element name="shapeType" type="geometric_t" />
+            <xs:element name="x" type="xs:decimal" />
+            <xs:element name="y" type="xs:decimal" />
+            <xs:element name="z" type="xs:decimal" />
+            <xs:element name="mass" type="xs:decimal" />
+            <xs:element name="distance" type="xs:decimal" />
+            <xs:element name="brownianFactor" type="xs:decimal" />
+            <xs:element name="brownianDim" type="xs:int" />
+            <xs:element minOccurs="0" name="n1" type="xs:int" />
+            <xs:element minOccurs="0" name="n2" type="xs:int" />
+            <xs:element minOccurs="0" name="n3" type="xs:int" />
+            <xs:element minOccurs="0" name="radius" type="xs:decimal" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name ="containertype_t">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value ="linkedcell"/>
+            <xs:enumeration value ="directsum"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="calculatortype_t">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value ="lennardjones"/>
+            <xs:enumeration value ="gravitation"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="containerinfo_t">
+        <xs:sequence>
+            <xs:element name="rCut" type="xs:decimal" />
+            <xs:element name="borderType" type="border_t"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="calculationInfo_t">
+        <xs:sequence>
+            <xs:element name="epsilon" type="xs:decimal" />
+            <xs:element name="sigma" type="xs:decimal" />
+            <xs:element name="brownianMotion" type="xs:decimal" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="outputwriter_t">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value ="vtk"/>
+            <xs:enumeration value ="xyz"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="simulation_t">
+        <xs:sequence>
+            <xs:element name="t_end" type="xs:decimal" />
+            <xs:element name="delta_t" type="xs:decimal" />
+            <xs:element name="writeFrequency" type="xs:int" />
+            <xs:element name="random" type="xs:boolean" />
+            <xs:element name="container_type" type="containertype_t"/>
+            <!-- optional additional info for container, only used for linkedcell -->
+            <xs:element name="containerinfo" type="containerinfo_t" minOccurs="0" />
+            <xs:element name="calculator" type="calculatortype_t" />
+            <!-- optional additional info for calculator, only used for lennardjones -->
+            <xs:element name="calculationinfo" type="calculationInfo_t" />
+            <xs:element name="outputWriter" type="outputwriter_t" />
+            <xs:element maxOccurs="unbounded" name="inputFile" type="xs:string" />
+            <xs:element maxOccurs="unbounded" name="generatorFile" type="xs:string" />
+            <xs:element name="outputFile" type="xs:string" />
+            <xs:element maxOccurs="unbounded" name="generatorInfo" type="generator_info_t"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:element name="simulation" type="simulation_t"/>
+
+</xs:schema>

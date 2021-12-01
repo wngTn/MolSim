@@ -1,81 +1,20 @@
 #pragma once
 
-#include "utils/ArrayUtils.h"
+#include <vector>
+#include <cmath>
+#include <functional>
+
+#include "Particle.h"
 #include "ParticleContainer.h"
 
-#include <vector>
-#include <Particle.h>
-#include <iostream>
-#include <cmath>
-#include <iterator>
-
-struct LinkedCellContainer : public ParticleContainer {
+class LinkedCellContainer : public ParticleContainer{
+public:
     /**
      * Each element in the grid is a cell
      */
-    struct Cell {
-        /**
-         * Normal default constructor
-         */
-        Cell() : particles{std::vector<Particle>{}} {};
-
-        void setParticles(const std::vector<Particle> &particlesV) {
-            Cell::particles = particlesV;
-        }
-
-        [[nodiscard]] const std::vector<Particle> &getParticles() const {
-            return particles;
-        }
-
-        /**
-         * @brief Provides the iterator for single particles at the start of the collection
-         * @return iterator
-         */
-        std::vector<Particle>::iterator begin();
-
-        /**
-         * @brief Provides the iterator for single particles at the end of the collection
-         * @return iterator
-         */
-        std::vector<Particle>::iterator end();
-
-        /**
-         * @brief Provides the _const_ iterator for single particles at the start of the collection
-         * @return const iterator
-         */
-        [[nodiscard]] std::vector<Particle>::const_iterator begin() const;
-
-        /**
-         * @brief Provides the _const_ iterator for single particles at the end of the collection
-         * @return const iterator
-         */
-        [[nodiscard]] std::vector<Particle>::const_iterator end() const;
-
-
-        /**
-         * @brief Moves an object to the collection, i.e. uses one of the constructor of the Particle class
-         * and creates an object directly
-         * @tparam Args Parameter pack
-         * @param args The parameter for the constructor
-         */
-        template<typename... Args>
-        void emplace_back(Args &&... args);
-
-        /*
-         * Removes particle at the position
-         */
-        std::vector<Particle>::iterator erase (std::vector<Particle>::const_iterator position);
-
-        void toString();
-
-    private:
-        /**
-         * The Particles in each cell
-         */
-        std::vector<Particle> particles;
-
+    enum Border {
+        outflow, cyclic, reflective
     };
-
     /***********************************************************************/
 
     /**
@@ -86,7 +25,7 @@ struct LinkedCellContainer : public ParticleContainer {
      * @param rCutV the r_cut value
      */
     LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV) :
-        grid{std::vector<LinkedCellContainer::Cell>(static_cast<int>(std::floor(Xv/rCutV))*
+        grid{std::vector<Cell>(static_cast<int>(std::floor(Xv/rCutV))*
                                                             static_cast<int>(std::floor(Yv/rCutV))*
                                                             (static_cast<int>(std::floor(Zv/rCutV)) == 0 ? 1 :
                                                     static_cast<int>(std::floor(Zv/rCutV))))},
@@ -103,6 +42,13 @@ struct LinkedCellContainer : public ParticleContainer {
 
     void setLenDim(const std::array<int, 3> &lenDim);
 
+    ParticleIterator begin() override;
+
+    ParticleIterator end() override;
+
+    [[nodiscard]] ParticleIterator begin() const override;
+
+    [[nodiscard]] ParticleIterator end() const override;
 
     /**
      * @brief Provides the iterator for single particles at the start of the collection
@@ -128,14 +74,6 @@ struct LinkedCellContainer : public ParticleContainer {
      */
     [[nodiscard]] std::vector<Cell>::const_iterator end_cell() const;
 
-    /*
-     * these are just here to conform to the ParticleContainer interface
-     */
-    std::vector<Particle>::iterator begin() override = 0;
-    std::vector<Particle>::iterator end() override = 0;
-
-    [[nodiscard]] std::vector<Particle>::const_iterator begin() const override = 0;
-    [[nodiscard]] std::vector<Particle>::const_iterator end() const override = 0;
 
 //    /**
 //     * Get a list of all neighbors of a particle with index i
@@ -147,7 +85,7 @@ struct LinkedCellContainer : public ParticleContainer {
 
     /***** Getters *****/
 
-    [[nodiscard]] const std::vector<LinkedCellContainer::Cell> & getGrid() const;
+    [[nodiscard]] const std::vector<Cell> & getGrid() const;
 
     [[nodiscard]] double getRCut() const;
 
@@ -157,7 +95,7 @@ struct LinkedCellContainer : public ParticleContainer {
 
 
     /***** Setters *****/
-    void setGrid(const std::vector<LinkedCellContainer::Cell> &grid);
+    void setGrid(const std::vector<Cell> &grid);
 
     void setDim(const std::array<int, 3> &dim);
 
@@ -166,7 +104,8 @@ struct LinkedCellContainer : public ParticleContainer {
     /**
      * Has X * Y * Z many elements
      */
-    std::vector<LinkedCellContainer::Cell> grid;
+    std::vector<Cell> grid;
+
 
  private:
     /**
@@ -222,10 +161,7 @@ struct LinkedCellContainer : public ParticleContainer {
 //    return neighbors;
 //}
 
-template<typename... Args>
-void LinkedCellContainer::Cell::emplace_back(Args &&... args) {
-    particles.emplace_back(std::forward<Args>(args)...);
-}
+
 
 
 

@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
 #include <Particle.h>
-#include <LinkedCellContainer.h>
+#include <particleContainers/LinkedCellContainer.h>
 #include <physicsCalculator/LinkedCell.h>
 
 /**

@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "DirectSumParticleContainer.h"
+#include "particleContainers/DirectSumParticleContainer.h"
 
 #include <random>
 #include <array>

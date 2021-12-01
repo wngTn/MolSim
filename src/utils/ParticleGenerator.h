@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DirectSumParticleContainer.h"
+#include "particleContainers/DirectSumParticleContainer.h"
 
 class ParticleGenerator {
 public:

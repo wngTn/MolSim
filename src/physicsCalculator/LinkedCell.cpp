@@ -55,7 +55,7 @@ namespace calculator {
 
                     for (auto it = curCell.begin(); it != curCell.end();) {
 
-                        // TODO treat boundary condition if it->getX() is out of bounds
+                        // TODO treat boundary condition if it->getX() is out of bounds (only if using outflow/cyclic)
 
                         for (int d = 0; d < 3; ++d){
                             novelIndex[d] = static_cast<int>(std::floor(it->getX()[d] * grid.getDim()[d] / grid.getLenDim()[d]));
@@ -105,6 +105,7 @@ namespace calculator {
 
     void LinkedCell::skipOutOfBoundary(LinkedCellContainer &grid, const std::array<int, 3> & neighbors,
                                        Particle &p) {
+        // TODO
         for (int d = 0; (grid.getDim()[2] == 1) ? d < 2 : d < 3; d++) {
             if (neighbors[d] < 0 || neighbors[d] >= grid.getDim()[d])
                 return;
@@ -148,6 +149,13 @@ namespace calculator {
                                         ++neighbors[2]) {
 
                                     /* Boundary conditions */
+                                    // only if using reflecting
+                                    // if(distanceToBorder < LIMIT && usingReflecting)
+                                    //      boundary(grid, p, distanceToBorder, currentIndexes)
+                                    // grid: for dimensions
+                                    // p: obvious
+                                    // distanceToBorder: obvious
+                                    // currentIndexes: to find out which border -> mirroring direction
                                     skipOutOfBoundary(grid, neighbors, p);
                                 }
                             }

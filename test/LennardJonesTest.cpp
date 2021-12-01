@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "DirectSumParticleContainer.h"
+#include "particleContainers/DirectSumParticleContainer.h"
 #include "utils/ArrayUtils.h"
 #include "physicsCalculator/LennardJones.h"
 

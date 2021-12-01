@@ -3,6 +3,7 @@
 #include <vector>
 #include <cmath> /* sqrt */
 #include <functional>
+
 #include "Particle.h"
 #include "ParticleContainer.h"
 
@@ -23,29 +24,26 @@ public:
     template<typename... Args>
     void emplace_back(Args &&... args);
 
-    /**
-     * @brief Provides the iterator for single particles at the start of the collection
-     * @return iterator
-     */
-    std::vector<Particle>::iterator begin();
+    ParticleIterator begin() override;
 
-    /**
-     * @brief Provides the iterator for single particles at the end of the collection
-     * @return iterator
-     */
-    std::vector<Particle>::iterator end();
+    ParticleIterator end() override;
 
+    [[nodiscard]] ParticleIterator begin() const override;
+
+    [[nodiscard]] ParticleIterator end() const override;
+
+    // TODO maybe remove those idk?
     /**
      * @brief Provides the _const_ iterator for single particles at the start of the collection
      * @return const iterator
      */
-    [[nodiscard]] std::vector<Particle>::const_iterator begin() const;
+    // [[nodiscard]] std::vector<Particle>::const_iterator begin() const;
 
     /**
      * @brief Provides the _const_ iterator for single particles at the end of the collection
      * @return const iterator
      */
-    [[nodiscard]] std::vector<Particle>::const_iterator end() const;
+    // [[nodiscard]] std::vector<Particle>::const_iterator end() const;
 
     /**
      * @brief Gives information about the size
