@@ -138,6 +138,55 @@ TEST(LinkedCellTest, MoveMethodTest) {
     EXPECT_EQ(linkedCellContainer1.grid[calculator::LinkedCell::index(std::array<int, 3>{0, 1, 2}, linkedCellContainer1.getDim())].getParticles().size(), 2);
     EXPECT_EQ(linkedCellContainer1.grid[calculator::LinkedCell::index(std::array<int, 3>{0, 0, 1}, linkedCellContainer1.getDim())].getParticles().size(), 1);
 
+
+    // Check whether outflow works
+    LinkedCellContainer linkedCellContainer2 = LinkedCellContainer{16, 14, 13, 3.};
+
+    linkedCellContainer2.grid[0].emplace_back(std::array<double, 3>{-1, 2, 2},
+                                             std::array<double, 3>{0., 0., 0.},
+                                             static_cast<double>(1),
+                                             0);
+    linkedCellContainer2.grid[0].emplace_back(std::array<double, 3>{1, -2, 2},
+                                              std::array<double, 3>{0., 0., 0.},
+                                              static_cast<double>(1),
+                                              0);
+    linkedCellContainer2.grid[0].emplace_back(std::array<double, 3>{1, 2, -2},
+                                              std::array<double, 3>{0., 0., 0.},
+                                              static_cast<double>(1),
+                                              0);
+
+    EXPECT_EQ(linkedCellContainer2.grid[0].getParticles().size(), 3);
+    calculator::LinkedCell::moveParticles(linkedCellContainer2);
+
+    EXPECT_EQ(linkedCellContainer2.grid[0].getParticles().size(), 0);
+
+    // Check whether cyclic works
+    LinkedCellContainer linkedCellContainer3 = LinkedCellContainer{12, 12, 12, 3.,
+                                                                   std::array<LinkedCellContainer::Border, 6>{
+        LinkedCellContainer::cyclic, LinkedCellContainer::cyclic, LinkedCellContainer::cyclic, LinkedCellContainer::cyclic
+    , LinkedCellContainer::cyclic, LinkedCellContainer::cyclic}};
+
+    linkedCellContainer3.grid[0].emplace_back(std::array<double, 3>{-1, 2, 2},
+                                              std::array<double, 3>{0., 0., 0.},
+                                              static_cast<double>(1),
+                                              0);
+    linkedCellContainer3.grid[0].emplace_back(std::array<double, 3>{1, -2, 2},
+                                              std::array<double, 3>{0., 0., 0.},
+                                              static_cast<double>(1),
+                                              0);
+    linkedCellContainer3.grid[0].emplace_back(std::array<double, 3>{1, 2, -2},
+                                              std::array<double, 3>{0., 0., 0.},
+                                              static_cast<double>(1),
+                                              0);
+
+    EXPECT_EQ(linkedCellContainer3.grid[0].getParticles().size(), 3);
+    calculator::LinkedCell::moveParticles(linkedCellContainer3);
+    EXPECT_EQ(linkedCellContainer3.grid[calculator::LinkedCell::index(
+            std::array<int, 3>{3, 0, 0},std::array<int, 3>{4, 4, 4})].getParticles().size(), 1);
+    EXPECT_EQ(linkedCellContainer3.grid[calculator::LinkedCell::index(
+            std::array<int, 3>{0, 3, 0},std::array<int, 3>{4, 4, 4})].getParticles().size(), 1);
+    EXPECT_EQ(linkedCellContainer3.grid[calculator::LinkedCell::index(
+            std::array<int, 3>{0, 0, 3},std::array<int, 3>{4, 4, 4})].getParticles().size(), 1);
 }
 
 /**
@@ -219,4 +268,73 @@ TEST(LinkedCellTest, LinkedCellMethodIntermediateTest) {
          EXPECT_LE(fabs(p1.getV()[2] - p2.getV()[2]), EPSILON_VALUE);
     }
 
+    /************************************* Second Container Test *************************************/
+
+    ParticleContainer particleContainer2 = ParticleContainer{};
+    LinkedCellContainer linkedCellContainer2 = LinkedCellContainer{120, 80, 100, rCut};
+
+    std::cout<<"Grid size: "<<linkedCellContainer2.grid.size()<<std::endl;
+
+    for (int i = 0; i < 10; ++i) {
+        particleContainer2.emplace_back(std::array<double, 3>{(0.4 * i) + 0.8 * i, (0.6 * i) + 0.8 * i, (1.2 * i) + 0.8 * i},
+                                       std::array<double, 3>{0.1, 0.1, 0.1},
+                                       .05,
+                                       i);
+        linkedCellContainer2.grid[calculator::LinkedCell::index(std::array<int, 3>{0, 0, 0}, linkedCellContainer.getDim())]
+                .emplace_back(std::array<double, 3>{(0.4 * i) + 0.8 * i, (0.6 * i) + 0.8 * i, (1.2 * i) + 0.8 * i},
+                              std::array<double, 3>{0.1, 0.1, 0.1},
+                              .05,
+                              i);
+    }
+
+    calculator::LinkedCell::moveParticles(linkedCellContainer2);
+
+    // calculate our result
+    calculator::LennardJones lj2{SIGMA, EPS};
+    lj2.setDim(3);
+    lj2.setDeltaT(delta_t);
+
+    lj2.calcF(particleContainer2);
+
+    calculator::LinkedCell lc2{SIGMA, EPS, rCut, delta_t};
+    lc2.calcF_LC(linkedCellContainer2);
+
+    for (int i = 0; i < 10; ++i) {
+        auto p1 = findParticle(particleContainer2, i);
+        auto p2 = findParticle(linkedCellContainer2, i);
+        std::cout<<"F1 of P1 is: "<<p1.getF()[0]<<" F1 of P2 is: "<<p2.getF()[0]<<std::endl;
+        std::cout<<"F2 of P1 is: "<<p1.getF()[1]<<" F2 of P2 is: "<<p2.getF()[1]<<std::endl;
+        std::cout<<"F3 of P1 is: "<<p1.getF()[2]<<" F3 of P2 is: "<<p2.getF()[2]<<std::endl;
+        EXPECT_LE(fabs(p1.getF()[0] - p2.getF()[0]), EPSILON_VALUE);
+        EXPECT_LE(fabs(p1.getF()[1] - p2.getF()[1]), EPSILON_VALUE);
+        EXPECT_LE(fabs(p1.getF()[2] - p2.getF()[2]), EPSILON_VALUE);
+    }
+
+    lj.calcX(particleContainer2);
+    lc.compX_LC(linkedCellContainer2);
+
+    for (int i = 0; i < 10; ++i) {
+        auto p1 = findParticle(particleContainer2, i);
+        auto p2 = findParticle(linkedCellContainer2, i);
+        std::cout<<"X of P1 is: "<<p1.getX()[0]<<" X of P2 is: "<<p2.getX()[0]<<std::endl;
+        std::cout<<"Y of P1 is: "<<p1.getX()[1]<<" Y of P2 is: "<<p2.getX()[1]<<std::endl;
+        std::cout<<"Z of P1 is: "<<p1.getX()[2]<<" Z of P2 is: "<<p2.getX()[2]<<std::endl;
+        EXPECT_LE(fabs(p1.getX()[0] - p2.getX()[0]), EPSILON_VALUE);
+        EXPECT_LE(fabs(p1.getX()[1] - p2.getX()[1]), EPSILON_VALUE);
+        EXPECT_LE(fabs(p1.getX()[2] - p2.getX()[2]), EPSILON_VALUE);
+    }
+
+    lj.calcV(particleContainer2);
+    lc.compV_LC(linkedCellContainer2);
+
+    for (int i = 0; i < 10; ++i) {
+        auto p1 = findParticle(particleContainer2, i);
+        auto p2 = findParticle(linkedCellContainer2, i);
+        std::cout<<"V1 of P1 is: "<<p1.getV()[0]<<" V1 of P2 is: "<<p2.getV()[0]<<std::endl;
+        std::cout<<"V2 of P1 is: "<<p1.getV()[1]<<" V2 of P2 is: "<<p2.getV()[1]<<std::endl;
+        std::cout<<"V3 of P1 is: "<<p1.getV()[2]<<" V3 of P2 is: "<<p2.getV()[2]<<std::endl;
+        EXPECT_LE(fabs(p1.getV()[0] - p2.getV()[0]), EPSILON_VALUE);
+        EXPECT_LE(fabs(p1.getV()[1] - p2.getV()[1]), EPSILON_VALUE);
+        EXPECT_LE(fabs(p1.getV()[2] - p2.getV()[2]), EPSILON_VALUE);
+    }
 }

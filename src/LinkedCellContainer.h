@@ -9,7 +9,7 @@
 
 struct LinkedCellContainer {
 
-    enum Border {outflow, cyclic};
+    enum Border {outflow, cyclic, reflective};
 
     /**
      * Each element in the grid is a cell
@@ -85,9 +85,11 @@ struct LinkedCellContainer {
      * @param Yv length of Y-Axis of the array == the length of the domain
      * @param Zv length of Z-Axis of the array == the length of the domain
      * @param rCutV the r_cut value
-     * @param border the border type
+     * @param border the border types of the 6 (3D) or 4 (2D) borders
      */
-    LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV, Border borderV = outflow) :
+    LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV, std::array<Border, 6> borderV = std::array<Border, 6>{
+        outflow, outflow, outflow, outflow, outflow, outflow
+    }) :
         grid{std::vector<LinkedCellContainer::Cell>(static_cast<int>(std::floor(Xv/rCutV))*
                                                             static_cast<int>(std::floor(Yv/rCutV))*
                                                             (static_cast<int>(std::floor(Zv/rCutV)) == 0 ? 1 :
@@ -119,11 +121,11 @@ struct LinkedCellContainer {
 
     [[nodiscard]] double getRCut() const;
 
-    [[nodiscard]] Border getBorder() const;
-
     [[nodiscard]] const std::array<int, 3> &getDim() const;
 
     [[nodiscard]] const std::array<int, 3> &getLenDim() const;
+
+    Border getBorder(const std::array<int, 3> & currentIndexes, int d);
 
 
     /***** Setters *****/
@@ -133,9 +135,7 @@ struct LinkedCellContainer {
 
     void setRCut(double rCutV);
 
-    void setBorder(Border border);
-
-    std::vector<std::array<int, 3>> getNeighbors (const std::array<int, 3> & currentIndex) const;
+    [[nodiscard]] std::vector<std::array<int, 3>> getNeighbors (const std::array<int, 3> & currentIndex) const;
 
     /**
      * Has X * Y * Z many elements
@@ -155,7 +155,7 @@ struct LinkedCellContainer {
     std::array<int, 3>lenDim{};
     double rCut{};
 
-    Border border{outflow};
+    std::array<Border, 6> border{outflow};
 };
 
 

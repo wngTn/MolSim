@@ -12,7 +12,7 @@ namespace calculator {
     public:
         LinkedCell(double sigma, double epsilon, double rCut, double delta_t) : sigma(sigma), epsilon(epsilon), rCut{rCut} ,delta_t{delta_t}{};
 
-        void calcF_LC(LinkedCellContainer &grid, bool reflection = false);
+        void calcF_LC(LinkedCellContainer &grid);
 
         static std::string toString();
 
@@ -48,14 +48,17 @@ namespace calculator {
 
         void calcV(LinkedCellContainer::Cell & cell) const;
 
-        void calcF(LinkedCellContainer::Cell & cell);
+        /**
+         * Method explicitly for calculating the forces within a cell
+         * @param cell
+         */
+        void calcFWithinCell(LinkedCellContainer::Cell & cell);
 
     private:
 
         inline void ljforce(Particle &p1, Particle &p2, double sqrd_dist);
 
-        void reflectiveBoundary(LinkedCellContainer & grid, const std::array<int, 3> & neighbors,
-                                Particle & p);
+        void reflectiveBoundary(LinkedCellContainer & grid, const std::array<int, 3> & currentIndexes);
 
         void calcNeighbors(LinkedCellContainer &grid, const std::array<int, 3> & neighbors,
                            Particle &p);
