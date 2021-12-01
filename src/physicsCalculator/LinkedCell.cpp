@@ -1,8 +1,9 @@
+#include <iostream>
 #include "LinkedCell.h"
 
 namespace calculator {
 
-    void LinkedCell::calcFWithinCell(LinkedCellContainer::Cell &cell) {
+    void LinkedCell::calcFWithinCell(Cell &cell) {
         for (auto it = cell.begin(); it != cell.end(); ++it) {
             for (auto it2 = it; it2 != cell.end(); ++it2) {
                 if (*it != *it2) {
@@ -17,7 +18,7 @@ namespace calculator {
 
     }
 
-    void LinkedCell::calcVcell(LinkedCellContainer::Cell &cell) const {
+    void LinkedCell::calcVcell(Cell &cell) const {
 // calculate new velocities
         for (auto &p: cell) { // loop over every particle
             // go through all three dimensions
@@ -37,7 +38,7 @@ namespace calculator {
         }
     }
 
-    void LinkedCell::calcXcell(LinkedCellContainer::Cell &cell) const {
+    void LinkedCell::calcXcell(Cell &cell) const {
         // calculate new positions
         for (auto &p: cell) { // loop over every particle
             // go through all three dimensions
@@ -147,7 +148,8 @@ namespace calculator {
         //TODO
     }
 
-    void LinkedCell::calcF_LC(LinkedCellContainer &grid) {
+    void LinkedCell::calcF(ParticleContainer &container) {
+        auto& grid = static_cast<LinkedCellContainer&>(container);
         for (auto &cell: grid.grid) {
             for (auto &p: cell) {
                 p.setF({0, 0, 0});

@@ -11,9 +11,8 @@ namespace calculator {
     public:
         LinkedCell(double sigma, double epsilon, double rCut, double delta_t) : sigma(sigma), epsilon(epsilon), rCut{rCut} ,delta_t{delta_t}{};
 
-        void calcF_LC(LinkedCellContainer &grid);
-
         void calcF(ParticleContainer &grid) override;
+
 
         std::string toString() override;
 
@@ -43,17 +42,17 @@ namespace calculator {
 
         void calcX(ParticleContainer & grid) const override;
 
-        void calcXcell(LinkedCellContainer::Cell & cell) const;
+        void calcXcell(Cell & cell) const;
 
         void calcV(ParticleContainer & grid) const override;
 
-        void calcVcell(LinkedCellContainer::Cell & cell) const;
+        void calcVcell(Cell & cell) const;
 
         /**
          * Method explicitly for calculating the forces within a cell
          * @param cell
          */
-        void calcFWithinCell(LinkedCellContainer::Cell & cell);
+        void calcFWithinCell(Cell & cell);
 
     private:
 

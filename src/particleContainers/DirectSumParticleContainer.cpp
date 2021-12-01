@@ -7,20 +7,20 @@
 DirectSumParticleContainer::DirectSumParticleContainer() : particles{std::vector<Particle>{}} {}
 
 // TODO
-ParticleIterator DirectSumParticleContainer::begin() {
-    return DirectSumParticleIterator{particles, 0};
+std::vector<Particle>::iterator DirectSumParticleContainer::begin() {
+    return std::vector<Particle>::iterator{};
 }
 
-ParticleIterator DirectSumParticleContainer::end() {
-    return DirectSumParticleIterator{particles, particles.size()};
+std::vector<Particle>::iterator DirectSumParticleContainer::end() {
+    return std::vector<Particle>::iterator{};
 }
 
-ParticleIterator DirectSumParticleContainer::begin() const {
-    return DirectSumParticleIterator{particles, 0};
+std::vector<Particle>::const_iterator DirectSumParticleContainer::begin() const {
+    return std::vector<Particle>::const_iterator{};
 }
 
-ParticleIterator DirectSumParticleContainer::end() const {
-    return DirectSumParticleIterator{particles, particles.size()};
+std::vector<Particle>::const_iterator DirectSumParticleContainer::end() const {
+    return std::vector<Particle>::const_iterator{};
 }
 
 /*
