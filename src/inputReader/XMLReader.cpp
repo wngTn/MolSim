@@ -1,8 +1,8 @@
 #include "XMLReader.h"
-#include "simulation.hxx"
+
 
 XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
-    // flags?
+    // TODO double check everything is set
     auto sim = simulation(s,  xml_schema::flags::dont_validate);
 
     XMLInfo info{};
@@ -10,24 +10,102 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
     if(sim->container_type() == containertype_t::linkedcell){
         info.linkedcell = true;
         auto borderType = sim->containerinfo().get().borderType();
-
         std::array<LinkedCellContainer::Border, 6> boundaryConds = {};
-        switch (borderType.left()) {
-            case border_single_t::cyclic:
-                boundaryConds[0] = LinkedCellContainer::cyclic;
-                break;
-            case border_single_t::reflective:
-                boundaryConds[0] = LinkedCellContainer::reflective;
-                break;
-            case border_single_t::outflow:
-                boundaryConds[0] = LinkedCellContainer::outflow;
-                break;
+        // this is ugly but idk how to iterate the borderType thing
+        initializeBorderType(0,borderType.left(), boundaryConds);
+        initializeBorderType(1,borderType.right(), boundaryConds);
+        initializeBorderType(2,borderType.upper(), boundaryConds);
+        initializeBorderType(3,borderType.lower(), boundaryConds);
+        if(borderType.front().present()){
+            initializeBorderType(4,borderType.front().get(), boundaryConds);
         }
+        if(borderType.back().present()){
+            initializeBorderType(5,borderType.back().get(), boundaryConds);
+        }
+    }else{
+        info.linkedcell = false;
+    }
+
+    if(sim->calculator() == calculatortype_t::lennardjones){
+        info.epsilon = sim->calculationinfo().epsilon();
+        info.sigma = sim->calculationinfo().sigma();
+        info.brownianMotionMean = sim->calculationinfo().brownianMotion();
+        info.calculatorType = PhysicsCalc::lennardJones;
+    }else{
+        info.calculatorType = PhysicsCalc::gravitation;
     }
 
     info.delta_t = sim->delta_t();
-    //TODO XML READER
+    info.t_end = sim->t_end();
+    info.writeFrequency = sim->writeFrequency();
+    info.random = sim->random();
+    switch(sim->outputWriter()){
+        case outputwriter_t::vtk:
+            info.outputWriterType = IOWriter::vtk;
+            break;
+        case outputwriter_t::xyz:
+            info.outputWriterType = IOWriter::xyz;
+            break;
+    }
+
+    info.inputFiles = std::vector<std::string>{};
+    for(auto& inpf : sim->inputFile()){
+        info.inputFiles.push_back(inpf);
+    }
+
+    info.outputfile = sim->outputFile();
+
+    info.generatorInputFiles = std::vector<std::string>{};
+    for(auto& ginpf : sim->generatorFile()){
+        info.generatorInputFiles.push_back(ginpf);
+    }
+
+    auto genInfos = std::vector<ParticleGenerator::ShapeInfo>{};
+
+    for(auto& gi : sim->generatorInfo()){
+        getGeneratorInfo(genInfos, gi);
+    }
+    info.generatorInfos = genInfos;
+
     return info;
+}
+
+void XMLReader::initializeBorderType(int index, border_single_t& type, std::array<LinkedCellContainer::Border, 6>& boundaryConds) {
+    switch (type) {
+        case border_single_t::cyclic:
+            boundaryConds[index] = LinkedCellContainer::cyclic;
+            break;
+        case border_single_t::reflective:
+            boundaryConds[index] = LinkedCellContainer::reflective;
+            break;
+        case border_single_t::outflow:
+            boundaryConds[index] = LinkedCellContainer::outflow;
+            break;
+    }
+}
+
+void XMLReader::getGeneratorInfo(std::vector<ParticleGenerator::ShapeInfo>& genInfos, generator_info_t &info) {
+    ParticleGenerator::ShapeInfo shapeInfo{};
+    shapeInfo.mass = info.mass();
+    shapeInfo.distance = info.distance();
+    shapeInfo.brownianDIM = info.brownianDim();
+    shapeInfo.brownianFactor = info.brownianFactor();
+
+    shapeInfo.pos = {info.x(), info.y(), info.z()};
+    shapeInfo.vel = {info.v1(), info.v2(), info.v3()};
+
+    switch(info.shapeType()){
+        case geometric_t::cuboid:
+            shapeInfo.N = {info.n1().get(), info.n2().get(), info.n3().get()};
+            shapeInfo.type = ParticleGenerator::cuboid;
+            break;
+        case geometric_t::sphere:
+            shapeInfo.radius = info.radius().get();
+            shapeInfo.type = ParticleGenerator::sphere;
+            break;
+    }
+
+    genInfos.push_back(shapeInfo);
 }
 
 

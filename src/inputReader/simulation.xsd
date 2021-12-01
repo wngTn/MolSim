@@ -32,6 +32,9 @@
             <xs:element name="x" type="xs:decimal" />
             <xs:element name="y" type="xs:decimal" />
             <xs:element name="z" type="xs:decimal" />
+            <xs:element name="v1" type="xs:decimal" />
+            <xs:element name="v2" type="xs:decimal" />
+            <xs:element name="v3" type="xs:decimal" />
             <xs:element name="mass" type="xs:decimal" />
             <xs:element name="distance" type="xs:decimal" />
             <xs:element name="brownianFactor" type="xs:decimal" />

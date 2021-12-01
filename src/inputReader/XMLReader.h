@@ -3,6 +3,7 @@
 #include "../physicsCalculator/PhysicsCalc.h"
 #include "../utils/ParticleGenerator.h"
 #include "../particleContainers/LinkedCellContainer.h"
+#include "simulation.hxx"
 
 #include <vector>
 #include <string>
@@ -12,6 +13,7 @@ class XMLReader {
 
 public:
 
+    static void initializeBorderType(int index, border_single_t& type, std::array<LinkedCellContainer::Border, 6>& boundaryConds);
 
     struct XMLInfo {
         // general parameters of the simulation
@@ -39,5 +41,7 @@ public:
         std::array<LinkedCellContainer::Border, 6> boundaryConditions;
     };
 
-    XMLInfo readFile(const std::string& s);
+    static XMLInfo readFile(const std::string& s);
+
+    static void getGeneratorInfo(std::vector<ParticleGenerator::ShapeInfo>& genInfos, generator_info_t &info);
 };

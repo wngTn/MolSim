@@ -1,5 +1,5 @@
+
 #include "LinkedCellContainer.h"
-#include "LinkedCellParticleIterator.h"
 
 const std::vector<Cell> & LinkedCellContainer::getGrid() const {
     return grid;
