@@ -9,12 +9,75 @@
 
 class LinkedCellContainer : public ParticleContainer{
 public:
+
+    enum Border {outflow, cyclic, reflective};
+
     /**
      * Each element in the grid is a cell
      */
-    enum Border {
-        outflow, cyclic, reflective
+    struct Cell {
+        /**
+         * Normal default constructor
+         */
+        Cell() : particles{std::vector<Particle>{}} {};
+
+        void setParticles(const std::vector<Particle> &particlesV) {
+            Cell::particles = particlesV;
+        }
+
+        [[nodiscard]] const std::vector<Particle> &getParticles() const {
+            return particles;
+        }
+
+        /**
+         * @brief Provides the iterator for single particles at the start of the collection
+         * @return iterator
+         */
+        std::vector<Particle>::iterator begin();
+
+        /**
+         * @brief Provides the iterator for single particles at the end of the collection
+         * @return iterator
+         */
+        std::vector<Particle>::iterator end();
+
+        /**
+         * @brief Provides the _const_ iterator for single particles at the start of the collection
+         * @return const iterator
+         */
+        [[nodiscard]] std::vector<Particle>::const_iterator begin() const;
+
+        /**
+         * @brief Provides the _const_ iterator for single particles at the end of the collection
+         * @return const iterator
+         */
+        [[nodiscard]] std::vector<Particle>::const_iterator end() const;
+
+
+        /**
+         * @brief Moves an object to the collection, i.e. uses one of the constructor of the Particle class
+         * and creates an object directly
+         * @tparam Args Parameter pack
+         * @param args The parameter for the constructor
+         */
+        template<typename... Args>
+        void emplace_back(Args &&... args);
+
+        /*
+         * Removes particle at the position
+         */
+        std::vector<Particle>::iterator erase (std::vector<Particle>::const_iterator position);
+
+        void toString();
+
+    private:
+        /**
+         * The Particles in each cell
+         */
+        std::vector<Particle> particles;
+
     };
+
     /***********************************************************************/
 
     /**
@@ -23,8 +86,11 @@ public:
      * @param Yv length of Y-Axis of the array == the length of the domain
      * @param Zv length of Z-Axis of the array == the length of the domain
      * @param rCutV the r_cut value
+     * @param border the border types of the 6 (3D) or 4 (2D) borders
      */
-    LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV) :
+    LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV, std::array<Border, 6> borderV = std::array<Border, 6>{
+        outflow, outflow, outflow, outflow, outflow, outflow
+    }) :
         grid{std::vector<Cell>(static_cast<int>(std::floor(Xv/rCutV))*
                                                             static_cast<int>(std::floor(Yv/rCutV))*
                                                             (static_cast<int>(std::floor(Zv/rCutV)) == 0 ? 1 :
@@ -33,7 +99,7 @@ public:
                                static_cast<int>(std::floor(Yv/rCutV)),
                                (static_cast<int>(std::floor(Zv/rCutV))) == 0 ? 1 :
                                static_cast<int>(std::floor(Zv/rCutV))}},
-        lenDim{std::array<int, 3>{Xv, Yv, Zv}}, rCut{rCutV} {};
+        lenDim{std::array<int, 3>{Xv, Yv, Zv}}, rCut{rCutV}, border{borderV} {};
 
     /**
      * Default constructor
@@ -93,6 +159,8 @@ public:
 
     [[nodiscard]] const std::array<int, 3> &getLenDim() const;
 
+    Border getBorder(const std::array<int, 3> & currentIndexes, int d);
+
 
     /***** Setters *****/
     void setGrid(const std::vector<Cell> &grid);
@@ -100,6 +168,8 @@ public:
     void setDim(const std::array<int, 3> &dim);
 
     void setRCut(double rCutV);
+
+    [[nodiscard]] std::vector<std::array<int, 3>> getNeighbors (const std::array<int, 3> & currentIndex) const;
 
     /**
      * Has X * Y * Z many elements
@@ -119,6 +189,8 @@ public:
      */
     std::array<int, 3>lenDim{};
     double rCut{};
+
+    std::array<Border, 6> border{outflow};
 };
 
 

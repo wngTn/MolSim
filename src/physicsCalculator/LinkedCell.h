@@ -34,6 +34,11 @@ namespace calculator {
          */
         static inline int index(const std::array<int , 3> & currentIndexes, const std::array<int, 3> & dim);
 
+        /**
+         *
+         * @param grid
+         * @param border 0 means outflow -> particle gets deleted; 1 means cyclic -> particle goes to the other side
+         */
         static void moveParticles(LinkedCellContainer & grid);
 
         void calcX(ParticleContainer & grid) const override;
@@ -44,12 +49,17 @@ namespace calculator {
 
         void calcVcell(LinkedCellContainer::Cell & cell) const;
 
+        /**
+         * Method explicitly for calculating the forces within a cell
+         * @param cell
+         */
+        void calcFWithinCell(LinkedCellContainer::Cell & cell);
+
     private:
 
         inline void ljforce(Particle &p1, Particle &p2, double sqrd_dist);
 
-        void skipOutOfBoundary(LinkedCellContainer & grid, const std::array<int, 3> & neighbors,
-                               Particle & p);
+        void reflectiveBoundary(LinkedCellContainer & grid, const std::array<int, 3> & currentIndexes);
 
         void calcNeighbors(LinkedCellContainer &grid, const std::array<int, 3> & neighbors,
                            Particle &p);
@@ -79,12 +89,14 @@ namespace calculator {
 
         // set old force
         p1.setOldF(p1.getF());
-        // p2.setOldF(p2.getF());
+        p2.setOldF(p2.getF());
 
         p1.setF(p1.getF() + force);
-        // p2.setF(p2.getF() - force);
+        p2.setF(p2.getF() - force);
         std::cout<<"LINKED LIST: Particle with Type: "<<p1.getType()<<" after Force Calc with Particle Type: "<<
                  p2.getType()<<" is: ("<<p1.getF()[0]<<", "<<p1.getF()[1]<<", "<<p1.getF()[2]<<")"<<std::endl;
+        std::cout<<"LINKED LIST: Particle with Type: "<<p2.getType()<<" after Force Calc with Particle Type: "<<
+                 p1.getType()<<" is: ("<<p2.getF()[0]<<", "<<p2.getF()[1]<<", "<<p2.getF()[2]<<")"<<std::endl;
     }
 }
 

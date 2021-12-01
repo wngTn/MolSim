@@ -15,8 +15,6 @@ if(BUILD_TEST)
             LennardJonesTest.cpp
             main.cpp LinkedCellContainerTest.cpp LinkedCellTest.cpp)
 
-    enable_testing()
-
     # add the files to our executable
     add_executable(${This} ${Test_Sources})
 
