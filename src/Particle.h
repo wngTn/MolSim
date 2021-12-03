@@ -40,6 +40,11 @@ private:
 
 public:
     /**
+     * Whether this particle is still valid and should be printed/used for calculations
+     */
+    bool valid;
+
+    /**
      * @brief Default constructor
      */
     explicit Particle();
