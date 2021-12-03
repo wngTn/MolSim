@@ -8,7 +8,7 @@
 #pragma once
 
 #include "Particle.h"
-#include "particleContainers/DirectSumParticleContainer.h"
+#include "particleContainers/ParticleContainer.h"
 
 #include <vector>
 
@@ -19,5 +19,5 @@ public:
 
     virtual ~FileReader();
 
-    static void readFile(DirectSumParticleContainer &particles, const std::string &filename);
+    static void readFile(ParticleContainer &particles, const std::string &filename);
 };

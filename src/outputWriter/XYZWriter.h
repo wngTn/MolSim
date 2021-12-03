@@ -30,7 +30,7 @@ namespace outputWriter {
          * @param filename custom filename
          * @param iteration current iteration, used for unique filenames
          */
-        void write(const DirectSumParticleContainer &container, const std::string &filename, int iteration) const override;
+        void write(const ParticleContainer &container, const std::string &filename, int iteration) const override;
         std::string toString() override;
 
     private:

@@ -17,7 +17,7 @@ FileReader::FileReader() = default;
 
 FileReader::~FileReader() = default;
 
-void FileReader::readFile(DirectSumParticleContainer &particles, const std::string &filename) {
+void FileReader::readFile(ParticleContainer &particles, const std::string &filename) {
     std::array<double, 3> x{};
     std::array<double, 3> v{};
     double m{};
@@ -62,7 +62,8 @@ void FileReader::readFile(DirectSumParticleContainer &particles, const std::stri
                 exit(-1);
             }
             datastream >> m;
-            particles.emplace_back(x, v, m);
+            // TODO make emplace back for x v m and change
+            particles.emplace_back(Particle{x, v, m});
 
             getline(input_file, tmp_string);
             // std::cout << "Read line: " << tmp_string << std::endl;

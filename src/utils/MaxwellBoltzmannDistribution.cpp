@@ -16,7 +16,7 @@
     return randomVelocity;
 }
 
-void initializeBrownianMotion(DirectSumParticleContainer &particles, double brownianMotionMean){
+void initializeBrownianMotion(ParticleContainer &particles, double brownianMotionMean){
     int DIM = 3;
     for(auto &p : particles){
         const auto brownMot = maxwellBoltzmannDistributedVelocity(brownianMotionMean, DIM);
