@@ -39,6 +39,10 @@ private:
     double m{};
 
 public:
+    /**
+     * @brief Default constructor
+     */
+    explicit Particle();
 
     /**
      * @brief Normal constructor
@@ -164,6 +168,8 @@ public:
      * @return the string
      */
     [[nodiscard]] std::string toString() const;
+
+
 };
 
 /**

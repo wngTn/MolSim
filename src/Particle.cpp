@@ -3,6 +3,11 @@
 #include <iostream>
 #include "utils/ArrayUtils.h"
 
+Particle::Particle() : type{0}, f{std::array<double, 3>{}}, old_f(std::array<double, 3>{}) {
+    std::cout << "Particle generated with default constructor!" << std::endl;
+}
+
+
 Particle::Particle(int type_arg) : type{type_arg}, f{std::array<double, 3>{}}, old_f(std::array<double, 3>{}) {
     std::cout << "Particle generated with type!" << std::endl;
 }
