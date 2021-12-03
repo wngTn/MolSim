@@ -30,7 +30,19 @@ std::vector<Particle>::const_iterator DirectSumParticleContainer::end() const {
     return particles.end();
 }*/
 
-void DirectSumParticleContainer::push_back(const Particle &p) {
+void DirectSumParticleContainer::emplace_back(Particle&& part) {
+    particles.emplace_back(part);
+}
+
+void DirectSumParticleContainer::emplace_back(Particle& part) {
+    particles.emplace_back(part);
+}
+
+void DirectSumParticleContainer::push_back(const Particle&& p) {
+    particles.push_back(p);
+}
+
+void DirectSumParticleContainer::push_back(const Particle& p) {
     particles.push_back(p);
 }
 

@@ -54,6 +54,16 @@ public:
 
     void setLenDim(const std::array<int, 3> &lenDim);
 
+    [[nodiscard]] size_t size() const noexcept override;
+
+    void reserve(size_t) override;
+
+    void emplace_back(Particle&& part) override;
+    void emplace_back(Particle& part) override;
+
+    void push_back(const Particle&& p) override;
+    void push_back(const Particle& p) override;
+
     std::vector<Particle>::iterator begin() override;
 
     std::vector<Particle>::iterator end() override;

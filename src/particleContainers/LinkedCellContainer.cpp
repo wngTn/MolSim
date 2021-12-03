@@ -1,4 +1,5 @@
 
+#include <iostream>
 #include "LinkedCellContainer.h"
 
 void LinkedCellContainer::setup() {
@@ -92,6 +93,34 @@ LinkedCellContainer::Border LinkedCellContainer::getBorder(const std::array<int,
     if (currentIndexes[2] == dim[2] - 1 && d == 2) {
         return border[5];
     }
+    // should never reach? maybe throw exception
+    std::cerr << "Unreachable in getBorder\n";
+    return outflow;
+}
+
+[[nodiscard]] size_t LinkedCellContainer::size() const noexcept {
+    return particles.size();
+}
+
+void LinkedCellContainer::reserve(size_t size) {
+    particles.reserve(size);
+}
+
+void LinkedCellContainer::emplace_back(Particle&& part) {
+    particles.emplace_back(part);
+}
+
+void LinkedCellContainer::emplace_back(Particle& part) {
+    particles.emplace_back(part);
+}
+
+void LinkedCellContainer::push_back(const Particle&& p) {
+    particles.push_back(p);
+}
+
+
+void LinkedCellContainer::push_back(const Particle& p) {
+    particles.push_back(p);
 }
 
 

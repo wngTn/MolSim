@@ -18,6 +18,37 @@ public:
     virtual void cleanup() = 0;
 
     /**
+    * @brief Allocates the vector size so it doesn't resize automatically
+    * @param size The size of the vector
+    */
+    virtual void reserve(size_t) = 0;
+
+    /**
+     * @brief Adds a particle to the container
+     * @param p The particle that should be added
+     */
+    virtual void push_back(const Particle &p) = 0;
+    virtual void push_back(const Particle&& p) = 0;
+    // i know this should be templated with a parameter pack, but templates and inheritance don't mix easily
+    /**
+   * @brief Moves a Particle to the collection
+   * @param Particle The particle
+   */
+    virtual void emplace_back(Particle&&) = 0;
+
+    /**
+    * @brief Moves a Particle to the collection
+    * @param Particle The particle
+    */
+    virtual void emplace_back(Particle&) = 0;
+
+    /**
+    * @brief Gives information about the size
+    * @return The size of the container
+    */
+    [[nodiscard]] virtual size_t size() const noexcept = 0;
+
+    /**
      * @brief Provides the iterator for single particles at the start of the collection
      * @return iterator
      */

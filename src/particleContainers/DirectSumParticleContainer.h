@@ -22,14 +22,12 @@ public:
     void cleanup() override {
 
     }
-    /**
-     * @brief Moves an object to the collection, i.e. uses one of the constructor of the Particle class
-     * and creates an object directly
-     * @tparam Args Parameter pack
-     * @param args The parameter for the constructor
-     */
+
     template<typename... Args>
     void emplace_back(Args &&... args);
+
+    void emplace_back(Particle&& ) override;
+    void emplace_back(Particle& ) override;
 
     std::vector<Particle>::iterator begin() override;
 
@@ -39,41 +37,22 @@ public:
 
     [[nodiscard]] std::vector<Particle>::const_iterator end() const override;
 
-
-    /**
-     * @brief Provides the _const_ iterator for single particles at the start of the collection
-     * @return const iterator
-     */
-    // [[nodiscard]] std::vector<Particle>::const_iterator begin() const;
-
-    /**
-     * @brief Provides the _const_ iterator for single particles at the end of the collection
-     * @return const iterator
-     */
-    // [[nodiscard]] std::vector<Particle>::const_iterator end() const;
-
-    /**
-     * @brief Gives information about the size
-     * @return The size of the container
-     */
-    [[nodiscard]] size_t size() const noexcept;
+    [[nodiscard]] size_t size() const noexcept override;
 
     /**
      * @brief Adds a particle to the container
      * @param p The particle that should be added
      */
-    void push_back(const Particle &p);
+    void push_back(const Particle &p) override;
+    void push_back(const Particle&& p) override;
 
     /**
      * @brief Prints the content of the container
      */
     void print();
 
-    /**
-     * @brief Allocates the vector size so it doesn't resize automatically
-     * @param size The size of the vector
-     */
-    void reserve(size_t size);
+
+    void reserve(size_t size) override;
 
 
     /*
