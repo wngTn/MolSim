@@ -1,26 +1,24 @@
 #include <iostream>
 
 #include "DirectSumParticleContainer.h"
-#include "DirectSumParticleIterator.h"
 
 
 DirectSumParticleContainer::DirectSumParticleContainer() : particles{std::vector<Particle>{}} {}
 
-// TODO
 std::vector<Particle>::iterator DirectSumParticleContainer::begin() {
-    return std::vector<Particle>::iterator{};
+    return particles.begin();
 }
 
 std::vector<Particle>::iterator DirectSumParticleContainer::end() {
-    return std::vector<Particle>::iterator{};
+    return particles.end();
 }
 
 std::vector<Particle>::const_iterator DirectSumParticleContainer::begin() const {
-    return std::vector<Particle>::const_iterator{};
+    return particles.begin();
 }
 
 std::vector<Particle>::const_iterator DirectSumParticleContainer::end() const {
-    return std::vector<Particle>::const_iterator{};
+    return particles.end();
 }
 
 /*

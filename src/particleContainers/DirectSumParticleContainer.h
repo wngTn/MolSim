@@ -15,6 +15,13 @@ public:
      */
     DirectSumParticleContainer();
 
+    void setup() override {
+        // TODO maybe set all forces to zero
+    }
+
+    void cleanup() override {
+
+    }
     /**
      * @brief Moves an object to the collection, i.e. uses one of the constructor of the Particle class
      * and creates an object directly
@@ -24,15 +31,15 @@ public:
     template<typename... Args>
     void emplace_back(Args &&... args);
 
-    ParticleIterator begin() override;
+    std::vector<Particle>::iterator begin() override;
 
-    ParticleIterator end() override;
+    std::vector<Particle>::iterator end() override;
 
-    [[nodiscard]] ParticleIterator begin() const override;
+    [[nodiscard]] std::vector<Particle>::const_iterator begin() const override;
 
-    [[nodiscard]] ParticleIterator end() const override;
+    [[nodiscard]] std::vector<Particle>::const_iterator end() const override;
 
-    // TODO maybe remove those idk?
+
     /**
      * @brief Provides the _const_ iterator for single particles at the start of the collection
      * @return const iterator
