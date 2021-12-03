@@ -276,9 +276,15 @@ int main(int argc, char *argv[]) {
         spdlog::info("Iteration {}: ", iteration);
         logParticle(particles);
 
+        // TODO maybe change order?
+
+        particles.setup();
         calc->calcX(particles);
         calc->calcF(particles);
         calc->calcV(particles);
+
+        //TODO only do every nth iteration
+        particles.cleanup();
 
         logParticle(particles);
 
