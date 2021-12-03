@@ -6,6 +6,7 @@
 
 #include "Particle.h"
 #include "ParticleContainer.h"
+#include "Cell.h"
 
 class LinkedCellContainer : public ParticleContainer{
 public:
@@ -40,6 +41,16 @@ public:
      * Default constructor
      */
     LinkedCellContainer() = default;
+
+    /**
+     * @brief creates the cell grid
+     */
+    void setup() override;
+
+    /**
+     * @brief performs cleanup, deletes invalid Particles
+     */
+    void cleanup() override;
 
     void setLenDim(const std::array<int, 3> &lenDim);
 
@@ -110,7 +121,7 @@ public:
      * Has X * Y * Z many elements
      */
     std::vector<Cell> grid;
-
+    std::vector<Particle> particles;
 
  private:
     /**

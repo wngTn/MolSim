@@ -1,6 +1,15 @@
 
 #include "LinkedCellContainer.h"
 
+void LinkedCellContainer::setup() {
+    // TODO setup
+}
+
+void LinkedCellContainer::cleanup() {
+    // TODO cleanup
+}
+
+
 const std::vector<Cell> & LinkedCellContainer::getGrid() const {
     return grid;
 }

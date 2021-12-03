@@ -22,8 +22,8 @@ namespace calculator {
 // calculate new velocities
         for (auto &p: cell) { // loop over every particle
             // go through all three dimensions
-            auto newV = p.getV() + delta_t * 0.5 / p.getM() * (p.getF() + p.getOldF());
-            p.setV(newV);
+            auto newV = p->getV() + delta_t * 0.5 / p->getM() * (p->getF() + p->getOldF());
+            p->setV(newV);
         }
     }
 
@@ -42,8 +42,8 @@ namespace calculator {
         // calculate new positions
         for (auto &p: cell) { // loop over every particle
             // go through all three dimensions
-            auto newX = p.getX() + delta_t * (p.getV() + delta_t * 0.5 / p.getM() * p.getF());
-            p.setX(newX);
+            auto newX = p->getX() + delta_t * (p->getV() + delta_t * 0.5 / p->getM() * p->getF());
+            p->setX(newX);
         }
     }
 
@@ -56,6 +56,7 @@ namespace calculator {
        for(auto& c : gridLC.grid){
            calcXcell(c);
        }
+       // TODO adapt moveParticles to only handle outflow and cyclic boundaryConditions
        moveParticles(gridLC);
     }
 
@@ -74,7 +75,7 @@ namespace calculator {
 
                         for (int d = 0; d < 3; ++d) {
                             novelIndex[d] = static_cast<int>(std::floor(
-                                    it->getX()[d] * grid.getDim()[d] / grid.getLenDim()[d]));
+                                    (*it)->getX()[d] * grid.getDim()[d] / grid.getLenDim()[d]));
                         }
 
                         // Checks whether any particle has crossed the boundaries
@@ -125,19 +126,19 @@ namespace calculator {
     }
 
     void LinkedCell::calcNeighbors(LinkedCellContainer &grid, const std::array<int, 3> &neighbors,
-                                   Particle &p) {
+                                   Particle* p) {
         // Loops through every particle of the neighbor
         for (auto &p_other: grid.grid[LinkedCell::index(neighbors, grid.getDim())]) {
             double sqrd_dist = 0;
             for (int i = 0; i < 3; i++) {
-                sqrd_dist += LinkedCell::sqr(p_other.getX()[i] - p.getX()[i]);
+                sqrd_dist += LinkedCell::sqr(p_other->getX()[i] - p->getX()[i]);
             }
             if (sqrd_dist <= LinkedCell::sqr(rCut)) {
                 LinkedCell::ljforce(p, p_other, sqrd_dist);
             }
             // DEBUGGEN
             else {
-                std::cout << "Distance between Type: " << p.getType() << " and: " << p_other.getType()
+                std::cout << "Distance between Type: " << p->getType() << " and: " << p_other->getType()
                           << " is too high: " <<
                           sqrt(sqrd_dist) << std::endl;
             }
@@ -145,14 +146,14 @@ namespace calculator {
     }
 
     void LinkedCell::reflectiveBoundary(LinkedCellContainer &grid, const std::array<int, 3> &currentIndexes) {
-        //TODO
+        //TODO reflective Boundary (apply force to particles close to border, if reflective border is activated for it)
     }
 
     void LinkedCell::calcF(ParticleContainer &container) {
         auto& grid = static_cast<LinkedCellContainer&>(container);
         for (auto &cell: grid.grid) {
             for (auto &p: cell) {
-                p.setF({0, 0, 0});
+                p->setF({0, 0, 0});
             }
         }
         // current index we are currently in all 3 axis
@@ -168,7 +169,7 @@ namespace calculator {
                     // Calculates the forces within a cell
                     calcFWithinCell(grid.grid[index(currentIndexes, grid.getDim())]);
                     // get the Cell in the current index
-                    for (auto &p: grid.grid[index(currentIndexes, grid.getDim())]) {
+                    for (auto& p: grid.grid[index(currentIndexes, grid.getDim())]) {
                         // get all the neighbors
                         for (const std::array<int, 3> &neighbors: grid.getNeighbors(currentIndexes)) {
                             // TODO CHECK DISTANCE FROM CURRENT PARTICLE TO NEIGHBOR

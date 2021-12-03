@@ -3,10 +3,19 @@
 #include <vector>
 
 #include "Particle.h"
-#include "ParticleIterator.h"
 
 class ParticleContainer {
 public:
+
+    /**
+     * @brief prepares the container for calcualtions. E.g. for LinkedCellContainer constructs the cells
+     */
+    virtual void setup() = 0;
+
+    /**
+     * @brief performs some sort of cleanup after calculations. Not guaranteed to be called after every iteration
+     */
+    virtual void cleanup() = 0;
 
     /**
      * @brief Provides the iterator for single particles at the start of the collection

@@ -1,22 +1,23 @@
 #pragma once
 
+#include <vector>
 #include "../Particle.h"
 
 struct Cell {
     /**
      * Normal default constructor
      */
-    Cell() : particles{std::vector<Particle>{}} {};
+    Cell() : particles{std::vector<Particle*>{}} {};
 
-    void setParticles(const std::vector<Particle> &particlesV) {
+    void setParticles(const std::vector<Particle*> &particlesV) {
         Cell::particles = particlesV;
     }
 
-    std::vector<Particle> &getParticles() {
+    std::vector<Particle*> &getParticles() {
         return particles;
     }
 
-    [[nodiscard]] const std::vector<Particle> &getParticles() const {
+    [[nodiscard]] const std::vector<Particle*> &getParticles() const {
         return particles;
     }
 
@@ -24,25 +25,25 @@ struct Cell {
      * @brief Provides the iterator for single particles at the start of the collection
      * @return iterator
      */
-    std::vector<Particle>::iterator begin();
+    std::vector<Particle*>::iterator begin();
 
     /**
      * @brief Provides the iterator for single particles at the end of the collection
      * @return iterator
      */
-    std::vector<Particle>::iterator end();
+    std::vector<Particle*>::iterator end();
 
     /**
      * @brief Provides the _const_ iterator for single particles at the start of the collection
      * @return const iterator
      */
-    [[nodiscard]] std::vector<Particle>::const_iterator begin() const;
+    [[nodiscard]] std::vector<Particle*>::const_iterator begin() const;
 
     /**
      * @brief Provides the _const_ iterator for single particles at the end of the collection
      * @return const iterator
      */
-    [[nodiscard]] std::vector<Particle>::const_iterator end() const;
+    [[nodiscard]] std::vector<Particle*>::const_iterator end() const;
 
     /**
      * @brief Moves an object to the collection, i.e. uses one of the constructor of the Particle class
@@ -56,7 +57,7 @@ struct Cell {
     /*
      * Removes particle at the position
      */
-    std::vector<Particle>::iterator erase (std::vector<Particle>::const_iterator position);
+    std::vector<Particle*>::iterator erase (std::vector<Particle*>::const_iterator position);
 
     void toString();
 
@@ -64,7 +65,7 @@ private:
     /**
      * The Particles in each cell
      */
-    std::vector<Particle> particles;
+    std::vector<Particle*> particles;
 
 };
 
