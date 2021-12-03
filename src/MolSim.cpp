@@ -24,17 +24,26 @@ static double end_time = 1000;
 /// Default delta t
 static double delta_t = 0.014;
 
-/// File name used for the input/output file(s)
-static std::string filename;
+/// File name of the XML file specifying input parameters
+static std::string xml_file;
+
+/// File name used for the input file
+static std::vector<std::string> filename{};
 
 /// File name of the input to the ParticleGenerator
-static std::string generator_file;
+static std::vector<std::string> generator_files{};
+
+/// base file name of the output files
+static std::string output_file;
 
 /// Default dimension
 static int DIM = 3;
 
 /// Which IO method to use
 static IOWriter::iotype io_type{IOWriter::unknown};
+
+/// How often output files are generated (every nth file)
+static int writeFrequency;
 
 /// Which Physics calculation method to use
 static PhysicsCalc::calctype calc_type{PhysicsCalc::unknown};
@@ -44,9 +53,21 @@ static bool benchmarking = false;
 
 /// Whether a particle generator getting parameters from the input file (for e.g. cuboids) should be used
 static bool generate = false;
+
+/// info for generator from XML file
+static std::vector<ParticleGenerator::ShapeInfo> generatorInfos{};
+
 static bool randomGen = false;
 static bool brownianMotion = false;
 static double brownianMotionMean;
+
+static double eps;
+static double sigma;
+
+static bool linkedCell;
+static std::array<int,3> linkedCellSize;
+static double rCut;
+static std::array<LinkedCellContainer::Border, 6> boundaryConditions;
 
 /**
  * @brief Parse command line arguments and set static values accordingly
@@ -55,7 +76,8 @@ static double brownianMotionMean;
  * @param argv argv from main
  */
 static void get_arguments(int argc, char *argv[]) {
-    const std::string help = "Usage: ./MolSim [-i <input_file>] [-g <generator_input>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calc>] [-b <brownian_motion_velocity_mean>] [-r]\n"
+    const std::string help = "Usage: ./MolSim [-x <xml_file>] [-i <input_file>] [-g <generator_input>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calc>] [-b <brownian_motion_velocity_mean>] [-r]\n"
+                             "\tuse -x to specify an XML input file. Overwrites command line otpions (for options where multiple inputs are allowed in the file, e.g. input files command line argument is added)\n"
                              "\tuse -i to specify an input file\n"
                              "\tuse -g to specify a generator input file\n"
                              //"\tuse -t to specify an input type: 'g'/'generate' to generate based on values from input_file, 'r'/'random' for random input (-i discarded for random)\n"
@@ -72,17 +94,20 @@ static void get_arguments(int argc, char *argv[]) {
         std::cout << help;
         exit(0);
     }
-    while ((opt = getopt(argc, argv, "hi:g:e:d:w:c:rb:m:")) != -1) {
+    while ((opt = getopt(argc, argv, "x:hi:g:e:d:w:c:rb:m:")) != -1) {
         switch (opt) {
             case 'h':
                 std::cout << help;
                 exit(0);
+            case 'x':
+                xml_file = optarg;
+                break;
             case 'i':
-                filename = optarg;
+                filename.emplace_back(optarg);
                 break;
             case 'g':
                 generate = true;
-                generator_file = optarg;
+                generator_files.emplace_back(optarg);
                 break;
             case 'e':
                 end_time = std::stod(optarg);
@@ -129,8 +154,9 @@ static void get_arguments(int argc, char *argv[]) {
         }
     }
     std::cout << "Your configurations are:" << std::endl;
-    if(!filename.empty()) std::cout << "\u001b[36m\tFilename:\u001b[0m " << filename << std::endl;
-    if(generate) std::cout << "\u001b[36m\tGenerator Input:\u001b[0m " << generator_file << std::endl;
+    // TODO adapt to XML
+    // if(!filename.empty()) std::cout << "\u001b[36m\tFilename:\u001b[0m " << filename << std::endl;
+    // if(generate) std::cout << "\u001b[36m\tGenerator Input:\u001b[0m " << generator_file << std::endl;
     if(randomGen) std::cout << "\u001b[36m\tRandom Generation\u001b[0m (This needs Python3)\n";
     std::cout << "\u001b[36m\tEnd_time:\u001b[0m " << end_time << (end_time == 1000 ? "(Default)" : "") << std::endl;
     std::cout << "\u001b[36m\tDelta_t:\u001b[0m " << delta_t << (delta_t == 0.014 ? "(Default)" : "") << std::endl;
@@ -178,11 +204,19 @@ static std::unique_ptr<PhysicsCalc> get_calculator() {
     }
 }
 
-void initializeParticles(DirectSumParticleContainer &particles) {
-    // read normal input file
-    if (!filename.empty()) {
-        FileReader::readFile(particles, filename);
+static std::unique_ptr<ParticleContainer> get_container() {
+    if(linkedCell){
+        return std::make_unique<LinkedCellContainer>(linkedCellSize[0], linkedCellSize[1], linkedCellSize[2], rCut, boundaryConditions);
     }
+    return std::make_unique<DirectSumParticleContainer>();
+}
+
+void initializeParticles(ParticleContainer &particles) {
+    // read normal input file
+    for(auto& file : filename){
+        FileReader::readFile(particles, file);
+    }
+
     // if -r flag is set, generate random input using python script
     if (randomGen) {
         // maybe change particle amount
@@ -197,13 +231,19 @@ void initializeParticles(DirectSumParticleContainer &particles) {
         initializeBrownianMotion(particles, brownianMotionMean);
         std::cout<<"\u001b[36m\tBrownianMotion:\u001b[0m "<<brownianMotionMean<<std::endl;
     }
-    // if generate flag is set and input for generator is specified, use ParticleGenerator
-    if (generate && !generator_file.empty()) {
-        ParticleGenerator::generateParticles(particles, generator_file);
+    // generate Particles from generator input JSONs
+    for(auto& genFile : generator_files){
+        ParticleGenerator::generateParticles(particles, genFile);
     }
+
+    // generate Particles directly specified in XML
+    ParticleGenerator::generateParticles(particles, generatorInfos);
+
 }
 
-void logParticle(DirectSumParticleContainer &particles){
+
+
+void logParticle(ParticleContainer &particles){
     spdlog::info("-----------------------------------------------------------------------------------------------"
                  "---------------------------------------------------------------");
     for(auto &p : particles){
@@ -218,6 +258,39 @@ void logParticle(DirectSumParticleContainer &particles){
         auto f2 = p.getF()[2];
         spdlog::info("Moved particle ({} {} {}) with velocity ({} {} {}) and force ({} {} {})", x, y, z, v0, v1, v2, f0, f1, f2);
     }
+}
+
+void parseXML(){
+    if(xml_file.empty()) return;
+
+    XMLReader::XMLInfo info = XMLReader::readFile(xml_file);
+    // TODO currently input from flags is overwritten, fix
+    info.inputFiles.push_back(filename.front());
+    filename = info.inputFiles;
+    io_type = info.outputWriterType;
+    output_file = info.outputfile;
+    end_time = info.t_end;
+    delta_t = info.delta_t;
+    writeFrequency = info.writeFrequency;
+    randomGen = info.random;
+
+    info.generatorInputFiles.push_back(generator_files.front());
+    generator_files = info.generatorInputFiles;
+    generatorInfos = info.generatorInfos;
+
+    calc_type = info.calculatorType;
+    if(calc_type == PhysicsCalc::lennardJones){
+       eps = info.epsilon;
+       sigma = info.sigma;
+       brownianMotionMean = info.brownianMotionMean;
+       if(info.linkedcell){
+           linkedCell = info.linkedcell;
+           rCut = info.rCut;
+           linkedCellSize = info.linkedCellSize;
+           boundaryConditions = info.boundaryConditions;
+       }
+    }
+
 }
 
 /**
@@ -238,8 +311,10 @@ int main(int argc, char *argv[]) {
     get_arguments(argc, argv);
 
     // ------ setup ------ //
-    DirectSumParticleContainer particles = DirectSumParticleContainer();
-    initializeParticles(particles);
+    parseXML();
+
+    auto particles = get_container();
+    initializeParticles(*particles);
 
     auto io = get_io_type();
     auto calc = get_calculator();
@@ -256,7 +331,7 @@ int main(int argc, char *argv[]) {
         << "\u001b[31mElapsed setup time [microseconds]:\u001b[0m "
         << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start_setup).count()
         << std::endl
-        << "\u001b[31mIn total there are:\u001b[0m " << particles.size() << " particles." << std::endl;
+        << "\u001b[31mIn total there are:\u001b[0m " << particles->size() << " particles." << std::endl;
     }
 
     std::cout << "Currently processing your request..." << std::endl;
@@ -267,31 +342,31 @@ int main(int argc, char *argv[]) {
     // ------ calculation ------ //
     auto start_calc = std::chrono::steady_clock::now();
 
-    calc->calcF(particles);
+    calc->calcF(*particles);
     if (!benchmarking){
-        io->write(particles, "output", iteration);
+        io->write(*particles, "output", iteration);
     }
     // for this loop, we assume: current x, current f and current v are known
     while (current_time < end_time) {
         spdlog::info("Iteration {}: ", iteration);
-        logParticle(particles);
+        logParticle(*particles);
 
         // TODO maybe change order?
 
-        particles.setup();
-        calc->calcX(particles);
-        calc->calcF(particles);
-        calc->calcV(particles);
+        particles->setup();
+        calc->calcX(*particles);
+        calc->calcF(*particles);
+        calc->calcV(*particles);
 
         //TODO only do every nth iteration
-        particles.cleanup();
+        particles->cleanup();
 
-        logParticle(particles);
+        logParticle(*particles);
 
         iteration++;
-        if (!benchmarking && iteration % 10 == 0) {
+        if (!benchmarking && iteration % writeFrequency == 0) {
             // uses abstract write method overwritten by specific IO method
-            io->write(particles, "output", iteration);
+            io->write(*particles, output_file, iteration);
         }
 
         current_time += delta_t;

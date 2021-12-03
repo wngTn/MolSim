@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <!-- enum type for choosing geometric type for generator, values cuboid and sphere allowed -->
     <xs:simpleType name ="geometric_t">
         <xs:restriction base="xs:string">
             <xs:enumeration value ="cuboid"/>
@@ -7,6 +8,7 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <!-- enum type for choosing border type, values cyclic, reflective and outflow allowed -->
     <xs:simpleType name="border_single_t">
         <xs:restriction base="xs:string">
             <xs:enumeration value ="cyclic"/>
@@ -15,6 +17,7 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <!-- all boundary condition info, one border type for each side (front and back can be left out for 2D -->
     <xs:complexType name ="border_t">
         <xs:sequence>
             <xs:element name="left" type="border_single_t" />
@@ -26,6 +29,7 @@
         </xs:sequence>
     </xs:complexType>
 
+    <!-- info for the particle generator, n1,n2,n3 and radius optional, rest mandatory -->
     <xs:complexType name ="generator_info_t">
         <xs:sequence>
             <xs:element name="shapeType" type="geometric_t" />
@@ -46,6 +50,7 @@
         </xs:sequence>
     </xs:complexType>
 
+    <!-- enum type for choosing container type, values linkedcell and directsum allowed -->
     <xs:simpleType name ="containertype_t">
         <xs:restriction base="xs:string">
             <xs:enumeration value ="linkedcell"/>
@@ -53,6 +58,7 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <!-- enum type for choosing calculation type, values lennardjones and gravitation allowed -->
     <xs:simpleType name="calculatortype_t">
         <xs:restriction base="xs:string">
             <xs:enumeration value ="lennardjones"/>
@@ -60,13 +66,18 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <!-- info for the LinkedCellContainer, a few numbers and an object containing all boundary condition info -->
     <xs:complexType name="containerinfo_t">
         <xs:sequence>
             <xs:element name="rCut" type="xs:decimal" />
+            <xs:element name="domainSizeX" type="xs:int" />
+            <xs:element name="domainSizeY" type="xs:int" />
+            <xs:element name="domainSizeZ" type="xs:int" />
             <xs:element name="borderType" type="border_t"/>
         </xs:sequence>
     </xs:complexType>
 
+    <!-- some info for the LJ calculator -->
     <xs:complexType name="calculationInfo_t">
         <xs:sequence>
             <xs:element name="epsilon" type="xs:decimal" />
@@ -75,6 +86,7 @@
         </xs:sequence>
     </xs:complexType>
 
+    <!-- enum type for choosing output writer, values vtk and xyz allowed -->
     <xs:simpleType name="outputwriter_t">
         <xs:restriction base="xs:string">
             <xs:enumeration value ="vtk"/>
@@ -82,6 +94,7 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <!-- everything the simulation needs -->
     <xs:complexType name="simulation_t">
         <xs:sequence>
             <xs:element name="t_end" type="xs:decimal" />
@@ -102,7 +115,7 @@
         </xs:sequence>
     </xs:complexType>
 
-
+    <!-- one main simulation element in top level -->
     <xs:element name="simulation" type="simulation_t"/>
 
 </xs:schema>

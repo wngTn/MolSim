@@ -3,7 +3,7 @@
 #include "../physicsCalculator/PhysicsCalc.h"
 #include "../utils/ParticleGenerator.h"
 #include "../particleContainers/LinkedCellContainer.h"
-#include "simulation.hxx"
+#include "simulation.h"
 
 #include <vector>
 #include <string>
@@ -38,10 +38,12 @@ public:
         std::vector<std::string> generatorInputFiles;
         //stuff used for linked cell
         bool linkedcell;
+        std::array<int,3> linkedCellSize;
+        double rCut;
         std::array<LinkedCellContainer::Border, 6> boundaryConditions;
     };
 
     static XMLInfo readFile(const std::string& s);
-
-    static void getGeneratorInfo(std::vector<ParticleGenerator::ShapeInfo>& genInfos, generator_info_t &info);
+private:
+    static void insertGeneratorInfo(std::vector<ParticleGenerator::ShapeInfo>& genInfos, generator_info_t &info);
 };

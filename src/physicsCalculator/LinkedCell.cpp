@@ -9,7 +9,7 @@ namespace calculator {
                 if (*it != *it2) {
                     double sqrd_dist = 0;
                     for (int i = 0; i < 3; i++) {
-                        sqrd_dist += LinkedCell::sqr((*it2).getX()[i] - (*it).getX()[i]);
+                        sqrd_dist += LinkedCell::sqr((*it2)->getX()[i] - (*it)->getX()[i]);
                     }
                     LinkedCell::ljforce((*it), (*it2), sqrd_dist);
                 }
@@ -109,7 +109,7 @@ namespace calculator {
                         // Check whether any index has changed, skip if we already deleted something
                         if ((currentIndexes[0] != novelIndex[0] || currentIndexes[1] != novelIndex[1] ||
                              currentIndexes[2] != novelIndex[2]) && !deleted) {
-                            std::cout << "Moved Particle with type: " << (*it).getType() << " from: (" <<
+                            std::cout << "Moved Particle with type: " << (*it)->getType() << " from: (" <<
                                       currentIndexes[0] << ", " << currentIndexes[1] << ", " << currentIndexes[2]
                                       << ") to: " << "(" <<
                                       novelIndex[0] << ", " << novelIndex[1] << ", " << novelIndex[2] << ")"

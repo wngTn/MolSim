@@ -53,7 +53,7 @@ public:
      * @brief Normal constructor
      * @param type type of the particle
      */
-    explicit Particle(int type = 0);
+    explicit Particle(int type);
 
     /**
      * @brief Copy constructor

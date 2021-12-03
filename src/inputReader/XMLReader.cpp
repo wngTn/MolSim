@@ -9,6 +9,10 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
 
     if(sim->container_type() == containertype_t::linkedcell){
         info.linkedcell = true;
+        info.rCut = sim->containerinfo().get().rCut();
+        info.linkedCellSize = {sim->containerinfo().get().domainSizeX(),
+                               sim->containerinfo().get().domainSizeY(),
+                               sim->containerinfo().get().domainSizeZ()};
         auto borderType = sim->containerinfo().get().borderType();
         std::array<LinkedCellContainer::Border, 6> boundaryConds = {};
         // this is ugly but idk how to iterate the borderType thing
@@ -63,7 +67,7 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
     auto genInfos = std::vector<ParticleGenerator::ShapeInfo>{};
 
     for(auto& gi : sim->generatorInfo()){
-        getGeneratorInfo(genInfos, gi);
+        insertGeneratorInfo(genInfos, gi);
     }
     info.generatorInfos = genInfos;
 
@@ -84,7 +88,7 @@ void XMLReader::initializeBorderType(int index, border_single_t& type, std::arra
     }
 }
 
-void XMLReader::getGeneratorInfo(std::vector<ParticleGenerator::ShapeInfo>& genInfos, generator_info_t &info) {
+void XMLReader::insertGeneratorInfo(std::vector<ParticleGenerator::ShapeInfo>& genInfos, generator_info_t &info) {
     ParticleGenerator::ShapeInfo shapeInfo{};
     shapeInfo.mass = info.mass();
     shapeInfo.distance = info.distance();
