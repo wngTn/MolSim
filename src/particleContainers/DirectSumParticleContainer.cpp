@@ -38,6 +38,10 @@ void DirectSumParticleContainer::emplace_back(Particle& part) {
     particles.emplace_back(part);
 }
 
+void DirectSumParticleContainer::emplace_back(std::array<double, 3> x, std::array<double, 3> v, double m, int t) {
+    particles.emplace_back(x,v,m,t);
+}
+
 void DirectSumParticleContainer::push_back(const Particle&& p) {
     particles.push_back(p);
 }
@@ -72,11 +76,3 @@ DirectSumParticleContainer::PairIterator DirectSumParticleContainer::pair_end() 
     auto pit = DirectSumParticleContainer::PairIterator{particles, particles.size(), particles.size()};
     return pit;
 }
-
-
-
-
-
-
-
-

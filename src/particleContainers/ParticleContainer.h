@@ -29,6 +29,7 @@ public:
      */
     virtual void push_back(const Particle &p) = 0;
     virtual void push_back(const Particle&& p) = 0;
+    // TODO find way to use parameter pack
     // i know this should be templated with a parameter pack, but templates and inheritance don't mix easily
     /**
    * @brief Moves a Particle to the collection
@@ -41,6 +42,16 @@ public:
     * @param Particle The particle
     */
     virtual void emplace_back(Particle&) = 0;
+
+    /**
+     * @brief Moves a Particle to the collection using Particle constructor
+     * @param x position
+     * @param v velocity
+     * @param m mass
+     * @param t type
+     */
+    virtual void emplace_back( std::array<double, 3> x, std::array<double, 3> v, double m, int t) = 0;
+
 
     /**
     * @brief Gives information about the size

@@ -47,7 +47,7 @@ Particle findParticle(const DirectSumParticleContainer &p, int type) {
 Particle findParticle(const LinkedCellContainer &p, int type) {
     for (auto &cell: p.getGrid()) {
         for (auto &e: cell) {
-            if (e.getType() == type) return e;
+            if (e->getType() == type) return *e;
         }
     }
     return Particle{};
@@ -88,7 +88,7 @@ TEST(LinkedCellTest, LinkedCellMethodSimpleTest) {
     lj.calcF(particleContainer);
 
     calculator::LinkedCell lc{SIGMA, EPS, 3., 0.1};
-    lc.calcF_LC(linkedCellContainer);
+    lc.calcF(linkedCellContainer);
 
     for (int i = 0; i < 4; ++i) {
         auto p1 = findParticle(particleContainer, i);
@@ -227,7 +227,7 @@ TEST(LinkedCellTest, LinkedCellMethodIntermediateTest) {
     lj.calcF(particleContainer);
 
     calculator::LinkedCell lc{SIGMA, EPS, rCut, 0.0005};
-    lc.calcF_LC(linkedCellContainer);
+    lc.calcF(linkedCellContainer);
 
     for (int i = 0; i < 10; ++i) {
         auto p1 = findParticle(particleContainer, i);
@@ -241,7 +241,7 @@ TEST(LinkedCellTest, LinkedCellMethodIntermediateTest) {
     }
 
     lj.calcX(particleContainer);
-    lc.compX_LC(linkedCellContainer);
+    lc.calcX(linkedCellContainer);
 
     for (int i = 0; i < 10; ++i) {
         auto p1 = findParticle(particleContainer, i);
@@ -270,7 +270,7 @@ TEST(LinkedCellTest, LinkedCellMethodIntermediateTest) {
 
     /************************************* Second Container Test *************************************/
 
-    ParticleContainer particleContainer2 = ParticleContainer{};
+    DirectSumParticleContainer particleContainer2 = DirectSumParticleContainer{};
     LinkedCellContainer linkedCellContainer2 = LinkedCellContainer{120, 80, 100, rCut};
 
     std::cout<<"Grid size: "<<linkedCellContainer2.grid.size()<<std::endl;
@@ -297,7 +297,7 @@ TEST(LinkedCellTest, LinkedCellMethodIntermediateTest) {
     lj2.calcF(particleContainer2);
 
     calculator::LinkedCell lc2{SIGMA, EPS, rCut, delta_t};
-    lc2.calcF_LC(linkedCellContainer2);
+    lc2.calcF(linkedCellContainer2);
 
     for (int i = 0; i < 10; ++i) {
         auto p1 = findParticle(particleContainer2, i);
@@ -311,7 +311,7 @@ TEST(LinkedCellTest, LinkedCellMethodIntermediateTest) {
     }
 
     lj.calcX(particleContainer2);
-    lc.compX_LC(linkedCellContainer2);
+    lc.calcX(linkedCellContainer2);
 
     for (int i = 0; i < 10; ++i) {
         auto p1 = findParticle(particleContainer2, i);
@@ -325,7 +325,7 @@ TEST(LinkedCellTest, LinkedCellMethodIntermediateTest) {
     }
 
     lj.calcV(particleContainer2);
-    lc.compV_LC(linkedCellContainer2);
+    lc.calcV(linkedCellContainer2);
 
     for (int i = 0; i < 10; ++i) {
         auto p1 = findParticle(particleContainer2, i);

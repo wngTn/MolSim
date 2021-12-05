@@ -35,8 +35,8 @@ TEST(LinkedCellContainerTest, ConstructorTest) {
     auto xRef = std::array<double, 3>{0, 0, 0};
     auto xRef2 = std::array<double, 3>{0.6, 1.6, 0};
 
-    EXPECT_EQ(linkedCellContainer.getGrid()[24].getParticles()[0].getX(), xRef);
-    EXPECT_EQ(linkedCellContainer.getGrid()[11].getParticles()[0].getX(), xRef2);
+    EXPECT_EQ(linkedCellContainer.getGrid()[24].getParticles()[0]->getX(), xRef);
+    EXPECT_EQ(linkedCellContainer.getGrid()[11].getParticles()[0]->getX(), xRef2);
 }
 
 /**
@@ -71,7 +71,7 @@ TEST_P(ParameterizedLinkedCellTest, CorrectDimensionsTest) {
     ASSERT_EQ(p_result.getGrid().size(), X*Y*Z);
 
     for (int i = 0; i < p_result.getGrid().size(); ++i) {
-        ASSERT_EQ(p_result.getGrid()[i].getParticles()[0].getType(), i);
+        ASSERT_EQ(p_result.getGrid()[i].getParticles()[0]->getType(), i);
     }
 }
 
