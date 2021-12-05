@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
 #include <Particle.h>
-#include <LinkedCellContainer.h>
+#include <particleContainers/LinkedCellContainer.h>
 #include <physicsCalculator/LinkedCell.h>
 
 /**
@@ -20,14 +20,14 @@ TEST(LinkedCellContainerTest, ConstructorTest) {
     // 48 elements will be reserved, however, the size is still 0 - this says the grid was constructed though
     ASSERT_EQ(linkedCellContainer.getGrid().size(), 7*7);
 
-    linkedCellContainer.grid[24].emplace_back(std::array<double, 3>{0, 0, 0},
+    linkedCellContainer.grid[24].emplace_back(new Particle{std::array<double, 3>{0, 0, 0},
                                                    std::array<double, 3>{0, 0, 0},
                                                    .5,
-                                                   0);
-    linkedCellContainer.grid[11].emplace_back(std::array<double, 3>{0.6, 1.6, 0},
+                                                   0});
+    linkedCellContainer.grid[11].emplace_back(new Particle{std::array<double, 3>{0.6, 1.6, 0},
                                                    std::array<double, 3>{1, 2, 3},
                                                    1,
-                                                   1);
+                                                   1});
 
     ASSERT_EQ(linkedCellContainer.getGrid()[24].getParticles().size(), 1);
     ASSERT_EQ(linkedCellContainer.getGrid()[11].getParticles().size(), 1);
@@ -35,8 +35,56 @@ TEST(LinkedCellContainerTest, ConstructorTest) {
     auto xRef = std::array<double, 3>{0, 0, 0};
     auto xRef2 = std::array<double, 3>{0.6, 1.6, 0};
 
-    EXPECT_EQ(linkedCellContainer.getGrid()[24].getParticles()[0].getX(), xRef);
-    EXPECT_EQ(linkedCellContainer.getGrid()[11].getParticles()[0].getX(), xRef2);
+    EXPECT_EQ(linkedCellContainer.getGrid()[24].getParticles()[0]->getX(), xRef);
+    EXPECT_EQ(linkedCellContainer.getGrid()[11].getParticles()[0]->getX(), xRef2);
+
+    linkedCellContainer.grid[24].clear();
+    linkedCellContainer.grid[11].clear();
+}
+
+
+/**
+ * Uses the Particle Vector and creates each cell new
+ */
+TEST(LinkedCellContainerTest, ParticleConstructorTest) {
+    int X = 7;
+    int Y = 7;
+    int Z = 1;
+    double rCut = 1;
+
+
+    LinkedCellContainer linkedCellContainer = LinkedCellContainer(X, Y, Z, rCut);
+
+    // 48 elements will be reserved, however, the size is still 0 - this says the grid was constructed though
+    ASSERT_EQ(linkedCellContainer.getGrid().size(), 7*7);
+
+    linkedCellContainer.particles.emplace_back(std::array<double, 3>{0, 0, 0},
+                                               std::array<double, 3>{0, 0, 0},
+                                               .5,
+                                               0);
+
+    linkedCellContainer.particles.emplace_back(std::array<double, 3>{0.6, 1.6, 0},
+                                                             std::array<double, 3>{1, 2, 3},
+                                                             1,
+                                                             1);
+
+
+    for (auto it = linkedCellContainer.particles.begin(); it != linkedCellContainer.particles.end(); ++it) {
+        linkedCellContainer.grid[0].emplace_back(&(*it));
+    }
+
+    calculator::LinkedCell::moveParticles(linkedCellContainer);
+
+    ASSERT_EQ(linkedCellContainer.getGrid()[0].getParticles().size(), 1);
+    ASSERT_EQ(linkedCellContainer.getGrid()[7].getParticles().size(), 1);
+
+    auto xRef = std::array<double, 3>{0, 0, 0};
+    auto xRef2 = std::array<double, 3>{0.6, 1.6, 0};
+
+    EXPECT_EQ(linkedCellContainer.getGrid()[0].getParticles()[0]->getX(), xRef);
+    EXPECT_EQ(linkedCellContainer.getGrid()[7].getParticles()[0]->getX(), xRef2);
+
+    linkedCellContainer.grid.clear();
 }
 
 /**
@@ -53,10 +101,10 @@ protected:
      */
     void setSize(size_t size) {
         for (int i = 0; i < size; ++i) {
-            p_result.grid[i].emplace_back(std::array<double, 3>{0.1 + i, 0.2 + i, 0.3},
+            p_result.grid[i].emplace_back(new Particle{std::array<double, 3>{0.1 + i, 0.2 + i, 0.3},
                                             std::array<double, 3>{0., 0., 0.},
                                             static_cast<double>(i),
-                                            i);
+                                            i});
         }
     }
 
@@ -71,7 +119,7 @@ TEST_P(ParameterizedLinkedCellTest, CorrectDimensionsTest) {
     ASSERT_EQ(p_result.getGrid().size(), X*Y*Z);
 
     for (int i = 0; i < p_result.getGrid().size(); ++i) {
-        ASSERT_EQ(p_result.getGrid()[i].getParticles()[0].getType(), i);
+        ASSERT_EQ(p_result.getGrid()[i].getParticles()[0]->getType(), i);
     }
 }
 

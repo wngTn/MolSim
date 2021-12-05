@@ -3,7 +3,8 @@
 
 namespace calculator {
 
-    void Gravitation::calcF(ParticleContainer &particles) {
+    void Gravitation::calcF(ParticleContainer &container) {
+        auto& particles = static_cast<DirectSumParticleContainer&>(container);
         for (auto &p: particles) {
             p.setOldF(p.getF());
 

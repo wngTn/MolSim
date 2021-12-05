@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <!-- enum type for choosing geometric type for generator, values cuboid and sphere allowed -->
+    <xs:simpleType name ="geometric_t">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value ="cuboid"/>
+            <xs:enumeration value ="sphere"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- enum type for choosing border type, values cyclic, reflective and outflow allowed -->
+    <xs:simpleType name="border_single_t">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value ="cyclic"/>
+            <xs:enumeration value ="reflective"/>
+            <xs:enumeration value ="outflow"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- all boundary condition info, one border type for each side (front and back can be left out for 2D -->
+    <xs:complexType name ="border_t">
+        <xs:sequence>
+            <xs:element name="left" type="border_single_t" />
+            <xs:element name="right" type="border_single_t" />
+            <xs:element name="upper" type="border_single_t" />
+            <xs:element name="lower" type="border_single_t" />
+            <xs:element name="front" type="border_single_t" minOccurs="0" />
+            <xs:element name="back" type="border_single_t" minOccurs="0" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- info for the particle generator, n1,n2,n3 and radius optional, rest mandatory -->
+    <xs:complexType name ="generator_info_t">
+        <xs:sequence>
+            <xs:element name="shapeType" type="geometric_t" />
+            <xs:element name="x" type="xs:decimal" />
+            <xs:element name="y" type="xs:decimal" />
+            <xs:element name="z" type="xs:decimal" />
+            <xs:element name="v1" type="xs:decimal" />
+            <xs:element name="v2" type="xs:decimal" />
+            <xs:element name="v3" type="xs:decimal" />
+            <xs:element name="mass" type="xs:decimal" />
+            <xs:element name="distance" type="xs:decimal" />
+            <xs:element name="brownianFactor" type="xs:decimal" />
+            <xs:element name="brownianDim" type="xs:int" />
+            <xs:element minOccurs="0" name="n1" type="xs:int" />
+            <xs:element minOccurs="0" name="n2" type="xs:int" />
+            <xs:element minOccurs="0" name="n3" type="xs:int" />
+            <xs:element minOccurs="0" name="radius" type="xs:int" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- enum type for choosing container type, values linkedcell and directsum allowed -->
+    <xs:simpleType name ="containertype_t">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value ="linkedcell"/>
+            <xs:enumeration value ="directsum"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- enum type for choosing calculation type, values lennardjones and gravitation allowed -->
+    <xs:simpleType name="calculatortype_t">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value ="lennardjones"/>
+            <xs:enumeration value ="gravitation"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- info for the LinkedCellContainer, a few numbers and an object containing all boundary condition info -->
+    <xs:complexType name="containerinfo_t">
+        <xs:sequence>
+            <xs:element name="rCut" type="xs:decimal" />
+            <xs:element name="domainSizeX" type="xs:int" />
+            <xs:element name="domainSizeY" type="xs:int" />
+            <xs:element name="domainSizeZ" type="xs:int" />
+            <xs:element name="borderType" type="border_t"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- some info for the LJ calculator -->
+    <xs:complexType name="calculationInfo_t">
+        <xs:sequence>
+            <xs:element name="epsilon" type="xs:decimal" />
+            <xs:element name="sigma" type="xs:decimal" />
+            <xs:element name="brownianMotion" type="xs:decimal" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- enum type for choosing output writer, values vtk and xyz allowed -->
+    <xs:simpleType name="outputwriter_t">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value ="vtk"/>
+            <xs:enumeration value ="xyz"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- everything the simulation needs -->
+    <xs:complexType name="simulation_t">
+        <xs:sequence>
+            <xs:element name="t_end" type="xs:decimal" />
+            <xs:element name="delta_t" type="xs:decimal" />
+            <xs:element name="writeFrequency" type="xs:int" />
+            <xs:element minOccurs = "0" name="random" type="xs:boolean" />
+            <xs:element name="container_type" type="containertype_t"/>
+            <!-- optional additional info for container, only used for linkedcell -->
+            <xs:element name="containerinfo" type="containerinfo_t" minOccurs="0" />
+            <xs:element name="calculator" type="calculatortype_t" />
+            <!-- optional additional info for calculator, only used for lennardjones -->
+            <xs:element name="calculationinfo" type="calculationInfo_t" />
+            <xs:element name="outputWriter" type="outputwriter_t" />
+            <xs:element minOccurs = "0" maxOccurs="unbounded" name="inputFile" type="xs:string" />
+            <xs:element minOccurs = "0" maxOccurs="unbounded" name="generatorFile" type="xs:string" />
+            <xs:element name="outputFile" type="xs:string" />
+            <xs:element minOccurs = "0" maxOccurs="unbounded" name="generatorInfo" type="generator_info_t"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- one main simulation element in top level -->
+    <xs:element name="simulation" type="simulation_t"/>
+
+</xs:schema>

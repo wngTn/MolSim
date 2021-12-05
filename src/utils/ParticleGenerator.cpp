@@ -8,6 +8,19 @@
 
 #include <nlohmann/json.hpp>
 
+void ParticleGenerator::generateParticles(ParticleContainer &particles, const std::vector<ShapeInfo>& infovec) {
+    for(auto &info : infovec){
+        switch (info.type){
+            case cuboid:
+                generateCuboid(particles, info);
+                break;
+            case sphere:
+                generateSphere(particles, info);
+                break;
+        }
+    }
+}
+
 void ParticleGenerator::generateParticles(ParticleContainer &particles, const std::string &file) {
     std::vector<ShapeInfo> infovec = readJSON(file);
     for(auto &info : infovec){
@@ -66,7 +79,7 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles, const Shape
     for(int z = 0; z < info.N[2]; z++){
         for(int y = 0; y < info.N[1]; y++){
             for(int x = 0; x < info.N[0]; x++){
-                Particle part;
+                Particle part{};
                 // add browian motion
                 auto tempVel = info.vel + maxwellBoltzmannDistributedVelocity(info.brownianFactor, info.brownianDIM);
                 part = Particle{currentPos, tempVel, info.mass};
@@ -84,7 +97,8 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles, const Shape
 
 void ParticleGenerator::generateSphere(ParticleContainer &particles, const ShapeInfo &info) {
     // how many particles fit on the radius between center and edge
-    int height = floor(info.radius / info.distance);
+    // int height = floor(info.radius / info.distance);
+    int height = info.radius; // switched from radius = height in units to height in particles
     // get parameters for cube generation
     std::vector<int> edges = {2*height + 1,2 * height + 1,2 * height + 1};
     std::array<double,3> cubeCorner = {info.pos[0]-(height*info.distance),
@@ -107,8 +121,7 @@ void ParticleGenerator::generateSphere(ParticleContainer &particles, const Shape
                 if(distance <= info.radius){
                     Particle part;
                     auto tempVel = info.vel + maxwellBoltzmannDistributedVelocity(info.brownianFactor, info.brownianDIM);
-                    part = Particle{currentPos, tempVel, info.mass};
-                    particles.emplace_back(part);
+                    particles.emplace_back(Particle{currentPos, tempVel, info.mass});
                 }
                 currentPos[0] += info.distance;
             }
@@ -135,7 +148,8 @@ void ParticleGenerator::generateSphere2(ParticleContainer &particles, const Shap
     i.type = cuboid;
 
     // how many particles fit on the radius between center and edge
-    int height = floor(info.radius / info.distance);
+    // int height = floor(info.radius / info.distance);
+    int height = info.radius;
 
     i.N = {2*height + 1,2 * height + 1,2 * height + 1};
     i.distance = info.distance;

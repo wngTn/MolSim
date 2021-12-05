@@ -39,12 +39,21 @@ private:
     double m{};
 
 public:
+    /**
+     * Whether this particle is still valid and should be printed/used for calculations
+     */
+    bool valid;
+
+    /**
+     * @brief Default constructor
+     */
+    explicit Particle();
 
     /**
      * @brief Normal constructor
      * @param type type of the particle
      */
-    explicit Particle(int type = 0);
+    explicit Particle(int type);
 
     /**
      * @brief Copy constructor
@@ -164,6 +173,8 @@ public:
      * @return the string
      */
     [[nodiscard]] std::string toString() const;
+
+
 };
 
 /**

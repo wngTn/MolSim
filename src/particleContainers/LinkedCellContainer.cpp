@@ -1,6 +1,20 @@
+
+#include <iostream>
 #include "LinkedCellContainer.h"
 
-const std::vector<LinkedCellContainer::Cell> &LinkedCellContainer::getGrid() const {
+void LinkedCellContainer::setup() {
+    // TODO setup
+}
+
+void LinkedCellContainer::cleanup() {
+    // TODO think about whether this is efficient enough
+    std::vector<Particle> newParts;
+    std::copy_if(particles.begin(), particles.end(), std::back_inserter(newParts), [](Particle& p){return p.valid;});
+    particles = newParts;
+}
+
+
+const std::vector<Cell> & LinkedCellContainer::getGrid() const {
     return grid;
 }
 
@@ -8,7 +22,7 @@ double LinkedCellContainer::getRCut() const {
     return rCut;
 }
 
-void LinkedCellContainer::setGrid(const std::vector<LinkedCellContainer::Cell> &gridV) {
+void LinkedCellContainer::setGrid(const std::vector<Cell> &gridV) {
     LinkedCellContainer::grid = gridV;
 }
 
@@ -31,7 +45,6 @@ const std::array<int, 3> &LinkedCellContainer::getLenDim() const {
 void LinkedCellContainer::setLenDim(const std::array<int, 3> &lenDimV) {
     LinkedCellContainer::lenDim = lenDimV;
 }
-
 
 std::vector<std::array<int, 3>> LinkedCellContainer::getNeighbors(const std::array<int, 3> &currentIndex) const {
     // We are in 2D
@@ -83,35 +96,70 @@ LinkedCellContainer::Border LinkedCellContainer::getBorder(const std::array<int,
     if (currentIndexes[2] == dim[2] - 1 && d == 2) {
         return border[5];
     }
+    // should never reach? maybe throw exception
+    std::cerr << "Unreachable in getBorder\n";
+    return outflow;
+}
+
+[[nodiscard]] size_t LinkedCellContainer::size() const noexcept {
+    return particles.size();
+}
+
+void LinkedCellContainer::reserve(size_t size) {
+    particles.reserve(size);
+}
+
+void LinkedCellContainer::emplace_back(Particle&& part) {
+    particles.emplace_back(part);
+}
+
+void LinkedCellContainer::emplace_back(Particle& part) {
+    particles.emplace_back(part);
+}
+
+void LinkedCellContainer::emplace_back(const std::array<double, 3>& x, const std::array<double, 3>& v, double m, int t) {
+    particles.emplace_back(x,v,m,t);
+}
+
+void LinkedCellContainer::push_back(const Particle&& p) {
+    particles.push_back(p);
+}
+
+void LinkedCellContainer::push_back(const Particle& p) {
+    particles.push_back(p);
 }
 
 
-std::vector<Particle>::iterator LinkedCellContainer::Cell::begin() {
-    return particles.begin();
+std::vector<Particle>::iterator LinkedCellContainer::begin() {
+    return std::vector<Particle>::iterator{};
 }
 
-std::vector<Particle>::iterator LinkedCellContainer::Cell::end() {
-    return particles.end();
+std::vector<Particle>::iterator LinkedCellContainer::end() {
+    return std::vector<Particle>::iterator{};}
+
+std::vector<Particle>::const_iterator LinkedCellContainer::begin() const {
+    return std::vector<Particle>::const_iterator{};
 }
 
-std::vector<Particle>::const_iterator LinkedCellContainer::Cell::begin() const {
-    return particles.begin();
+std::vector<Particle>::const_iterator LinkedCellContainer::end() const {
+    return std::vector<Particle>::const_iterator{};
 }
 
-std::vector<Particle>::const_iterator LinkedCellContainer::Cell::end() const {
-    return particles.end();
+std::vector<Cell>::iterator LinkedCellContainer::begin_cell() {
+    return grid.begin();
 }
 
-std::vector<Particle>::iterator LinkedCellContainer::Cell::erase(std::vector<Particle>::const_iterator position) {
-    return particles.erase(position);
+std::vector<Cell>::iterator LinkedCellContainer::end_cell() {
+    return grid.end();
 }
 
-void LinkedCellContainer::Cell::toString() {
-    std::cout << "Cell with: {";
-    for (const auto &p: particles) {
-        std::cout << "Particle-" << p.getType() << ", ";
-    }
-    std::cout << "}" << std::endl;
+std::vector<Cell>::const_iterator LinkedCellContainer::begin_cell() const {
+    return grid.begin();
 }
+
+std::vector<Cell>::const_iterator LinkedCellContainer::end_cell() const {
+    return grid.end();
+}
+
 
 

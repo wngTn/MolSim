@@ -1,17 +1,16 @@
 #pragma once
 
-#include "ParticleContainer.h"
+#include "particleContainers/ParticleContainer.h"
 
 class ParticleGenerator {
 public:
     static void generateParticles(ParticleContainer &particles, const std::string &file);
 
-private:
-
     enum geometric_type{
         cuboid,
         sphere
     };
+
 
     struct ShapeInfo {
         geometric_type type;
@@ -28,10 +27,17 @@ private:
         double brownianFactor;
         int brownianDIM;
         // only used for sphere
-        double radius;
+        int radius;
         // only used for cuboid
         std::array<int,3> N;
     };
+
+    static void generateParticles(ParticleContainer &particles, const std::vector<ShapeInfo>& infovec);
+
+private:
+
+
+
 
     /**
      * parses a JSON file and returns the content (if well formed) as a vector of ShapeInfo object

@@ -3,71 +3,57 @@
 #include <vector>
 #include <cmath> /* sqrt */
 #include <functional>
-#include "Particle.h"
 
-class ParticleContainer {
+#include "Particle.h"
+#include "ParticleContainer.h"
+
+class DirectSumParticleContainer : public ParticleContainer{
 public:
 
     /**
      * @brief Default constructor
      */
-    ParticleContainer();
+    DirectSumParticleContainer();
 
-    /**
-     * @brief Moves an object to the collection, i.e. uses one of the constructor of the Particle class
-     * and creates an object directly
-     * @tparam Args Parameter pack
-     * @param args The parameter for the constructor
-     */
+    void setup() override {
+        // TODO maybe set all forces to zero
+    }
+
+    void cleanup() override {
+
+    }
+
     template<typename... Args>
     void emplace_back(Args &&... args);
 
-    /**
-     * @brief Provides the iterator for single particles at the start of the collection
-     * @return iterator
-     */
-    std::vector<Particle>::iterator begin();
+    void emplace_back(Particle&& ) override;
+    void emplace_back(Particle& ) override;
+    void emplace_back(const std::array<double, 3>& x, const std::array<double, 3>& v, double m, int t) override;
 
-    /**
-     * @brief Provides the iterator for single particles at the end of the collection
-     * @return iterator
-     */
-    std::vector<Particle>::iterator end();
+    std::vector<Particle>::iterator begin() override;
 
-    /**
-     * @brief Provides the _const_ iterator for single particles at the start of the collection
-     * @return const iterator
-     */
-    [[nodiscard]] std::vector<Particle>::const_iterator begin() const;
+    std::vector<Particle>::iterator end() override;
 
-    /**
-     * @brief Provides the _const_ iterator for single particles at the end of the collection
-     * @return const iterator
-     */
-    [[nodiscard]] std::vector<Particle>::const_iterator end() const;
+    [[nodiscard]] std::vector<Particle>::const_iterator begin() const override;
 
-    /**
-     * @brief Gives information about the size
-     * @return The size of the container
-     */
-    [[nodiscard]] size_t size() const noexcept;
+    [[nodiscard]] std::vector<Particle>::const_iterator end() const override;
+
+    [[nodiscard]] size_t size() const noexcept override;
 
     /**
      * @brief Adds a particle to the container
      * @param p The particle that should be added
      */
-    void push_back(const Particle &p);
+    void push_back(const Particle &p) override;
+    void push_back(const Particle&& p) override;
 
     /**
      * @brief Prints the content of the container
      */
     void print();
 
-    /**
-     * @brief Allocates the vector size so it doesn't resize automatically
-     * @param size The size of the vector
-     */
-    void reserve(size_t size);
+
+    void reserve(size_t size) override;
 
 
     /*
@@ -85,7 +71,7 @@ public:
          * @return The particle pair
          */
         reference operator*() {
-            return std::make_pair<std::reference_wrapper<Particle>, std::reference_wrapper<Particle>>(vec[i], vec[j]);
+            return {vec[i], vec[j]};
         }
 
         /**
@@ -123,8 +109,10 @@ public:
             return !(*this == b);
         }
 
-    private:
+
         PairIterator(std::vector<Particle> &vec, size_t i, size_t j) : vec{vec}, i{i}, j{j} {}
+
+    private:
 
         std::vector<Particle> &vec;
         size_t i;
@@ -155,7 +143,7 @@ private:
 };
 
 template<typename... Args>
-void ParticleContainer::emplace_back(Args &&... args) {
+void DirectSumParticleContainer::emplace_back(Args &&... args) {
     particles.emplace_back(std::forward<Args>(args)...);
 }
 
