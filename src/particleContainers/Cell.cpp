@@ -35,7 +35,7 @@ void Cell::toString() {
     std::cout<<"}"<<std::endl;
 }
 
-Cell::~Cell() {
+void Cell::clear() {
     for (auto e : particles) {
         delete e;
     }

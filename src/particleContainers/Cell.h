@@ -9,8 +9,6 @@ struct Cell {
      */
     Cell() : particles{std::vector<Particle*>{}} {};
 
-    ~Cell();
-
     void setParticles(const std::vector<Particle*> &particlesV) {
         Cell::particles = particlesV;
     }
@@ -48,6 +46,8 @@ struct Cell {
     [[nodiscard]] std::vector<Particle*>::const_iterator end() const;
 
     void add_particle(Particle&);
+
+    void clear();
 
     /**
      * @brief Moves an object to the collection, i.e. uses one of the constructor of the Particle class

@@ -69,7 +69,7 @@ namespace calculator {
                 // iterate through the Z axis
                 for (currentIndexes[2] = 0; currentIndexes[2] < grid.getDim()[2]; ++currentIndexes[2]) {
 
-                    auto &curCell = grid.grid[index(currentIndexes, grid.getDim())];
+                    auto & curCell = grid.grid[index(currentIndexes, grid.getDim())];
 
                     for (auto it = curCell.begin(); it != curCell.end(); ++it) {
 
@@ -95,6 +95,7 @@ namespace calculator {
                             } else if (novelIndex[d] >= grid.getDim()[d]) {
                                 // outflow, removing the particle
                                 if (grid.getBorder(currentIndexes, d) == LinkedCellContainer::outflow) {
+                                    std::cout<<"Removing Particle"<<std::endl;
                                     curCell.erase(it--);
                                     deleted = true;
                                     break;

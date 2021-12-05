@@ -37,6 +37,54 @@ TEST(LinkedCellContainerTest, ConstructorTest) {
 
     EXPECT_EQ(linkedCellContainer.getGrid()[24].getParticles()[0]->getX(), xRef);
     EXPECT_EQ(linkedCellContainer.getGrid()[11].getParticles()[0]->getX(), xRef2);
+
+    linkedCellContainer.grid[24].clear();
+    linkedCellContainer.grid[11].clear();
+}
+
+
+/**
+ * Uses the Particle Vector and creates each cell new
+ */
+TEST(LinkedCellContainerTest, ParticleConstructorTest) {
+    int X = 7;
+    int Y = 7;
+    int Z = 1;
+    double rCut = 1;
+
+
+    LinkedCellContainer linkedCellContainer = LinkedCellContainer(X, Y, Z, rCut);
+
+    // 48 elements will be reserved, however, the size is still 0 - this says the grid was constructed though
+    ASSERT_EQ(linkedCellContainer.getGrid().size(), 7*7);
+
+    linkedCellContainer.particles.emplace_back(std::array<double, 3>{0, 0, 0},
+                                               std::array<double, 3>{0, 0, 0},
+                                               .5,
+                                               0);
+
+    linkedCellContainer.particles.emplace_back(std::array<double, 3>{0.6, 1.6, 0},
+                                                             std::array<double, 3>{1, 2, 3},
+                                                             1,
+                                                             1);
+
+
+    for (auto it = linkedCellContainer.particles.begin(); it != linkedCellContainer.particles.end(); ++it) {
+        linkedCellContainer.grid[0].emplace_back(&(*it));
+    }
+
+    calculator::LinkedCell::moveParticles(linkedCellContainer);
+
+    ASSERT_EQ(linkedCellContainer.getGrid()[0].getParticles().size(), 1);
+    ASSERT_EQ(linkedCellContainer.getGrid()[7].getParticles().size(), 1);
+
+    auto xRef = std::array<double, 3>{0, 0, 0};
+    auto xRef2 = std::array<double, 3>{0.6, 1.6, 0};
+
+    EXPECT_EQ(linkedCellContainer.getGrid()[0].getParticles()[0]->getX(), xRef);
+    EXPECT_EQ(linkedCellContainer.getGrid()[7].getParticles()[0]->getX(), xRef2);
+
+    linkedCellContainer.grid.clear();
 }
 
 /**
