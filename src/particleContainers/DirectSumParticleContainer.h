@@ -28,7 +28,7 @@ public:
 
     void emplace_back(Particle&& ) override;
     void emplace_back(Particle& ) override;
-    void emplace_back( std::array<double, 3> x, std::array<double, 3> v, double m, int t) override;
+    void emplace_back(const std::array<double, 3>& x, const std::array<double, 3>& v, double m, int t) override;
 
     std::vector<Particle>::iterator begin() override;
 

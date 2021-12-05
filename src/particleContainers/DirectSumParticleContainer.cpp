@@ -21,15 +21,6 @@ std::vector<Particle>::const_iterator DirectSumParticleContainer::end() const {
     return particles.end();
 }
 
-/*
-std::vector<Particle>::const_iterator DirectSumParticleContainer::begin() const {
-    return particles.begin();
-}
-
-std::vector<Particle>::const_iterator DirectSumParticleContainer::end() const {
-    return particles.end();
-}*/
-
 void DirectSumParticleContainer::emplace_back(Particle&& part) {
     particles.emplace_back(part);
 }
@@ -38,7 +29,7 @@ void DirectSumParticleContainer::emplace_back(Particle& part) {
     particles.emplace_back(part);
 }
 
-void DirectSumParticleContainer::emplace_back(std::array<double, 3> x, std::array<double, 3> v, double m, int t) {
+void DirectSumParticleContainer::emplace_back(const std::array<double, 3>& x, const std::array<double, 3>& v, double m, int t) {
     particles.emplace_back(x,v,m,t);
 }
 

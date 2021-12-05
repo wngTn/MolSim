@@ -114,7 +114,7 @@ void LinkedCellContainer::emplace_back(Particle& part) {
     particles.emplace_back(part);
 }
 
-void LinkedCellContainer::emplace_back(std::array<double, 3> x, std::array<double, 3> v, double m, int t) {
+void LinkedCellContainer::emplace_back(const std::array<double, 3>& x, const std::array<double, 3>& v, double m, int t) {
     particles.emplace_back(x,v,m,t);
 }
 

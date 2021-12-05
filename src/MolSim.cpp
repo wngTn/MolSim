@@ -290,7 +290,6 @@ void parseXML(){
            boundaryConditions = info.boundaryConditions;
        }
     }
-
 }
 
 /**

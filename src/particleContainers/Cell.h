@@ -45,6 +45,8 @@ struct Cell {
      */
     [[nodiscard]] std::vector<Particle*>::const_iterator end() const;
 
+    void add_particle(Particle&);
+
     /**
      * @brief Moves an object to the collection, i.e. uses one of the constructor of the Particle class
      * and creates an object directly

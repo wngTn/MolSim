@@ -50,7 +50,7 @@ public:
      * @param m mass
      * @param t type
      */
-    virtual void emplace_back( std::array<double, 3> x, std::array<double, 3> v, double m, int t) = 0;
+    virtual void emplace_back(const std::array<double, 3>& x, const std::array<double, 3>& v, double m, int t) = 0;
 
 
     /**

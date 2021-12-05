@@ -22,6 +22,11 @@ std::vector<Particle*>::iterator Cell::erase(std::vector<Particle*>::const_itera
     return particles.erase(position);
 }
 
+void Cell::add_particle(Particle& p){
+    Particle* pp = &p;
+    particles.emplace_back(pp);
+}
+
 void Cell::toString() {
     std::cout<<"Cell with: {";
     for (const auto & p : particles) {

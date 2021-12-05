@@ -115,7 +115,7 @@ namespace calculator {
                                       novelIndex[0] << ", " << novelIndex[1] << ", " << novelIndex[2] << ")"
                                       << std::endl;
                             // TODO STD::MOVE CURRENTLY DELETE AND CREATING
-                            grid.grid[index(novelIndex, grid.getDim())].emplace_back((*it));
+                            grid.grid[index(novelIndex, grid.getDim())].add_particle(*(*it));
                             curCell.erase(it--);
                         }
                         deleted = false;
