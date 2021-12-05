@@ -2160,7 +2160,7 @@ class generator_info_t: public ::xml_schema::type
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::decimal radius_type;
+  typedef ::xml_schema::int_ radius_type;
 
   /**
    * @brief Element optional container type.
@@ -2170,7 +2170,7 @@ class generator_info_t: public ::xml_schema::type
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< radius_type, char, ::xsd::cxx::tree::schema_type::decimal > radius_traits;
+  typedef ::xsd::cxx::tree::traits< radius_type, char > radius_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element
@@ -3513,7 +3513,7 @@ class simulation_t: public ::xml_schema::type
    * @name random
    *
    * @brief Accessor and modifier functions for the %random
-   * required element.
+   * optional element.
    */
   //@{
 
@@ -3523,24 +3523,30 @@ class simulation_t: public ::xml_schema::type
   typedef ::xml_schema::boolean random_type;
 
   /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< random_type > random_optional;
+
+  /**
    * @brief Element traits type.
    */
   typedef ::xsd::cxx::tree::traits< random_type, char > random_traits;
 
   /**
-   * @brief Return a read-only (constant) reference to the element.
+   * @brief Return a read-only (constant) reference to the element
+   * container.
    *
-   * @return A constant reference to the element.
+   * @return A constant reference to the optional container.
    */
-  const random_type&
+  const random_optional&
   random () const;
 
   /**
-   * @brief Return a read-write reference to the element.
+   * @brief Return a read-write reference to the element container.
    *
-   * @return A reference to the element.
+   * @return A reference to the optional container.
    */
-  random_type&
+  random_optional&
   random ();
 
   /**
@@ -3553,6 +3559,18 @@ class simulation_t: public ::xml_schema::type
    */
   void
   random (const random_type& x);
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  random (const random_optional& x);
 
   //@}
 
@@ -4126,7 +4144,6 @@ class simulation_t: public ::xml_schema::type
   simulation_t (const t_end_type&,
                 const delta_t_type&,
                 const writeFrequency_type&,
-                const random_type&,
                 const container_type_type&,
                 const calculator_type&,
                 const calculationinfo_type&,
@@ -4144,7 +4161,6 @@ class simulation_t: public ::xml_schema::type
   simulation_t (const t_end_type&,
                 const delta_t_type&,
                 const writeFrequency_type&,
-                const random_type&,
                 const container_type_type&,
                 const calculator_type&,
                 ::std::unique_ptr< calculationinfo_type >,
@@ -4224,7 +4240,7 @@ class simulation_t: public ::xml_schema::type
   ::xsd::cxx::tree::one< t_end_type > t_end_;
   ::xsd::cxx::tree::one< delta_t_type > delta_t_;
   ::xsd::cxx::tree::one< writeFrequency_type > writeFrequency_;
-  ::xsd::cxx::tree::one< random_type > random_;
+  random_optional random_;
   ::xsd::cxx::tree::one< container_type_type > container_type_;
   containerinfo_optional containerinfo_;
   ::xsd::cxx::tree::one< calculator_type > calculator_;

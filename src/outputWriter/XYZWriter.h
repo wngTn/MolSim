@@ -23,7 +23,6 @@ namespace outputWriter {
 
         virtual ~XYZWriter();
 
-        //TODO adapt to LinkedCellContainer
         /**
          * override of function IOWRriter::write for VTK
          * @param container the ParticleContainer containg all particles that should be output

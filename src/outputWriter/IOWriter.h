@@ -13,7 +13,6 @@ public:
         unknown
     };
 
-    // TODO adapt to LinkedCellContainer
     /**
      * writes an output file of some form
      * @param container the ParticleContainer containing all particles that should be output

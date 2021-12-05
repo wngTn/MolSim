@@ -1,8 +1,8 @@
+#include <iostream>
 #include "XMLReader.h"
 
 
 XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
-    // TODO double check everything is set
     auto sim = simulation(s,  xml_schema::flags::dont_validate);
 
     XMLInfo info{};
@@ -42,7 +42,12 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
     info.delta_t = sim->delta_t();
     info.t_end = sim->t_end();
     info.writeFrequency = sim->writeFrequency();
-    info.random = sim->random();
+    if(sim->random().present()){
+        info.random = sim->random().get();
+    } else {
+        info.random = false;
+    }
+
     switch(sim->outputWriter()){
         case outputwriter_t::vtk:
             info.outputWriterType = IOWriter::vtk;

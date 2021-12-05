@@ -4,7 +4,6 @@
 
 class ParticleGenerator {
 public:
-    // TODO adapt to Linked cell Container
     static void generateParticles(ParticleContainer &particles, const std::string &file);
 
     enum geometric_type{
@@ -28,7 +27,7 @@ public:
         double brownianFactor;
         int brownianDIM;
         // only used for sphere
-        double radius;
+        int radius;
         // only used for cuboid
         std::array<int,3> N;
     };

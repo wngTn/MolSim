@@ -944,22 +944,28 @@ writeFrequency (const writeFrequency_type& x)
   this->writeFrequency_.set (x);
 }
 
-const simulation_t::random_type& simulation_t::
+const simulation_t::random_optional& simulation_t::
 random () const
 {
-  return this->random_.get ();
+  return this->random_;
 }
 
-simulation_t::random_type& simulation_t::
+simulation_t::random_optional& simulation_t::
 random ()
 {
-  return this->random_.get ();
+  return this->random_;
 }
 
 void simulation_t::
 random (const random_type& x)
 {
   this->random_.set (x);
+}
+
+void simulation_t::
+random (const random_optional& x)
+{
+  this->random_ = x;
 }
 
 const simulation_t::container_type_type& simulation_t::
@@ -2450,7 +2456,6 @@ simulation_t::
 simulation_t (const t_end_type& t_end,
               const delta_t_type& delta_t,
               const writeFrequency_type& writeFrequency,
-              const random_type& random,
               const container_type_type& container_type,
               const calculator_type& calculator,
               const calculationinfo_type& calculationinfo,
@@ -2460,7 +2465,7 @@ simulation_t (const t_end_type& t_end,
   t_end_ (t_end, this),
   delta_t_ (delta_t, this),
   writeFrequency_ (writeFrequency, this),
-  random_ (random, this),
+  random_ (this),
   container_type_ (container_type, this),
   containerinfo_ (this),
   calculator_ (calculator, this),
@@ -2477,7 +2482,6 @@ simulation_t::
 simulation_t (const t_end_type& t_end,
               const delta_t_type& delta_t,
               const writeFrequency_type& writeFrequency,
-              const random_type& random,
               const container_type_type& container_type,
               const calculator_type& calculator,
               ::std::unique_ptr< calculationinfo_type > calculationinfo,
@@ -2487,7 +2491,7 @@ simulation_t (const t_end_type& t_end,
   t_end_ (t_end, this),
   delta_t_ (delta_t, this),
   writeFrequency_ (writeFrequency, this),
-  random_ (random, this),
+  random_ (this),
   container_type_ (container_type, this),
   containerinfo_ (this),
   calculator_ (calculator, this),
@@ -2594,7 +2598,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "random" && n.namespace_ ().empty ())
     {
-      if (!random_.present ())
+      if (!this->random_)
       {
         this->random_.set (random_traits::create (i, f, this));
         continue;
@@ -2739,13 +2743,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "writeFrequency",
-      "");
-  }
-
-  if (!random_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "random",
       "");
   }
 
@@ -3378,7 +3375,7 @@ operator<< (::xercesc::DOMElement& e, const generator_info_t& i)
         "radius",
         e));
 
-    s << ::xml_schema::as_decimal(*i.radius ());
+    s << *i.radius ();
   }
 }
 
@@ -3579,13 +3576,14 @@ operator<< (::xercesc::DOMElement& e, const simulation_t& i)
 
   // random
   //
+  if (i.random ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "random",
         e));
 
-    s << i.random ();
+    s << *i.random ();
   }
 
   // container_type
