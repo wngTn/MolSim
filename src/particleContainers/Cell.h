@@ -9,6 +9,8 @@ struct Cell {
      */
     Cell() : particles{std::vector<Particle*>{}} {};
 
+    ~Cell();
+
     void setParticles(const std::vector<Particle*> &particlesV) {
         Cell::particles = particlesV;
     }
@@ -70,4 +72,9 @@ private:
     std::vector<Particle*> particles;
 
 };
+
+template<typename... Args>
+void Cell::emplace_back(Args &&... args) {
+    particles.emplace_back(std::forward<Args>(args)...);
+}
 

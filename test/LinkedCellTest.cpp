@@ -77,10 +77,10 @@ TEST(LinkedCellTest, LinkedCellMethodSimpleTest) {
                                        static_cast<double>(i),
                                        i);
         linkedCellContainer.grid[calculator::LinkedCell::index(std::array<int, 3>{2, 1, 0}, linkedCellContainer.getDim())]
-                .emplace_back(std::array<double, 3>{0.1 + i, 0.2 + i, 0.3},
+                .emplace_back(new Particle{std::array<double, 3>{0.1 + i, 0.2 + i, 0.3},
                               std::array<double, 3>{0., 0., 0.},
                               static_cast<double>(i),
-                              i);
+                              i});
     }
 
     // calculate our result
@@ -106,10 +106,10 @@ TEST(LinkedCellTest, LinkedCellMethodSimpleTest) {
 TEST(LinkedCellTest, MoveMethodTest) {
     LinkedCellContainer linkedCellContainer = LinkedCellContainer{16, 14, 13, 3.};
 
-    linkedCellContainer.grid[0].emplace_back(std::array<double, 3>{10, 4, 5},
+    linkedCellContainer.grid[0].emplace_back(new Particle{std::array<double, 3>{10, 4, 5},
                                              std::array<double, 3>{0., 0., 0.},
                                              static_cast<double>(1),
-                                             0);
+                                             0});
 
     calculator::LinkedCell::moveParticles(linkedCellContainer);
 
@@ -118,18 +118,18 @@ TEST(LinkedCellTest, MoveMethodTest) {
 
     LinkedCellContainer linkedCellContainer1 = LinkedCellContainer{120, 80, 100, 3.};
 
-    linkedCellContainer1.grid[0].emplace_back(std::array<double, 3>{2.1, 2.8, 5.6},
+    linkedCellContainer1.grid[0].emplace_back(new Particle{std::array<double, 3>{2.1, 2.8, 5.6},
                                               std::array<double, 3>{0.1, 0.1, 0.1},
                                               .05,
-                                              7);
-    linkedCellContainer1.grid[0].emplace_back(std::array<double, 3>{2.4, 3.2, 6.4},
+                                              7});
+    linkedCellContainer1.grid[0].emplace_back(new Particle{std::array<double, 3>{2.4, 3.2, 6.4},
                                              std::array<double, 3>{0.1, 0.1, 0.1},
                                              .05,
-                                             8);
-    linkedCellContainer1.grid[0].emplace_back(std::array<double, 3>{2.7, 3.6, 7.2},
+                                             8});
+    linkedCellContainer1.grid[0].emplace_back(new Particle{std::array<double, 3>{2.7, 3.6, 7.2},
                                              std::array<double, 3>{0.1, 0.1, 0.1},
                                              .05,
-                                             9);
+                                             9});
 
 
     calculator::LinkedCell::moveParticles(linkedCellContainer1);
@@ -142,18 +142,18 @@ TEST(LinkedCellTest, MoveMethodTest) {
     // Check whether outflow works
     LinkedCellContainer linkedCellContainer2 = LinkedCellContainer{16, 14, 13, 3.};
 
-    linkedCellContainer2.grid[0].emplace_back(std::array<double, 3>{-1, 2, 2},
+    linkedCellContainer2.grid[0].emplace_back(new Particle{std::array<double, 3>{-1, 2, 2},
                                              std::array<double, 3>{0., 0., 0.},
                                              static_cast<double>(1),
-                                             0);
-    linkedCellContainer2.grid[0].emplace_back(std::array<double, 3>{1, -2, 2},
+                                             0});
+    linkedCellContainer2.grid[0].emplace_back(new Particle{std::array<double, 3>{1, -2, 2},
                                               std::array<double, 3>{0., 0., 0.},
                                               static_cast<double>(1),
-                                              0);
-    linkedCellContainer2.grid[0].emplace_back(std::array<double, 3>{1, 2, -2},
+                                              0});
+    linkedCellContainer2.grid[0].emplace_back(new Particle{std::array<double, 3>{1, 2, -2},
                                               std::array<double, 3>{0., 0., 0.},
                                               static_cast<double>(1),
-                                              0);
+                                              0});
 
     EXPECT_EQ(linkedCellContainer2.grid[0].getParticles().size(), 3);
     calculator::LinkedCell::moveParticles(linkedCellContainer2);
@@ -166,18 +166,18 @@ TEST(LinkedCellTest, MoveMethodTest) {
         LinkedCellContainer::cyclic, LinkedCellContainer::cyclic, LinkedCellContainer::cyclic, LinkedCellContainer::cyclic
     , LinkedCellContainer::cyclic, LinkedCellContainer::cyclic}};
 
-    linkedCellContainer3.grid[0].emplace_back(std::array<double, 3>{-1, 2, 2},
+    linkedCellContainer3.grid[0].emplace_back(new Particle{std::array<double, 3>{-1, 2, 2},
                                               std::array<double, 3>{0., 0., 0.},
                                               static_cast<double>(1),
-                                              0);
-    linkedCellContainer3.grid[0].emplace_back(std::array<double, 3>{1, -2, 2},
+                                              0});
+    linkedCellContainer3.grid[0].emplace_back(new Particle{std::array<double, 3>{1, -2, 2},
                                               std::array<double, 3>{0., 0., 0.},
                                               static_cast<double>(1),
-                                              0);
-    linkedCellContainer3.grid[0].emplace_back(std::array<double, 3>{1, 2, -2},
+                                              0});
+    linkedCellContainer3.grid[0].emplace_back(new Particle{std::array<double, 3>{1, 2, -2},
                                               std::array<double, 3>{0., 0., 0.},
                                               static_cast<double>(1),
-                                              0);
+                                              0});
 
     EXPECT_EQ(linkedCellContainer3.grid[0].getParticles().size(), 3);
     calculator::LinkedCell::moveParticles(linkedCellContainer3);
@@ -211,10 +211,10 @@ TEST(LinkedCellTest, LinkedCellMethodIntermediateTest) {
                                        .05,
                                        i);
         linkedCellContainer.grid[calculator::LinkedCell::index(std::array<int, 3>{0, 0, 0}, linkedCellContainer.getDim())]
-                .emplace_back(std::array<double, 3>{(0.1 * i) + 0.8 * i, (0.2 * i) + 0.8 * i, (0.6 * i) + 0.8 * i},
+                .emplace_back(new Particle{std::array<double, 3>{(0.1 * i) + 0.8 * i, (0.2 * i) + 0.8 * i, (0.6 * i) + 0.8 * i},
                               std::array<double, 3>{0.1, 0.1, 0.1},
                               .05,
-                              i);
+                              i});
     }
 
     calculator::LinkedCell::moveParticles(linkedCellContainer);
@@ -281,10 +281,10 @@ TEST(LinkedCellTest, LinkedCellMethodIntermediateTest) {
                                        .05,
                                        i);
         linkedCellContainer2.grid[calculator::LinkedCell::index(std::array<int, 3>{0, 0, 0}, linkedCellContainer.getDim())]
-                .emplace_back(std::array<double, 3>{(0.4 * i) + 0.8 * i, (0.6 * i) + 0.8 * i, (1.2 * i) + 0.8 * i},
+                .emplace_back(new Particle{std::array<double, 3>{(0.4 * i) + 0.8 * i, (0.6 * i) + 0.8 * i, (1.2 * i) + 0.8 * i},
                               std::array<double, 3>{0.1, 0.1, 0.1},
                               .05,
-                              i);
+                              i});
     }
 
     calculator::LinkedCell::moveParticles(linkedCellContainer2);
