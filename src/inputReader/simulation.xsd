@@ -46,7 +46,7 @@
             <xs:element minOccurs="0" name="n1" type="xs:int" />
             <xs:element minOccurs="0" name="n2" type="xs:int" />
             <xs:element minOccurs="0" name="n3" type="xs:int" />
-            <xs:element minOccurs="0" name="radius" type="xs:decimal" />
+            <xs:element minOccurs="0" name="radius" type="xs:int" />
         </xs:sequence>
     </xs:complexType>
 
@@ -100,7 +100,7 @@
             <xs:element name="t_end" type="xs:decimal" />
             <xs:element name="delta_t" type="xs:decimal" />
             <xs:element name="writeFrequency" type="xs:int" />
-            <xs:element name="random" type="xs:boolean" />
+            <xs:element minOccurs = "0" name="random" type="xs:boolean" />
             <xs:element name="container_type" type="containertype_t"/>
             <!-- optional additional info for container, only used for linkedcell -->
             <xs:element name="containerinfo" type="containerinfo_t" minOccurs="0" />
@@ -108,10 +108,10 @@
             <!-- optional additional info for calculator, only used for lennardjones -->
             <xs:element name="calculationinfo" type="calculationInfo_t" />
             <xs:element name="outputWriter" type="outputwriter_t" />
-            <xs:element maxOccurs="unbounded" name="inputFile" type="xs:string" />
-            <xs:element maxOccurs="unbounded" name="generatorFile" type="xs:string" />
+            <xs:element minOccurs = "0" maxOccurs="unbounded" name="inputFile" type="xs:string" />
+            <xs:element minOccurs = "0" maxOccurs="unbounded" name="generatorFile" type="xs:string" />
             <xs:element name="outputFile" type="xs:string" />
-            <xs:element maxOccurs="unbounded" name="generatorInfo" type="generator_info_t"/>
+            <xs:element minOccurs = "0" maxOccurs="unbounded" name="generatorInfo" type="generator_info_t"/>
         </xs:sequence>
     </xs:complexType>
 
