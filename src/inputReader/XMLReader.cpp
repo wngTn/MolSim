@@ -26,14 +26,15 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
         if(borderType.back().present()){
             initializeBorderType(5,borderType.back().get(), boundaryConds);
         }
+        info.boundaryConditions = boundaryConds;
     }else{
         info.linkedcell = false;
     }
 
     if(sim->calculator() == calculatortype_t::lennardjones){
-        info.epsilon = sim->calculationinfo().epsilon();
-        info.sigma = sim->calculationinfo().sigma();
-        info.brownianMotionMean = sim->calculationinfo().brownianMotion();
+        info.epsilon = sim->calculationinfo().get().epsilon();
+        info.sigma = sim->calculationinfo().get().sigma();
+        info.brownianMotionMean = sim->calculationinfo().get().brownianMotion();
         info.calculatorType = PhysicsCalc::lennardJones;
     }else{
         info.calculatorType = PhysicsCalc::gravitation;
@@ -80,6 +81,7 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
 }
 
 void XMLReader::initializeBorderType(int index, border_single_t& type, std::array<LinkedCellContainer::Border, 6>& boundaryConds) {
+    std::cout << type << std::endl;
     switch (type) {
         case border_single_t::cyclic:
             boundaryConds[index] = LinkedCellContainer::cyclic;

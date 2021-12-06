@@ -6,6 +6,7 @@
 #include "physicsCalculator/PhysicsCalc.h"
 #include "physicsCalculator/Gravitation.h"
 #include "physicsCalculator/LennardJones.h"
+#include "physicsCalculator/LinkedCell.h"
 #include "utils/ParticleGenerator.h"
 #include "utils/MaxwellBoltzmannDistribution.h"
 #include "inputReader/XMLReader.h"
@@ -183,6 +184,9 @@ static std::unique_ptr<PhysicsCalc> get_calculator() {
         case PhysicsCalc::lennardJones:
         case PhysicsCalc::unknown:
         default:
+            if(linkedCell){
+                return std::make_unique<calculator::LinkedCell>(sigma, eps, rCut, delta_t);
+            }
             return std::make_unique<calculator::LennardJones>(sigma, eps);
     }
 }

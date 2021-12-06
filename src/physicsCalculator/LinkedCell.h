@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include "physicsCalculator/PhysicsCalc.h"
 #include "physicsCalculator/LennardJones.h"
 #include "particleContainers/LinkedCellContainer.h"
