@@ -57,7 +57,7 @@ namespace calculator {
            calcXcell(c);
        }
        // TODO adapt moveParticles to only handle outflow and cyclic boundaryConditions
-       moveParticles(gridLC);
+      // moveParticles(gridLC);
     }
 
     void LinkedCell::moveParticles(LinkedCellContainer &grid) {
