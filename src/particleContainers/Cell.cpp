@@ -35,7 +35,9 @@ void Cell::toString() {
     std::cout<<"}"<<std::endl;
 }
 
-template<typename... Args>
-void Cell::emplace_back(Args &&... args) {
-    particles.emplace_back(std::forward<Args>(args)...);
+void Cell::clear() {
+    for (auto e : particles) {
+        delete e;
+    }
 }
+

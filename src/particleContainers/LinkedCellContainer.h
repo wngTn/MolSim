@@ -42,6 +42,7 @@ public:
      */
     LinkedCellContainer() = default;
 
+
     /**
      * @brief creates the cell grid
      */

@@ -47,6 +47,8 @@ struct Cell {
 
     void add_particle(Particle&);
 
+    void clear();
+
     /**
      * @brief Moves an object to the collection, i.e. uses one of the constructor of the Particle class
      * and creates an object directly
@@ -70,4 +72,9 @@ private:
     std::vector<Particle*> particles;
 
 };
+
+template<typename... Args>
+void Cell::emplace_back(Args &&... args) {
+    particles.emplace_back(std::forward<Args>(args)...);
+}
 
