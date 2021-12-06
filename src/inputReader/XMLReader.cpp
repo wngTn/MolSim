@@ -81,7 +81,6 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
 }
 
 void XMLReader::initializeBorderType(int index, border_single_t& type, std::array<LinkedCellContainer::Border, 6>& boundaryConds) {
-    std::cout << type << std::endl;
     switch (type) {
         case border_single_t::cyclic:
             boundaryConds[index] = LinkedCellContainer::cyclic;

@@ -256,7 +256,6 @@ void parseXML(){
     if(!filename.empty()){
         info.inputFiles.push_back(filename.front());
     }
-    std::cout << "after push back!\n";
     filename = info.inputFiles;
     io_type = info.outputWriterType;
     output_file = info.outputfile;

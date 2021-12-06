@@ -131,18 +131,19 @@ void LinkedCellContainer::push_back(const Particle& p) {
 
 
 std::vector<Particle>::iterator LinkedCellContainer::begin() {
-    return std::vector<Particle>::iterator{};
+    return particles.begin();
 }
 
 std::vector<Particle>::iterator LinkedCellContainer::end() {
-    return std::vector<Particle>::iterator{};}
+    return particles.end();
+}
 
 std::vector<Particle>::const_iterator LinkedCellContainer::begin() const {
-    return std::vector<Particle>::const_iterator{};
+    return particles.begin();
 }
 
 std::vector<Particle>::const_iterator LinkedCellContainer::end() const {
-    return std::vector<Particle>::const_iterator{};
+    return particles.end();
 }
 
 std::vector<Cell>::iterator LinkedCellContainer::begin_cell() {
