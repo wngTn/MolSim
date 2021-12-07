@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include "physicsCalculator/PhysicsCalc.h"
 #include "physicsCalculator/LennardJones.h"
 #include "particleContainers/LinkedCellContainer.h"
@@ -59,6 +60,8 @@ namespace calculator {
         inline void ljforce(Particle* p1, Particle* p2, double sqrd_dist) const;
 
         void reflectiveBoundary(LinkedCellContainer & grid, const std::array<int, 3> & currentIndexes);
+
+        Particle generateGhostParticle(const LinkedCellContainer & grid, const Particle* p, int bord);
 
         void calcNeighbors(LinkedCellContainer &grid, const std::array<int, 3> & neighbors,
                            Particle* p);

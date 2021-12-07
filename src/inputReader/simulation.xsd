@@ -103,10 +103,10 @@
             <xs:element minOccurs = "0" name="random" type="xs:boolean" />
             <xs:element name="container_type" type="containertype_t"/>
             <!-- optional additional info for container, only used for linkedcell -->
-            <xs:element name="containerinfo" type="containerinfo_t" minOccurs="0" />
+            <xs:element minOccurs = "0" name="containerinfo" type="containerinfo_t"/>
             <xs:element name="calculator" type="calculatortype_t" />
             <!-- optional additional info for calculator, only used for lennardjones -->
-            <xs:element name="calculationinfo" type="calculationInfo_t" />
+            <xs:element minOccurs = "0" name="calculationinfo" type="calculationInfo_t" />
             <xs:element name="outputWriter" type="outputwriter_t" />
             <xs:element minOccurs = "0" maxOccurs="unbounded" name="inputFile" type="xs:string" />
             <xs:element minOccurs = "0" maxOccurs="unbounded" name="generatorFile" type="xs:string" />

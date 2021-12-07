@@ -3770,7 +3770,7 @@ class simulation_t: public ::xml_schema::type
    * @name calculationinfo
    *
    * @brief Accessor and modifier functions for the %calculationinfo
-   * required element.
+   * optional element.
    */
   //@{
 
@@ -3780,24 +3780,30 @@ class simulation_t: public ::xml_schema::type
   typedef ::calculationInfo_t calculationinfo_type;
 
   /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< calculationinfo_type > calculationinfo_optional;
+
+  /**
    * @brief Element traits type.
    */
   typedef ::xsd::cxx::tree::traits< calculationinfo_type, char > calculationinfo_traits;
 
   /**
-   * @brief Return a read-only (constant) reference to the element.
+   * @brief Return a read-only (constant) reference to the element
+   * container.
    *
-   * @return A constant reference to the element.
+   * @return A constant reference to the optional container.
    */
-  const calculationinfo_type&
+  const calculationinfo_optional&
   calculationinfo () const;
 
   /**
-   * @brief Return a read-write reference to the element.
+   * @brief Return a read-write reference to the element container.
    *
-   * @return A reference to the element.
+   * @return A reference to the optional container.
    */
-  calculationinfo_type&
+  calculationinfo_optional&
   calculationinfo ();
 
   /**
@@ -3812,12 +3818,24 @@ class simulation_t: public ::xml_schema::type
   calculationinfo (const calculationinfo_type& x);
 
   /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  calculationinfo (const calculationinfo_optional& x);
+
+  /**
    * @brief Set the element value without copying.
    *
    * @param p A new value to use.
    *
-   * This function will try to use the passed value directly
-   * instead of making a copy.
+   * This function will try to use the passed value directly instead
+   * of making a copy.
    */
   void
   calculationinfo (::std::unique_ptr< calculationinfo_type > p);
@@ -4146,24 +4164,6 @@ class simulation_t: public ::xml_schema::type
                 const writeFrequency_type&,
                 const container_type_type&,
                 const calculator_type&,
-                const calculationinfo_type&,
-                const outputWriter_type&,
-                const outputFile_type&);
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes
-   * (::std::unique_ptr version).
-   *
-   * This constructor will try to use the passed values directly
-   * instead of making copies.
-   */
-  simulation_t (const t_end_type&,
-                const delta_t_type&,
-                const writeFrequency_type&,
-                const container_type_type&,
-                const calculator_type&,
-                ::std::unique_ptr< calculationinfo_type >,
                 const outputWriter_type&,
                 const outputFile_type&);
 
@@ -4244,7 +4244,7 @@ class simulation_t: public ::xml_schema::type
   ::xsd::cxx::tree::one< container_type_type > container_type_;
   containerinfo_optional containerinfo_;
   ::xsd::cxx::tree::one< calculator_type > calculator_;
-  ::xsd::cxx::tree::one< calculationinfo_type > calculationinfo_;
+  calculationinfo_optional calculationinfo_;
   ::xsd::cxx::tree::one< outputWriter_type > outputWriter_;
   inputFile_sequence inputFile_;
   generatorFile_sequence generatorFile_;

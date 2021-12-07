@@ -2,8 +2,25 @@
 #include <iostream>
 #include "LinkedCellContainer.h"
 
+int getCellIndex(const std::array<int, 3> &currentIndexes, const std::array<int, 3> & dim) {
+    return currentIndexes[0] + dim[0] * (currentIndexes[1] + dim[1] * currentIndexes[2]);
+}
+
 void LinkedCellContainer::setup() {
-    // TODO setup
+    for(auto & it : grid){
+        it = Cell{};
+    }
+    for(auto &p : particles){
+        std::array<int, 3> novelCellIndex{};
+        for (int d = 0; d < 3; ++d) {
+            novelCellIndex[d] = static_cast<int>(std::floor(
+                    p.getX()[d] * getDim()[d] / getLenDim()[d]));
+        }
+        auto cellIndex = getCellIndex(novelCellIndex, getDim());
+        std::cout << "emplacing Particle at " << p.getX()[0] << ", " << p.getX()[1] << ", " << p.getX()[2] <<
+        " in Cell " << novelCellIndex[0] << ", " << novelCellIndex[1] << ", " << novelCellIndex[2] << " at index " << cellIndex << std::endl;
+        grid[cellIndex].emplace_back(&p);
+    }
 }
 
 void LinkedCellContainer::cleanup() {
@@ -71,35 +88,35 @@ std::vector<std::array<int, 3>> LinkedCellContainer::getNeighbors(const std::arr
     }
 }
 
-LinkedCellContainer::Border LinkedCellContainer::getBorder(const std::array<int, 3> &currentIndexes, int d) {
+std::tuple<LinkedCellContainer::Border, int> LinkedCellContainer::getBorder(const std::array<int, 3> &currentIndexes, int d) {
     // y value is zero --> upper border
-    if (currentIndexes[1] == 0 && d == 1) {
-        return border[2];
+    if (currentIndexes[1] <= 0 && d == 1) {
+        return std::make_tuple(border[2], 2);
     }
     // x value is zero --> left border
-    if (currentIndexes[0] == 0 && d == 0) {
-        return border[0];
+    if (currentIndexes[0] <= 0 && d == 0) {
+        return std::make_tuple(border[0], 0);
     }
     // y value is max --> lower border
-    if (currentIndexes[1] == dim[1] - 1 && d == 1) {
-        return border[3];
+    if (currentIndexes[1] >= dim[1] - 1 && d == 1) {
+        return std::make_tuple(border[3], 3);
     }
     // x value is max --> right border
-    if (currentIndexes[0] == dim[0] - 1 && d == 0) {
-        return border[1];
+    if (currentIndexes[0] >= dim[0] - 1 && d == 0) {
+        return std::make_tuple(border[1], 1);
     }
     // z value is zero --> front
-    if (currentIndexes[2] == 0 && d == 2) {
-        return border[4];
+    if (currentIndexes[2] <= 0 && d == 2) {
+        return std::make_tuple(border[4], 4);
     }
     // z value is max --> back
-    if (currentIndexes[2] == dim[2] - 1 && d == 2) {
-        return border[5];
+    if (currentIndexes[2] >= dim[2] - 1 && d == 2) {
+        return std::make_tuple(border[5], 5);
     }
-    // should never reach? maybe throw exception
-    std::cerr << "Unreachable in getBorder\n";
-    return outflow;
+    // not a border
+    return std::make_tuple(none, -1);
 }
+
 
 [[nodiscard]] size_t LinkedCellContainer::size() const noexcept {
     return particles.size();
@@ -131,18 +148,19 @@ void LinkedCellContainer::push_back(const Particle& p) {
 
 
 std::vector<Particle>::iterator LinkedCellContainer::begin() {
-    return std::vector<Particle>::iterator{};
+    return particles.begin();
 }
 
 std::vector<Particle>::iterator LinkedCellContainer::end() {
-    return std::vector<Particle>::iterator{};}
+    return particles.end();
+}
 
 std::vector<Particle>::const_iterator LinkedCellContainer::begin() const {
-    return std::vector<Particle>::const_iterator{};
+    return particles.begin();
 }
 
 std::vector<Particle>::const_iterator LinkedCellContainer::end() const {
-    return std::vector<Particle>::const_iterator{};
+    return particles.end();
 }
 
 std::vector<Cell>::iterator LinkedCellContainer::begin_cell() {
@@ -159,6 +177,13 @@ std::vector<Cell>::const_iterator LinkedCellContainer::begin_cell() const {
 
 std::vector<Cell>::const_iterator LinkedCellContainer::end_cell() const {
     return grid.end();
+}
+
+bool LinkedCellContainer::is2D() {
+    if (dim[2] == 1) {
+        return true;
+    }
+    else return false;
 }
 
 

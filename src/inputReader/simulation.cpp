@@ -1046,22 +1046,28 @@ calculator (::std::unique_ptr< calculator_type > x)
   this->calculator_.set (std::move (x));
 }
 
-const simulation_t::calculationinfo_type& simulation_t::
+const simulation_t::calculationinfo_optional& simulation_t::
 calculationinfo () const
 {
-  return this->calculationinfo_.get ();
+  return this->calculationinfo_;
 }
 
-simulation_t::calculationinfo_type& simulation_t::
+simulation_t::calculationinfo_optional& simulation_t::
 calculationinfo ()
 {
-  return this->calculationinfo_.get ();
+  return this->calculationinfo_;
 }
 
 void simulation_t::
 calculationinfo (const calculationinfo_type& x)
 {
   this->calculationinfo_.set (x);
+}
+
+void simulation_t::
+calculationinfo (const calculationinfo_optional& x)
+{
+  this->calculationinfo_ = x;
 }
 
 void simulation_t::
@@ -2458,7 +2464,6 @@ simulation_t (const t_end_type& t_end,
               const writeFrequency_type& writeFrequency,
               const container_type_type& container_type,
               const calculator_type& calculator,
-              const calculationinfo_type& calculationinfo,
               const outputWriter_type& outputWriter,
               const outputFile_type& outputFile)
 : ::xml_schema::type (),
@@ -2469,33 +2474,7 @@ simulation_t (const t_end_type& t_end,
   container_type_ (container_type, this),
   containerinfo_ (this),
   calculator_ (calculator, this),
-  calculationinfo_ (calculationinfo, this),
-  outputWriter_ (outputWriter, this),
-  inputFile_ (this),
-  generatorFile_ (this),
-  outputFile_ (outputFile, this),
-  generatorInfo_ (this)
-{
-}
-
-simulation_t::
-simulation_t (const t_end_type& t_end,
-              const delta_t_type& delta_t,
-              const writeFrequency_type& writeFrequency,
-              const container_type_type& container_type,
-              const calculator_type& calculator,
-              ::std::unique_ptr< calculationinfo_type > calculationinfo,
-              const outputWriter_type& outputWriter,
-              const outputFile_type& outputFile)
-: ::xml_schema::type (),
-  t_end_ (t_end, this),
-  delta_t_ (delta_t, this),
-  writeFrequency_ (writeFrequency, this),
-  random_ (this),
-  container_type_ (container_type, this),
-  containerinfo_ (this),
-  calculator_ (calculator, this),
-  calculationinfo_ (std::move (calculationinfo), this),
+  calculationinfo_ (this),
   outputWriter_ (outputWriter, this),
   inputFile_ (this),
   generatorFile_ (this),
@@ -2654,7 +2633,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       ::std::unique_ptr< calculationinfo_type > r (
         calculationinfo_traits::create (i, f, this));
 
-      if (!calculationinfo_.present ())
+      if (!this->calculationinfo_)
       {
         this->calculationinfo_.set (::std::move (r));
         continue;
@@ -2757,13 +2736,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "calculator",
-      "");
-  }
-
-  if (!calculationinfo_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "calculationinfo",
       "");
   }
 
@@ -3622,13 +3594,14 @@ operator<< (::xercesc::DOMElement& e, const simulation_t& i)
 
   // calculationinfo
   //
+  if (i.calculationinfo ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "calculationinfo",
         e));
 
-    s << i.calculationinfo ();
+    s << *i.calculationinfo ();
   }
 
   // outputWriter
