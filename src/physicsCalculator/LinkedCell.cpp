@@ -149,7 +149,7 @@ namespace calculator {
 
     void LinkedCell::reflectiveBoundary(LinkedCellContainer &grid, const std::array<int, 3> &currentIndexes) {
         // We only reflect at this distance
-        double reflectDistance = std::pow(2, 1/6) * sigma;
+        double reflectDistance = std::pow(2, 1.0/6.0) * sigma;
         // saves the borders of the current cell
         std::vector<int> borders;
         // go through all three or two axis and acquire the borders of currentIndex that are reflective
@@ -172,7 +172,7 @@ namespace calculator {
 
         for (auto & p : grid.grid[index(currentIndexes, grid.getDim())]) {
             for (int bord : borders) {
-                if (grid.getDistance((const std::array<int, 3> &) p->getX(), bord) <= reflectDistance) {
+                if (grid.getDistance(p->getX(), bord) <= reflectDistance) {
                     Particle p2 = generateGhostParticle(grid, p, bord);
                     double sqrd_dist = 0;
                     for (int i = 0; i < 3; i++) {
@@ -204,7 +204,7 @@ namespace calculator {
                 // RIGHT
             case 1: {
                 // Mirror for position at right border
-                auto mirrorX = std::array<double, 3>{2 * grid.getDistance((const std::array<int, 3> &) p->getX(),
+                auto mirrorX = std::array<double, 3>{2 * grid.getDistance(p->getX(),
                                                                           1), 0, 0};
                 auto newX = mirrorX + p->getX();
                 // Mirror at Y axis
@@ -227,7 +227,7 @@ namespace calculator {
                 // LOWER
             case 3: {
                 // Mirror for position at lower border
-                auto mirrorX = std::array<double, 3>{0, 2 * grid.getDistance((const std::array<int, 3> &) p->getX(),
+                auto mirrorX = std::array<double, 3>{0, 2 * grid.getDistance(p->getX(),
                                                                              3), 0};
                 auto newX = mirrorX + p->getX();
                 // Mirror at X axis
@@ -250,8 +250,8 @@ namespace calculator {
                 // BACK
             case 5: {
                 // Mirror for position at lower border
-                auto mirrorX = std::array<double, 3>{0, 0, 2 * grid.getDistance((const std::array<int, 3> &) p->getX(),
-                                                                                3)};
+                auto mirrorX = std::array<double, 3>{0, 0, 2 * grid.getDistance(p->getX(),
+                                                                                5)};
                 auto newX = mirrorX + p->getX();
                 // Mirror at X axis
                 auto mirror = std::array<double, 3>{1, 1, -1};

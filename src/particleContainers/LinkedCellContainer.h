@@ -104,7 +104,7 @@ public:
      * @param bord the specific border ([0;5])
      * @return the distance
      */
-    [[nodiscard]] inline double getDistance(std::array<int, 3> X, int bord) const;
+    [[nodiscard]] inline double getDistance(const std::array<double, 3> & X, int bord) const;
 
     /**
      * True if 2D, false if 3D
@@ -172,7 +172,7 @@ private:
     std::array<Border, 6> border{outflow};
 };
 
-double LinkedCellContainer::getDistance(std::array<int, 3> X, int bord) const {
+double LinkedCellContainer::getDistance(const std::array<double, 3> & X, int bord) const {
     switch (bord) {
         // LEFT
         case 0: return X[0];
