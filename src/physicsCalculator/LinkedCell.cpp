@@ -57,12 +57,11 @@ namespace calculator {
            calcXcell(c);
        }
        // TODO adapt moveParticles to only handle outflow and cyclic boundaryConditions
-      // moveParticles(gridLC);
+      moveParticles(gridLC);
     }
 
     void LinkedCell::moveParticles(LinkedCellContainer &grid) {
         std::array<int, 3> currentIndexes{}, novelIndex{};
-        bool deleted = false;
         for (currentIndexes[0] = 0; currentIndexes[0] < grid.getDim()[0]; ++currentIndexes[0]) {
             // iterate through the Y axis
             for (currentIndexes[1] = 0; currentIndexes[1] < grid.getDim()[1]; ++currentIndexes[1]) {
@@ -71,11 +70,11 @@ namespace calculator {
 
                     auto & curCell = grid.grid[index(currentIndexes, grid.getDim())];
 
-                    for (auto it = curCell.begin(); it != curCell.end(); ++it) {
+                    for (auto & it : curCell) {
 
                         for (int d = 0; d < 3; ++d) {
                             novelIndex[d] = static_cast<int>(std::floor(
-                                    (*it)->getX()[d] * grid.getDim()[d] / grid.getLenDim()[d]));
+                                    it->getX()[d] * grid.getDim()[d] / grid.getLenDim()[d]));
                         }
 
                         // Checks whether any particle has crossed the boundaries
@@ -84,42 +83,44 @@ namespace calculator {
                                 // outflow, removing the particle
                                 if (grid.getBorder(currentIndexes, d) == LinkedCellContainer::outflow) {
                                     std::cout<<"Removing Particle"<<std::endl;
-                                    curCell.erase(it--);
-                                    deleted = true;
+                                    it->valid = false;
                                     break;
                                 }
                                     // cyclic
                                 else if (grid.getBorder(currentIndexes, d) == LinkedCellContainer::cyclic) {
-                                    novelIndex[d] = grid.getDim()[d] - 1;
+                                    // set X to the opposite site
+                                    std::cout<<"Particle was at d: "<<d<<" and position"<<it->getX()<<"; now at "<<
+                                    grid.getLenDim()[d] + it->getX()[d]<<std::endl;
+                                    it->setX(d, grid.getLenDim()[d] + it->getX()[d]);
                                 }
                             } else if (novelIndex[d] >= grid.getDim()[d]) {
                                 // outflow, removing the particle
                                 if (grid.getBorder(currentIndexes, d) == LinkedCellContainer::outflow) {
                                     std::cout<<"Removing Particle"<<std::endl;
-                                    curCell.erase(it--);
-                                    deleted = true;
+                                    it->valid = false;
                                     break;
                                 }
                                     // cyclic
                                 else if (grid.getBorder(currentIndexes, d) == LinkedCellContainer::cyclic) {
-                                    novelIndex[d] = 0;
+                                    // set X to the opposite site
+                                    std::cout<<"Particle was at d: "<<d<<" and position"<<it->getX()<<"; now at "<<
+                                    it->getX()[d] - grid.getLenDim()[d]<<std::endl;
+                                    it->setX(d, it->getX()[d] - grid.getLenDim()[d]);
                                 }
                             }
                         }
 
-                        // Check whether any index has changed, skip if we already deleted something
-                        if ((currentIndexes[0] != novelIndex[0] || currentIndexes[1] != novelIndex[1] ||
-                             currentIndexes[2] != novelIndex[2]) && !deleted) {
-                            std::cout << "Moved Particle with type: " << (*it)->getType() << " from: (" <<
-                                      currentIndexes[0] << ", " << currentIndexes[1] << ", " << currentIndexes[2]
-                                      << ") to: " << "(" <<
-                                      novelIndex[0] << ", " << novelIndex[1] << ", " << novelIndex[2] << ")"
-                                      << std::endl;
-                            // TODO STD::MOVE CURRENTLY DELETE AND CREATING
-                            grid.grid[index(novelIndex, grid.getDim())].add_particle(*(*it));
-                            curCell.erase(it--);
-                        }
-                        deleted = false;
+//                        // Check whether any index has changed, skip if we already deleted something
+//                        if ((currentIndexes[0] != novelIndex[0] || currentIndexes[1] != novelIndex[1] ||
+//                             currentIndexes[2] != novelIndex[2]) && !deleted) {
+//                            std::cout << "Moved Particle with type: " << (*it)->getType() << " from: (" <<
+//                                      currentIndexes[0] << ", " << currentIndexes[1] << ", " << currentIndexes[2]
+//                                      << ") to: " << "(" <<
+//                                      novelIndex[0] << ", " << novelIndex[1] << ", " << novelIndex[2] << ")"
+//                                      << std::endl;
+//                            grid.grid[index(novelIndex, grid.getDim())].add_particle(*(*it));
+//                            curCell.erase(it--);
+//                        }
                     }
                 }
             }
@@ -138,11 +139,11 @@ namespace calculator {
                 LinkedCell::ljforce(p, p_other, sqrd_dist);
             }
             // DEBUGGEN
-            else {
-                std::cout << "Distance between Type: " << p->getType() << " and: " << p_other->getType()
-                          << " is too high: " <<
-                          sqrt(sqrd_dist) << std::endl;
-            }
+//            else {
+//                std::cout << "Distance between Type: " << p->getType() << " and: " << p_other->getType()
+//                          << " is too high: " <<
+//                          sqrt(sqrd_dist) << std::endl;
+//            }
         }
     }
 
