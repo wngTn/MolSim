@@ -61,6 +61,8 @@ namespace calculator {
 
         void reflectiveBoundary(LinkedCellContainer & grid, const std::array<int, 3> & currentIndexes);
 
+        Particle generateGhostParticle(const LinkedCellContainer & grid, const Particle* p, int bord);
+
         void calcNeighbors(LinkedCellContainer &grid, const std::array<int, 3> & neighbors,
                            Particle* p);
 
