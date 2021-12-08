@@ -11,7 +11,7 @@
 class LinkedCellContainer : public ParticleContainer{
 public:
 
-    enum Border {outflow, cyclic, reflective};
+    enum Border {outflow, cyclic, reflective, none};
 
 
     /***********************************************************************/
@@ -25,23 +25,22 @@ public:
      * @param border the border types of the 6 (3D) or 4 (2D) borders
      */
     LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV, std::array<Border, 6> borderV = std::array<Border, 6>{
-        outflow, outflow, outflow, outflow, outflow, outflow
+            outflow, outflow, outflow, outflow, outflow, outflow
     }) :
-        grid{std::vector<Cell>(static_cast<int>(std::floor(Xv/rCutV))*
-                                                            static_cast<int>(std::floor(Yv/rCutV))*
-                                                            (static_cast<int>(std::floor(Zv/rCutV)) == 0 ? 1 :
-                                                    static_cast<int>(std::floor(Zv/rCutV))))},
-        dim{std::array<int, 3>{static_cast<int>(std::floor(Xv/rCutV)),
-                               static_cast<int>(std::floor(Yv/rCutV)),
-                               (static_cast<int>(std::floor(Zv/rCutV))) == 0 ? 1 :
-                               static_cast<int>(std::floor(Zv/rCutV))}},
-        lenDim{std::array<int, 3>{Xv, Yv, Zv}}, rCut{rCutV}, border{borderV} {};
+            grid{std::vector<Cell>(static_cast<int>(std::floor(Xv/rCutV))*
+                                   static_cast<int>(std::floor(Yv/rCutV))*
+                                   (static_cast<int>(std::floor(Zv/rCutV)) == 0 ? 1 :
+                                    static_cast<int>(std::floor(Zv/rCutV))))},
+            dim{std::array<int, 3>{static_cast<int>(std::floor(Xv/rCutV)),
+                                   static_cast<int>(std::floor(Yv/rCutV)),
+                                   (static_cast<int>(std::floor(Zv/rCutV))) == 0 ? 1 :
+                                   static_cast<int>(std::floor(Zv/rCutV))}},
+            lenDim{std::array<int, 3>{Xv, Yv, Zv}}, rCut{rCutV}, border{borderV} {};
 
     /**
      * Default constructor
      */
     LinkedCellContainer() = default;
-
 
     /**
      * @brief creates the cell grid
@@ -103,6 +102,20 @@ public:
      */
     [[nodiscard]] std::vector<Cell>::const_iterator end_cell() const;
 
+    /**
+     * Calculates the distance between a position X a border
+     * @param X the position
+     * @param bord the specific border ([0;5])
+     * @return the distance
+     */
+    [[nodiscard]] inline double getDistance(const std::array<double, 3> & X, int bord) const;
+
+    /**
+     * True if 2D, false if 3D
+     * @return whether the grid is 2D or 3D
+     */
+    bool is2D();
+
 
 //    /**
 //     * Get a list of all neighbors of a particle with index i
@@ -122,7 +135,14 @@ public:
 
     [[nodiscard]] const std::array<int, 3> &getLenDim() const;
 
-    Border getBorder(const std::array<int, 3> & currentIndexes, int d);
+    /**
+     * Gets the border and the index of the border
+     * LEFT, RIGHT, UP, DOWN, FRONT, BACK
+     * @param currentIndexes the index of the current cell
+     * @param d the axis we are currently in
+     * @return
+     */
+    std::tuple<Border, int> getBorder(const std::array<int, 3> & currentIndexes, int d);
 
 
     /***** Setters *****/
@@ -140,7 +160,7 @@ public:
     std::vector<Cell> grid;
     std::vector<Particle> particles;
 
- private:
+private:
     /**
      * The array describes the length of the respective dimensions
      * dim[0] = X, dim[1] = Y, dim[2] = Z
@@ -156,7 +176,24 @@ public:
     std::array<Border, 6> border{outflow};
 };
 
-
+double LinkedCellContainer::getDistance(const std::array<double, 3> & X, int bord) const {
+    switch (bord) {
+        // LEFT
+        case 0: return X[0];
+            // RIGHT
+        case 1: return lenDim[0] - X[0];
+            // UPPER
+        case 2: return X[1];
+            // LOWER
+        case 3: return lenDim[1] - X[1];
+            // FRONT
+        case 4: return X[2];
+            // BACK
+        case 5: return lenDim[2] - X[2];
+            // INVALID CASE
+        default: return -1;
+    }
+}
 
 //template<int i>
 //std::vector<LinkedCellContainer::Cell> LinkedCellContainer::getNeighbors() const {
@@ -195,11 +232,3 @@ public:
 //    }
 //    return neighbors;
 //}
-
-
-
-
-
-
-
-
