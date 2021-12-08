@@ -20,7 +20,7 @@
       "distance": 1.1225,
       "mass": 1.0,
       "brownianFactor": 0.1,
-      "brownianDIM": 2
+      "DIM": 2
     },
     {
       "type": "cuboid",
@@ -42,7 +42,7 @@
       "distance": 1.1225,
       "mass": 1.0,
       "brownianFactor": 0.1,
-      "brownianDIM": 2
+      "DIM": 2
     }
   ]
 }
