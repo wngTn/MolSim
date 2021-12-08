@@ -44,53 +44,47 @@ TEST(LinkedCellContainerTest, ConstructorTest) {
 
 
 /**
- * Uses the Particle Vector and creates each cell new
+ * Uses the Particle Vector and creates each cell new with setup
  */
-//TEST(LinkedCellContainerTest, ParticleConstructorTest) {
-//    int X = 7;
-//    int Y = 7;
-//    int Z = 1;
-//    double rCut = 1;
-//
-//
-//    LinkedCellContainer linkedCellContainer = LinkedCellContainer(X, Y, Z, rCut);
-//
-//    // 48 elements will be reserved, however, the size is still 0 - this says the grid was constructed though
-//    ASSERT_EQ(linkedCellContainer.getGrid().size(), 7*7);
-//
-//    linkedCellContainer.particles.emplace_back(std::array<double, 3>{0, 0, 0},
-//                                               std::array<double, 3>{0, 0, 0},
-//                                               .5,
-//                                               0);
-//
-//    linkedCellContainer.particles.emplace_back(std::array<double, 3>{0.6, 1.6, 0},
-//                                                             std::array<double, 3>{1, 2, 3},
-//                                                             1,
-//                                                             1);
-//
-//
-//    for (auto it = linkedCellContainer.particles.begin(); it != linkedCellContainer.particles.end(); ++it) {
-//        linkedCellContainer.grid[0].emplace_back(&(*it));
-//    }
-//
-//    calculator::LinkedCell::moveParticles(linkedCellContainer);
-//
-//    ASSERT_EQ(linkedCellContainer.getGrid()[0].getParticles().size(), 1);
-//    ASSERT_EQ(linkedCellContainer.getGrid()[7].getParticles().size(), 1);
-//
-//    auto xRef = std::array<double, 3>{0, 0, 0};
-//    auto xRef2 = std::array<double, 3>{0.6, 1.6, 0};
-//
-//    EXPECT_EQ(linkedCellContainer.getGrid()[0].getParticles()[0]->getX(), xRef);
-//    EXPECT_EQ(linkedCellContainer.getGrid()[7].getParticles()[0]->getX(), xRef2);
-//
-//    linkedCellContainer.grid.clear();
-//}
+TEST(LinkedCellContainerTest, ParticleConstructorTest) {
+    int X = 7;
+    int Y = 7;
+    int Z = 1;
+    double rCut = 1;
+
+
+    LinkedCellContainer linkedCellContainer = LinkedCellContainer(X, Y, Z, rCut);
+
+    // 48 elements will be reserved, however, the size is still 0 - this says the grid was constructed though
+    ASSERT_EQ(linkedCellContainer.getGrid().size(), 7*7);
+
+    linkedCellContainer.particles.emplace_back(std::array<double, 3>{0, 0, 0},
+                                               std::array<double, 3>{0, 0, 0},
+                                               .5,
+                                               0);
+
+    linkedCellContainer.particles.emplace_back(std::array<double, 3>{0.6, 1.6, 0},
+                                                             std::array<double, 3>{1, 2, 3},
+                                                             1,
+                                                             1);
+
+    linkedCellContainer.setup();
+
+    ASSERT_EQ(linkedCellContainer.getGrid()[0].getParticles().size(), 1);
+    ASSERT_EQ(linkedCellContainer.getGrid()[7].getParticles().size(), 1);
+
+    auto xRef = std::array<double, 3>{0, 0, 0};
+    auto xRef2 = std::array<double, 3>{0.6, 1.6, 0};
+
+    EXPECT_EQ(linkedCellContainer.getGrid()[0].getParticles()[0]->getX(), xRef);
+    EXPECT_EQ(linkedCellContainer.getGrid()[7].getParticles()[0]->getX(), xRef2);
+
+    linkedCellContainer.grid.clear();
+}
 
 /**
- * More sophisticated Test to check whether the Container saves the particles
+ * More sophisticated Test to check whether the Container saves the particles in the ParticleContainer
  */
-
 class ParameterizedLinkedCellTest : public testing::TestWithParam<std::tuple<int, int, int>> {
 protected:
     LinkedCellContainer p_result;
@@ -101,10 +95,10 @@ protected:
      */
     void setSize(size_t size) {
         for (int i = 0; i < size; ++i) {
-            p_result.grid[i].emplace_back(new Particle{std::array<double, 3>{0.1 + i, 0.2 + i, 0.3},
+            p_result.particles.emplace_back(std::array<double, 3>{0.1 + i, 0.2 + i, 0.3},
                                             std::array<double, 3>{0., 0., 0.},
                                             static_cast<double>(i),
-                                            i});
+                                            i);
         }
     }
 
@@ -118,8 +112,8 @@ TEST_P(ParameterizedLinkedCellTest, CorrectDimensionsTest) {
 
     ASSERT_EQ(p_result.getGrid().size(), X*Y*Z);
 
-    for (int i = 0; i < p_result.getGrid().size(); ++i) {
-        ASSERT_EQ(p_result.getGrid()[i].getParticles()[0]->getType(), i);
+    for (int i = 0; i < p_result.particles.size(); ++i) {
+        ASSERT_EQ(p_result.particles[i].getType(), i);
     }
 }
 
@@ -135,44 +129,3 @@ INSTANTIATE_TEST_SUITE_P(
                 std::make_tuple(5, 7, 8)
         )
 );
-
-/**
- * Tests whether the getNeighbor function really gets all neighbors
- */
-//TEST(LinkedCellContainer, getNeighbor) {
-//    int X = 3;
-//    int Y = 6;
-//    int Z = 1;
-//    double rCut = 1;
-//
-//    LinkedCellContainer linkedCellContainer1 = LinkedCellContainer(3, 4, 1, 1.);
-//    LinkedCellContainer linkedCellContainer2 = LinkedCellContainer(3, 4, 5, 1.);
-//
-//    for (int i = 0; i < 12; ++i) {
-//        std::cout<<"I will be executed"<<std::endl;
-//        linkedCellContainer1.addParticle(Particle(i), i);
-//    }
-//
-//    for (int i = 0; i < 60; ++i) {
-//        linkedCellContainer2.addParticle(Particle(i), i);
-//    }
-//
-//    std::vector<int> n1_ref = {0, 1, 2, 3, 5, 6, 7, 8};
-//    std::vector<int> n2_ref = {24, 25, 26, 12, 13, 14, 0, 1, 2, 27, 28, 29, 15, 17, 3, 4, 5, 30, 31, 32,
-//                           18, 19, 20, 6, 7, 8};
-//
-//
-//    auto n1_impl = linkedCellContainer1.getNeighbors<4>();
-//    auto n2_impl = linkedCellContainer2.getNeighbors<16>();
-//
-//    ASSERT_EQ(n1_impl.size(), 8);
-//    ASSERT_EQ(n2_impl.size(), 26);
-//
-//    for (int i = 0; i < 8; ++i) {
-//        EXPECT_EQ(n1_impl[i].getParticles()[0].getType(), n1_ref[i]);
-//    }
-//
-//    for (int i = 0; i < 26; ++i) {
-//        EXPECT_EQ(n2_impl[i].getParticles()[0].getType(), n2_ref[i]);
-//    }
-// }
