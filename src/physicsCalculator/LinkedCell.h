@@ -12,9 +12,6 @@ namespace calculator {
     public:
         LinkedCell(double sigma, double epsilon, double rCut, double delta_t) : sigma(sigma), epsilon(epsilon), rCut{rCut} ,delta_t{delta_t}{};
 
-        void calcF(ParticleContainer &grid) override;
-
-
         std::string toString() override;
 
         /**
@@ -41,13 +38,13 @@ namespace calculator {
          */
         static void moveParticles(LinkedCellContainer & grid);
 
+        /**
+         * override of the default calcX method, because here boundary conditions need to be applied
+         * @param grid the particle container (here a LinkedCellContainer, will be downcasted)
+         */
         void calcX(ParticleContainer & grid) const override;
 
-        void calcXcell(Cell & cell) const;
-
-        void calcV(ParticleContainer & grid) const override;
-
-        void calcVcell(Cell & cell) const;
+        void calcF(ParticleContainer &grid) override;
 
         /**
          * Method explicitly for calculating the forces within a cell

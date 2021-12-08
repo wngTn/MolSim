@@ -11,15 +11,17 @@ void LinkedCellContainer::setup() {
         it = Cell{};
     }
     for(auto &p : particles){
-        std::array<int, 3> novelCellIndex{};
-        for (int d = 0; d < 3; ++d) {
-            novelCellIndex[d] = static_cast<int>(std::floor(
-                    p.getX()[d] * getDim()[d] / getLenDim()[d]));
+        if(p.valid){
+            std::array<int, 3> novelCellIndex{};
+            for (int d = 0; d < 3; ++d) {
+                novelCellIndex[d] = static_cast<int>(std::floor(
+                        p.getX()[d] * getDim()[d] / getLenDim()[d]));
+            }
+            auto cellIndex = getCellIndex(novelCellIndex, getDim());
+            std::cout << "emplacing Particle at " << p.getX()[0] << ", " << p.getX()[1] << ", " << p.getX()[2] <<
+                      " in Cell " << novelCellIndex[0] << ", " << novelCellIndex[1] << ", " << novelCellIndex[2] << " at index " << cellIndex << std::endl;
+            grid[cellIndex].emplace_back(&p);
         }
-        auto cellIndex = getCellIndex(novelCellIndex, getDim());
-        std::cout << "emplacing Particle at " << p.getX()[0] << ", " << p.getX()[1] << ", " << p.getX()[2] <<
-        " in Cell " << novelCellIndex[0] << ", " << novelCellIndex[1] << ", " << novelCellIndex[2] << " at index " << cellIndex << std::endl;
-        grid[cellIndex].emplace_back(&p);
     }
 }
 
