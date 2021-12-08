@@ -11,23 +11,23 @@ void LinkedCellContainer::setup() {
         it = Cell{};
     }
     for(auto &p : particles){
-        std::array<int, 3> novelCellIndex{};
-        for (int d = 0; d < 3; ++d) {
-            novelCellIndex[d] = static_cast<int>(std::floor(
-                    p.getX()[d] * getDim()[d] / getLenDim()[d]));
+        if(p.valid){
+            std::array<int, 3> novelCellIndex{};
+            for (int d = 0; d < 3; ++d) {
+                novelCellIndex[d] = static_cast<int>(std::floor(
+                        p.getX()[d] * getDim()[d] / getLenDim()[d]));
+            }
+            auto cellIndex = getCellIndex(novelCellIndex, getDim());
+            std::cout << "emplacing Particle at " << p.getX()[0] << ", " << p.getX()[1] << ", " << p.getX()[2] <<
+                      " in Cell " << novelCellIndex[0] << ", " << novelCellIndex[1] << ", " << novelCellIndex[2] << " at index " << cellIndex << std::endl;
+            grid[cellIndex].emplace_back(&p);
         }
-        auto cellIndex = getCellIndex(novelCellIndex, getDim());
-        std::cout << "emplacing Particle at " << p.getX()[0] << ", " << p.getX()[1] << ", " << p.getX()[2] <<
-        " in Cell " << novelCellIndex[0] << ", " << novelCellIndex[1] << ", " << novelCellIndex[2] << " at index " << cellIndex << std::endl;
-        grid[cellIndex].emplace_back(&p);
     }
 }
 
 void LinkedCellContainer::cleanup() {
-    // TODO think about whether this is efficient enough
-    std::vector<Particle> newParts;
-    std::copy_if(particles.begin(), particles.end(), std::back_inserter(newParts), [](Particle& p){return p.valid;});
-    particles = newParts;
+    // use erase-remove idiom
+    particles.erase(std::remove_if(particles.begin(), particles.end(), [](Particle& p){return !p.valid;}), particles.end());
 }
 
 
@@ -185,6 +185,16 @@ bool LinkedCellContainer::is2D() {
     }
     else return false;
 }
+
+PairIterator LinkedCellContainer::pair_begin() {
+    // ++ to skip pair (0,0)
+    return {particles, 0, 1};
+}
+
+PairIterator LinkedCellContainer::pair_end() {
+    return {particles, particles.size(), particles.size()};
+}
+
 
 
 

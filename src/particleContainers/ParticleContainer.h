@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "Particle.h"
+#include "PairIterator.h"
 
 class ParticleContainer {
 public:
@@ -83,18 +84,18 @@ public:
      */
     [[nodiscard]] virtual std::vector<Particle>::const_iterator end() const = 0;
 
+    /**
+    * @brief Provides the iterator for particle pairs at the start of the collection. The iterator iterates
+    * through every distinct pair.
+    * @return PairIterator
+    */
+    virtual PairIterator pair_begin() = 0;
 
     /**
-     * @brief Provides the _const_ iterator for single particles at the start of the collection
-     * @return const iterator
+     * @brief Provides the iterator for particle pairs at the end of the collection.
+     * @return PairIterator
      */
-    // [[nodiscard]] virtual std::vector<Particle>::const_iterator begin() const = 0;
-
-    /**
-     * @brief Provides the _const_ iterator for single particles at the end of the collection
-     * @return const iterator
-     */
-    // [[nodiscard]] virtual std::vector<Particle>::const_iterator end() const = 0;
+    virtual PairIterator pair_end() = 0;
 
 };
 

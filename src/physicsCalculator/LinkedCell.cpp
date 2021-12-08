@@ -18,45 +18,13 @@ namespace calculator {
 
     }
 
-    void LinkedCell::calcVcell(Cell &cell) const {
-// calculate new velocities
-        for (auto &p: cell) { // loop over every particle
-            // go through all three dimensions
-            auto newV = p->getV() + delta_t * 0.5 / p->getM() * (p->getF() + p->getOldF());
-            p->setV(newV);
-        }
-    }
-
-    // Method only valid for LinkedCellContainer. Parameter type is ParticleContainer to override
-    // the cast is not very nice, but necessary to use the PhysicsCalc interface
-    // distinguishing between LinkedCell and other calculators would make this cast
-    // unnecessary, but would lead to lots of ugly code in every place calculators are used
-    void LinkedCell::calcV(ParticleContainer &container) const {
-        auto& gridLC = static_cast<LinkedCellContainer&>(container);
-        for(auto& c : gridLC.grid){
-            calcVcell(c);
-        }
-    }
-
-    void LinkedCell::calcXcell(Cell &cell) const {
-        // calculate new positions
-        for (auto &p: cell) { // loop over every particle
-            // go through all three dimensions
-            auto newX = p->getX() + delta_t * (p->getV() + delta_t * 0.5 / p->getM() * p->getF());
-            p->setX(newX);
-        }
-    }
-
-    // Method only valid for LinkedCellContainer. Parameter type is ParticleContainer to override
-    // the cast is not very nice, but necessary to use the PhysicsCalc interface
-    // distinguishing between LinkedCell and other calculators would make this cast
-    // unnecessary, but would lead to lots of ugly code in every place calculators are used
     void LinkedCell::calcX(ParticleContainer &container) const {
         auto& gridLC = static_cast<LinkedCellContainer&>(container);
-       for(auto& c : gridLC.grid){
-           calcXcell(c);
-       }
-       // TODO adapt moveParticles to only handle outflow and cyclic boundaryConditions
+        for(auto& p : gridLC){
+            auto newX = p.getX() + delta_t * (p.getV() + delta_t * 0.5 / p.getM() * p.getF());
+            p.setX(newX);
+        }
+
       moveParticles(gridLC);
     }
 
@@ -71,7 +39,9 @@ namespace calculator {
                     auto & curCell = grid.grid[index(currentIndexes, grid.getDim())];
 
                     for (auto & it : curCell) {
-
+                        if(!it->valid){
+                            continue;
+                        }
                         for (int d = 0; d < 3; ++d) {
                             novelIndex[d] = static_cast<int>(std::floor(
                                     it->getX()[d] * grid.getDim()[d] / grid.getLenDim()[d]));
@@ -171,6 +141,9 @@ namespace calculator {
          */
 
         for (auto & p : grid.grid[index(currentIndexes, grid.getDim())]) {
+            if(!p->valid){
+                continue;
+            }
             for (int bord : borders) {
                 if (grid.getDistance(p->getX(), bord) <= reflectDistance) {
                     Particle p2 = generateGhostParticle(grid, p, bord);

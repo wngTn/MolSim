@@ -35,7 +35,7 @@ def write_json(size):
             'distance': 3.1225,
             'mass': 1.0,
             'brownianFactor': 0.1,
-            'brownianDIM': 3
+            'DIM': 3
         })
     # else:
     #     data['shapes'].append({

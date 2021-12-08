@@ -58,12 +58,11 @@ void DirectSumParticleContainer::reserve(size_t size) {
     particles.reserve(size);
 }
 
-DirectSumParticleContainer::PairIterator DirectSumParticleContainer::pair_begin() {
+PairIterator DirectSumParticleContainer::pair_begin() {
     // ++ to skip pair (0,0)
     return {particles, 0, 1};
 }
 
-DirectSumParticleContainer::PairIterator DirectSumParticleContainer::pair_end() {
-    auto pit = DirectSumParticleContainer::PairIterator{particles, particles.size(), particles.size()};
-    return pit;
+PairIterator DirectSumParticleContainer::pair_end() {
+    return {particles, particles.size(), particles.size()};
 }

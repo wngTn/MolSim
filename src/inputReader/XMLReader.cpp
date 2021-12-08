@@ -7,13 +7,13 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
 
     XMLInfo info{};
 
-    if(sim->container_type() == containertype_t::linkedcell){
+    if(sim->container().type() == containertype_t::linkedcell){
         info.linkedcell = true;
-        info.rCut = sim->containerinfo().get().rCut();
-        info.linkedCellSize = {sim->containerinfo().get().domainSizeX(),
-                               sim->containerinfo().get().domainSizeY(),
-                               sim->containerinfo().get().domainSizeZ()};
-        auto borderType = sim->containerinfo().get().borderType();
+        info.rCut = sim->container().rCut().get();
+        info.linkedCellSize = {sim->container().domainSizeX().get(),
+                               sim->container().domainSizeY().get(),
+                               sim->container().domainSizeZ().get()};
+        auto borderType = sim->container().borderType().get();
         std::array<LinkedCellContainer::Border, 6> boundaryConds = {};
         // this is ugly but idk how to iterate the borderType thing
         initializeBorderType(0,borderType.left(), boundaryConds);
@@ -31,10 +31,10 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
         info.linkedcell = false;
     }
 
-    if(sim->calculator() == calculatortype_t::lennardjones){
-        info.epsilon = sim->calculationinfo().get().epsilon();
-        info.sigma = sim->calculationinfo().get().sigma();
-        info.brownianMotionMean = sim->calculationinfo().get().brownianMotion();
+    if(sim->calculator().type() == calculatortype_t::lennardjones){
+        info.epsilon = sim->calculator().epsilon().get();
+        info.sigma = sim->calculator().sigma().get();
+        info.brownianMotionMean = sim->calculator().brownianMotion().get();
         info.calculatorType = PhysicsCalc::lennardJones;
     }else{
         info.calculatorType = PhysicsCalc::gravitation;
@@ -98,13 +98,13 @@ void XMLReader::insertGeneratorInfo(std::vector<ParticleGenerator::ShapeInfo>& g
     ParticleGenerator::ShapeInfo shapeInfo{};
     shapeInfo.mass = info.mass();
     shapeInfo.distance = info.distance();
-    shapeInfo.brownianDIM = info.brownianDim();
+    shapeInfo.DIM = info.dim();
     shapeInfo.brownianFactor = info.brownianFactor();
 
     shapeInfo.pos = {info.x(), info.y(), info.z()};
     shapeInfo.vel = {info.v1(), info.v2(), info.v3()};
 
-    switch(info.shapeType()){
+    switch(info.type()){
         case geometric_t::cuboid:
             shapeInfo.N = {info.n1().get(), info.n2().get(), info.n3().get()};
             shapeInfo.type = ParticleGenerator::cuboid;

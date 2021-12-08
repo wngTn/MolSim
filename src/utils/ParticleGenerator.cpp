@@ -51,7 +51,7 @@ std::vector<ParticleGenerator::ShapeInfo> ParticleGenerator::readJSON(const std:
         i.distance = shape["distance"];
         i.mass = shape["mass"];
         i.brownianFactor = shape["brownianFactor"];
-        i.brownianDIM = shape["brownianDIM"];
+        i.DIM = shape["DIM"];
 
         if(type == "cuboid"){
             i.type = ParticleGenerator::cuboid;
@@ -76,12 +76,12 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles, const Shape
 
     std::array<double, 3> currentPos{info.pos};
 
-    for(int z = 0; z < info.N[2]; z++){
+    for(int z = 0; z < (info.DIM == 3 ? info.N[2] : 1); z++){
         for(int y = 0; y < info.N[1]; y++){
             for(int x = 0; x < info.N[0]; x++){
                 Particle part{};
                 // add browian motion
-                auto tempVel = info.vel + maxwellBoltzmannDistributedVelocity(info.brownianFactor, info.brownianDIM);
+                auto tempVel = info.vel + maxwellBoltzmannDistributedVelocity(info.brownianFactor, info.DIM);
                 part = Particle{currentPos, tempVel, info.mass};
                 particles.emplace_back(part);
                 currentPos[0] += info.distance;
@@ -100,17 +100,19 @@ void ParticleGenerator::generateSphere(ParticleContainer &particles, const Shape
     // int height = floor(info.radius / info.distance);
     int height = info.radius; // switched from radius = height in units to height in particles
     // get parameters for cube generation
-    std::vector<int> edges = {2*height + 1,2 * height + 1,2 * height + 1};
-    std::array<double,3> cubeCorner = {info.pos[0]-(height*info.distance),
-                                       info.pos[1]-(height*info.distance),
-                                       info.pos[2]-(height*info.distance)};
+    std::vector<int> edges = {2*height - 1,2 * height - 1,2 * height - 1};
+    std::array<double,3> cubeCorner = {info.pos[0]-((height-1)*info.distance),
+                                       info.pos[1]-((height-1)*info.distance),
+                                       info.pos[2]-((height-1)*info.distance)};
     auto currentPos{cubeCorner};
-
+    if(info.DIM == 2){
+        currentPos[2] = info.pos[2];
+    }
     // ratio of volume of maximum inscribed sphere to cube is pi/6 ~= 0.523...
     int count = floor(pow((2*height+1),3) * 0.523598775598f);
     particles.reserve(count);
 
-    for(int z = 0; z < edges[2]; z++){
+    for(int z = 0; z < (info.DIM == 3 ? edges[2] : 1); z++){
         for(int y = 0; y < edges[1]; y++){
             for(int x = 0; x < edges[0]; x++){
                 double delta_x = currentPos[0] - info.pos[0];
@@ -118,9 +120,9 @@ void ParticleGenerator::generateSphere(ParticleContainer &particles, const Shape
                 double delta_z = currentPos[2] - info.pos[2];
                 double distance = std::abs(sqrt(delta_x * delta_x + delta_y * delta_y + delta_z * delta_z));
                 // only add if distance to center is less or equal the radius
-                if(distance <= info.radius){
+                if(distance <= (info.radius - 1) * info.distance){
                     Particle part;
-                    auto tempVel = info.vel + maxwellBoltzmannDistributedVelocity(info.brownianFactor, info.brownianDIM);
+                    auto tempVel = info.vel + maxwellBoltzmannDistributedVelocity(info.brownianFactor, info.DIM);
                     particles.emplace_back(Particle{currentPos, tempVel, info.mass});
                 }
                 currentPos[0] += info.distance;
@@ -132,7 +134,6 @@ void ParticleGenerator::generateSphere(ParticleContainer &particles, const Shape
         currentPos[1] = cubeCorner[1];
         currentPos[2] += info.distance;
     }
-
 }
 
 void ParticleGenerator::generateSphere2(ParticleContainer &particles, const ShapeInfo &info) {
