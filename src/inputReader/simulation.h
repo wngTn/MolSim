@@ -1908,9 +1908,9 @@ class generator_info_t: public ::xml_schema::type
   //@}
 
   /**
-   * @name brownianDim
+   * @name dim
    *
-   * @brief Accessor and modifier functions for the %brownianDim
+   * @brief Accessor and modifier functions for the %dim
    * required element.
    */
   //@{
@@ -1918,28 +1918,28 @@ class generator_info_t: public ::xml_schema::type
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::int_ brownianDim_type;
+  typedef ::xml_schema::int_ dim_type;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< brownianDim_type, char > brownianDim_traits;
+  typedef ::xsd::cxx::tree::traits< dim_type, char > dim_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element.
    *
    * @return A constant reference to the element.
    */
-  const brownianDim_type&
-  brownianDim () const;
+  const dim_type&
+  dim () const;
 
   /**
    * @brief Return a read-write reference to the element.
    *
    * @return A reference to the element.
    */
-  brownianDim_type&
-  brownianDim ();
+  dim_type&
+  dim ();
 
   /**
    * @brief Set the element value.
@@ -1950,7 +1950,7 @@ class generator_info_t: public ::xml_schema::type
    * the new value of the element.
    */
   void
-  brownianDim (const brownianDim_type& x);
+  dim (const dim_type& x);
 
   //@}
 
@@ -2233,7 +2233,7 @@ class generator_info_t: public ::xml_schema::type
                     const mass_type&,
                     const distance_type&,
                     const brownianFactor_type&,
-                    const brownianDim_type&);
+                    const dim_type&);
 
   /**
    * @brief Create an instance from a DOM element.
@@ -2315,7 +2315,7 @@ class generator_info_t: public ::xml_schema::type
   ::xsd::cxx::tree::one< mass_type > mass_;
   ::xsd::cxx::tree::one< distance_type > distance_;
   ::xsd::cxx::tree::one< brownianFactor_type > brownianFactor_;
-  ::xsd::cxx::tree::one< brownianDim_type > brownianDim_;
+  ::xsd::cxx::tree::one< dim_type > dim_;
   n1_optional n1_;
   n2_optional n2_;
   n3_optional n3_;

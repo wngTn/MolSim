@@ -98,7 +98,7 @@ void XMLReader::insertGeneratorInfo(std::vector<ParticleGenerator::ShapeInfo>& g
     ParticleGenerator::ShapeInfo shapeInfo{};
     shapeInfo.mass = info.mass();
     shapeInfo.distance = info.distance();
-    shapeInfo.brownianDIM = info.brownianDim();
+    shapeInfo.DIM = info.dim();
     shapeInfo.brownianFactor = info.brownianFactor();
 
     shapeInfo.pos = {info.x(), info.y(), info.z()};

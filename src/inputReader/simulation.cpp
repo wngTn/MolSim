@@ -479,22 +479,22 @@ brownianFactor (const brownianFactor_type& x)
   this->brownianFactor_.set (x);
 }
 
-const generator_info_t::brownianDim_type& generator_info_t::
-brownianDim () const
+const generator_info_t::dim_type& generator_info_t::
+dim () const
 {
-  return this->brownianDim_.get ();
+  return this->dim_.get ();
 }
 
-generator_info_t::brownianDim_type& generator_info_t::
-brownianDim ()
+generator_info_t::dim_type& generator_info_t::
+dim ()
 {
-  return this->brownianDim_.get ();
+  return this->dim_.get ();
 }
 
 void generator_info_t::
-brownianDim (const brownianDim_type& x)
+dim (const dim_type& x)
 {
-  this->brownianDim_.set (x);
+  this->dim_.set (x);
 }
 
 const generator_info_t::n1_optional& generator_info_t::
@@ -1543,7 +1543,7 @@ generator_info_t (const shapeType_type& shapeType,
                   const mass_type& mass,
                   const distance_type& distance,
                   const brownianFactor_type& brownianFactor,
-                  const brownianDim_type& brownianDim)
+                  const dim_type& dim)
 : ::xml_schema::type (),
   shapeType_ (shapeType, this),
   x_ (x, this),
@@ -1555,7 +1555,7 @@ generator_info_t (const shapeType_type& shapeType,
   mass_ (mass, this),
   distance_ (distance, this),
   brownianFactor_ (brownianFactor, this),
-  brownianDim_ (brownianDim, this),
+  dim_ (dim, this),
   n1_ (this),
   n2_ (this),
   n3_ (this),
@@ -1578,7 +1578,7 @@ generator_info_t (const generator_info_t& x,
   mass_ (x.mass_, f, this),
   distance_ (x.distance_, f, this),
   brownianFactor_ (x.brownianFactor_, f, this),
-  brownianDim_ (x.brownianDim_, f, this),
+  dim_ (x.dim_, f, this),
   n1_ (x.n1_, f, this),
   n2_ (x.n2_, f, this),
   n3_ (x.n3_, f, this),
@@ -1601,7 +1601,7 @@ generator_info_t (const ::xercesc::DOMElement& e,
   mass_ (this),
   distance_ (this),
   brownianFactor_ (this),
-  brownianDim_ (this),
+  dim_ (this),
   n1_ (this),
   n2_ (this),
   n3_ (this),
@@ -1737,13 +1737,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
-    // brownianDim
+    // dim
     //
-    if (n.name () == "brownianDim" && n.namespace_ ().empty ())
+    if (n.name () == "dim" && n.namespace_ ().empty ())
     {
-      if (!brownianDim_.present ())
+      if (!dim_.present ())
       {
-        this->brownianDim_.set (brownianDim_traits::create (i, f, this));
+        this->dim_.set (dim_traits::create (i, f, this));
         continue;
       }
     }
@@ -1865,10 +1865,10 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "");
   }
 
-  if (!brownianDim_.present ())
+  if (!dim_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
-      "brownianDim",
+      "dim",
       "");
   }
 }
@@ -1896,7 +1896,7 @@ operator= (const generator_info_t& x)
     this->mass_ = x.mass_;
     this->distance_ = x.distance_;
     this->brownianFactor_ = x.brownianFactor_;
-    this->brownianDim_ = x.brownianDim_;
+    this->dim_ = x.dim_;
     this->n1_ = x.n1_;
     this->n2_ = x.n2_;
     this->n3_ = x.n3_;
@@ -3291,15 +3291,15 @@ operator<< (::xercesc::DOMElement& e, const generator_info_t& i)
     s << ::xml_schema::as_decimal(i.brownianFactor ());
   }
 
-  // brownianDim
+  // dim
   //
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
-        "brownianDim",
+        "dim",
         e));
 
-    s << i.brownianDim ();
+    s << i.dim ();
   }
 
   // n1
