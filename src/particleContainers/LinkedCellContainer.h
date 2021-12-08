@@ -110,7 +110,17 @@ public:
      * True if 2D, false if 3D
      * @return whether the grid is 2D or 3D
      */
-    bool is2D();
+    [[nodiscard]] bool is2D() const;
+
+    /**
+     * Calculates whether the neighbor is in the range by calculating the longest distance of the middle point
+     * of the neighbor cell to its edges and then calculating the distance between the middle poin and the particle
+     * and decide whether it should be considered
+     * @param p the current particle
+     * @param neighbor the neighbor cell index
+     * @return true if it is in range, false if not
+     */
+    bool inline isNeighborInRange(const Particle * p, const std::array<int, 3> & neighbor);
 
 
 //    /**
@@ -189,6 +199,31 @@ double LinkedCellContainer::getDistance(const std::array<double, 3> & X, int bor
             // INVALID CASE
         default: return -1;
     }
+}
+
+bool inline LinkedCellContainer::isNeighborInRange(const Particle *p, const std::array<int, 3> &neighbor) {
+    // the max range from middle point of neighbor to its edges
+    double midPointEdgeRange{};
+    for (int d = 0; ((*this).is2D()) ? d < 2 : d < 3; ++d) {
+        midPointEdgeRange += static_cast<double>(lenDim[d]) / static_cast<double>(dim[d]) *
+                static_cast<double>(lenDim[d]) / static_cast<double>(dim[d]);
+    }
+    midPointEdgeRange = sqrt(midPointEdgeRange);
+
+    // position of the neighborCell middle point
+    std::array<double, 3> neighborPos{};
+    for (int d = 0; ((*this).is2D()) ? d < 2 : d < 3; ++d) {
+        neighborPos[d] = neighbor[d] * (static_cast<double>(lenDim[d]) / static_cast<double>(dim[d]));
+    }
+
+    // Distance between these points
+    double distance{};
+    for (int d = 0; ((*this).is2D()) ? d < 2 : d < 3; ++d) {
+        distance += (neighborPos[d] - p->getX()[d]) * (neighborPos[d] - p->getX()[d]);
+    }
+    distance = sqrt(distance);
+
+    return distance <= midPointEdgeRange + rCut;
 }
 
 //template<int i>

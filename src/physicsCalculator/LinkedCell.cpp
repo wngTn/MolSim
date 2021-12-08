@@ -283,7 +283,6 @@ namespace calculator {
                 // iterate through the Z axis
                 for (currentIndexes[2] = 0; currentIndexes[2] < grid.getDim()[2]; ++currentIndexes[2]) {
 
-                    // TODO CHECK IF CELL IS A BORDER CELL AND THEN CHECK IF REFLECTION THEN DO REFLECTION ELSE DO NORMAL CELL CALCULATION
                     // Calculates the forces within a cell
                     calcFWithinCell(grid.grid[index(currentIndexes, grid.getDim())]);
                     // checks if it is a border cell, if yes also calculate border forces
@@ -301,7 +300,10 @@ namespace calculator {
                             // Neighbor should be existing
                             if (neighbors[0] < grid.getDim()[0] && neighbors[1] < grid.getDim()[1] &&
                                 neighbors[2] < grid.getDim()[2]) {
-                                calcNeighbors(grid, neighbors, p);
+                                // dunno if this is actually contributing lmaoo
+                                //if (grid.isNeighborInRange(p, neighbors)) {
+                                    calcNeighbors(grid, neighbors, p);
+                                //}
                             }
                         }
                     }
