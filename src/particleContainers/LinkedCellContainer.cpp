@@ -26,10 +26,8 @@ void LinkedCellContainer::setup() {
 }
 
 void LinkedCellContainer::cleanup() {
-    // TODO think about whether this is efficient enough
-    std::vector<Particle> newParts;
-    std::copy_if(particles.begin(), particles.end(), std::back_inserter(newParts), [](Particle& p){return p.valid;});
-    particles = newParts;
+    // use erase-remove idiom
+    particles.erase(std::remove_if(particles.begin(), particles.end(), [](Particle& p){return !p.valid;}), particles.end());
 }
 
 
