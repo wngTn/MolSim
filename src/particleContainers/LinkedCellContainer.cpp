@@ -179,5 +179,15 @@ std::vector<Cell>::const_iterator LinkedCellContainer::end_cell() const {
     return grid.end();
 }
 
+PairIterator LinkedCellContainer::pair_begin() {
+    // ++ to skip pair (0,0)
+    return {particles, 0, 1};
+}
+
+PairIterator LinkedCellContainer::pair_end() {
+    return {particles, particles.size(), particles.size()};
+}
+
+
 
 

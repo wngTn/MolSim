@@ -317,11 +317,11 @@ static void printConfig(){
             std::cout << "Gravitation" << std::endl;
             break;
         case PhysicsCalc::lennardJones:
-            std::cout << "Lennard-Jones-Potential" << std::endl;
+            std::cout << "Lennard-Jones-Potential" << (linkedCell?" (LinkedCellCalculation)":"") << std::endl;
             break;
         case PhysicsCalc::unknown:
         default:
-            std::cout << "Lennard-Jones-Potential (Default)" << std::endl;
+            std::cout << "Lennard-Jones-Potential (Default)" << (linkedCell?" (LinkedCellCalculation)":"") << std::endl;
     }
     std::cout << "\u001b[36m\tWriter:\u001b[0m ";
     switch (io_type) {
