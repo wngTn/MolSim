@@ -141,6 +141,9 @@ namespace calculator {
          */
 
         for (auto & p : grid.grid[index(currentIndexes, grid.getDim())]) {
+            if(!p->valid){
+                continue;
+            }
             for (int bord : borders) {
                 if (grid.getDistance(p->getX(), bord) <= reflectDistance) {
                     Particle p2 = generateGhostParticle(grid, p, bord);

@@ -293,30 +293,6 @@ back (::std::unique_ptr< back_type > x)
 // generator_info_t
 // 
 
-const generator_info_t::shapeType_type& generator_info_t::
-shapeType () const
-{
-  return this->shapeType_.get ();
-}
-
-generator_info_t::shapeType_type& generator_info_t::
-shapeType ()
-{
-  return this->shapeType_.get ();
-}
-
-void generator_info_t::
-shapeType (const shapeType_type& x)
-{
-  this->shapeType_.set (x);
-}
-
-void generator_info_t::
-shapeType (::std::unique_ptr< shapeType_type > x)
-{
-  this->shapeType_.set (std::move (x));
-}
-
 const generator_info_t::x_type& generator_info_t::
 x () const
 {
@@ -593,6 +569,30 @@ radius (const radius_optional& x)
   this->radius_ = x;
 }
 
+const generator_info_t::type_type& generator_info_t::
+type () const
+{
+  return this->type_.get ();
+}
+
+generator_info_t::type_type& generator_info_t::
+type ()
+{
+  return this->type_.get ();
+}
+
+void generator_info_t::
+type (const type_type& x)
+{
+  this->type_.set (x);
+}
+
+void generator_info_t::
+type (::std::unique_ptr< type_type > x)
+{
+  this->type_.set (std::move (x));
+}
+
 
 // containertype_t
 // 
@@ -687,16 +687,16 @@ operator= (value v)
 // containerinfo_t
 // 
 
-const containerinfo_t::rCut_type& containerinfo_t::
+const containerinfo_t::rCut_optional& containerinfo_t::
 rCut () const
 {
-  return this->rCut_.get ();
+  return this->rCut_;
 }
 
-containerinfo_t::rCut_type& containerinfo_t::
+containerinfo_t::rCut_optional& containerinfo_t::
 rCut ()
 {
-  return this->rCut_.get ();
+  return this->rCut_;
 }
 
 void containerinfo_t::
@@ -705,16 +705,22 @@ rCut (const rCut_type& x)
   this->rCut_.set (x);
 }
 
-const containerinfo_t::domainSizeX_type& containerinfo_t::
-domainSizeX () const
+void containerinfo_t::
+rCut (const rCut_optional& x)
 {
-  return this->domainSizeX_.get ();
+  this->rCut_ = x;
 }
 
-containerinfo_t::domainSizeX_type& containerinfo_t::
+const containerinfo_t::domainSizeX_optional& containerinfo_t::
+domainSizeX () const
+{
+  return this->domainSizeX_;
+}
+
+containerinfo_t::domainSizeX_optional& containerinfo_t::
 domainSizeX ()
 {
-  return this->domainSizeX_.get ();
+  return this->domainSizeX_;
 }
 
 void containerinfo_t::
@@ -723,16 +729,22 @@ domainSizeX (const domainSizeX_type& x)
   this->domainSizeX_.set (x);
 }
 
-const containerinfo_t::domainSizeY_type& containerinfo_t::
-domainSizeY () const
+void containerinfo_t::
+domainSizeX (const domainSizeX_optional& x)
 {
-  return this->domainSizeY_.get ();
+  this->domainSizeX_ = x;
 }
 
-containerinfo_t::domainSizeY_type& containerinfo_t::
+const containerinfo_t::domainSizeY_optional& containerinfo_t::
+domainSizeY () const
+{
+  return this->domainSizeY_;
+}
+
+containerinfo_t::domainSizeY_optional& containerinfo_t::
 domainSizeY ()
 {
-  return this->domainSizeY_.get ();
+  return this->domainSizeY_;
 }
 
 void containerinfo_t::
@@ -741,16 +753,22 @@ domainSizeY (const domainSizeY_type& x)
   this->domainSizeY_.set (x);
 }
 
-const containerinfo_t::domainSizeZ_type& containerinfo_t::
-domainSizeZ () const
+void containerinfo_t::
+domainSizeY (const domainSizeY_optional& x)
 {
-  return this->domainSizeZ_.get ();
+  this->domainSizeY_ = x;
 }
 
-containerinfo_t::domainSizeZ_type& containerinfo_t::
+const containerinfo_t::domainSizeZ_optional& containerinfo_t::
+domainSizeZ () const
+{
+  return this->domainSizeZ_;
+}
+
+containerinfo_t::domainSizeZ_optional& containerinfo_t::
 domainSizeZ ()
 {
-  return this->domainSizeZ_.get ();
+  return this->domainSizeZ_;
 }
 
 void containerinfo_t::
@@ -759,16 +777,22 @@ domainSizeZ (const domainSizeZ_type& x)
   this->domainSizeZ_.set (x);
 }
 
-const containerinfo_t::borderType_type& containerinfo_t::
-borderType () const
+void containerinfo_t::
+domainSizeZ (const domainSizeZ_optional& x)
 {
-  return this->borderType_.get ();
+  this->domainSizeZ_ = x;
 }
 
-containerinfo_t::borderType_type& containerinfo_t::
+const containerinfo_t::borderType_optional& containerinfo_t::
+borderType () const
+{
+  return this->borderType_;
+}
+
+containerinfo_t::borderType_optional& containerinfo_t::
 borderType ()
 {
-  return this->borderType_.get ();
+  return this->borderType_;
 }
 
 void containerinfo_t::
@@ -778,25 +802,55 @@ borderType (const borderType_type& x)
 }
 
 void containerinfo_t::
+borderType (const borderType_optional& x)
+{
+  this->borderType_ = x;
+}
+
+void containerinfo_t::
 borderType (::std::unique_ptr< borderType_type > x)
 {
   this->borderType_.set (std::move (x));
+}
+
+const containerinfo_t::type_type& containerinfo_t::
+type () const
+{
+  return this->type_.get ();
+}
+
+containerinfo_t::type_type& containerinfo_t::
+type ()
+{
+  return this->type_.get ();
+}
+
+void containerinfo_t::
+type (const type_type& x)
+{
+  this->type_.set (x);
+}
+
+void containerinfo_t::
+type (::std::unique_ptr< type_type > x)
+{
+  this->type_.set (std::move (x));
 }
 
 
 // calculationInfo_t
 // 
 
-const calculationInfo_t::epsilon_type& calculationInfo_t::
+const calculationInfo_t::epsilon_optional& calculationInfo_t::
 epsilon () const
 {
-  return this->epsilon_.get ();
+  return this->epsilon_;
 }
 
-calculationInfo_t::epsilon_type& calculationInfo_t::
+calculationInfo_t::epsilon_optional& calculationInfo_t::
 epsilon ()
 {
-  return this->epsilon_.get ();
+  return this->epsilon_;
 }
 
 void calculationInfo_t::
@@ -805,16 +859,22 @@ epsilon (const epsilon_type& x)
   this->epsilon_.set (x);
 }
 
-const calculationInfo_t::sigma_type& calculationInfo_t::
-sigma () const
+void calculationInfo_t::
+epsilon (const epsilon_optional& x)
 {
-  return this->sigma_.get ();
+  this->epsilon_ = x;
 }
 
-calculationInfo_t::sigma_type& calculationInfo_t::
+const calculationInfo_t::sigma_optional& calculationInfo_t::
+sigma () const
+{
+  return this->sigma_;
+}
+
+calculationInfo_t::sigma_optional& calculationInfo_t::
 sigma ()
 {
-  return this->sigma_.get ();
+  return this->sigma_;
 }
 
 void calculationInfo_t::
@@ -823,22 +883,58 @@ sigma (const sigma_type& x)
   this->sigma_.set (x);
 }
 
-const calculationInfo_t::brownianMotion_type& calculationInfo_t::
-brownianMotion () const
+void calculationInfo_t::
+sigma (const sigma_optional& x)
 {
-  return this->brownianMotion_.get ();
+  this->sigma_ = x;
 }
 
-calculationInfo_t::brownianMotion_type& calculationInfo_t::
+const calculationInfo_t::brownianMotion_optional& calculationInfo_t::
+brownianMotion () const
+{
+  return this->brownianMotion_;
+}
+
+calculationInfo_t::brownianMotion_optional& calculationInfo_t::
 brownianMotion ()
 {
-  return this->brownianMotion_.get ();
+  return this->brownianMotion_;
 }
 
 void calculationInfo_t::
 brownianMotion (const brownianMotion_type& x)
 {
   this->brownianMotion_.set (x);
+}
+
+void calculationInfo_t::
+brownianMotion (const brownianMotion_optional& x)
+{
+  this->brownianMotion_ = x;
+}
+
+const calculationInfo_t::type_type& calculationInfo_t::
+type () const
+{
+  return this->type_.get ();
+}
+
+calculationInfo_t::type_type& calculationInfo_t::
+type ()
+{
+  return this->type_.get ();
+}
+
+void calculationInfo_t::
+type (const type_type& x)
+{
+  this->type_.set (x);
+}
+
+void calculationInfo_t::
+type (::std::unique_ptr< type_type > x)
+{
+  this->type_.set (std::move (x));
 }
 
 
@@ -890,136 +986,28 @@ operator= (value v)
 // simulation_t
 // 
 
-const simulation_t::t_end_type& simulation_t::
-t_end () const
+const simulation_t::container_type& simulation_t::
+container () const
 {
-  return this->t_end_.get ();
+  return this->container_.get ();
 }
 
-simulation_t::t_end_type& simulation_t::
-t_end ()
+simulation_t::container_type& simulation_t::
+container ()
 {
-  return this->t_end_.get ();
-}
-
-void simulation_t::
-t_end (const t_end_type& x)
-{
-  this->t_end_.set (x);
-}
-
-const simulation_t::delta_t_type& simulation_t::
-delta_t () const
-{
-  return this->delta_t_.get ();
-}
-
-simulation_t::delta_t_type& simulation_t::
-delta_t ()
-{
-  return this->delta_t_.get ();
+  return this->container_.get ();
 }
 
 void simulation_t::
-delta_t (const delta_t_type& x)
+container (const container_type& x)
 {
-  this->delta_t_.set (x);
-}
-
-const simulation_t::writeFrequency_type& simulation_t::
-writeFrequency () const
-{
-  return this->writeFrequency_.get ();
-}
-
-simulation_t::writeFrequency_type& simulation_t::
-writeFrequency ()
-{
-  return this->writeFrequency_.get ();
+  this->container_.set (x);
 }
 
 void simulation_t::
-writeFrequency (const writeFrequency_type& x)
+container (::std::unique_ptr< container_type > x)
 {
-  this->writeFrequency_.set (x);
-}
-
-const simulation_t::random_optional& simulation_t::
-random () const
-{
-  return this->random_;
-}
-
-simulation_t::random_optional& simulation_t::
-random ()
-{
-  return this->random_;
-}
-
-void simulation_t::
-random (const random_type& x)
-{
-  this->random_.set (x);
-}
-
-void simulation_t::
-random (const random_optional& x)
-{
-  this->random_ = x;
-}
-
-const simulation_t::container_type_type& simulation_t::
-container_type () const
-{
-  return this->container_type_.get ();
-}
-
-simulation_t::container_type_type& simulation_t::
-container_type ()
-{
-  return this->container_type_.get ();
-}
-
-void simulation_t::
-container_type (const container_type_type& x)
-{
-  this->container_type_.set (x);
-}
-
-void simulation_t::
-container_type (::std::unique_ptr< container_type_type > x)
-{
-  this->container_type_.set (std::move (x));
-}
-
-const simulation_t::containerinfo_optional& simulation_t::
-containerinfo () const
-{
-  return this->containerinfo_;
-}
-
-simulation_t::containerinfo_optional& simulation_t::
-containerinfo ()
-{
-  return this->containerinfo_;
-}
-
-void simulation_t::
-containerinfo (const containerinfo_type& x)
-{
-  this->containerinfo_.set (x);
-}
-
-void simulation_t::
-containerinfo (const containerinfo_optional& x)
-{
-  this->containerinfo_ = x;
-}
-
-void simulation_t::
-containerinfo (::std::unique_ptr< containerinfo_type > x)
-{
-  this->containerinfo_.set (std::move (x));
+  this->container_.set (std::move (x));
 }
 
 const simulation_t::calculator_type& simulation_t::
@@ -1044,60 +1032,6 @@ void simulation_t::
 calculator (::std::unique_ptr< calculator_type > x)
 {
   this->calculator_.set (std::move (x));
-}
-
-const simulation_t::calculationinfo_optional& simulation_t::
-calculationinfo () const
-{
-  return this->calculationinfo_;
-}
-
-simulation_t::calculationinfo_optional& simulation_t::
-calculationinfo ()
-{
-  return this->calculationinfo_;
-}
-
-void simulation_t::
-calculationinfo (const calculationinfo_type& x)
-{
-  this->calculationinfo_.set (x);
-}
-
-void simulation_t::
-calculationinfo (const calculationinfo_optional& x)
-{
-  this->calculationinfo_ = x;
-}
-
-void simulation_t::
-calculationinfo (::std::unique_ptr< calculationinfo_type > x)
-{
-  this->calculationinfo_.set (std::move (x));
-}
-
-const simulation_t::outputWriter_type& simulation_t::
-outputWriter () const
-{
-  return this->outputWriter_.get ();
-}
-
-simulation_t::outputWriter_type& simulation_t::
-outputWriter ()
-{
-  return this->outputWriter_.get ();
-}
-
-void simulation_t::
-outputWriter (const outputWriter_type& x)
-{
-  this->outputWriter_.set (x);
-}
-
-void simulation_t::
-outputWriter (::std::unique_ptr< outputWriter_type > x)
-{
-  this->outputWriter_.set (std::move (x));
 }
 
 const simulation_t::inputFile_sequence& simulation_t::
@@ -1176,6 +1110,108 @@ void simulation_t::
 generatorInfo (const generatorInfo_sequence& s)
 {
   this->generatorInfo_ = s;
+}
+
+const simulation_t::t_end_type& simulation_t::
+t_end () const
+{
+  return this->t_end_.get ();
+}
+
+simulation_t::t_end_type& simulation_t::
+t_end ()
+{
+  return this->t_end_.get ();
+}
+
+void simulation_t::
+t_end (const t_end_type& x)
+{
+  this->t_end_.set (x);
+}
+
+const simulation_t::delta_t_type& simulation_t::
+delta_t () const
+{
+  return this->delta_t_.get ();
+}
+
+simulation_t::delta_t_type& simulation_t::
+delta_t ()
+{
+  return this->delta_t_.get ();
+}
+
+void simulation_t::
+delta_t (const delta_t_type& x)
+{
+  this->delta_t_.set (x);
+}
+
+const simulation_t::writeFrequency_type& simulation_t::
+writeFrequency () const
+{
+  return this->writeFrequency_.get ();
+}
+
+simulation_t::writeFrequency_type& simulation_t::
+writeFrequency ()
+{
+  return this->writeFrequency_.get ();
+}
+
+void simulation_t::
+writeFrequency (const writeFrequency_type& x)
+{
+  this->writeFrequency_.set (x);
+}
+
+const simulation_t::outputWriter_type& simulation_t::
+outputWriter () const
+{
+  return this->outputWriter_.get ();
+}
+
+simulation_t::outputWriter_type& simulation_t::
+outputWriter ()
+{
+  return this->outputWriter_.get ();
+}
+
+void simulation_t::
+outputWriter (const outputWriter_type& x)
+{
+  this->outputWriter_.set (x);
+}
+
+void simulation_t::
+outputWriter (::std::unique_ptr< outputWriter_type > x)
+{
+  this->outputWriter_.set (std::move (x));
+}
+
+const simulation_t::random_optional& simulation_t::
+random () const
+{
+  return this->random_;
+}
+
+simulation_t::random_optional& simulation_t::
+random ()
+{
+  return this->random_;
+}
+
+void simulation_t::
+random (const random_type& x)
+{
+  this->random_.set (x);
+}
+
+void simulation_t::
+random (const random_optional& x)
+{
+  this->random_ = x;
 }
 
 
@@ -1533,8 +1569,7 @@ border_t::
 //
 
 generator_info_t::
-generator_info_t (const shapeType_type& shapeType,
-                  const x_type& x,
+generator_info_t (const x_type& x,
                   const y_type& y,
                   const z_type& z,
                   const v1_type& v1,
@@ -1543,9 +1578,9 @@ generator_info_t (const shapeType_type& shapeType,
                   const mass_type& mass,
                   const distance_type& distance,
                   const brownianFactor_type& brownianFactor,
-                  const dim_type& dim)
+                  const dim_type& dim,
+                  const type_type& type)
 : ::xml_schema::type (),
-  shapeType_ (shapeType, this),
   x_ (x, this),
   y_ (y, this),
   z_ (z, this),
@@ -1559,7 +1594,8 @@ generator_info_t (const shapeType_type& shapeType,
   n1_ (this),
   n2_ (this),
   n3_ (this),
-  radius_ (this)
+  radius_ (this),
+  type_ (type, this)
 {
 }
 
@@ -1568,7 +1604,6 @@ generator_info_t (const generator_info_t& x,
                   ::xml_schema::flags f,
                   ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
-  shapeType_ (x.shapeType_, f, this),
   x_ (x.x_, f, this),
   y_ (x.y_, f, this),
   z_ (x.z_, f, this),
@@ -1582,7 +1617,8 @@ generator_info_t (const generator_info_t& x,
   n1_ (x.n1_, f, this),
   n2_ (x.n2_, f, this),
   n3_ (x.n3_, f, this),
-  radius_ (x.radius_, f, this)
+  radius_ (x.radius_, f, this),
+  type_ (x.type_, f, this)
 {
 }
 
@@ -1591,7 +1627,6 @@ generator_info_t (const ::xercesc::DOMElement& e,
                   ::xml_schema::flags f,
                   ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  shapeType_ (this),
   x_ (this),
   y_ (this),
   z_ (this),
@@ -1605,11 +1640,12 @@ generator_info_t (const ::xercesc::DOMElement& e,
   n1_ (this),
   n2_ (this),
   n3_ (this),
-  radius_ (this)
+  radius_ (this),
+  type_ (this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
-    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, true);
     this->parse (p, f);
   }
 }
@@ -1623,20 +1659,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xercesc::DOMElement& i (p.cur_element ());
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
-
-    // shapeType
-    //
-    if (n.name () == "shapeType" && n.namespace_ ().empty ())
-    {
-      ::std::unique_ptr< shapeType_type > r (
-        shapeType_traits::create (i, f, this));
-
-      if (!shapeType_.present ())
-      {
-        this->shapeType_.set (::std::move (r));
-        continue;
-      }
-    }
 
     // x
     //
@@ -1795,13 +1817,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     break;
   }
 
-  if (!shapeType_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "shapeType",
-      "");
-  }
-
   if (!x_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
@@ -1871,6 +1886,26 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "dim",
       "");
   }
+
+  while (p.more_attributes ())
+  {
+    const ::xercesc::DOMAttr& i (p.next_attribute ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    if (n.name () == "type" && n.namespace_ ().empty ())
+    {
+      this->type_.set (type_traits::create (i, f, this));
+      continue;
+    }
+  }
+
+  if (!type_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_attribute< char > (
+      "type",
+      "");
+  }
 }
 
 generator_info_t* generator_info_t::
@@ -1886,7 +1921,6 @@ operator= (const generator_info_t& x)
   if (this != &x)
   {
     static_cast< ::xml_schema::type& > (*this) = x;
-    this->shapeType_ = x.shapeType_;
     this->x_ = x.x_;
     this->y_ = x.y_;
     this->z_ = x.z_;
@@ -1901,6 +1935,7 @@ operator= (const generator_info_t& x)
     this->n2_ = x.n2_;
     this->n3_ = x.n3_;
     this->radius_ = x.radius_;
+    this->type_ = x.type_;
   }
 
   return *this;
@@ -2055,32 +2090,14 @@ _xsd_calculatortype_t_indexes_[2] =
 //
 
 containerinfo_t::
-containerinfo_t (const rCut_type& rCut,
-                 const domainSizeX_type& domainSizeX,
-                 const domainSizeY_type& domainSizeY,
-                 const domainSizeZ_type& domainSizeZ,
-                 const borderType_type& borderType)
+containerinfo_t (const type_type& type)
 : ::xml_schema::type (),
-  rCut_ (rCut, this),
-  domainSizeX_ (domainSizeX, this),
-  domainSizeY_ (domainSizeY, this),
-  domainSizeZ_ (domainSizeZ, this),
-  borderType_ (borderType, this)
-{
-}
-
-containerinfo_t::
-containerinfo_t (const rCut_type& rCut,
-                 const domainSizeX_type& domainSizeX,
-                 const domainSizeY_type& domainSizeY,
-                 const domainSizeZ_type& domainSizeZ,
-                 ::std::unique_ptr< borderType_type > borderType)
-: ::xml_schema::type (),
-  rCut_ (rCut, this),
-  domainSizeX_ (domainSizeX, this),
-  domainSizeY_ (domainSizeY, this),
-  domainSizeZ_ (domainSizeZ, this),
-  borderType_ (std::move (borderType), this)
+  rCut_ (this),
+  domainSizeX_ (this),
+  domainSizeY_ (this),
+  domainSizeZ_ (this),
+  borderType_ (this),
+  type_ (type, this)
 {
 }
 
@@ -2093,7 +2110,8 @@ containerinfo_t (const containerinfo_t& x,
   domainSizeX_ (x.domainSizeX_, f, this),
   domainSizeY_ (x.domainSizeY_, f, this),
   domainSizeZ_ (x.domainSizeZ_, f, this),
-  borderType_ (x.borderType_, f, this)
+  borderType_ (x.borderType_, f, this),
+  type_ (x.type_, f, this)
 {
 }
 
@@ -2106,11 +2124,12 @@ containerinfo_t (const ::xercesc::DOMElement& e,
   domainSizeX_ (this),
   domainSizeY_ (this),
   domainSizeZ_ (this),
-  borderType_ (this)
+  borderType_ (this),
+  type_ (this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
-    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, true);
     this->parse (p, f);
   }
 }
@@ -2129,7 +2148,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "rCut" && n.namespace_ ().empty ())
     {
-      if (!rCut_.present ())
+      if (!this->rCut_)
       {
         this->rCut_.set (rCut_traits::create (i, f, this));
         continue;
@@ -2140,7 +2159,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "domainSizeX" && n.namespace_ ().empty ())
     {
-      if (!domainSizeX_.present ())
+      if (!this->domainSizeX_)
       {
         this->domainSizeX_.set (domainSizeX_traits::create (i, f, this));
         continue;
@@ -2151,7 +2170,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "domainSizeY" && n.namespace_ ().empty ())
     {
-      if (!domainSizeY_.present ())
+      if (!this->domainSizeY_)
       {
         this->domainSizeY_.set (domainSizeY_traits::create (i, f, this));
         continue;
@@ -2162,7 +2181,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "domainSizeZ" && n.namespace_ ().empty ())
     {
-      if (!domainSizeZ_.present ())
+      if (!this->domainSizeZ_)
       {
         this->domainSizeZ_.set (domainSizeZ_traits::create (i, f, this));
         continue;
@@ -2176,7 +2195,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       ::std::unique_ptr< borderType_type > r (
         borderType_traits::create (i, f, this));
 
-      if (!borderType_.present ())
+      if (!this->borderType_)
       {
         this->borderType_.set (::std::move (r));
         continue;
@@ -2186,38 +2205,23 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     break;
   }
 
-  if (!rCut_.present ())
+  while (p.more_attributes ())
   {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "rCut",
-      "");
+    const ::xercesc::DOMAttr& i (p.next_attribute ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    if (n.name () == "type" && n.namespace_ ().empty ())
+    {
+      this->type_.set (type_traits::create (i, f, this));
+      continue;
+    }
   }
 
-  if (!domainSizeX_.present ())
+  if (!type_.present ())
   {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "domainSizeX",
-      "");
-  }
-
-  if (!domainSizeY_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "domainSizeY",
-      "");
-  }
-
-  if (!domainSizeZ_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "domainSizeZ",
-      "");
-  }
-
-  if (!borderType_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "borderType",
+    throw ::xsd::cxx::tree::expected_attribute< char > (
+      "type",
       "");
   }
 }
@@ -2240,6 +2244,7 @@ operator= (const containerinfo_t& x)
     this->domainSizeY_ = x.domainSizeY_;
     this->domainSizeZ_ = x.domainSizeZ_;
     this->borderType_ = x.borderType_;
+    this->type_ = x.type_;
   }
 
   return *this;
@@ -2254,13 +2259,12 @@ containerinfo_t::
 //
 
 calculationInfo_t::
-calculationInfo_t (const epsilon_type& epsilon,
-                   const sigma_type& sigma,
-                   const brownianMotion_type& brownianMotion)
+calculationInfo_t (const type_type& type)
 : ::xml_schema::type (),
-  epsilon_ (epsilon, this),
-  sigma_ (sigma, this),
-  brownianMotion_ (brownianMotion, this)
+  epsilon_ (this),
+  sigma_ (this),
+  brownianMotion_ (this),
+  type_ (type, this)
 {
 }
 
@@ -2271,7 +2275,8 @@ calculationInfo_t (const calculationInfo_t& x,
 : ::xml_schema::type (x, f, c),
   epsilon_ (x.epsilon_, f, this),
   sigma_ (x.sigma_, f, this),
-  brownianMotion_ (x.brownianMotion_, f, this)
+  brownianMotion_ (x.brownianMotion_, f, this),
+  type_ (x.type_, f, this)
 {
 }
 
@@ -2282,11 +2287,12 @@ calculationInfo_t (const ::xercesc::DOMElement& e,
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
   epsilon_ (this),
   sigma_ (this),
-  brownianMotion_ (this)
+  brownianMotion_ (this),
+  type_ (this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
-    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, true);
     this->parse (p, f);
   }
 }
@@ -2305,7 +2311,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "epsilon" && n.namespace_ ().empty ())
     {
-      if (!epsilon_.present ())
+      if (!this->epsilon_)
       {
         this->epsilon_.set (epsilon_traits::create (i, f, this));
         continue;
@@ -2316,7 +2322,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "sigma" && n.namespace_ ().empty ())
     {
-      if (!sigma_.present ())
+      if (!this->sigma_)
       {
         this->sigma_.set (sigma_traits::create (i, f, this));
         continue;
@@ -2327,7 +2333,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "brownianMotion" && n.namespace_ ().empty ())
     {
-      if (!brownianMotion_.present ())
+      if (!this->brownianMotion_)
       {
         this->brownianMotion_.set (brownianMotion_traits::create (i, f, this));
         continue;
@@ -2337,24 +2343,23 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     break;
   }
 
-  if (!epsilon_.present ())
+  while (p.more_attributes ())
   {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "epsilon",
-      "");
+    const ::xercesc::DOMAttr& i (p.next_attribute ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    if (n.name () == "type" && n.namespace_ ().empty ())
+    {
+      this->type_.set (type_traits::create (i, f, this));
+      continue;
+    }
   }
 
-  if (!sigma_.present ())
+  if (!type_.present ())
   {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "sigma",
-      "");
-  }
-
-  if (!brownianMotion_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "brownianMotion",
+    throw ::xsd::cxx::tree::expected_attribute< char > (
+      "type",
       "");
   }
 }
@@ -2375,6 +2380,7 @@ operator= (const calculationInfo_t& x)
     this->epsilon_ = x.epsilon_;
     this->sigma_ = x.sigma_;
     this->brownianMotion_ = x.brownianMotion_;
+    this->type_ = x.type_;
   }
 
   return *this;
@@ -2459,27 +2465,48 @@ _xsd_outputwriter_t_indexes_[2] =
 //
 
 simulation_t::
-simulation_t (const t_end_type& t_end,
+simulation_t (const container_type& container,
+              const calculator_type& calculator,
+              const outputFile_type& outputFile,
+              const t_end_type& t_end,
               const delta_t_type& delta_t,
               const writeFrequency_type& writeFrequency,
-              const container_type_type& container_type,
-              const calculator_type& calculator,
-              const outputWriter_type& outputWriter,
-              const outputFile_type& outputFile)
+              const outputWriter_type& outputWriter)
 : ::xml_schema::type (),
-  t_end_ (t_end, this),
-  delta_t_ (delta_t, this),
-  writeFrequency_ (writeFrequency, this),
-  random_ (this),
-  container_type_ (container_type, this),
-  containerinfo_ (this),
+  container_ (container, this),
   calculator_ (calculator, this),
-  calculationinfo_ (this),
-  outputWriter_ (outputWriter, this),
   inputFile_ (this),
   generatorFile_ (this),
   outputFile_ (outputFile, this),
-  generatorInfo_ (this)
+  generatorInfo_ (this),
+  t_end_ (t_end, this),
+  delta_t_ (delta_t, this),
+  writeFrequency_ (writeFrequency, this),
+  outputWriter_ (outputWriter, this),
+  random_ (this)
+{
+}
+
+simulation_t::
+simulation_t (::std::unique_ptr< container_type > container,
+              ::std::unique_ptr< calculator_type > calculator,
+              const outputFile_type& outputFile,
+              const t_end_type& t_end,
+              const delta_t_type& delta_t,
+              const writeFrequency_type& writeFrequency,
+              const outputWriter_type& outputWriter)
+: ::xml_schema::type (),
+  container_ (std::move (container), this),
+  calculator_ (std::move (calculator), this),
+  inputFile_ (this),
+  generatorFile_ (this),
+  outputFile_ (outputFile, this),
+  generatorInfo_ (this),
+  t_end_ (t_end, this),
+  delta_t_ (delta_t, this),
+  writeFrequency_ (writeFrequency, this),
+  outputWriter_ (outputWriter, this),
+  random_ (this)
 {
 }
 
@@ -2488,19 +2515,17 @@ simulation_t (const simulation_t& x,
               ::xml_schema::flags f,
               ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
-  t_end_ (x.t_end_, f, this),
-  delta_t_ (x.delta_t_, f, this),
-  writeFrequency_ (x.writeFrequency_, f, this),
-  random_ (x.random_, f, this),
-  container_type_ (x.container_type_, f, this),
-  containerinfo_ (x.containerinfo_, f, this),
+  container_ (x.container_, f, this),
   calculator_ (x.calculator_, f, this),
-  calculationinfo_ (x.calculationinfo_, f, this),
-  outputWriter_ (x.outputWriter_, f, this),
   inputFile_ (x.inputFile_, f, this),
   generatorFile_ (x.generatorFile_, f, this),
   outputFile_ (x.outputFile_, f, this),
-  generatorInfo_ (x.generatorInfo_, f, this)
+  generatorInfo_ (x.generatorInfo_, f, this),
+  t_end_ (x.t_end_, f, this),
+  delta_t_ (x.delta_t_, f, this),
+  writeFrequency_ (x.writeFrequency_, f, this),
+  outputWriter_ (x.outputWriter_, f, this),
+  random_ (x.random_, f, this)
 {
 }
 
@@ -2509,23 +2534,21 @@ simulation_t (const ::xercesc::DOMElement& e,
               ::xml_schema::flags f,
               ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  t_end_ (this),
-  delta_t_ (this),
-  writeFrequency_ (this),
-  random_ (this),
-  container_type_ (this),
-  containerinfo_ (this),
+  container_ (this),
   calculator_ (this),
-  calculationinfo_ (this),
-  outputWriter_ (this),
   inputFile_ (this),
   generatorFile_ (this),
   outputFile_ (this),
-  generatorInfo_ (this)
+  generatorInfo_ (this),
+  t_end_ (this),
+  delta_t_ (this),
+  writeFrequency_ (this),
+  outputWriter_ (this),
+  random_ (this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
-    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, true);
     this->parse (p, f);
   }
 }
@@ -2540,74 +2563,16 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
 
-    // t_end
+    // container
     //
-    if (n.name () == "t_end" && n.namespace_ ().empty ())
+    if (n.name () == "container" && n.namespace_ ().empty ())
     {
-      if (!t_end_.present ())
+      ::std::unique_ptr< container_type > r (
+        container_traits::create (i, f, this));
+
+      if (!container_.present ())
       {
-        this->t_end_.set (t_end_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // delta_t
-    //
-    if (n.name () == "delta_t" && n.namespace_ ().empty ())
-    {
-      if (!delta_t_.present ())
-      {
-        this->delta_t_.set (delta_t_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // writeFrequency
-    //
-    if (n.name () == "writeFrequency" && n.namespace_ ().empty ())
-    {
-      if (!writeFrequency_.present ())
-      {
-        this->writeFrequency_.set (writeFrequency_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // random
-    //
-    if (n.name () == "random" && n.namespace_ ().empty ())
-    {
-      if (!this->random_)
-      {
-        this->random_.set (random_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // container_type
-    //
-    if (n.name () == "container_type" && n.namespace_ ().empty ())
-    {
-      ::std::unique_ptr< container_type_type > r (
-        container_type_traits::create (i, f, this));
-
-      if (!container_type_.present ())
-      {
-        this->container_type_.set (::std::move (r));
-        continue;
-      }
-    }
-
-    // containerinfo
-    //
-    if (n.name () == "containerinfo" && n.namespace_ ().empty ())
-    {
-      ::std::unique_ptr< containerinfo_type > r (
-        containerinfo_traits::create (i, f, this));
-
-      if (!this->containerinfo_)
-      {
-        this->containerinfo_.set (::std::move (r));
+        this->container_.set (::std::move (r));
         continue;
       }
     }
@@ -2622,34 +2587,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!calculator_.present ())
       {
         this->calculator_.set (::std::move (r));
-        continue;
-      }
-    }
-
-    // calculationinfo
-    //
-    if (n.name () == "calculationinfo" && n.namespace_ ().empty ())
-    {
-      ::std::unique_ptr< calculationinfo_type > r (
-        calculationinfo_traits::create (i, f, this));
-
-      if (!this->calculationinfo_)
-      {
-        this->calculationinfo_.set (::std::move (r));
-        continue;
-      }
-    }
-
-    // outputWriter
-    //
-    if (n.name () == "outputWriter" && n.namespace_ ().empty ())
-    {
-      ::std::unique_ptr< outputWriter_type > r (
-        outputWriter_traits::create (i, f, this));
-
-      if (!outputWriter_.present ())
-      {
-        this->outputWriter_.set (::std::move (r));
         continue;
       }
     }
@@ -2704,31 +2641,10 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     break;
   }
 
-  if (!t_end_.present ())
+  if (!container_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
-      "t_end",
-      "");
-  }
-
-  if (!delta_t_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "delta_t",
-      "");
-  }
-
-  if (!writeFrequency_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "writeFrequency",
-      "");
-  }
-
-  if (!container_type_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "container_type",
+      "container",
       "");
   }
 
@@ -2739,17 +2655,75 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "");
   }
 
-  if (!outputWriter_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "outputWriter",
-      "");
-  }
-
   if (!outputFile_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "outputFile",
+      "");
+  }
+
+  while (p.more_attributes ())
+  {
+    const ::xercesc::DOMAttr& i (p.next_attribute ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    if (n.name () == "t_end" && n.namespace_ ().empty ())
+    {
+      this->t_end_.set (t_end_traits::create (i, f, this));
+      continue;
+    }
+
+    if (n.name () == "delta_t" && n.namespace_ ().empty ())
+    {
+      this->delta_t_.set (delta_t_traits::create (i, f, this));
+      continue;
+    }
+
+    if (n.name () == "writeFrequency" && n.namespace_ ().empty ())
+    {
+      this->writeFrequency_.set (writeFrequency_traits::create (i, f, this));
+      continue;
+    }
+
+    if (n.name () == "outputWriter" && n.namespace_ ().empty ())
+    {
+      this->outputWriter_.set (outputWriter_traits::create (i, f, this));
+      continue;
+    }
+
+    if (n.name () == "random" && n.namespace_ ().empty ())
+    {
+      this->random_.set (random_traits::create (i, f, this));
+      continue;
+    }
+  }
+
+  if (!t_end_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_attribute< char > (
+      "t_end",
+      "");
+  }
+
+  if (!delta_t_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_attribute< char > (
+      "delta_t",
+      "");
+  }
+
+  if (!writeFrequency_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_attribute< char > (
+      "writeFrequency",
+      "");
+  }
+
+  if (!outputWriter_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_attribute< char > (
+      "outputWriter",
       "");
   }
 }
@@ -2767,19 +2741,17 @@ operator= (const simulation_t& x)
   if (this != &x)
   {
     static_cast< ::xml_schema::type& > (*this) = x;
-    this->t_end_ = x.t_end_;
-    this->delta_t_ = x.delta_t_;
-    this->writeFrequency_ = x.writeFrequency_;
-    this->random_ = x.random_;
-    this->container_type_ = x.container_type_;
-    this->containerinfo_ = x.containerinfo_;
+    this->container_ = x.container_;
     this->calculator_ = x.calculator_;
-    this->calculationinfo_ = x.calculationinfo_;
-    this->outputWriter_ = x.outputWriter_;
     this->inputFile_ = x.inputFile_;
     this->generatorFile_ = x.generatorFile_;
     this->outputFile_ = x.outputFile_;
     this->generatorInfo_ = x.generatorInfo_;
+    this->t_end_ = x.t_end_;
+    this->delta_t_ = x.delta_t_;
+    this->writeFrequency_ = x.writeFrequency_;
+    this->outputWriter_ = x.outputWriter_;
+    this->random_ = x.random_;
   }
 
   return *this;
@@ -3181,17 +3153,6 @@ operator<< (::xercesc::DOMElement& e, const generator_info_t& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
 
-  // shapeType
-  //
-  {
-    ::xercesc::DOMElement& s (
-      ::xsd::cxx::xml::dom::create_element (
-        "shapeType",
-        e));
-
-    s << i.shapeType ();
-  }
-
   // x
   //
   {
@@ -3349,6 +3310,17 @@ operator<< (::xercesc::DOMElement& e, const generator_info_t& i)
 
     s << *i.radius ();
   }
+
+  // type
+  //
+  {
+    ::xercesc::DOMAttr& a (
+      ::xsd::cxx::xml::dom::create_attribute (
+        "type",
+        e));
+
+    a << i.type ();
+  }
 }
 
 void
@@ -3396,57 +3368,73 @@ operator<< (::xercesc::DOMElement& e, const containerinfo_t& i)
 
   // rCut
   //
+  if (i.rCut ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "rCut",
         e));
 
-    s << ::xml_schema::as_decimal(i.rCut ());
+    s << ::xml_schema::as_decimal(*i.rCut ());
   }
 
   // domainSizeX
   //
+  if (i.domainSizeX ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "domainSizeX",
         e));
 
-    s << i.domainSizeX ();
+    s << *i.domainSizeX ();
   }
 
   // domainSizeY
   //
+  if (i.domainSizeY ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "domainSizeY",
         e));
 
-    s << i.domainSizeY ();
+    s << *i.domainSizeY ();
   }
 
   // domainSizeZ
   //
+  if (i.domainSizeZ ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "domainSizeZ",
         e));
 
-    s << i.domainSizeZ ();
+    s << *i.domainSizeZ ();
   }
 
   // borderType
   //
+  if (i.borderType ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "borderType",
         e));
 
-    s << i.borderType ();
+    s << *i.borderType ();
+  }
+
+  // type
+  //
+  {
+    ::xercesc::DOMAttr& a (
+      ::xsd::cxx::xml::dom::create_attribute (
+        "type",
+        e));
+
+    a << i.type ();
   }
 }
 
@@ -3457,35 +3445,49 @@ operator<< (::xercesc::DOMElement& e, const calculationInfo_t& i)
 
   // epsilon
   //
+  if (i.epsilon ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "epsilon",
         e));
 
-    s << ::xml_schema::as_decimal(i.epsilon ());
+    s << ::xml_schema::as_decimal(*i.epsilon ());
   }
 
   // sigma
   //
+  if (i.sigma ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "sigma",
         e));
 
-    s << ::xml_schema::as_decimal(i.sigma ());
+    s << ::xml_schema::as_decimal(*i.sigma ());
   }
 
   // brownianMotion
   //
+  if (i.brownianMotion ())
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
         "brownianMotion",
         e));
 
-    s << ::xml_schema::as_decimal(i.brownianMotion ());
+    s << ::xml_schema::as_decimal(*i.brownianMotion ());
+  }
+
+  // type
+  //
+  {
+    ::xercesc::DOMAttr& a (
+      ::xsd::cxx::xml::dom::create_attribute (
+        "type",
+        e));
+
+    a << i.type ();
   }
 }
 
@@ -3513,72 +3515,15 @@ operator<< (::xercesc::DOMElement& e, const simulation_t& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
 
-  // t_end
+  // container
   //
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
-        "t_end",
+        "container",
         e));
 
-    s << ::xml_schema::as_decimal(i.t_end ());
-  }
-
-  // delta_t
-  //
-  {
-    ::xercesc::DOMElement& s (
-      ::xsd::cxx::xml::dom::create_element (
-        "delta_t",
-        e));
-
-    s << ::xml_schema::as_decimal(i.delta_t ());
-  }
-
-  // writeFrequency
-  //
-  {
-    ::xercesc::DOMElement& s (
-      ::xsd::cxx::xml::dom::create_element (
-        "writeFrequency",
-        e));
-
-    s << i.writeFrequency ();
-  }
-
-  // random
-  //
-  if (i.random ())
-  {
-    ::xercesc::DOMElement& s (
-      ::xsd::cxx::xml::dom::create_element (
-        "random",
-        e));
-
-    s << *i.random ();
-  }
-
-  // container_type
-  //
-  {
-    ::xercesc::DOMElement& s (
-      ::xsd::cxx::xml::dom::create_element (
-        "container_type",
-        e));
-
-    s << i.container_type ();
-  }
-
-  // containerinfo
-  //
-  if (i.containerinfo ())
-  {
-    ::xercesc::DOMElement& s (
-      ::xsd::cxx::xml::dom::create_element (
-        "containerinfo",
-        e));
-
-    s << *i.containerinfo ();
+    s << i.container ();
   }
 
   // calculator
@@ -3590,29 +3535,6 @@ operator<< (::xercesc::DOMElement& e, const simulation_t& i)
         e));
 
     s << i.calculator ();
-  }
-
-  // calculationinfo
-  //
-  if (i.calculationinfo ())
-  {
-    ::xercesc::DOMElement& s (
-      ::xsd::cxx::xml::dom::create_element (
-        "calculationinfo",
-        e));
-
-    s << *i.calculationinfo ();
-  }
-
-  // outputWriter
-  //
-  {
-    ::xercesc::DOMElement& s (
-      ::xsd::cxx::xml::dom::create_element (
-        "outputWriter",
-        e));
-
-    s << i.outputWriter ();
   }
 
   // inputFile
@@ -3666,6 +3588,62 @@ operator<< (::xercesc::DOMElement& e, const simulation_t& i)
         e));
 
     s << *b;
+  }
+
+  // t_end
+  //
+  {
+    ::xercesc::DOMAttr& a (
+      ::xsd::cxx::xml::dom::create_attribute (
+        "t_end",
+        e));
+
+    a << ::xml_schema::as_decimal(i.t_end ());
+  }
+
+  // delta_t
+  //
+  {
+    ::xercesc::DOMAttr& a (
+      ::xsd::cxx::xml::dom::create_attribute (
+        "delta_t",
+        e));
+
+    a << ::xml_schema::as_decimal(i.delta_t ());
+  }
+
+  // writeFrequency
+  //
+  {
+    ::xercesc::DOMAttr& a (
+      ::xsd::cxx::xml::dom::create_attribute (
+        "writeFrequency",
+        e));
+
+    a << i.writeFrequency ();
+  }
+
+  // outputWriter
+  //
+  {
+    ::xercesc::DOMAttr& a (
+      ::xsd::cxx::xml::dom::create_attribute (
+        "outputWriter",
+        e));
+
+    a << i.outputWriter ();
+  }
+
+  // random
+  //
+  if (i.random ())
+  {
+    ::xercesc::DOMAttr& a (
+      ::xsd::cxx::xml::dom::create_attribute (
+        "random",
+        e));
+
+    a << *i.random ();
   }
 }
 

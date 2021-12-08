@@ -1427,64 +1427,6 @@ class generator_info_t: public ::xml_schema::type
 {
   public:
   /**
-   * @name shapeType
-   *
-   * @brief Accessor and modifier functions for the %shapeType
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::geometric_t shapeType_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< shapeType_type, char > shapeType_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const shapeType_type&
-  shapeType () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  shapeType_type&
-  shapeType ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  shapeType (const shapeType_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly
-   * instead of making a copy.
-   */
-  void
-  shapeType (::std::unique_ptr< shapeType_type > p);
-
-  //@}
-
-  /**
    * @name x
    *
    * @brief Accessor and modifier functions for the %x
@@ -2215,6 +2157,64 @@ class generator_info_t: public ::xml_schema::type
   //@}
 
   /**
+   * @name type
+   *
+   * @brief Accessor and modifier functions for the %type
+   * required attribute.
+   */
+  //@{
+
+  /**
+   * @brief Attribute type.
+   */
+  typedef ::geometric_t type_type;
+
+  /**
+   * @brief Attribute traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< type_type, char > type_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the attribute.
+   *
+   * @return A constant reference to the attribute.
+   */
+  const type_type&
+  type () const;
+
+  /**
+   * @brief Return a read-write reference to the attribute.
+   *
+   * @return A reference to the attribute.
+   */
+  type_type&
+  type ();
+
+  /**
+   * @brief Set the attribute value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the attribute.
+   */
+  void
+  type (const type_type& x);
+
+  /**
+   * @brief Set the attribute value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly
+   * instead of making a copy.
+   */
+  void
+  type (::std::unique_ptr< type_type > p);
+
+  //@}
+
+  /**
    * @name Constructors
    */
   //@{
@@ -2223,8 +2223,7 @@ class generator_info_t: public ::xml_schema::type
    * @brief Create an instance from the ultimate base and
    * initializers for required elements and attributes.
    */
-  generator_info_t (const shapeType_type&,
-                    const x_type&,
+  generator_info_t (const x_type&,
                     const y_type&,
                     const z_type&,
                     const v1_type&,
@@ -2233,7 +2232,8 @@ class generator_info_t: public ::xml_schema::type
                     const mass_type&,
                     const distance_type&,
                     const brownianFactor_type&,
-                    const dim_type&);
+                    const dim_type&,
+                    const type_type&);
 
   /**
    * @brief Create an instance from a DOM element.
@@ -2305,7 +2305,6 @@ class generator_info_t: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  ::xsd::cxx::tree::one< shapeType_type > shapeType_;
   ::xsd::cxx::tree::one< x_type > x_;
   ::xsd::cxx::tree::one< y_type > y_;
   ::xsd::cxx::tree::one< z_type > z_;
@@ -2320,6 +2319,7 @@ class generator_info_t: public ::xml_schema::type
   n2_optional n2_;
   n3_optional n3_;
   radius_optional radius_;
+  ::xsd::cxx::tree::one< type_type > type_;
 
   //@endcond
 };
@@ -2626,7 +2626,7 @@ class containerinfo_t: public ::xml_schema::type
    * @name rCut
    *
    * @brief Accessor and modifier functions for the %rCut
-   * required element.
+   * optional element.
    */
   //@{
 
@@ -2636,24 +2636,30 @@ class containerinfo_t: public ::xml_schema::type
   typedef ::xml_schema::decimal rCut_type;
 
   /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< rCut_type > rCut_optional;
+
+  /**
    * @brief Element traits type.
    */
   typedef ::xsd::cxx::tree::traits< rCut_type, char, ::xsd::cxx::tree::schema_type::decimal > rCut_traits;
 
   /**
-   * @brief Return a read-only (constant) reference to the element.
+   * @brief Return a read-only (constant) reference to the element
+   * container.
    *
-   * @return A constant reference to the element.
+   * @return A constant reference to the optional container.
    */
-  const rCut_type&
+  const rCut_optional&
   rCut () const;
 
   /**
-   * @brief Return a read-write reference to the element.
+   * @brief Return a read-write reference to the element container.
    *
-   * @return A reference to the element.
+   * @return A reference to the optional container.
    */
-  rCut_type&
+  rCut_optional&
   rCut ();
 
   /**
@@ -2667,13 +2673,25 @@ class containerinfo_t: public ::xml_schema::type
   void
   rCut (const rCut_type& x);
 
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  rCut (const rCut_optional& x);
+
   //@}
 
   /**
    * @name domainSizeX
    *
    * @brief Accessor and modifier functions for the %domainSizeX
-   * required element.
+   * optional element.
    */
   //@{
 
@@ -2683,24 +2701,30 @@ class containerinfo_t: public ::xml_schema::type
   typedef ::xml_schema::int_ domainSizeX_type;
 
   /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< domainSizeX_type > domainSizeX_optional;
+
+  /**
    * @brief Element traits type.
    */
   typedef ::xsd::cxx::tree::traits< domainSizeX_type, char > domainSizeX_traits;
 
   /**
-   * @brief Return a read-only (constant) reference to the element.
+   * @brief Return a read-only (constant) reference to the element
+   * container.
    *
-   * @return A constant reference to the element.
+   * @return A constant reference to the optional container.
    */
-  const domainSizeX_type&
+  const domainSizeX_optional&
   domainSizeX () const;
 
   /**
-   * @brief Return a read-write reference to the element.
+   * @brief Return a read-write reference to the element container.
    *
-   * @return A reference to the element.
+   * @return A reference to the optional container.
    */
-  domainSizeX_type&
+  domainSizeX_optional&
   domainSizeX ();
 
   /**
@@ -2714,13 +2738,25 @@ class containerinfo_t: public ::xml_schema::type
   void
   domainSizeX (const domainSizeX_type& x);
 
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  domainSizeX (const domainSizeX_optional& x);
+
   //@}
 
   /**
    * @name domainSizeY
    *
    * @brief Accessor and modifier functions for the %domainSizeY
-   * required element.
+   * optional element.
    */
   //@{
 
@@ -2730,24 +2766,30 @@ class containerinfo_t: public ::xml_schema::type
   typedef ::xml_schema::int_ domainSizeY_type;
 
   /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< domainSizeY_type > domainSizeY_optional;
+
+  /**
    * @brief Element traits type.
    */
   typedef ::xsd::cxx::tree::traits< domainSizeY_type, char > domainSizeY_traits;
 
   /**
-   * @brief Return a read-only (constant) reference to the element.
+   * @brief Return a read-only (constant) reference to the element
+   * container.
    *
-   * @return A constant reference to the element.
+   * @return A constant reference to the optional container.
    */
-  const domainSizeY_type&
+  const domainSizeY_optional&
   domainSizeY () const;
 
   /**
-   * @brief Return a read-write reference to the element.
+   * @brief Return a read-write reference to the element container.
    *
-   * @return A reference to the element.
+   * @return A reference to the optional container.
    */
-  domainSizeY_type&
+  domainSizeY_optional&
   domainSizeY ();
 
   /**
@@ -2761,13 +2803,25 @@ class containerinfo_t: public ::xml_schema::type
   void
   domainSizeY (const domainSizeY_type& x);
 
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  domainSizeY (const domainSizeY_optional& x);
+
   //@}
 
   /**
    * @name domainSizeZ
    *
    * @brief Accessor and modifier functions for the %domainSizeZ
-   * required element.
+   * optional element.
    */
   //@{
 
@@ -2777,24 +2831,30 @@ class containerinfo_t: public ::xml_schema::type
   typedef ::xml_schema::int_ domainSizeZ_type;
 
   /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< domainSizeZ_type > domainSizeZ_optional;
+
+  /**
    * @brief Element traits type.
    */
   typedef ::xsd::cxx::tree::traits< domainSizeZ_type, char > domainSizeZ_traits;
 
   /**
-   * @brief Return a read-only (constant) reference to the element.
+   * @brief Return a read-only (constant) reference to the element
+   * container.
    *
-   * @return A constant reference to the element.
+   * @return A constant reference to the optional container.
    */
-  const domainSizeZ_type&
+  const domainSizeZ_optional&
   domainSizeZ () const;
 
   /**
-   * @brief Return a read-write reference to the element.
+   * @brief Return a read-write reference to the element container.
    *
-   * @return A reference to the element.
+   * @return A reference to the optional container.
    */
-  domainSizeZ_type&
+  domainSizeZ_optional&
   domainSizeZ ();
 
   /**
@@ -2808,13 +2868,25 @@ class containerinfo_t: public ::xml_schema::type
   void
   domainSizeZ (const domainSizeZ_type& x);
 
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  domainSizeZ (const domainSizeZ_optional& x);
+
   //@}
 
   /**
    * @name borderType
    *
    * @brief Accessor and modifier functions for the %borderType
-   * required element.
+   * optional element.
    */
   //@{
 
@@ -2824,24 +2896,30 @@ class containerinfo_t: public ::xml_schema::type
   typedef ::border_t borderType_type;
 
   /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< borderType_type > borderType_optional;
+
+  /**
    * @brief Element traits type.
    */
   typedef ::xsd::cxx::tree::traits< borderType_type, char > borderType_traits;
 
   /**
-   * @brief Return a read-only (constant) reference to the element.
+   * @brief Return a read-only (constant) reference to the element
+   * container.
    *
-   * @return A constant reference to the element.
+   * @return A constant reference to the optional container.
    */
-  const borderType_type&
+  const borderType_optional&
   borderType () const;
 
   /**
-   * @brief Return a read-write reference to the element.
+   * @brief Return a read-write reference to the element container.
    *
-   * @return A reference to the element.
+   * @return A reference to the optional container.
    */
-  borderType_type&
+  borderType_optional&
   borderType ();
 
   /**
@@ -2856,7 +2934,77 @@ class containerinfo_t: public ::xml_schema::type
   borderType (const borderType_type& x);
 
   /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  borderType (const borderType_optional& x);
+
+  /**
    * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  borderType (::std::unique_ptr< borderType_type > p);
+
+  //@}
+
+  /**
+   * @name type
+   *
+   * @brief Accessor and modifier functions for the %type
+   * required attribute.
+   */
+  //@{
+
+  /**
+   * @brief Attribute type.
+   */
+  typedef ::containertype_t type_type;
+
+  /**
+   * @brief Attribute traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< type_type, char > type_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the attribute.
+   *
+   * @return A constant reference to the attribute.
+   */
+  const type_type&
+  type () const;
+
+  /**
+   * @brief Return a read-write reference to the attribute.
+   *
+   * @return A reference to the attribute.
+   */
+  type_type&
+  type ();
+
+  /**
+   * @brief Set the attribute value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the attribute.
+   */
+  void
+  type (const type_type& x);
+
+  /**
+   * @brief Set the attribute value without copying.
    *
    * @param p A new value to use.
    *
@@ -2864,7 +3012,7 @@ class containerinfo_t: public ::xml_schema::type
    * instead of making a copy.
    */
   void
-  borderType (::std::unique_ptr< borderType_type > p);
+  type (::std::unique_ptr< type_type > p);
 
   //@}
 
@@ -2877,25 +3025,7 @@ class containerinfo_t: public ::xml_schema::type
    * @brief Create an instance from the ultimate base and
    * initializers for required elements and attributes.
    */
-  containerinfo_t (const rCut_type&,
-                   const domainSizeX_type&,
-                   const domainSizeY_type&,
-                   const domainSizeZ_type&,
-                   const borderType_type&);
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes
-   * (::std::unique_ptr version).
-   *
-   * This constructor will try to use the passed values directly
-   * instead of making copies.
-   */
-  containerinfo_t (const rCut_type&,
-                   const domainSizeX_type&,
-                   const domainSizeY_type&,
-                   const domainSizeZ_type&,
-                   ::std::unique_ptr< borderType_type >);
+  containerinfo_t (const type_type&);
 
   /**
    * @brief Create an instance from a DOM element.
@@ -2967,11 +3097,12 @@ class containerinfo_t: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  ::xsd::cxx::tree::one< rCut_type > rCut_;
-  ::xsd::cxx::tree::one< domainSizeX_type > domainSizeX_;
-  ::xsd::cxx::tree::one< domainSizeY_type > domainSizeY_;
-  ::xsd::cxx::tree::one< domainSizeZ_type > domainSizeZ_;
-  ::xsd::cxx::tree::one< borderType_type > borderType_;
+  rCut_optional rCut_;
+  domainSizeX_optional domainSizeX_;
+  domainSizeY_optional domainSizeY_;
+  domainSizeZ_optional domainSizeZ_;
+  borderType_optional borderType_;
+  ::xsd::cxx::tree::one< type_type > type_;
 
   //@endcond
 };
@@ -2988,7 +3119,7 @@ class calculationInfo_t: public ::xml_schema::type
    * @name epsilon
    *
    * @brief Accessor and modifier functions for the %epsilon
-   * required element.
+   * optional element.
    */
   //@{
 
@@ -2998,24 +3129,30 @@ class calculationInfo_t: public ::xml_schema::type
   typedef ::xml_schema::decimal epsilon_type;
 
   /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< epsilon_type > epsilon_optional;
+
+  /**
    * @brief Element traits type.
    */
   typedef ::xsd::cxx::tree::traits< epsilon_type, char, ::xsd::cxx::tree::schema_type::decimal > epsilon_traits;
 
   /**
-   * @brief Return a read-only (constant) reference to the element.
+   * @brief Return a read-only (constant) reference to the element
+   * container.
    *
-   * @return A constant reference to the element.
+   * @return A constant reference to the optional container.
    */
-  const epsilon_type&
+  const epsilon_optional&
   epsilon () const;
 
   /**
-   * @brief Return a read-write reference to the element.
+   * @brief Return a read-write reference to the element container.
    *
-   * @return A reference to the element.
+   * @return A reference to the optional container.
    */
-  epsilon_type&
+  epsilon_optional&
   epsilon ();
 
   /**
@@ -3029,13 +3166,25 @@ class calculationInfo_t: public ::xml_schema::type
   void
   epsilon (const epsilon_type& x);
 
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  epsilon (const epsilon_optional& x);
+
   //@}
 
   /**
    * @name sigma
    *
    * @brief Accessor and modifier functions for the %sigma
-   * required element.
+   * optional element.
    */
   //@{
 
@@ -3045,24 +3194,30 @@ class calculationInfo_t: public ::xml_schema::type
   typedef ::xml_schema::decimal sigma_type;
 
   /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< sigma_type > sigma_optional;
+
+  /**
    * @brief Element traits type.
    */
   typedef ::xsd::cxx::tree::traits< sigma_type, char, ::xsd::cxx::tree::schema_type::decimal > sigma_traits;
 
   /**
-   * @brief Return a read-only (constant) reference to the element.
+   * @brief Return a read-only (constant) reference to the element
+   * container.
    *
-   * @return A constant reference to the element.
+   * @return A constant reference to the optional container.
    */
-  const sigma_type&
+  const sigma_optional&
   sigma () const;
 
   /**
-   * @brief Return a read-write reference to the element.
+   * @brief Return a read-write reference to the element container.
    *
-   * @return A reference to the element.
+   * @return A reference to the optional container.
    */
-  sigma_type&
+  sigma_optional&
   sigma ();
 
   /**
@@ -3076,13 +3231,25 @@ class calculationInfo_t: public ::xml_schema::type
   void
   sigma (const sigma_type& x);
 
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  sigma (const sigma_optional& x);
+
   //@}
 
   /**
    * @name brownianMotion
    *
    * @brief Accessor and modifier functions for the %brownianMotion
-   * required element.
+   * optional element.
    */
   //@{
 
@@ -3092,24 +3259,30 @@ class calculationInfo_t: public ::xml_schema::type
   typedef ::xml_schema::decimal brownianMotion_type;
 
   /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< brownianMotion_type > brownianMotion_optional;
+
+  /**
    * @brief Element traits type.
    */
   typedef ::xsd::cxx::tree::traits< brownianMotion_type, char, ::xsd::cxx::tree::schema_type::decimal > brownianMotion_traits;
 
   /**
-   * @brief Return a read-only (constant) reference to the element.
+   * @brief Return a read-only (constant) reference to the element
+   * container.
    *
-   * @return A constant reference to the element.
+   * @return A constant reference to the optional container.
    */
-  const brownianMotion_type&
+  const brownianMotion_optional&
   brownianMotion () const;
 
   /**
-   * @brief Return a read-write reference to the element.
+   * @brief Return a read-write reference to the element container.
    *
-   * @return A reference to the element.
+   * @return A reference to the optional container.
    */
-  brownianMotion_type&
+  brownianMotion_optional&
   brownianMotion ();
 
   /**
@@ -3123,6 +3296,76 @@ class calculationInfo_t: public ::xml_schema::type
   void
   brownianMotion (const brownianMotion_type& x);
 
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  brownianMotion (const brownianMotion_optional& x);
+
+  //@}
+
+  /**
+   * @name type
+   *
+   * @brief Accessor and modifier functions for the %type
+   * required attribute.
+   */
+  //@{
+
+  /**
+   * @brief Attribute type.
+   */
+  typedef ::calculatortype_t type_type;
+
+  /**
+   * @brief Attribute traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< type_type, char > type_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the attribute.
+   *
+   * @return A constant reference to the attribute.
+   */
+  const type_type&
+  type () const;
+
+  /**
+   * @brief Return a read-write reference to the attribute.
+   *
+   * @return A reference to the attribute.
+   */
+  type_type&
+  type ();
+
+  /**
+   * @brief Set the attribute value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the attribute.
+   */
+  void
+  type (const type_type& x);
+
+  /**
+   * @brief Set the attribute value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly
+   * instead of making a copy.
+   */
+  void
+  type (::std::unique_ptr< type_type > p);
+
   //@}
 
   /**
@@ -3134,9 +3377,7 @@ class calculationInfo_t: public ::xml_schema::type
    * @brief Create an instance from the ultimate base and
    * initializers for required elements and attributes.
    */
-  calculationInfo_t (const epsilon_type&,
-                     const sigma_type&,
-                     const brownianMotion_type&);
+  calculationInfo_t (const type_type&);
 
   /**
    * @brief Create an instance from a DOM element.
@@ -3208,9 +3449,10 @@ class calculationInfo_t: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  ::xsd::cxx::tree::one< epsilon_type > epsilon_;
-  ::xsd::cxx::tree::one< sigma_type > sigma_;
-  ::xsd::cxx::tree::one< brownianMotion_type > brownianMotion_;
+  epsilon_optional epsilon_;
+  sigma_optional sigma_;
+  brownianMotion_optional brownianMotion_;
+  ::xsd::cxx::tree::one< type_type > type_;
 
   //@endcond
 };
@@ -3369,9 +3611,9 @@ class simulation_t: public ::xml_schema::type
 {
   public:
   /**
-   * @name t_end
+   * @name container
    *
-   * @brief Accessor and modifier functions for the %t_end
+   * @brief Accessor and modifier functions for the %container
    * required element.
    */
   //@{
@@ -3379,28 +3621,28 @@ class simulation_t: public ::xml_schema::type
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::decimal t_end_type;
+  typedef ::containerinfo_t container_type;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< t_end_type, char, ::xsd::cxx::tree::schema_type::decimal > t_end_traits;
+  typedef ::xsd::cxx::tree::traits< container_type, char > container_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element.
    *
    * @return A constant reference to the element.
    */
-  const t_end_type&
-  t_end () const;
+  const container_type&
+  container () const;
 
   /**
    * @brief Return a read-write reference to the element.
    *
    * @return A reference to the element.
    */
-  t_end_type&
-  t_end ();
+  container_type&
+  container ();
 
   /**
    * @brief Set the element value.
@@ -3411,213 +3653,7 @@ class simulation_t: public ::xml_schema::type
    * the new value of the element.
    */
   void
-  t_end (const t_end_type& x);
-
-  //@}
-
-  /**
-   * @name delta_t
-   *
-   * @brief Accessor and modifier functions for the %delta_t
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::decimal delta_t_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< delta_t_type, char, ::xsd::cxx::tree::schema_type::decimal > delta_t_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const delta_t_type&
-  delta_t () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  delta_t_type&
-  delta_t ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  delta_t (const delta_t_type& x);
-
-  //@}
-
-  /**
-   * @name writeFrequency
-   *
-   * @brief Accessor and modifier functions for the %writeFrequency
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::int_ writeFrequency_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< writeFrequency_type, char > writeFrequency_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const writeFrequency_type&
-  writeFrequency () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  writeFrequency_type&
-  writeFrequency ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  writeFrequency (const writeFrequency_type& x);
-
-  //@}
-
-  /**
-   * @name random
-   *
-   * @brief Accessor and modifier functions for the %random
-   * optional element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::boolean random_type;
-
-  /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< random_type > random_optional;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< random_type, char > random_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
-   *
-   * @return A constant reference to the optional container.
-   */
-  const random_optional&
-  random () const;
-
-  /**
-   * @brief Return a read-write reference to the element container.
-   *
-   * @return A reference to the optional container.
-   */
-  random_optional&
-  random ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  random (const random_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  random (const random_optional& x);
-
-  //@}
-
-  /**
-   * @name container_type
-   *
-   * @brief Accessor and modifier functions for the %container_type
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::containertype_t container_type_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< container_type_type, char > container_type_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const container_type_type&
-  container_type () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  container_type_type&
-  container_type ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  container_type (const container_type_type& x);
+  container (const container_type& x);
 
   /**
    * @brief Set the element value without copying.
@@ -3628,83 +3664,7 @@ class simulation_t: public ::xml_schema::type
    * instead of making a copy.
    */
   void
-  container_type (::std::unique_ptr< container_type_type > p);
-
-  //@}
-
-  /**
-   * @name containerinfo
-   *
-   * @brief Accessor and modifier functions for the %containerinfo
-   * optional element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::containerinfo_t containerinfo_type;
-
-  /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< containerinfo_type > containerinfo_optional;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< containerinfo_type, char > containerinfo_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
-   *
-   * @return A constant reference to the optional container.
-   */
-  const containerinfo_optional&
-  containerinfo () const;
-
-  /**
-   * @brief Return a read-write reference to the element container.
-   *
-   * @return A reference to the optional container.
-   */
-  containerinfo_optional&
-  containerinfo ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  containerinfo (const containerinfo_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  containerinfo (const containerinfo_optional& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  containerinfo (::std::unique_ptr< containerinfo_type > p);
+  container (::std::unique_ptr< container_type > p);
 
   //@}
 
@@ -3719,7 +3679,7 @@ class simulation_t: public ::xml_schema::type
   /**
    * @brief Element type.
    */
-  typedef ::calculatortype_t calculator_type;
+  typedef ::calculationInfo_t calculator_type;
 
   /**
    * @brief Element traits type.
@@ -3763,140 +3723,6 @@ class simulation_t: public ::xml_schema::type
    */
   void
   calculator (::std::unique_ptr< calculator_type > p);
-
-  //@}
-
-  /**
-   * @name calculationinfo
-   *
-   * @brief Accessor and modifier functions for the %calculationinfo
-   * optional element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::calculationInfo_t calculationinfo_type;
-
-  /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< calculationinfo_type > calculationinfo_optional;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< calculationinfo_type, char > calculationinfo_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
-   *
-   * @return A constant reference to the optional container.
-   */
-  const calculationinfo_optional&
-  calculationinfo () const;
-
-  /**
-   * @brief Return a read-write reference to the element container.
-   *
-   * @return A reference to the optional container.
-   */
-  calculationinfo_optional&
-  calculationinfo ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  calculationinfo (const calculationinfo_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  calculationinfo (const calculationinfo_optional& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly instead
-   * of making a copy.
-   */
-  void
-  calculationinfo (::std::unique_ptr< calculationinfo_type > p);
-
-  //@}
-
-  /**
-   * @name outputWriter
-   *
-   * @brief Accessor and modifier functions for the %outputWriter
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::outputwriter_t outputWriter_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< outputWriter_type, char > outputWriter_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const outputWriter_type&
-  outputWriter () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  outputWriter_type&
-  outputWriter ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  outputWriter (const outputWriter_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly
-   * instead of making a copy.
-   */
-  void
-  outputWriter (::std::unique_ptr< outputWriter_type > p);
 
   //@}
 
@@ -4151,6 +3977,270 @@ class simulation_t: public ::xml_schema::type
   //@}
 
   /**
+   * @name t_end
+   *
+   * @brief Accessor and modifier functions for the %t_end
+   * required attribute.
+   */
+  //@{
+
+  /**
+   * @brief Attribute type.
+   */
+  typedef ::xml_schema::decimal t_end_type;
+
+  /**
+   * @brief Attribute traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< t_end_type, char, ::xsd::cxx::tree::schema_type::decimal > t_end_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the attribute.
+   *
+   * @return A constant reference to the attribute.
+   */
+  const t_end_type&
+  t_end () const;
+
+  /**
+   * @brief Return a read-write reference to the attribute.
+   *
+   * @return A reference to the attribute.
+   */
+  t_end_type&
+  t_end ();
+
+  /**
+   * @brief Set the attribute value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the attribute.
+   */
+  void
+  t_end (const t_end_type& x);
+
+  //@}
+
+  /**
+   * @name delta_t
+   *
+   * @brief Accessor and modifier functions for the %delta_t
+   * required attribute.
+   */
+  //@{
+
+  /**
+   * @brief Attribute type.
+   */
+  typedef ::xml_schema::decimal delta_t_type;
+
+  /**
+   * @brief Attribute traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< delta_t_type, char, ::xsd::cxx::tree::schema_type::decimal > delta_t_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the attribute.
+   *
+   * @return A constant reference to the attribute.
+   */
+  const delta_t_type&
+  delta_t () const;
+
+  /**
+   * @brief Return a read-write reference to the attribute.
+   *
+   * @return A reference to the attribute.
+   */
+  delta_t_type&
+  delta_t ();
+
+  /**
+   * @brief Set the attribute value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the attribute.
+   */
+  void
+  delta_t (const delta_t_type& x);
+
+  //@}
+
+  /**
+   * @name writeFrequency
+   *
+   * @brief Accessor and modifier functions for the %writeFrequency
+   * required attribute.
+   */
+  //@{
+
+  /**
+   * @brief Attribute type.
+   */
+  typedef ::xml_schema::int_ writeFrequency_type;
+
+  /**
+   * @brief Attribute traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< writeFrequency_type, char > writeFrequency_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the attribute.
+   *
+   * @return A constant reference to the attribute.
+   */
+  const writeFrequency_type&
+  writeFrequency () const;
+
+  /**
+   * @brief Return a read-write reference to the attribute.
+   *
+   * @return A reference to the attribute.
+   */
+  writeFrequency_type&
+  writeFrequency ();
+
+  /**
+   * @brief Set the attribute value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the attribute.
+   */
+  void
+  writeFrequency (const writeFrequency_type& x);
+
+  //@}
+
+  /**
+   * @name outputWriter
+   *
+   * @brief Accessor and modifier functions for the %outputWriter
+   * required attribute.
+   */
+  //@{
+
+  /**
+   * @brief Attribute type.
+   */
+  typedef ::outputwriter_t outputWriter_type;
+
+  /**
+   * @brief Attribute traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< outputWriter_type, char > outputWriter_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the attribute.
+   *
+   * @return A constant reference to the attribute.
+   */
+  const outputWriter_type&
+  outputWriter () const;
+
+  /**
+   * @brief Return a read-write reference to the attribute.
+   *
+   * @return A reference to the attribute.
+   */
+  outputWriter_type&
+  outputWriter ();
+
+  /**
+   * @brief Set the attribute value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the attribute.
+   */
+  void
+  outputWriter (const outputWriter_type& x);
+
+  /**
+   * @brief Set the attribute value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly
+   * instead of making a copy.
+   */
+  void
+  outputWriter (::std::unique_ptr< outputWriter_type > p);
+
+  //@}
+
+  /**
+   * @name random
+   *
+   * @brief Accessor and modifier functions for the %random
+   * optional attribute.
+   */
+  //@{
+
+  /**
+   * @brief Attribute type.
+   */
+  typedef ::xml_schema::boolean random_type;
+
+  /**
+   * @brief Attribute optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< random_type > random_optional;
+
+  /**
+   * @brief Attribute traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< random_type, char > random_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the attribute
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const random_optional&
+  random () const;
+
+  /**
+   * @brief Return a read-write reference to the attribute container.
+   *
+   * @return A reference to the optional container.
+   */
+  random_optional&
+  random ();
+
+  /**
+   * @brief Set the attribute value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the attribute.
+   */
+  void
+  random (const random_type& x);
+
+  /**
+   * @brief Set the attribute value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the attribute.
+   * Otherwise the attribute container is set the 'not present' state.
+   */
+  void
+  random (const random_optional& x);
+
+  //@}
+
+  /**
    * @name Constructors
    */
   //@{
@@ -4159,13 +4249,29 @@ class simulation_t: public ::xml_schema::type
    * @brief Create an instance from the ultimate base and
    * initializers for required elements and attributes.
    */
-  simulation_t (const t_end_type&,
+  simulation_t (const container_type&,
+                const calculator_type&,
+                const outputFile_type&,
+                const t_end_type&,
                 const delta_t_type&,
                 const writeFrequency_type&,
-                const container_type_type&,
-                const calculator_type&,
-                const outputWriter_type&,
-                const outputFile_type&);
+                const outputWriter_type&);
+
+  /**
+   * @brief Create an instance from the ultimate base and
+   * initializers for required elements and attributes
+   * (::std::unique_ptr version).
+   *
+   * This constructor will try to use the passed values directly
+   * instead of making copies.
+   */
+  simulation_t (::std::unique_ptr< container_type >,
+                ::std::unique_ptr< calculator_type >,
+                const outputFile_type&,
+                const t_end_type&,
+                const delta_t_type&,
+                const writeFrequency_type&,
+                const outputWriter_type&);
 
   /**
    * @brief Create an instance from a DOM element.
@@ -4237,19 +4343,17 @@ class simulation_t: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  ::xsd::cxx::tree::one< t_end_type > t_end_;
-  ::xsd::cxx::tree::one< delta_t_type > delta_t_;
-  ::xsd::cxx::tree::one< writeFrequency_type > writeFrequency_;
-  random_optional random_;
-  ::xsd::cxx::tree::one< container_type_type > container_type_;
-  containerinfo_optional containerinfo_;
+  ::xsd::cxx::tree::one< container_type > container_;
   ::xsd::cxx::tree::one< calculator_type > calculator_;
-  calculationinfo_optional calculationinfo_;
-  ::xsd::cxx::tree::one< outputWriter_type > outputWriter_;
   inputFile_sequence inputFile_;
   generatorFile_sequence generatorFile_;
   ::xsd::cxx::tree::one< outputFile_type > outputFile_;
   generatorInfo_sequence generatorInfo_;
+  ::xsd::cxx::tree::one< t_end_type > t_end_;
+  ::xsd::cxx::tree::one< delta_t_type > delta_t_;
+  ::xsd::cxx::tree::one< writeFrequency_type > writeFrequency_;
+  ::xsd::cxx::tree::one< outputWriter_type > outputWriter_;
+  random_optional random_;
 
   //@endcond
 };
