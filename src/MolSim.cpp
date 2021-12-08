@@ -416,6 +416,7 @@ int main(int argc, char *argv[]) {
 
         iteration++;
         if (!benchmarking && iteration % writeFrequency == 0) {
+            particles->cleanup();
             // uses abstract write method overwritten by specific IO method
             io->write(*particles, output_file, iteration);
         }

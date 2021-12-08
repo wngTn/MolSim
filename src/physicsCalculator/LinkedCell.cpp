@@ -21,9 +21,10 @@ namespace calculator {
     void LinkedCell::calcVcell(Cell &cell) const {
 // calculate new velocities
         for (auto &p: cell) { // loop over every particle
-            // go through all three dimensions
-            auto newV = p->getV() + delta_t * 0.5 / p->getM() * (p->getF() + p->getOldF());
-            p->setV(newV);
+            if(p->valid){
+                auto newV = p->getV() + delta_t * 0.5 / p->getM() * (p->getF() + p->getOldF());
+                p->setV(newV);
+            }
         }
     }
 
@@ -41,9 +42,10 @@ namespace calculator {
     void LinkedCell::calcXcell(Cell &cell) const {
         // calculate new positions
         for (auto &p: cell) { // loop over every particle
-            // go through all three dimensions
-            auto newX = p->getX() + delta_t * (p->getV() + delta_t * 0.5 / p->getM() * p->getF());
-            p->setX(newX);
+            if(p->valid){
+                auto newX = p->getX() + delta_t * (p->getV() + delta_t * 0.5 / p->getM() * p->getF());
+                p->setX(newX);
+            }
         }
     }
 
@@ -71,7 +73,9 @@ namespace calculator {
                     auto & curCell = grid.grid[index(currentIndexes, grid.getDim())];
 
                     for (auto & it : curCell) {
-
+                        if(!it->valid){
+                            continue;
+                        }
                         for (int d = 0; d < 3; ++d) {
                             novelIndex[d] = static_cast<int>(std::floor(
                                     it->getX()[d] * grid.getDim()[d] / grid.getLenDim()[d]));
@@ -171,6 +175,9 @@ namespace calculator {
          */
 
         for (auto & p : grid.grid[index(currentIndexes, grid.getDim())]) {
+            if(!p->valid){
+                continue;
+            }
             for (int bord : borders) {
                 if (grid.getDistance(p->getX(), bord) <= reflectDistance) {
                     Particle p2 = generateGhostParticle(grid, p, bord);
@@ -295,15 +302,19 @@ namespace calculator {
                     }
                     // get the Cell in the current index
                     for (auto& p: grid.grid[index(currentIndexes, grid.getDim())]) {
-                        // get all the neighbors
-                        for (const std::array<int, 3> &neighbors: grid.getNeighbors(currentIndexes)) {
-                            // TODO CHECK DISTANCE FROM CURRENT PARTICLE TO NEIGHBOR
-                            // Neighbor should be existing
-                            if (neighbors[0] < grid.getDim()[0] && neighbors[1] < grid.getDim()[1] &&
-                                neighbors[2] < grid.getDim()[2]) {
-                                calcNeighbors(grid, neighbors, p);
+                        // only calc for valid particles
+                        if(p->valid){
+                            // get all the neighbors
+                            for (const std::array<int, 3> &neighbors: grid.getNeighbors(currentIndexes)) {
+                                // TODO CHECK DISTANCE FROM CURRENT PARTICLE TO NEIGHBOR
+                                // Neighbor should be existing
+                                if (neighbors[0] < grid.getDim()[0] && neighbors[1] < grid.getDim()[1] &&
+                                    neighbors[2] < grid.getDim()[2]) {
+                                    calcNeighbors(grid, neighbors, p);
+                                }
                             }
                         }
+
                     }
                 }
             }
