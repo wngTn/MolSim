@@ -81,7 +81,64 @@ cmake .. # Makefile won't build the tests anymore
 
 ## Task - XML Parser ##
 
+We have implemented a new way to enter input data with [XML files](https://www.w3.org/XML/).  
+To specify XML input use flag  ```-x <xml_file>``` like this:
 
+```bash
+./Molsim -x ../input/file/input_assignment_3.xml
+```
+The file structure allows inputs for both **Linked Cell and Direct Sums** calculation.
+This example file is our input for assignment 3:
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<simulation>
+    <t_end>1.5</t_end>
+    <delta_t>0.0005</delta_t>
+    <writeFrequency>5</writeFrequency>
+    <container_type>linkedcell</container_type>
+    <!-- only needed for linkedcell container -->
+    <containerinfo>
+        <rCut>3.0</rCut>
+        <domainSizeX>9</domainSizeX>
+        <domainSizeY>9</domainSizeY>
+        <domainSizeZ>9</domainSizeZ>
+        <borderType>
+            <left>reflective</left>
+            <right>outflow</right>
+            <upper>reflective</upper>
+            <lower>outflow</lower>
+            <front>reflective</front>
+            <back>reflective</back>
+        </borderType>
+    </containerinfo>
+    <calculator>lennardjones</calculator>
+    <!-- only needed for lennardjones calculator -->
+    <calculationinfo>
+        <epsilon>5.0</epsilon>
+        <sigma>1.0</sigma>
+        <brownianMotion>1.2</brownianMotion>
+    </calculationinfo>
+    <outputWriter>vtk</outputWriter>
+    <outputFile>output</outputFile>
+    <generatorInfo>
+        <shapeType>cuboid</shapeType>
+        <x>3.0</x>
+        <y>3.0</y>
+        <z>3.0</z>
+        <v1>1.0</v1>
+        <v2>1.0</v2>
+        <v3>1.0</v3>
+        <mass>1.0</mass>
+        <distance>0.8</distance>
+        <brownianFactor>3</brownianFactor>
+        <brownianDim>2</brownianDim>
+        <n1>5</n1>
+        <n2>5</n2>
+        <n3>1</n3>
+        <!-- <radius>123</radius> -->
+    </generatorInfo>
+</simulation>
+```
 ## Task - Linked Cell Method ##
 
 
@@ -99,13 +156,3 @@ We used and tested the documentation with:
 And as browser we have used:
 - Safari 15.1
 - Chrome 96.0.4664.55.
-
-
-
-
-
-
-
-
-
-
