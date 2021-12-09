@@ -143,6 +143,8 @@ public:
 
     [[nodiscard]] const std::array<int, 3> &getLenDim() const;
 
+    bool is2D();
+
 
     /***** Setters *****/
     void setGrid(const std::vector<Cell> &grid);
