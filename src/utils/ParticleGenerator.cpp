@@ -100,6 +100,7 @@ void ParticleGenerator::generateSphere(ParticleContainer &particles, const Shape
     // int height = floor(info.radius / info.distance);
     int height = info.radius; // switched from radius = height in units to height in particles
     // get parameters for cube generation
+    // TODO fix radius
     std::vector<int> edges = {2*height - 1,2 * height - 1,2 * height - 1};
     std::array<double,3> cubeCorner = {info.pos[0]-((height-1)*info.distance),
                                        info.pos[1]-((height-1)*info.distance),
@@ -111,7 +112,6 @@ void ParticleGenerator::generateSphere(ParticleContainer &particles, const Shape
     // ratio of volume of maximum inscribed sphere to cube is pi/6 ~= 0.523...
     int count = floor(pow((2*height+1),3) * 0.523598775598f);
     particles.reserve(count);
-
     for(int z = 0; z < (info.DIM == 3 ? edges[2] : 1); z++){
         for(int y = 0; y < edges[1]; y++){
             for(int x = 0; x < edges[0]; x++){
