@@ -185,7 +185,7 @@ static std::unique_ptr<PhysicsCalc> get_calculator() {
         case PhysicsCalc::unknown:
         default:
             if(linkedCell){
-                return std::make_unique<calculator::LinkedCell>(sigma, eps, rCut, delta_t);
+                return std::make_unique<calculator::LinkedCell>(sigma, eps, rCut);
             }
             return std::make_unique<calculator::LennardJones>(sigma, eps);
     }

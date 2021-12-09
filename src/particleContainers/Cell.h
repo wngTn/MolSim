@@ -47,6 +47,9 @@ struct Cell {
 
     void add_particle(Particle&);
 
+    /**
+     * Deletes all the pointers in the particle list
+     */
     void clear();
 
     /**
@@ -63,6 +66,9 @@ struct Cell {
      */
     std::vector<Particle*>::iterator erase (std::vector<Particle*>::const_iterator position);
 
+    /**
+     * Prints a string for debugging purposes
+     */
     void toString();
 
 private:
