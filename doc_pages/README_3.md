@@ -81,7 +81,52 @@ cmake .. # Makefile won't build the tests anymore
 
 ## Task - XML Parser ##
 
+We have implemented a new way to enter input data with [XML files](https://www.w3.org/XML/).  
+To specify XML input use flag  ```-x <xml_file>``` like this:
 
+```bash
+./Molsim -x ../input/file/input_assignment_3.xml
+```
+The file structure allows inputs for both **Linked Cell and Direct Sums** calculation.  
+This example file shows the **structure** you need to follow:
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<simulation t_end="0.5" delta_t="0.00005" writeFrequency="100" outputWriter="vtk">
+    <container type="linkedcell">
+        <rCut>3.0</rCut>
+        <domainSizeX>120</domainSizeX>
+        <domainSizeY>100</domainSizeY>
+        <domainSizeZ>1</domainSizeZ>
+        <borderType>
+            <left>outflow</left>
+            <right>outflow</right>
+            <upper>outflow</upper>
+            <lower>outflow</lower>
+            <front>outflow</front>
+            <back>outflow</back>
+        </borderType>
+    </container>
+    <calculator type="lennardjones">
+        <epsilon>5</epsilon>
+        <sigma>1</sigma>
+        <brownianMotion>0.0</brownianMotion>
+    </calculator>
+    <outputFile>output</outputFile>
+    <generatorInfo type="sphere">
+        <x>30.0</x>
+        <y>15.0</y>
+        <z>0.0</z>
+        <v1>20.0</v1>
+        <v2>0.0</v2>
+        <v3>0.0</v3>
+        <mass>1.0</mass>
+        <distance>1.1225</distance>
+        <brownianFactor>0.1</brownianFactor>
+        <dim>2</dim>
+        <radius>12</radius>
+    </generatorInfo>
+</simulation>
+```
 ## Task - Linked Cell Method ##
 
 
@@ -99,13 +144,3 @@ We used and tested the documentation with:
 And as browser we have used:
 - Safari 15.1
 - Chrome 96.0.4664.55.
-
-
-
-
-
-
-
-
-
-
