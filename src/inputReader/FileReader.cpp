@@ -12,6 +12,8 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/basic_file_sink.h>
 
 FileReader::FileReader() = default;
 
@@ -29,22 +31,22 @@ void FileReader::readFile(ParticleContainer &particles, const std::string &filen
     if (input_file.is_open()) {
 
         getline(input_file, tmp_string);
-        // std::cout << "Read line: " << tmp_string << std::endl;
+        spdlog::info("Read line: {}", tmp_string);
 
         while (tmp_string.empty() or tmp_string[0] == '#') {
             getline(input_file, tmp_string);
-            // std::cout << "Read line: " << tmp_string << std::endl;
+            spdlog::info("Read line: {}", tmp_string);
         }
 
         std::istringstream numstream(tmp_string);
         numstream >> num_particles;
-        // std::cout << "Reading " << num_particles << "." << std::endl;
+        spdlog::info("Reading {}", num_particles);
 
         // already allocates the number of particles
         particles.reserve(num_particles);
 
         getline(input_file, tmp_string);
-        // std::cout << "Read line: " << tmp_string << std::endl;
+        spdlog::info("Read line: {}", tmp_string);
 
         for (int i = 0; i < num_particles; i++) {
             std::istringstream datastream(tmp_string);
@@ -56,19 +58,17 @@ void FileReader::readFile(ParticleContainer &particles, const std::string &filen
                 datastream >> vj;
             }
             if (datastream.eof()) {
-                std::cout
-                        << "Error reading file: eof reached unexpectedly reading from line "
-                        << i << std::endl;
+                spdlog::critical("Error reading file: eof reached unexpectedly reading from line {}", i);
                 exit(-1);
             }
             datastream >> m;
             particles.emplace_back(x, v, m, 0);
 
             getline(input_file, tmp_string);
-            // std::cout << "Read line: " << tmp_string << std::endl;
+            spdlog::info("Read line: {}", tmp_string);
         }
     } else {
-        std::cout << "Error: could not open file " << filename << std::endl;
+        spdlog::critical("Error: could not open file {}", filename);
         exit(-1);
     }
 }

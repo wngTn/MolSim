@@ -209,7 +209,7 @@ void initializeParticles(ParticleContainer &particles) {
         // maybe change particle amount
         if (std::system("python ../input/generate_input.py -n 24 -o input.txt")) {
             spdlog::critical("Error while generating random input.");
-            exit(EXIT_FAILURE);
+            exit(-1);
         }
         FileReader::readFile(particles, "../input/files/input.txt");
     }
@@ -246,7 +246,7 @@ void logParticle(ParticleContainer &particles){
 }
 
 void parseXML(){
-    std::cout << "Starting XML parsing!\n";
+    spdlog::info("Starting XML parsing!");
     if(xml_file.empty()) return;
 
     XMLReader::XMLInfo info = XMLReader::readFile(xml_file);
@@ -282,10 +282,13 @@ void parseXML(){
            boundaryConditions = info.boundaryConditions;
        }
     }
-    std::cout << "Finished XML parsing!\n";
+    spdlog::info("Finished XML parsing!");
 
 }
 
+/**
+ * We want to have output here to prevent long simulations with wrong configurations.
+ */
 static void printConfig(){
     std::cout << "Your configurations are:" << std::endl;
     if(!xml_file.empty()){
@@ -392,7 +395,6 @@ int main(int argc, char *argv[]) {
 
     // ------ calculation ------ //
     auto start_calc = std::chrono::steady_clock::now();
-
     // initial setup
     calc->calcX(*particles);
     particles->setup();
@@ -428,10 +430,8 @@ int main(int argc, char *argv[]) {
                 << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start_calc).count()
                 << std::endl;
     }else{
-        std::cout << "All files have been written!" << std::endl;
+        spdlog::info("All files have been written!");
     }
-
-    spdlog::info("All files have been written!");
 
     return 0;
 }
