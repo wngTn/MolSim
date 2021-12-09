@@ -10,7 +10,7 @@ namespace calculator {
     class LinkedCell : public PhysicsCalc{
 
     public:
-        LinkedCell(double sigma, double epsilon, double rCut, double delta_t) : sigma(sigma), epsilon(epsilon), rCut{rCut} ,delta_t{delta_t}{};
+        LinkedCell(double sigma, double epsilon, double rCut) : sigma(sigma), epsilon(epsilon), rCut{rCut}{};
 
         std::string toString() override;
 
@@ -66,7 +66,6 @@ namespace calculator {
         double sigma = 1;
         double epsilon = 5;
         double rCut = 2.5 * epsilon;
-        double delta_t{0.1};
     };
 
 

@@ -99,7 +99,7 @@ TEST(LinkedCellTest, LinkedCellMethodSimpleTest) {
     calculator::LennardJones lj{SIGMA, EPS};
     lj.calcF(particleContainer);
 
-    calculator::LinkedCell lc{SIGMA, EPS, 3., 0.1};
+    calculator::LinkedCell lc{SIGMA, EPS, 3.};
     lc.calcF(linkedCellContainer);
 
     for (int i = 0; i < 4; ++i) {
@@ -253,8 +253,11 @@ TEST(LinkedCellTest, LinkedCellMethodIntermediateTest) {
 
     lj.calcF(particleContainer);
 
-    calculator::LinkedCell lc{SIGMA, EPS, rCut, delta_t};
+    calculator::LinkedCell lc{SIGMA, EPS, rCut};
+    lc.setDim(3);
+    lc.setDeltaT(delta_t);
     lc.calcF(linkedCellContainer);
+
 
     for (int i = 0; i < 10; ++i) {
         auto p1 = findParticle(particleContainer, i);
@@ -322,7 +325,9 @@ TEST(LinkedCellTest, LinkedCellMethodIntermediateTest) {
 
     lj2.calcF(particleContainer2);
 
-    calculator::LinkedCell lc2{SIGMA, EPS, rCut, delta_t};
+    calculator::LinkedCell lc2{SIGMA, EPS, rCut};
+    lc2.setDim(3);
+    lc2.setDeltaT(delta_t);
     lc2.calcF(linkedCellContainer2);
 
     for (int i = 0; i < 10; ++i) {
