@@ -185,7 +185,7 @@ static std::unique_ptr<PhysicsCalc> get_calculator() {
         case PhysicsCalc::unknown:
         default:
             if(linkedCell){
-                return std::make_unique<calculator::LinkedCell>(sigma, eps, rCut, delta_t);
+                return std::make_unique<calculator::LinkedCell>(sigma, eps, rCut);
             }
             return std::make_unique<calculator::LennardJones>(sigma, eps);
     }
@@ -341,7 +341,7 @@ static void printConfig(){
     message.append("\n\u001b[36m\tBrownianMotion:\u001b[0m ").append(std::to_string(brownianMotionMean));
     message.append("\n\u001b[36m\tEnd_time:\u001b[0m ").append(std::to_string(end_time)).append(end_time == 1000 ? " (Default)\n" : "\n");
     message.append("\u001b[36m\tDelta_t:\u001b[0m ").append(std::to_string(delta_t)).append(delta_t == 0.014 ? " (Default)\n" : "\n");
-    std::cout << message << "Calculating...";
+    std::cout << message << "Calculating..." << std::endl;
 }
 
 /**
