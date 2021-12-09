@@ -9,6 +9,7 @@ namespace calculator {
     void LennardJones::calcF(ParticleContainer &container) {
         auto& particles = static_cast<DirectSumParticleContainer&>(container);
         for(auto &p : particles){
+            p.setOldF(p.getF());
             p.setF({0.,0.,0.});
         }
 
@@ -36,10 +37,6 @@ namespace calculator {
         double f = 24 * epsilon * s / sqrd_dist * (1 - 2 * s);
 
         auto force = f * (p2.getX() - p1.getX());
-
-        // set old force
-        p1.setOldF(p1.getF());
-        p2.setOldF(p2.getF());
 
         p1.setF(p1.getF() + force);
         p2.setF(p2.getF() - force);

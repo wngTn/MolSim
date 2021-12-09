@@ -251,8 +251,6 @@ void parseXML(){
 
     XMLReader::XMLInfo info = XMLReader::readFile(xml_file);
 
-
-    // TODO currently input from flags is overwritten, fix
     if(!filename.empty()){
         info.inputFiles.push_back(filename.front());
     }
