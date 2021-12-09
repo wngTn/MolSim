@@ -127,8 +127,6 @@ namespace calculator {
             }
             for (int bord : borders) {
                 double r = grid.getDistance(p->getX(), bord);
-                r = 2 * r;
-                // TODO check if 2r or r
                  if (r <= reflectDistance) {
                      double s = (sigma*sigma) / (r * r);
                      s = s * s * s;
