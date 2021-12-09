@@ -25,7 +25,7 @@ public:
         double distance;
         // mean velocity of brownian motion
         double brownianFactor;
-        int brownianDIM;
+        int DIM;
         // only used for sphere
         int radius;
         // only used for cuboid

@@ -32,7 +32,6 @@
     <!-- info for the particle generator, n1,n2,n3 and radius optional, rest mandatory -->
     <xs:complexType name ="generator_info_t">
         <xs:sequence>
-            <xs:element name="shapeType" type="geometric_t" />
             <xs:element name="x" type="xs:decimal" />
             <xs:element name="y" type="xs:decimal" />
             <xs:element name="z" type="xs:decimal" />
@@ -42,12 +41,14 @@
             <xs:element name="mass" type="xs:decimal" />
             <xs:element name="distance" type="xs:decimal" />
             <xs:element name="brownianFactor" type="xs:decimal" />
-            <xs:element name="brownianDim" type="xs:int" />
+            <!-- used for brownian motion and generation -->
+            <xs:element name="dim" type="xs:int" />
             <xs:element minOccurs="0" name="n1" type="xs:int" />
             <xs:element minOccurs="0" name="n2" type="xs:int" />
             <xs:element minOccurs="0" name="n3" type="xs:int" />
             <xs:element minOccurs="0" name="radius" type="xs:int" />
         </xs:sequence>
+        <xs:attribute name="type" type="geometric_t" use="required"/>
     </xs:complexType>
 
     <!-- enum type for choosing container type, values linkedcell and directsum allowed -->
@@ -68,22 +69,24 @@
 
     <!-- info for the LinkedCellContainer, a few numbers and an object containing all boundary condition info -->
     <xs:complexType name="containerinfo_t">
-        <xs:sequence>
-            <xs:element name="rCut" type="xs:decimal" />
-            <xs:element name="domainSizeX" type="xs:int" />
-            <xs:element name="domainSizeY" type="xs:int" />
+        <xs:sequence minOccurs = "0">
+            <xs:element name="rCut" type="xs:decimal"/>
+            <xs:element name="domainSizeX" type="xs:int"  />
+            <xs:element name="domainSizeY" type="xs:int"  />
             <xs:element name="domainSizeZ" type="xs:int" />
-            <xs:element name="borderType" type="border_t"/>
+            <xs:element name="borderType" type="border_t" />
         </xs:sequence>
+        <xs:attribute name="type" type="containertype_t" use="required" />
     </xs:complexType>
 
     <!-- some info for the LJ calculator -->
     <xs:complexType name="calculationInfo_t">
-        <xs:sequence>
+        <xs:sequence minOccurs = "0">
             <xs:element name="epsilon" type="xs:decimal" />
             <xs:element name="sigma" type="xs:decimal" />
             <xs:element name="brownianMotion" type="xs:decimal" />
         </xs:sequence>
+        <xs:attribute name="type" type = "calculatortype_t" use = "required" />
     </xs:complexType>
 
     <!-- enum type for choosing output writer, values vtk and xyz allowed -->
@@ -97,22 +100,21 @@
     <!-- everything the simulation needs -->
     <xs:complexType name="simulation_t">
         <xs:sequence>
-            <xs:element name="t_end" type="xs:decimal" />
-            <xs:element name="delta_t" type="xs:decimal" />
-            <xs:element name="writeFrequency" type="xs:int" />
-            <xs:element minOccurs = "0" name="random" type="xs:boolean" />
-            <xs:element name="container_type" type="containertype_t"/>
             <!-- optional additional info for container, only used for linkedcell -->
-            <xs:element minOccurs = "0" name="containerinfo" type="containerinfo_t"/>
-            <xs:element name="calculator" type="calculatortype_t" />
+            <xs:element name="container" type="containerinfo_t"/>
             <!-- optional additional info for calculator, only used for lennardjones -->
-            <xs:element minOccurs = "0" name="calculationinfo" type="calculationInfo_t" />
-            <xs:element name="outputWriter" type="outputwriter_t" />
+            <xs:element name="calculator" type="calculationInfo_t" />
             <xs:element minOccurs = "0" maxOccurs="unbounded" name="inputFile" type="xs:string" />
             <xs:element minOccurs = "0" maxOccurs="unbounded" name="generatorFile" type="xs:string" />
             <xs:element name="outputFile" type="xs:string" />
             <xs:element minOccurs = "0" maxOccurs="unbounded" name="generatorInfo" type="generator_info_t"/>
         </xs:sequence>
+        <xs:attribute name="t_end" type="xs:decimal" use="required"/>
+        <xs:attribute name="delta_t" type="xs:decimal" use="required"/>
+        <xs:attribute name="writeFrequency" type="xs:int" use="required"/>
+
+        <xs:attribute name="outputWriter" type = "outputwriter_t" use = "required" />
+        <xs:attribute name="random" type="xs:boolean" use="optional" />
     </xs:complexType>
 
     <!-- one main simulation element in top level -->

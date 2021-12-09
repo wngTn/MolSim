@@ -74,6 +74,10 @@ public:
 
     [[nodiscard]] std::vector<Particle>::const_iterator end() const override;
 
+    PairIterator pair_begin() override;
+
+    PairIterator pair_end() override;
+
     /**
      * @brief Provides the iterator for single particles at the start of the collection
      * @return iterator

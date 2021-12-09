@@ -317,11 +317,11 @@ static void printConfig(){
             std::cout << "Gravitation" << std::endl;
             break;
         case PhysicsCalc::lennardJones:
-            std::cout << "Lennard-Jones-Potential" << std::endl;
+            std::cout << "Lennard-Jones-Potential" << (linkedCell?" (LinkedCellCalculation)":"") << std::endl;
             break;
         case PhysicsCalc::unknown:
         default:
-            std::cout << "Lennard-Jones-Potential (Default)" << std::endl;
+            std::cout << "Lennard-Jones-Potential (Default)" << (linkedCell?" (LinkedCellCalculation)":"") << std::endl;
     }
     std::cout << "\u001b[36m\tWriter:\u001b[0m ";
     switch (io_type) {
@@ -393,6 +393,9 @@ int main(int argc, char *argv[]) {
     // ------ calculation ------ //
     auto start_calc = std::chrono::steady_clock::now();
 
+    // initial setup
+    calc->calcX(*particles);
+    particles->setup();
     calc->calcF(*particles);
     if (!benchmarking){
         io->write(*particles, "output", iteration);
@@ -402,20 +405,16 @@ int main(int argc, char *argv[]) {
         spdlog::info("Iteration {}: ", iteration);
         logParticle(*particles);
 
-        // TODO maybe change order?
-
-        particles->setup();
         calc->calcX(*particles);
+        particles->setup();
         calc->calcF(*particles);
         calc->calcV(*particles);
-
-        //TODO only do every nth iteration
-        particles->cleanup();
 
         logParticle(*particles);
 
         iteration++;
         if (!benchmarking && iteration % writeFrequency == 0) {
+            particles->cleanup();
             // uses abstract write method overwritten by specific IO method
             io->write(*particles, output_file, iteration);
         }
