@@ -35,7 +35,7 @@ namespace calculator {
                 // iterate through the Z axis
                 for (currentIndexes[2] = 0; currentIndexes[2] < grid.getDim()[2]; ++currentIndexes[2]) {
 
-                    auto & curCell = grid.grid[index(currentIndexes, grid.getDim())];
+                    auto & curCell = grid.grid[grid.index(currentIndexes)];
 
                     for (auto & it : curCell) {
                         if(!it->valid){
@@ -87,25 +87,24 @@ namespace calculator {
     void LinkedCell::calcNeighbors(LinkedCellContainer &grid, const std::array<int, 3> &neighbors,
                                    Particle* p) {
         // Loops through every particle of the neighbor
-        for (auto &p_other: grid.grid[LinkedCell::index(neighbors, grid.getDim())]) {
+        for (auto &p_other: grid.grid[grid.index(neighbors)]) {
             double sqrd_dist = 0;
             for (int i = 0; i < DIM; i++) {
                 sqrd_dist += LinkedCell::sqr(p_other->getX()[i] - p->getX()[i]);
             }
-
             if (sqrd_dist <= LinkedCell::sqr(rCut)) {
                 LinkedCell::ljforce(p, p_other, sqrd_dist);
             }
         }
     }
 
-    void LinkedCell::reflectiveBoundary(LinkedCellContainer &grid, const std::array<int, 3> &currentIndexes) {
+    void LinkedCell::reflectiveBoundary(LinkedCellContainer &grid, const std::array<int, 3> &currentIndexes) const {
         // We only reflect at this distance
         double reflectDistance = std::pow(2, 1.0/6.0) * sigma;
         // saves the borders of the current cell
         std::vector<int> borders{};
         // go through all three or two axis and acquire the borders of currentIndex that are reflective
-        for (int d = 0; d < (grid.is2D() ? 2 : 3); ++d) {
+        for (int d = 0; d < DIM; ++d) {
             auto [bordType, bord] = grid.getBorder(currentIndexes, d);
             if (bordType == LinkedCellContainer::reflective) {
                 borders.push_back(bord);
@@ -122,7 +121,7 @@ namespace calculator {
          * 5: BACK
          */
 
-        for (auto & p : grid.grid[index(currentIndexes, grid.getDim())]) {
+        for (auto & p : grid.grid[grid.index(currentIndexes)]) {
             if(!p->valid){
                 continue;
             }
@@ -257,22 +256,23 @@ namespace calculator {
                 for (currentIndexes[2] = 0; currentIndexes[2] < grid.getDim()[2]; ++currentIndexes[2]) {
 
                     // get the Cell in the current index
-                    for (auto& p: grid.grid[index(currentIndexes, grid.getDim())]) {
+                    for (auto& p: grid.grid[grid.index(currentIndexes)]) {
                         // get all the neighbors
                         for (const std::array<int, 3> &neighbors: grid.getNeighbors(currentIndexes)) {
-                            // TODO CHECK DISTANCE FROM CURRENT PARTICLE TO NEIGHBOR
-                            // Neighbor should be existing
 
+                            // Neighbor should be existing
                             if (neighbors[0] < grid.getDim()[0] && neighbors[1] < grid.getDim()[1] &&
                                 neighbors[2] < grid.getDim()[2] && neighbors[0] >= 0 && neighbors[1] >= 0 && neighbors[2] >= 0) {
-                                calcNeighbors(grid, neighbors, p);
+                                // Does not bring too much performance benefits
+                                //if (grid.isNeighborInRange(p, neighbors)) {
+                                    calcNeighbors(grid, neighbors, p);
+                                //}
                             }
                         }
                     }
 
-                    // TODO CHECK IF CELL IS A BORDER CELL AND THEN CHECK IF REFLECTION THEN DO REFLECTION ELSE DO NORMAL CELL CALCULATION
                     // Calculates the forces within a cell
-                    calcFWithinCell(grid.grid[index(currentIndexes, grid.getDim())]);
+                    calcFWithinCell(grid.grid[grid.index(currentIndexes)]);
                     // checks if it is a border cell, if yes also calculate border forces
                     if(currentIndexes[0] == 0 || currentIndexes[0] == grid.getDim()[0] - 1 ||
                        currentIndexes[1] == 0 || currentIndexes[1] == grid.getDim()[1] - 1 ||

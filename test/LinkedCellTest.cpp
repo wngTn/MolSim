@@ -10,17 +10,18 @@
 TEST(LinkedCellTest, indexTest) {
 
     std::array<int, 3> dim = {3, 4, 1};
+    LinkedCellContainer linkedCellContainer = LinkedCellContainer{dim[0], dim[1], dim[2], 1.};
     std::array<int, 3> arr1 = {0, 0, 0};
     std::array<int, 3> arr2 = {0, 0, 1};
     std::array<int, 3> arr3 = {1, 2, 2};
     std::array<int, 3> arr4 = {1, 1, 1};
     std::array<int, 3> arr5 = {2, 3, 1};
 
-    int res1 = calculator::LinkedCell::index(arr1, dim);
-    int res2 = calculator::LinkedCell::index(arr2, dim);
-    int res3 = calculator::LinkedCell::index(arr3, dim);
-    int res4 = calculator::LinkedCell::index(arr4, dim);
-    int res5 = calculator::LinkedCell::index(arr5, dim);
+    int res1 = linkedCellContainer.index(arr1);
+    int res2 = linkedCellContainer.index(arr2);
+    int res3 = linkedCellContainer.index(arr3);
+    int res4 = linkedCellContainer.index(arr4);
+    int res5 = linkedCellContainer.index(arr5);
 
     ASSERT_EQ(res1, 0);
     ASSERT_EQ(res2, 12);
@@ -31,7 +32,9 @@ TEST(LinkedCellTest, indexTest) {
     std::array<int, 3> dim1 = {7, 7, 1};
     std::array<int, 3> arr_1 = {3, 3, 0};
 
-    int res_1 = calculator::LinkedCell::index(arr_1, dim1);
+    linkedCellContainer = LinkedCellContainer{dim1[0], dim1[1], dim1[2], 1.};
+
+    int res_1 = linkedCellContainer.index(arr_1);
 
     ASSERT_EQ(res_1, 24);
 }
@@ -127,8 +130,8 @@ TEST(LinkedCellTest, SetupMethodTest) {
     linkedCellContainer.setup();
 
     EXPECT_EQ(linkedCellContainer.grid[0].getParticles().size(), 0);
-    EXPECT_EQ(linkedCellContainer.grid[calculator::LinkedCell::index
-    (std::array<int, 3>{3, 1, 1}, linkedCellContainer.getDim())].getParticles().size(), 1);
+    EXPECT_EQ(linkedCellContainer.grid[linkedCellContainer.index(std::array<int, 3>{3, 1, 1})]
+    .getParticles().size(), 1);
 
     /**********************Test with 3 particles**********************************/
     LinkedCellContainer linkedCellContainer1 = LinkedCellContainer{120, 80, 100, 3.};
@@ -150,10 +153,10 @@ TEST(LinkedCellTest, SetupMethodTest) {
     linkedCellContainer1.setup();
 
     EXPECT_EQ(linkedCellContainer1.grid[0].getParticles().size(), 0);
-    EXPECT_EQ(linkedCellContainer1.grid[calculator::LinkedCell::index
-    (std::array<int, 3>{0, 1, 2}, linkedCellContainer1.getDim())].getParticles().size(), 2);
-    EXPECT_EQ(linkedCellContainer1.grid[calculator::LinkedCell::index
-    (std::array<int, 3>{0, 0, 1}, linkedCellContainer1.getDim())].getParticles().size(), 1);
+    EXPECT_EQ(linkedCellContainer1.grid[linkedCellContainer1.index(std::array<int, 3>{0, 1, 2})]
+    .getParticles().size(), 2);
+    EXPECT_EQ(linkedCellContainer1.grid[linkedCellContainer1.index(std::array<int, 3>{0, 0, 1})]
+    .getParticles().size(), 1);
 }
 
 
@@ -208,16 +211,13 @@ TEST(LinkedCellTest, OutflowAndCyclicTest) {
     ASSERT_EQ(cellContainer1.grid[0].getParticles().size(), 3);
     calculator::LinkedCell::moveParticles(cellContainer1);
     cellContainer1.setup();
-    EXPECT_EQ(cellContainer1.grid[calculator::LinkedCell::index(
-            std::array<int, 3>{3, 0, 0},std::array<int, 3>{4, 4, 4})].getParticles().size(), 1);
-    EXPECT_EQ(cellContainer1.grid[calculator::LinkedCell::index(
-            std::array<int, 3>{0, 3, 0},std::array<int, 3>{4, 4, 4})].getParticles().size(), 1);
-    EXPECT_EQ(cellContainer1.grid[calculator::LinkedCell::index(
-            std::array<int, 3>{0, 0, 3},std::array<int, 3>{4, 4, 4})].getParticles().size(), 1);
+    EXPECT_EQ(cellContainer1.grid[cellContainer1.index( std::array<int, 3>{3, 0, 0})].getParticles().size(), 1);
+    EXPECT_EQ(cellContainer1.grid[cellContainer1.index( std::array<int, 3>{0, 3, 0})].getParticles().size(), 1);
+    EXPECT_EQ(cellContainer1.grid[cellContainer1.index( std::array<int, 3>{0, 0, 3})].getParticles().size(), 1);
 }
 
 /**
-* Tests the LinkedCell Method more detailedly against the Lennard Jones implementation
+ * Tests the LinkedCell Method more detailedly against the Lennard Jones implementation
  * Creates two container with 10 particles each and compares the values
 */
 TEST(LinkedCellTest, LinkedCellMethodIntermediateTest) {

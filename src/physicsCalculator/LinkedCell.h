@@ -5,6 +5,7 @@
 #include "physicsCalculator/LennardJones.h"
 #include "particleContainers/LinkedCellContainer.h"
 #include "utils/ArrayUtils.h"
+#include "spdlog/spdlog.h"
 
 namespace calculator {
     class LinkedCell : public PhysicsCalc{
@@ -20,16 +21,6 @@ namespace calculator {
         */
         template<typename T> static
         T sqr(T x);
-
-        /**
-         * Returns the index in the 1D Grid container
-         * @param currentIndexes the current indexes in the three dimensions
-         * @param X Length of X axis
-         * @param Y Length of Y axis
-         * @param Z Length of Z axis
-         * @return The index
-         */
-        static inline int index(const std::array<int , 3> & currentIndexes, const std::array<int, 3> & dim);
 
         /**
          *
@@ -52,13 +43,21 @@ namespace calculator {
          */
         void calcFWithinCell(Cell & cell);
 
+        /**
+         * Generates a ghost particle on the other side of the border
+         * @param grid the LinkedCellContainer
+         * @param p the Particle that should be mirrored
+         * @param bord the border it should be mirrored from
+         * @return the ghost particle on the other side of the border
+         * \note{This method is not as efficient as using a formula to calculate the force, thus not used}
+         */
+        static Particle generateGhostParticle(const LinkedCellContainer & grid, const Particle* p, int bord);
+
     private:
 
         inline void ljforce(Particle* p1, Particle* p2, double sqrd_dist) const;
 
-        void reflectiveBoundary(LinkedCellContainer & grid, const std::array<int, 3> & currentIndexes);
-
-        Particle generateGhostParticle(const LinkedCellContainer & grid, const Particle* p, int bord);
+        void reflectiveBoundary(LinkedCellContainer & grid, const std::array<int, 3> & currentIndexes) const;
 
         void calcNeighbors(LinkedCellContainer &grid, const std::array<int, 3> & neighbors,
                            Particle* p);
@@ -67,11 +66,6 @@ namespace calculator {
         double epsilon = 5;
         double rCut = 2.5 * epsilon;
     };
-
-
-    int LinkedCell::index(const std::array<int, 3> &currentIndexes, const std::array<int, 3> & dim) {
-        return currentIndexes[0] + dim[0] * (currentIndexes[1] + dim[1] * currentIndexes[2]);
-    }
 
     template<typename T>
     T LinkedCell::sqr(T x) {
@@ -92,13 +86,6 @@ namespace calculator {
 
         p1->setF(p1->getF() + force);
         p2->setF(p2->getF() - force);
-        //std::cout << "p1 at " << p1->getX() << " and p2 at " << p2->getX() << " with force " << force << ": p1.F: " << p1->getF() << ", p2.F: " << p2->getF() << std::endl;
-        //std::cout << "sqrd dist: " << sqrd_dist << ", p1.X: " << p1->getX() << ", p2.X: " << p2->getX() <<
-        //", p1.newF: " << p1->getF() << ", p2.newF: " << p2->getF() << "p1.oldF: " << p1->getOldF() <<  ", p1.V: " << p1->getV() << std::endl;
-        // std::cout<<"LINKED LIST: Particle with Type: "<<p1->getType()<<" after Force Calc with Particle Type: "<<
-        //          p2->getType()<<" is: ("<<p1->getF()[0]<<", "<<p1->getF()[1]<<", "<<p1->getF()[2]<<")"<<std::endl;
-        // std::cout<<"LINKED LIST: Particle with Type: "<<p2->getType()<<" after Force Calc with Particle Type: "<<
-        //          p1->getType()<<" is: ("<<p2->getF()[0]<<", "<<p2->getF()[1]<<", "<<p2->getF()[2]<<")"<<std::endl;
     }
 }
 

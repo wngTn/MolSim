@@ -1,11 +1,20 @@
 
 #include <iostream>
 #include "LinkedCellContainer.h"
-#include "utils/ArrayUtils.h"
 
-int getCellIndex(const std::array<int, 3> &currentIndexes, const std::array<int, 3> & dim) {
-    return currentIndexes[0] + dim[0] * (currentIndexes[1] + dim[1] * currentIndexes[2]);
-}
+
+
+LinkedCellContainer::LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV, std::array<Border, 6> borderV) :
+        grid{std::vector<Cell>(static_cast<int>(std::floor(Xv/rCutV))*
+                               static_cast<int>(std::floor(Yv/rCutV))*
+                               (static_cast<int>(std::floor(Zv/rCutV)) == 0 ? 1 :
+                                static_cast<int>(std::floor(Zv/rCutV))))},
+        dim{std::array<int, 3>{static_cast<int>(std::floor(Xv/rCutV)),
+                               static_cast<int>(std::floor(Yv/rCutV)),
+                               (static_cast<int>(std::floor(Zv/rCutV))) == 0 ? 1 :
+                               static_cast<int>(std::floor(Zv/rCutV))}},
+        lenDim{std::array<int, 3>{Xv, Yv, Zv}}, rCut{rCutV}, border{borderV} {}
+
 
 void LinkedCellContainer::setup() {
     for(auto & it : grid){
@@ -18,51 +27,16 @@ void LinkedCellContainer::setup() {
                 novelCellIndex[d] = static_cast<int>(std::floor(
                         p.getX()[d] * getDim()[d] / getLenDim()[d]));
             }
-            auto cellIndex = getCellIndex(novelCellIndex, getDim());
-
+            auto cellIndex = (*this).index(novelCellIndex);
             grid[cellIndex].emplace_back(&p);
-
-
         }
     }
 }
 
 void LinkedCellContainer::cleanup() {
     // use erase-remove idiom
-    particles.erase(std::remove_if(particles.begin(), particles.end(), [](Particle& p){return !p.valid;}), particles.end());
-}
-
-
-const std::vector<Cell> & LinkedCellContainer::getGrid() const {
-    return grid;
-}
-
-double LinkedCellContainer::getRCut() const {
-    return rCut;
-}
-
-void LinkedCellContainer::setGrid(const std::vector<Cell> &gridV) {
-    LinkedCellContainer::grid = gridV;
-}
-
-void LinkedCellContainer::setRCut(double rCutV) {
-    LinkedCellContainer::rCut = rCutV;
-}
-
-const std::array<int, 3> &LinkedCellContainer::getDim() const {
-    return dim;
-}
-
-void LinkedCellContainer::setDim(const std::array<int, 3> &dimV) {
-    LinkedCellContainer::dim = dimV;
-}
-
-const std::array<int, 3> &LinkedCellContainer::getLenDim() const {
-    return lenDim;
-}
-
-void LinkedCellContainer::setLenDim(const std::array<int, 3> &lenDimV) {
-    LinkedCellContainer::lenDim = lenDimV;
+    particles.erase(std::remove_if(particles.begin(),
+                                   particles.end(), [](Particle& p){return !p.valid;}), particles.end());
 }
 
 std::vector<std::array<int, 3>> LinkedCellContainer::getNeighbors(const std::array<int, 3> &currentIndex) const {
@@ -127,6 +101,38 @@ std::tuple<LinkedCellContainer::Border, int> LinkedCellContainer::getBorder(cons
     return std::make_tuple(none, -1);
 }
 
+const std::vector<Cell> & LinkedCellContainer::getGrid() const {
+    return grid;
+}
+
+double LinkedCellContainer::getRCut() const {
+    return rCut;
+}
+
+void LinkedCellContainer::setGrid(const std::vector<Cell> &gridV) {
+    LinkedCellContainer::grid = gridV;
+}
+
+void LinkedCellContainer::setRCut(double rCutV) {
+    LinkedCellContainer::rCut = rCutV;
+}
+
+const std::array<int, 3> &LinkedCellContainer::getDim() const {
+    return dim;
+}
+
+void LinkedCellContainer::setDim(const std::array<int, 3> &dimV) {
+    LinkedCellContainer::dim = dimV;
+}
+
+const std::array<int, 3> &LinkedCellContainer::getLenDim() const {
+    return lenDim;
+}
+
+void LinkedCellContainer::setLenDim(const std::array<int, 3> &lenDimV) {
+    LinkedCellContainer::lenDim = lenDimV;
+}
+
 
 [[nodiscard]] size_t LinkedCellContainer::size() const noexcept {
     return particles.size();
@@ -189,13 +195,6 @@ std::vector<Cell>::const_iterator LinkedCellContainer::end_cell() const {
     return grid.end();
 }
 
-bool LinkedCellContainer::is2D() {
-    if (dim[2] == 1) {
-        return true;
-    }
-    else return false;
-}
-
 PairIterator LinkedCellContainer::pair_begin() {
     // ++ to skip pair (0,0)
     return {particles, 0, 1};
@@ -204,6 +203,8 @@ PairIterator LinkedCellContainer::pair_begin() {
 PairIterator LinkedCellContainer::pair_end() {
     return {particles, particles.size(), particles.size()};
 }
+
+
 
 
 
