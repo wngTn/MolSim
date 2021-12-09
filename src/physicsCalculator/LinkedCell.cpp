@@ -28,7 +28,7 @@ namespace calculator {
     }
 
     void LinkedCell::moveParticles(LinkedCellContainer &grid) {
-        std::array<int, 3> currentIndexes{}, novelIndex{};
+        std::array<int, 3> currentIndexes{};
         for (currentIndexes[0] = 0; currentIndexes[0] < grid.getDim()[0]; ++currentIndexes[0]) {
             // iterate through the Y axis
             for (currentIndexes[1] = 0; currentIndexes[1] < grid.getDim()[1]; ++currentIndexes[1]) {
@@ -36,44 +36,40 @@ namespace calculator {
                 for (currentIndexes[2] = 0; currentIndexes[2] < grid.getDim()[2]; ++currentIndexes[2]) {
 
                     auto & curCell = grid.grid[grid.index(currentIndexes)];
+                    //std::cout << "move particles for cell index " << currentIndexes << std::endl;
 
                     for (auto & it : curCell) {
-                        if(!it->valid){
+                        /*if(!it->valid){
                             continue;
-                        }
-                        for (int d = 0; d < 3; ++d) {
-                            novelIndex[d] = static_cast<int>(std::floor(
-                                    it->getX()[d] * grid.getDim()[d] / grid.getLenDim()[d]));
-                        }
-
+                        }*/
                         // Checks whether any particle has crossed the boundaries
                         for (int d = 0; d < 3; ++d) {
-                            if (novelIndex[d] < 0) {
+                            if ( it->getX()[d] < 0) {
                                 // outflow, removing the particle
                                 if (std::get<0>(grid.getBorder(currentIndexes, d)) == LinkedCellContainer::outflow) {
-                                    std::cout<<"Removing Particle"<<std::endl;
+                                    //std::cout<<"Removing Particle"<<std::endl;
                                     it->valid = false;
                                     break;
                                 }
                                     // cyclic
                                 else if (std::get<0>(grid.getBorder(currentIndexes, d)) == LinkedCellContainer::cyclic) {
                                     // set X to the opposite site
-                                    std::cout<<"Particle was at d: "<<d<<" and position"<<it->getX()<<"; now at "<<
-                                    grid.getLenDim()[d] + it->getX()[d]<<std::endl;
+                                   // std::cout<<"Particle was at d: "<<d<<" and position"<<it->getX()<<"; now at "<<
+                                    //         grid.getLenDim()[d] + it->getX()[d]<<std::endl;
                                     it->setX(d, grid.getLenDim()[d] + it->getX()[d]);
                                 }
-                            } else if (novelIndex[d] >= grid.getDim()[d]) {
+                            } else if (it->getX()[d] >= grid.getLenDim()[d]) {
                                 // outflow, removing the particle
                                 if (std::get<0>(grid.getBorder(currentIndexes, d)) == LinkedCellContainer::outflow) {
-                                    std::cout<<"Removing Particle"<<std::endl;
+                                   // std::cout<<"Removing Particle"<<std::endl;
                                     it->valid = false;
                                     break;
                                 }
                                     // cyclic
                                 else if (std::get<0>(grid.getBorder(currentIndexes, d)) == LinkedCellContainer::cyclic) {
                                     // set X to the opposite site
-                                    std::cout<<"Particle was at d: "<<d<<" and position"<<it->getX()<<"; now at "<<
-                                    it->getX()[d] - grid.getLenDim()[d]<<std::endl;
+                                    // std::cout<<"Particle was at d: "<<d<<" and position"<<it->getX()<<"; now at "<<
+                                    //         it->getX()[d] - grid.getLenDim()[d]<<std::endl;
                                     it->setX(d, it->getX()[d] - grid.getLenDim()[d]);
                                 }
                             }
