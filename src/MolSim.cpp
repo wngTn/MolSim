@@ -35,7 +35,7 @@ static std::vector<std::string> filename{};
 static std::vector<std::string> generator_files{};
 
 /// base file name of the output files
-static std::string output_file;
+static std::string output_file = "output";
 
 /// Default dimension
 static int DIM = 3;
@@ -44,7 +44,7 @@ static int DIM = 3;
 static IOWriter::iotype io_type{IOWriter::unknown};
 
 /// How often output files are generated (every nth file)
-static int writeFrequency;
+static int writeFrequency = 10;
 
 /// Which Physics calculation method to use
 static PhysicsCalc::calctype calc_type{PhysicsCalc::unknown};

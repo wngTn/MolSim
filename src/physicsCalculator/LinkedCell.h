@@ -80,6 +80,7 @@ namespace calculator {
     }
 
     void LinkedCell::ljforce(Particle* p1, Particle* p2, double sqrd_dist) const {
+
         double s = sqr(sigma) / sqrd_dist;
         s = s * s * s; // s = sqr(s) * s
         double f = 24 * epsilon * s / sqrd_dist * (1 - 2 * s);
@@ -87,15 +88,18 @@ namespace calculator {
         auto force = f * (p2->getX() - p1->getX());
 
         // set old force
-        p1->setOldF(p1->getF());
-        p2->setOldF(p2->getF());
+        // p1->setOldF(p1->getF());
+        // p2->setOldF(p2->getF());
 
         p1->setF(p1->getF() + force);
         p2->setF(p2->getF() - force);
-        std::cout<<"LINKED LIST: Particle with Type: "<<p1->getType()<<" after Force Calc with Particle Type: "<<
-                 p2->getType()<<" is: ("<<p1->getF()[0]<<", "<<p1->getF()[1]<<", "<<p1->getF()[2]<<")"<<std::endl;
-        std::cout<<"LINKED LIST: Particle with Type: "<<p2->getType()<<" after Force Calc with Particle Type: "<<
-                 p1->getType()<<" is: ("<<p2->getF()[0]<<", "<<p2->getF()[1]<<", "<<p2->getF()[2]<<")"<<std::endl;
+        //std::cout << "p1 at " << p1->getX() << " and p2 at " << p2->getX() << " with force " << force << ": p1.F: " << p1->getF() << ", p2.F: " << p2->getF() << std::endl;
+        //std::cout << "sqrd dist: " << sqrd_dist << ", p1.X: " << p1->getX() << ", p2.X: " << p2->getX() <<
+        //", p1.newF: " << p1->getF() << ", p2.newF: " << p2->getF() << "p1.oldF: " << p1->getOldF() <<  ", p1.V: " << p1->getV() << std::endl;
+        // std::cout<<"LINKED LIST: Particle with Type: "<<p1->getType()<<" after Force Calc with Particle Type: "<<
+        //          p2->getType()<<" is: ("<<p1->getF()[0]<<", "<<p1->getF()[1]<<", "<<p1->getF()[2]<<")"<<std::endl;
+        // std::cout<<"LINKED LIST: Particle with Type: "<<p2->getType()<<" after Force Calc with Particle Type: "<<
+        //          p1->getType()<<" is: ("<<p2->getF()[0]<<", "<<p2->getF()[1]<<", "<<p2->getF()[2]<<")"<<std::endl;
     }
 }
 
