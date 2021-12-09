@@ -14,13 +14,9 @@ public:
      */
     DirectSumParticleContainer();
 
-    void setup() override {
-        // TODO maybe set all forces to zero
-    }
+    void setup() override {}
 
-    void cleanup() override {
-
-    }
+    void cleanup() override {}
 
     template<typename... Args>
     void emplace_back(Args &&... args);
