@@ -117,6 +117,10 @@ void LinkedCellContainer::setRCut(double rCutV) {
     LinkedCellContainer::rCut = rCutV;
 }
 
+bool LinkedCellContainer::is2D() {
+    return dim[2] == 1;
+}
+
 const std::array<int, 3> &LinkedCellContainer::getDim() const {
     return dim;
 }
