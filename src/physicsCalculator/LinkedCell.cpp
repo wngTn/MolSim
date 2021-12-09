@@ -128,11 +128,13 @@ namespace calculator {
             }
             for (int bord : borders) {
                 double r = grid.getDistance(p->getX(), bord);
+                r = 2 * r;
                 // TODO check if 2r or r
-                 if (2 * r <= reflectDistance) {
-                     // TODO make formula more efficient
-                     //std::cout << "Force Before reflection (bord dist: " << grid.getDistance(p->getX(), bord) << "): " << p->getF();
-                     auto force = -24 * epsilon * (1/(2*r)) * pow((sigma/(2*r)), 6) * (1 - 2 * (pow((sigma/(2*r)), 6)));
+                 if (r <= reflectDistance) {
+                     double s = (sigma*sigma) / (r * r);
+                     s = s * s * s;
+                     auto force = -24 * epsilon / r * s * (1 - 2 * s);
+                     // auto force = -24 * epsilon * (1/(r)) * pow((sigma/(r)), 6) * (1 - 2 * (pow((sigma/(r)), 6)));
                      auto newF{p->getF()};
                      switch(bord) {
                          case 0:

@@ -30,7 +30,6 @@ public:
      */
     virtual void push_back(const Particle &p) = 0;
     virtual void push_back(const Particle&& p) = 0;
-    // TODO find way to use parameter pack
     // i know this should be templated with a parameter pack, but templates and inheritance don't mix easily
     /**
    * @brief Moves a Particle to the collection

@@ -19,9 +19,11 @@ void LinkedCellContainer::setup() {
                         p.getX()[d] * getDim()[d] / getLenDim()[d]));
             }
             auto cellIndex = getCellIndex(novelCellIndex, getDim());
-
-            grid[cellIndex].emplace_back(&p);
-
+            if(cellIndex < 0 || cellIndex >= grid.size()){
+                std::cout << "HILFE PARTIKEL ALARM!\n";
+            }else{
+                grid[cellIndex].emplace_back(&p);
+            }
 
         }
     }
@@ -74,25 +76,25 @@ std::vector<std::array<int, 3>> LinkedCellContainer::getNeighbors(const std::arr
                 std::array<int, 3>{currentIndex[0] + 1, currentIndex[1], currentIndex[2]},
                 std::array<int, 3>{currentIndex[0] + 1, currentIndex[1] + 1, currentIndex[2]},
                 std::array<int, 3>{currentIndex[0] - 1, currentIndex[1] + 1, currentIndex[2]}
-
-                /*,
-                std::array<int, 3>{currentIndex[0], currentIndex[1] - 1, currentIndex[2]},
-                std::array<int, 3>{currentIndex[0] - 1, currentIndex[1], currentIndex[2]},
-                std::array<int, 3>{currentIndex[0] - 1, currentIndex[1] - 1, currentIndex[2]},
-                std::array<int, 3>{currentIndex[0] -1 , currentIndex[1] + 1, currentIndex[2]},
-                std::array<int, 3>{currentIndex[0] + 1, currentIndex[1] -1, currentIndex[2]}*/
         };
         return neighbors;
     } else {
-        std::vector<std::array<int, 3>> neighbors(7);
+        std::vector<std::array<int, 3>> neighbors(13);
         neighbors = {
-                std::array<int, 3>{currentIndex[0], currentIndex[1], currentIndex[2] + 1},
                 std::array<int, 3>{currentIndex[0], currentIndex[1] + 1, currentIndex[2]},
-                std::array<int, 3>{currentIndex[0], currentIndex[1] + 1, currentIndex[2] + 1},
                 std::array<int, 3>{currentIndex[0] + 1, currentIndex[1], currentIndex[2]},
-                std::array<int, 3>{currentIndex[0] + 1, currentIndex[1], currentIndex[2] + 1},
                 std::array<int, 3>{currentIndex[0] + 1, currentIndex[1] + 1, currentIndex[2]},
-                std::array<int, 3>{currentIndex[0] + 1, currentIndex[1] + 1, currentIndex[2] + 1}
+                std::array<int, 3>{currentIndex[0] - 1, currentIndex[1] + 1, currentIndex[2]},
+
+                std::array<int, 3>{currentIndex[0], currentIndex[1], currentIndex[2]+1},
+                std::array<int, 3>{currentIndex[0], currentIndex[1]+1, currentIndex[2]+1},
+                std::array<int, 3>{currentIndex[0]+1, currentIndex[1], currentIndex[2]+1},
+                std::array<int, 3>{currentIndex[0]+1, currentIndex[1]+1, currentIndex[2]+1},
+                std::array<int, 3>{currentIndex[0]-1, currentIndex[1], currentIndex[2]+1},
+                std::array<int, 3>{currentIndex[0], currentIndex[1]-1, currentIndex[2]+1},
+                std::array<int, 3>{currentIndex[0]-1, currentIndex[1]-1, currentIndex[2]+1},
+                std::array<int, 3>{currentIndex[0]-1, currentIndex[1]+1, currentIndex[2]+1},
+                std::array<int, 3>{currentIndex[0]+1, currentIndex[1]-1, currentIndex[2]+1},
         };
         return neighbors;
     }
