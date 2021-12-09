@@ -104,7 +104,7 @@ namespace calculator {
         // saves the borders of the current cell
         std::vector<int> borders{};
         // go through all three or two axis and acquire the borders of currentIndex that are reflective
-        for (int d = 0; d < DIM; ++d) {
+        for (int d = 0; d < (grid.is2D()?2:3); ++d) {
             auto [bordType, bord] = grid.getBorder(currentIndexes, d);
             if (bordType == LinkedCellContainer::reflective) {
                 borders.push_back(bord);
