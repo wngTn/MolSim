@@ -8,7 +8,7 @@ namespace calculator {
             for (auto it2 = it; it2 != cell.end(); ++it2) {
                 if (*it != *it2) {
                     double sqrd_dist = 0;
-                    for (int i = 0; i < 3; i++) {
+                    for (int i = 0; i < DIM; i++) {
                         sqrd_dist += LinkedCell::sqr((*it2)->getX()[i] - (*it)->getX()[i]);
                     }
                     LinkedCell::ljforce((*it), (*it2), sqrd_dist);
@@ -24,7 +24,6 @@ namespace calculator {
             auto newX = p.getX() + delta_t * (p.getV() + delta_t * 0.5 / p.getM() * p.getF());
             p.setX(newX);
         }
-
       moveParticles(gridLC);
     }
 
@@ -79,18 +78,6 @@ namespace calculator {
                                 }
                             }
                         }
-
-//                        // Check whether any index has changed, skip if we already deleted something
-//                        if ((currentIndexes[0] != novelIndex[0] || currentIndexes[1] != novelIndex[1] ||
-//                             currentIndexes[2] != novelIndex[2]) && !deleted) {
-//                            std::cout << "Moved Particle with type: " << (*it)->getType() << " from: (" <<
-//                                      currentIndexes[0] << ", " << currentIndexes[1] << ", " << currentIndexes[2]
-//                                      << ") to: " << "(" <<
-//                                      novelIndex[0] << ", " << novelIndex[1] << ", " << novelIndex[2] << ")"
-//                                      << std::endl;
-//                            grid.grid[index(novelIndex, grid.getDim())].add_particle(*(*it));
-//                            curCell.erase(it--);
-//                        }
                     }
                 }
             }
@@ -102,18 +89,13 @@ namespace calculator {
         // Loops through every particle of the neighbor
         for (auto &p_other: grid.grid[LinkedCell::index(neighbors, grid.getDim())]) {
             double sqrd_dist = 0;
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < DIM; i++) {
                 sqrd_dist += LinkedCell::sqr(p_other->getX()[i] - p->getX()[i]);
             }
+
             if (sqrd_dist <= LinkedCell::sqr(rCut)) {
                 LinkedCell::ljforce(p, p_other, sqrd_dist);
             }
-            // DEBUGGEN
-//            else {
-//                std::cout << "Distance between Type: " << p->getType() << " and: " << p_other->getType()
-//                          << " is too high: " <<
-//                          sqrt(sqrd_dist) << std::endl;
-//            }
         }
     }
 
@@ -121,7 +103,7 @@ namespace calculator {
         // We only reflect at this distance
         double reflectDistance = std::pow(2, 1.0/6.0) * sigma;
         // saves the borders of the current cell
-        std::vector<int> borders;
+        std::vector<int> borders{};
         // go through all three or two axis and acquire the borders of currentIndex that are reflective
         for (int d = 0; d < (grid.is2D() ? 2 : 3); ++d) {
             auto [bordType, bord] = grid.getBorder(currentIndexes, d);
@@ -145,17 +127,36 @@ namespace calculator {
                 continue;
             }
             for (int bord : borders) {
-                if (grid.getDistance(p->getX(), bord) <= reflectDistance) {
-                    Particle p2 = generateGhostParticle(grid, p, bord);
-                    double sqrd_dist = 0;
-                    for (int i = 0; i < 3; i++) {
-                        sqrd_dist += LinkedCell::sqr(p2.getX()[i] - p->getX()[i]);
-                    }
-                    std::cout<<"THIS IS GHOST PARTICLE CALCULATION"<<std::endl;
-                    std::cout<<"Particle with Type: "<<p->getType()
-                    <<" before Force Calc is: ("<<p->getF()[0]<<", "<<p->getF()[1]<<", "<<p->getF()[2]<<")"<<std::endl;
-                    std::cout<<"At border: "<<bord<<std::endl;
-                    LinkedCell::ljforce(p, &p2, sqrd_dist);
+                double r = grid.getDistance(p->getX(), bord);
+                // TODO check if 2r or r
+                 if (2 * r <= reflectDistance) {
+                     // TODO make formula more efficient
+                     //std::cout << "Force Before reflection (bord dist: " << grid.getDistance(p->getX(), bord) << "): " << p->getF();
+                     auto force = -24 * epsilon * (1/(2*r)) * pow((sigma/(2*r)), 6) * (1 - 2 * (pow((sigma/(2*r)), 6)));
+                     auto newF{p->getF()};
+                     switch(bord) {
+                         case 0:
+                             newF[0] += force;
+                             break;
+                         case 1:
+                             newF[0] -= force;
+                             break;
+                         case 2:
+                             newF[1] += force;
+                             break;
+                         case 3:
+                             newF[1] -= force;
+                             break;
+                         case 4:
+                             newF[2] += force;
+                             break;
+                         case 5:
+                             newF[2] -= force;
+                             break;
+                         default:
+                            std::cout << "DEFAULT CASE SOMETHING WRONG ALARM\n";
+                     }
+                    p->setF(newF);
                 }
             }
         }
@@ -242,10 +243,9 @@ namespace calculator {
 
     void LinkedCell::calcF(ParticleContainer &container) {
         auto& grid = static_cast<LinkedCellContainer&>(container);
-        for (auto &cell: grid.grid) {
-            for (auto &p: cell) {
-                p->setF({0, 0, 0});
-            }
+        for(auto& p : grid){
+            p.setOldF(p.getF());
+            p.setF({0.,0.,0.});
         }
         // current index we are currently in all 3 axis
         std::array<int, 3> currentIndexes{};
@@ -256,6 +256,20 @@ namespace calculator {
                 // iterate through the Z axis
                 for (currentIndexes[2] = 0; currentIndexes[2] < grid.getDim()[2]; ++currentIndexes[2]) {
 
+                    // get the Cell in the current index
+                    for (auto& p: grid.grid[index(currentIndexes, grid.getDim())]) {
+                        // get all the neighbors
+                        for (const std::array<int, 3> &neighbors: grid.getNeighbors(currentIndexes)) {
+                            // TODO CHECK DISTANCE FROM CURRENT PARTICLE TO NEIGHBOR
+                            // Neighbor should be existing
+
+                            if (neighbors[0] < grid.getDim()[0] && neighbors[1] < grid.getDim()[1] &&
+                                neighbors[2] < grid.getDim()[2] && neighbors[0] >= 0 && neighbors[1] >= 0 && neighbors[2] >= 0) {
+                                calcNeighbors(grid, neighbors, p);
+                            }
+                        }
+                    }
+
                     // TODO CHECK IF CELL IS A BORDER CELL AND THEN CHECK IF REFLECTION THEN DO REFLECTION ELSE DO NORMAL CELL CALCULATION
                     // Calculates the forces within a cell
                     calcFWithinCell(grid.grid[index(currentIndexes, grid.getDim())]);
@@ -265,18 +279,6 @@ namespace calculator {
                        currentIndexes[2] == 0 || currentIndexes[2] == grid.getDim()[2] - 1) {
                         reflectiveBoundary(grid, currentIndexes);
 
-                    }
-                    // get the Cell in the current index
-                    for (auto& p: grid.grid[index(currentIndexes, grid.getDim())]) {
-                        // get all the neighbors
-                        for (const std::array<int, 3> &neighbors: grid.getNeighbors(currentIndexes)) {
-                            // TODO CHECK DISTANCE FROM CURRENT PARTICLE TO NEIGHBOR
-                            // Neighbor should be existing
-                            if (neighbors[0] < grid.getDim()[0] && neighbors[1] < grid.getDim()[1] &&
-                                neighbors[2] < grid.getDim()[2]) {
-                                calcNeighbors(grid, neighbors, p);
-                            }
-                        }
                     }
                 }
             }
