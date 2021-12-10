@@ -78,7 +78,7 @@ static std::array<LinkedCellContainer::Border, 6> boundaryConditions;
  */
 static void get_arguments(int argc, char *argv[]) {
     const std::string help = "Usage: ./MolSim [-x <xml_file>] [-i <input_file>] [-g <generator_input>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calc>] [-b <brownian_motion_velocity_mean>] [-r]\n"
-                             "\tuse -x to specify an XML input file. Overwrites command line otpions (for options where multiple inputs are allowed in the file, e.g. input files command line argument is added)\n"
+                             "\tuse -x to specify an XML input file. Overwrites command line options (for options where multiple inputs are allowed, e.g. input files, command line argument is added)\n"
                              "\tuse -i to specify an input file\n"
                              "\tuse -g to specify a generator input file\n"
                              //"\tuse -t to specify an input type: 'g'/'generate' to generate based on values from input_file, 'r'/'random' for random input (-i discarded for random)\n"
