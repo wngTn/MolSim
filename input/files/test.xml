@@ -1,6 +1,5 @@
-<!-- used for testing the XMLReader -->
-
 <?xml version="1.0" encoding="utf-8"?>
+<!-- used for testing the XMLReader -->
 <simulation t_end="10" delta_t="0.005" writeFrequency="10" outputWriter="xyz" random="true">
     <container type="linkedcell">
         <rCut>3.0</rCut>
