@@ -209,7 +209,7 @@ void initializeParticles(ParticleContainer &particles) {
         // maybe change particle amount
         if (std::system("python ../input/generate_input.py -n 24 -o input.txt")) {
             spdlog::critical("Error while generating random input.");
-            exit(EXIT_FAILURE);
+            exit(-1);
         }
         FileReader::readFile(particles, "../input/files/input.txt");
     }
@@ -246,7 +246,7 @@ void logParticle(ParticleContainer &particles){
 }
 
 void parseXML(){
-    std::cout << "Starting XML parsing!\n";
+    spdlog::info("Starting XML parsing!");
     if(xml_file.empty()) return;
 
     XMLReader::XMLInfo info = XMLReader::readFile(xml_file);
@@ -280,64 +280,66 @@ void parseXML(){
            boundaryConditions = info.boundaryConditions;
        }
     }
-    std::cout << "Finished XML parsing!\n";
+    spdlog::info("Finished XML parsing!");
 
 }
 
+/**
+ * We want to have output here to prevent long simulations with wrong configurations.
+ */
 static void printConfig(){
-    std::cout << "Your configurations are:" << std::endl;
+    std::string message = "Your configurations are:\n";
     if(!xml_file.empty()){
-        std::cout << "\u001b[36m\tXML File:\u001b[0m " << xml_file << std::endl;
+        message.append("\u001b[36m\tXML File:\u001b[0m " + xml_file + "\n");
     }
     if(!filename.empty()){
-        std::cout << "\u001b[36m\tFilenames:\u001b[0m ";
+        message.append("\u001b[36m\tFilenames:\u001b[0m ");
         for(auto& f : filename){
-            std::cout << f << " ";
+            message.append(f + " ");
         }
-        std::cout << std::endl;
     }
 
     if(!generator_files.empty()){
-        std::cout << "\u001b[36m\tGenerator Input Files:\u001b[0m ";
+        message.append("\n\u001b[36m\tGenerator Input Files:\u001b[0m ");
         for(auto& f : generator_files){
-            std::cout << f << " ";
+            message.append(f + " ");
         }
-        std::cout << std::endl;
     }
 
     if(!generatorInfos.empty()){
-        std::cout << "\u001b[36m\tGenerator Input (XML):\u001b[0m " << generatorInfos.size() << std::endl;
+        message.append("\n\u001b[36m\tGenerator Input (XML):\u001b[0m " + generatorInfos.size());
     }
-    std::cout << "\u001b[36m\tContainer:\u001b[0m " << (linkedCell?"LinkedCellContainer":"DirectSumContainer") << std::endl;
-    std::cout << "\u001b[36m\tCalculator:\u001b[0m ";
+    message.append("\n\u001b[36m\tContainer:\u001b[0m ").append(linkedCell?"LinkedCellContainer\n":"DirectSumContainer\n");
+    message.append("\u001b[36m\tCalculator:\u001b[0m ");
     switch (calc_type) {
         case PhysicsCalc::gravitation:
-            std::cout << "Gravitation" << std::endl;
+            message.append("Gravitation\n");
             break;
         case PhysicsCalc::lennardJones:
-            std::cout << "Lennard-Jones-Potential" << (linkedCell?" (LinkedCellCalculation)":"") << std::endl;
+            message.append("Lennard-Jones-Potential").append(linkedCell?" (LinkedCellCalculation)\n":"\n");
             break;
         case PhysicsCalc::unknown:
         default:
-            std::cout << "Lennard-Jones-Potential (Default)" << (linkedCell?" (LinkedCellCalculation)":"") << std::endl;
+            message.append("Lennard-Jones-Potential (Default)").append(linkedCell?" (LinkedCellCalculation)\n":"\n");
     }
-    std::cout << "\u001b[36m\tWriter:\u001b[0m ";
+    message.append("\u001b[36m\tWriter:\u001b[0m ");
     switch (io_type) {
         case IOWriter::vtk:
-            std::cout << "VTK-Writer" << std::endl;
+            message.append("VTK-Writer\n");
             break;
         case IOWriter::xyz:
-            std::cout << "XYZ-Writer" << std::endl;
+            message.append("XYZ-Writer\n");
             break;
         case IOWriter::unknown:
         default:
-            std::cout << "VTK-Writer (Default)" << std::endl;
+            message.append("VTK-Writer (Default)\n");
     }
-    std::cout<<"\u001b[36m\tWrite Frequency:\u001b[0m "<< writeFrequency <<std::endl;
-    if(randomGen) std::cout << "\u001b[36m\tRandom Generation\u001b[0m (This needs Python3)\n";
-    std::cout<<"\u001b[36m\tBrownianMotion:\u001b[0m "<<brownianMotionMean<<std::endl;
-    std::cout << "\u001b[36m\tEnd_time:\u001b[0m " << end_time << (end_time == 1000 ? "(Default)" : "") << std::endl;
-    std::cout << "\u001b[36m\tDelta_t:\u001b[0m " << delta_t << (delta_t == 0.014 ? "(Default)" : "") << std::endl;
+    message.append("\u001b[36m\tWrite Frequency:\u001b[0m ").append(std::to_string(writeFrequency));
+    if(randomGen) message.append("\n\u001b[36m\tRandom Generation\u001b[0m (This needs Python3)\n");
+    message.append("\n\u001b[36m\tBrownianMotion:\u001b[0m ").append(std::to_string(brownianMotionMean));
+    message.append("\n\u001b[36m\tEnd_time:\u001b[0m ").append(std::to_string(end_time)).append(end_time == 1000 ? " (Default)\n" : "\n");
+    message.append("\u001b[36m\tDelta_t:\u001b[0m ").append(std::to_string(delta_t)).append(delta_t == 0.014 ? " (Default)\n" : "\n");
+    std::cout << message << "Calculating..." << std::endl;
 }
 
 /**
@@ -383,14 +385,12 @@ int main(int argc, char *argv[]) {
         << "\u001b[31mIn total there are:\u001b[0m " << particles->size() << " particles." << std::endl;
     }
 
-    std::cout << "Currently processing your request..." << std::endl;
     spdlog::info(
             "Start calculating particles with\n\tIO type:\t\t{:<15}\n\tcalculator type:\t{:<15}\n\tend time:\t\t{:<15}\n\ttimestep:\t\t{:<15}",
             io->toString(), calc->toString(), end_time, delta_t);
 
     // ------ calculation ------ //
     auto start_calc = std::chrono::steady_clock::now();
-
     // initial setup
     calc->calcX(*particles);
     particles->setup();
@@ -428,10 +428,8 @@ int main(int argc, char *argv[]) {
                 << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start_calc).count()
                 << std::endl;
     }else{
-        std::cout << "All files have been written!" << std::endl;
+        spdlog::info("All files have been written!");
     }
-
-    spdlog::info("All files have been written!");
 
     return 0;
 }

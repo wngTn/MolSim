@@ -36,7 +36,6 @@ namespace calculator {
                 for (currentIndexes[2] = 0; currentIndexes[2] < grid.getDim()[2]; ++currentIndexes[2]) {
 
                     auto & curCell = grid.grid[grid.index(currentIndexes)];
-                    //std::cout << "move particles for cell index " << currentIndexes << std::endl;
 
                     for (auto & it : curCell) {
                         /*if(!it->valid){
@@ -47,29 +46,29 @@ namespace calculator {
                             if ( it->getX()[d] < 0) {
                                 // outflow, removing the particle
                                 if (std::get<0>(grid.getBorder(currentIndexes, d)) == LinkedCellContainer::outflow) {
-                                    //std::cout<<"Removing Particle"<<std::endl;
+                                    spdlog::info("Removing Particle");
                                     it->valid = false;
                                     break;
                                 }
                                     // cyclic
                                 else if (std::get<0>(grid.getBorder(currentIndexes, d)) == LinkedCellContainer::cyclic) {
                                     // set X to the opposite site
-                                   // std::cout<<"Particle was at d: "<<d<<" and position"<<it->getX()<<"; now at "<<
-                                    //         grid.getLenDim()[d] + it->getX()[d]<<std::endl;
+                                    spdlog::info("Particle was at d: {} and position {} {} {} now at {}", d,
+                                                 it->getX()[0], it->getX()[1], it->getX()[2], grid.getLenDim()[d] + it->getX()[d]);
                                     it->setX(d, grid.getLenDim()[d] + it->getX()[d]);
                                 }
                             } else if (it->getX()[d] >= grid.getLenDim()[d]) {
                                 // outflow, removing the particle
                                 if (std::get<0>(grid.getBorder(currentIndexes, d)) == LinkedCellContainer::outflow) {
-                                   // std::cout<<"Removing Particle"<<std::endl;
+                                    spdlog::info("Removing Particle");
                                     it->valid = false;
                                     break;
                                 }
                                     // cyclic
                                 else if (std::get<0>(grid.getBorder(currentIndexes, d)) == LinkedCellContainer::cyclic) {
                                     // set X to the opposite site
-                                    // std::cout<<"Particle was at d: "<<d<<" and position"<<it->getX()<<"; now at "<<
-                                    //         it->getX()[d] - grid.getLenDim()[d]<<std::endl;
+                                    spdlog::info("Particle was at d: {} and position {} {} {} now at {}", d,
+                                                 it->getX()[0], it->getX()[1], it->getX()[2], it->getX()[d] - grid.getLenDim()[d]);
                                     it->setX(d, it->getX()[d] - grid.getLenDim()[d]);
                                 }
                             }
@@ -149,7 +148,7 @@ namespace calculator {
                              newF[2] -= force;
                              break;
                          default:
-                            std::cout << "DEFAULT CASE SOMETHING WRONG ALARM\n";
+                            spdlog::critical("DEFAULT CASE SOMETHING WRONG ALARM");
                      }
                     p->setF(newF);
                 }
