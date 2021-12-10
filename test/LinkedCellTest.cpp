@@ -217,6 +217,45 @@ TEST(LinkedCellTest, OutflowAndCyclicTest) {
 }
 
 /**
+ * Tests reflective boundary with a single particle
+ */
+TEST(LinkedCellTest, ReflectiveBoundaryTest) {
+    /**********************Test with 1 particle**********************************/
+    double SIGMA = 1;
+    // create domain with 3,3,3
+    LinkedCellContainer linkedCellContainer = {3, 3, 3, 1., std::array<LinkedCellContainer::Border, 6>{
+            LinkedCellContainer::reflective, LinkedCellContainer::reflective, LinkedCellContainer::reflective,
+            LinkedCellContainer::reflective, LinkedCellContainer::reflective, LinkedCellContainer::reflective}};
+    // set particle on the effectRadius;
+    Particle particle {std::array<double, 3>{3 - (std::pow(2, 1.0/6.0) * SIGMA ) + 0.2, 1.5, 1.5}, std::array<double, 3>{1, 0., 0.}, static_cast<double>(1)};
+    linkedCellContainer.particles.emplace_back(particle);
+
+    for (auto it = linkedCellContainer.particles.begin(); it != linkedCellContainer.particles.end(); ++it) {
+        linkedCellContainer.grid[0].emplace_back(&(*it));
+    }
+    // one particle should be added
+    ASSERT_EQ(linkedCellContainer.grid[0].getParticles().size(), 1);
+    linkedCellContainer.setup();
+    ASSERT_EQ(linkedCellContainer.grid[0].getParticles().size(), 0);
+    // it should only move towards positive x
+    EXPECT_EQ(linkedCellContainer.begin()->getV()[0], 1);
+    EXPECT_EQ(linkedCellContainer.begin()->getV()[1], 0);
+    EXPECT_EQ(linkedCellContainer.begin()->getV()[2], 0);
+    // calculate next step
+    calculator::LinkedCell calc{SIGMA, 1, 1};
+    calc.setDeltaT(0.00005);
+    calc.calcX(linkedCellContainer);
+    linkedCellContainer.setup();
+    calc.calcF(linkedCellContainer);
+    calc.calcV(linkedCellContainer);
+
+    // it should slow down after entering effectRadius
+    EXPECT_LT(linkedCellContainer.begin()->getV()[0], 1);
+    EXPECT_EQ(linkedCellContainer.begin()->getV()[1], 0);
+    EXPECT_EQ(linkedCellContainer.begin()->getV()[2], 0);
+}
+
+/**
  * Tests the LinkedCell Method more detailedly against the Lennard Jones implementation
  * Creates two container with 10 particles each and compares the values
 */

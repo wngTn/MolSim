@@ -52,9 +52,6 @@ static PhysicsCalc::calctype calc_type{PhysicsCalc::unknown};
 /// Whether to disable logging and IO operations
 static bool benchmarking = false;
 
-/// Whether a particle generator getting parameters from the input file (for e.g. cuboids) should be used
-static bool generate = false;
-
 /// info for generator from XML file
 static std::vector<ParticleGenerator::ShapeInfo> generatorInfos{};
 
@@ -78,7 +75,7 @@ static std::array<LinkedCellContainer::Border, 6> boundaryConditions;
  */
 static void get_arguments(int argc, char *argv[]) {
     const std::string help = "Usage: ./MolSim [-x <xml_file>] [-i <input_file>] [-g <generator_input>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calc>] [-b <brownian_motion_velocity_mean>] [-r]\n"
-                             "\tuse -x to specify an XML input file. Overwrites command line otpions (for options where multiple inputs are allowed in the file, e.g. input files command line argument is added)\n"
+                             "\tuse -x to specify an XML input file. Overwrites command line options (for options where multiple inputs are allowed, e.g. input files, command line argument is added)\n"
                              "\tuse -i to specify an input file\n"
                              "\tuse -g to specify a generator input file\n"
                              //"\tuse -t to specify an input type: 'g'/'generate' to generate based on values from input_file, 'r'/'random' for random input (-i discarded for random)\n"
@@ -107,7 +104,6 @@ static void get_arguments(int argc, char *argv[]) {
                 filename.emplace_back(optarg);
                 break;
             case 'g':
-                generate = true;
                 generator_files.emplace_back(optarg);
                 break;
             case 'e':
@@ -290,10 +286,10 @@ void parseXML(){
 static void printConfig(){
     std::string message = "Your configurations are:\n";
     if(!xml_file.empty()){
-        message.append("\u001b[36m\tXML File:\u001b[0m " + xml_file + "\n");
+        message.append("\u001b[36m\tXML File:\u001b[0m " + xml_file);
     }
     if(!filename.empty()){
-        message.append("\u001b[36m\tFilenames:\u001b[0m ");
+        message.append("\n\u001b[36m\tFilenames:\u001b[0m ");
         for(auto& f : filename){
             message.append(f + " ");
         }
@@ -307,7 +303,7 @@ static void printConfig(){
     }
 
     if(!generatorInfos.empty()){
-        message.append("\n\u001b[36m\tGenerator Input (XML):\u001b[0m " + generatorInfos.size());
+        message.append("\n\u001b[36m\tGenerator Input (XML):\u001b[0m " + std::to_string(generatorInfos.size()));
     }
     message.append("\n\u001b[36m\tContainer:\u001b[0m ").append(linkedCell?"LinkedCellContainer\n":"DirectSumContainer\n");
     message.append("\u001b[36m\tCalculator:\u001b[0m ");
@@ -428,6 +424,7 @@ int main(int argc, char *argv[]) {
                 << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start_calc).count()
                 << std::endl;
     }else{
+        std::cout << "All files have been written!" << std::endl;
         spdlog::info("All files have been written!");
     }
 
