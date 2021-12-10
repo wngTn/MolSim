@@ -22,7 +22,7 @@ public:
      * @param Yv length of Y-Axis of the array == the length of the domain
      * @param Zv length of Z-Axis of the array == the length of the domain
      * @param rCutV the r_cut value
-     * @param border the border types of the 6 (3D) or 4 (2D) borders
+     * @param borderV the border types of the 6 (3D) or 4 (2D) borders
      */
     LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV, std::array<Border, 6> borderV = std::array<Border, 6>{
             outflow, outflow, outflow, outflow, outflow, outflow});
