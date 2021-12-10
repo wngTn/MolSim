@@ -28,7 +28,7 @@ namespace calculator {
     }
 
     void LinkedCell::moveParticles(LinkedCellContainer &grid) {
-        std::array<int, 3> currentIndexes{}, novelIndex{};
+        std::array<int, 3> currentIndexes{};
         for (currentIndexes[0] = 0; currentIndexes[0] < grid.getDim()[0]; ++currentIndexes[0]) {
             // iterate through the Y axis
             for (currentIndexes[1] = 0; currentIndexes[1] < grid.getDim()[1]; ++currentIndexes[1]) {
@@ -38,17 +38,12 @@ namespace calculator {
                     auto & curCell = grid.grid[grid.index(currentIndexes)];
 
                     for (auto & it : curCell) {
-                        if(!it->valid){
+                        /*if(!it->valid){
                             continue;
-                        }
-                        for (int d = 0; d < 3; ++d) {
-                            novelIndex[d] = static_cast<int>(std::floor(
-                                    it->getX()[d] * grid.getDim()[d] / grid.getLenDim()[d]));
-                        }
-
+                        }*/
                         // Checks whether any particle has crossed the boundaries
                         for (int d = 0; d < 3; ++d) {
-                            if (novelIndex[d] < 0) {
+                            if ( it->getX()[d] < 0) {
                                 // outflow, removing the particle
                                 if (std::get<0>(grid.getBorder(currentIndexes, d)) == LinkedCellContainer::outflow) {
                                     spdlog::info("Removing Particle");
@@ -62,7 +57,7 @@ namespace calculator {
                                                  it->getX()[0], it->getX()[1], it->getX()[2], grid.getLenDim()[d] + it->getX()[d]);
                                     it->setX(d, grid.getLenDim()[d] + it->getX()[d]);
                                 }
-                            } else if (novelIndex[d] >= grid.getDim()[d]) {
+                            } else if (it->getX()[d] >= grid.getLenDim()[d]) {
                                 // outflow, removing the particle
                                 if (std::get<0>(grid.getBorder(currentIndexes, d)) == LinkedCellContainer::outflow) {
                                     spdlog::info("Removing Particle");
