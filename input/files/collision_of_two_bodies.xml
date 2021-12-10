@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<simulation t_end="20" delta_t="0.0005" writeFrequency="50" outputWriter="vtk">
+    <container type="linkedcell">
+        <rCut>3.0</rCut>
+        <domainSizeX>180</domainSizeX>
+        <domainSizeY>90</domainSizeY>
+        <domainSizeZ>1</domainSizeZ>
+        <borderType>
+            <left>outflow</left>
+            <right>outflow</right>
+            <upper>outflow</upper>
+            <lower>outflow</lower>
+            <front>outflow</front>
+            <back>outflow</back>
+        </borderType>
+    </container>
+    <calculator type="lennardjones">
+        <epsilon>5</epsilon>
+        <sigma>1</sigma>
+        <brownianMotion>0.0</brownianMotion>
+    </calculator>
+    <outputFile>output</outputFile>
+    <generatorInfo type="cuboid">
+        <x>20.0</x>
+        <y>20.0</y>
+        <z>0.0</z>
+        <v1>0.0</v1>
+        <v2>0.0</v2>
+        <v3>0.0</v3>
+        <mass>1.0</mass>
+        <distance>1.1225</distance>
+        <brownianFactor>0.1</brownianFactor>
+        <n1>100</n1>
+        <n2>20</n2>
+        <n3>1</n3>
+        <dim>2</dim>
+    </generatorInfo>
+    <generatorInfo type="cuboid">
+        <x>70.0</x>
+        <y>60.0</y>
+        <z>0.0</z>
+        <v1>0.0</v1>
+        <v2>-10.0</v2>
+        <v3>0.0</v3>
+        <mass>1.0</mass>
+        <distance>1.1225</distance>
+        <brownianFactor>0.1</brownianFactor>
+        <n1>20</n1>
+        <n2>20</n2>
+        <n3>1</n3>
+        <dim>2</dim>
+    </generatorInfo>
+</simulation>
