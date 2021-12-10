@@ -23,9 +23,9 @@ namespace calculator {
         T sqr(T x);
 
         /**
-         *
-         * @param grid
-         * @param border 0 means outflow -> particle gets deleted; 1 means cyclic -> particle goes to the other side
+         * This method simply sets all Particles to invalid, if they cross any borders,
+         * or puts them on the other side, if there are cyclic borders
+         * @param grid the grid
          */
         static void moveParticles(LinkedCellContainer & grid);
 
