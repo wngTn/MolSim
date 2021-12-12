@@ -3,6 +3,7 @@
 #include <vector>
 #include <cmath>
 #include <functional>
+#include <spdlog/spdlog.h>
 
 #include "Particle.h"
 #include "ParticleContainer.h"
@@ -11,8 +12,7 @@
 class LinkedCellContainer : public ParticleContainer{
 public:
 
-    enum Border {outflow, cyclic, reflective, none};
-
+    enum Border {outflow, periodic, reflective, none};
 
     /***********************************************************************/
 
@@ -117,6 +117,15 @@ public:
      */
     [[nodiscard]] std::vector<std::array<int, 3>> getNeighbors (const std::array<int, 3> & currentIndex) const;
 
+
+    /**
+     * Returns a vector of neighbor indices depending on the border it should be mirrored at
+     * @param currentIndex the index of the current cell
+     * @param border the border it is at
+     * @return a vector of indices of the neighbor
+     */
+    std::vector<std::array<int, 3>> getPerNeighbors(const std::array<int, 3> & currentIndex, int border);
+
     /**
      * Calculates the distance between a position X a border
      * @param X the position
@@ -124,6 +133,7 @@ public:
      * @return the distance
      */
     [[nodiscard]] inline double getDistance(const std::array<double, 3> & X, int bord) const;
+
 
     /**
      * Returns the index in the 1D Grid container
@@ -164,6 +174,7 @@ public:
      * Vector that saves all the instantiations of our particles
      */
     std::vector<Particle> particles;
+
 
 private:
     /**

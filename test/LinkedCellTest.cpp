@@ -190,8 +190,8 @@ TEST(LinkedCellTest, OutflowAndCyclicTest) {
     // Check whether cyclic works
     LinkedCellContainer cellContainer1 = LinkedCellContainer{12, 12, 12, 3.,
                                                              std::array<LinkedCellContainer::Border, 6>{
-        LinkedCellContainer::cyclic, LinkedCellContainer::cyclic, LinkedCellContainer::cyclic, LinkedCellContainer::cyclic
-        ,LinkedCellContainer::cyclic, LinkedCellContainer::cyclic}};
+                                                                     LinkedCellContainer::periodic, LinkedCellContainer::periodic, LinkedCellContainer::periodic, LinkedCellContainer::periodic
+        , LinkedCellContainer::periodic, LinkedCellContainer::periodic}};
 
     cellContainer1.particles.emplace_back(std::array<double, 3>{-1, 2, 2},
                                           std::array<double, 3>{0., 0., 0.},

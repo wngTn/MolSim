@@ -799,7 +799,7 @@ class border_single_t: public ::xml_schema::string
    */
   enum value
   {
-    cyclic,
+    periodic,
     reflective,
     outflow
   };

@@ -2,7 +2,7 @@
 
 #include <Particle.h>
 #include <particleContainers/LinkedCellContainer.h>
-#include <physicsCalculator/LinkedCell.h>
+#include "utils/ArrayUtils.h"
 
 /**
 * Simple test to check whether a particle will be added to the container
@@ -129,3 +129,31 @@ INSTANTIATE_TEST_SUITE_P(
                 std::make_tuple(5, 7, 8)
         )
 );
+
+
+/*
+ * Tests whether the getPerNeighbor function returns the correct neighbors
+ */
+
+TEST(LinkedCellContainer, GetPerNeighborFunctionTest) {
+    LinkedCellContainer linkedCellContainer = LinkedCellContainer{10, 10, 0, 1.};
+    std::array<int, 3> ci = {0, 0, 0};
+    std::array<int, 3> ci_n_1 = {9, 0, 0};
+    std::array<int, 3> ci_n_2 = {9, 1, 0};
+    // Left border
+    auto result = linkedCellContainer.getPerNeighbors(ci, 0);
+    ASSERT_EQ(result.size(), 2);
+    ASSERT_EQ(result[0], ci_n_1);
+    ASSERT_EQ(result[1], ci_n_2);
+
+    LinkedCellContainer linkedCellContainer3D = LinkedCellContainer{10, 10, 10, 1.};
+    std::array<int, 3> ci_3D = {0, 0, 0};
+    auto result3D = linkedCellContainer3D.getPerNeighbors(ci_3D, 0);
+    ASSERT_EQ(result3D.size(), 4);
+    std::cout<<result3D<<std::endl;
+
+    std::array<int, 3> ci_3D_2 = {0, 5, 5};
+    auto result3D_2 = linkedCellContainer3D.getPerNeighbors(ci_3D_2, 0);
+    ASSERT_EQ(result3D_2.size(), 9);
+    std::cout<<result3D_2<<std::endl;
+}

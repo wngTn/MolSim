@@ -11,8 +11,8 @@
             <right>reflective</right>
             <upper>reflective</upper>
             <lower>reflective</lower>
-            <front>cyclic</front>
-            <back>cyclic</back>
+            <front>periodic</front>
+            <back>periodic</back>
         </borderType>
     </container>
     <calculator type="lennardjones">
