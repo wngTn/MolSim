@@ -56,6 +56,22 @@ static bool benchmarking = false;
 /// info for generator from XML file
 static std::vector<ParticleGenerator::ShapeInfo> generatorInfos{};
 
+/// Thermostat
+static Thermostat thermostat{};
+
+/// time steps to apply temperature
+static int nThermostat;
+
+/// initial temperature
+static double initialTemperature;
+
+/// temperature we want to reach
+static double targetTemperature;
+
+/// max temperature difference in one temperature calculation
+static double maxDeltaTemperature;
+
+
 static bool randomGen = false;
 static bool brownianMotion = false;
 static double brownianMotionMean;
@@ -402,6 +418,7 @@ int main(int argc, char *argv[]) {
     while (current_time < end_time) {
         spdlog::info("Iteration {}: ", iteration);
         logParticle(*particles);
+
 
         calc->calcX(*particles);
         particles->setup();
