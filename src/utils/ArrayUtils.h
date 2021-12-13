@@ -197,6 +197,18 @@ namespace ArrayUtils {
         return std::sqrt(std::accumulate(std::cbegin(c), std::cend(c), 0.0,
                                          [](auto a, auto b) { return a + b * b; }));
     }
+
+    /**
+  * Calculates the dot product for two given containers.
+  * @tparam Container
+  * @param c1, c2
+  * @return sum_i(c1[i]*c2[i]).
+  */
+    template <class Container> auto dotProduct(const Container &c1, const Container &c2) {
+        auto mult = ArrayUtils::elementWisePairOp(c1, c2, std::multiplies<>());
+        return std::accumulate(std::cbegin(mult), std::cend(mult), 0.0);
+    }
+
 } // namespace ArrayUtils
 
 

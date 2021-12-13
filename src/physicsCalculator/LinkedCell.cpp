@@ -120,7 +120,6 @@ namespace calculator {
             }
         }
 
-
         /**
          * Border type overview:
          * 0: LEFT
@@ -130,7 +129,6 @@ namespace calculator {
          * 4: FRONT
          * 5: BACK
          */
-
         for (auto &p: grid.grid[grid.index(currentIndexes)]) {
             if (!p->valid) {
                 continue;
@@ -163,7 +161,7 @@ namespace calculator {
                             newF[2] -= force;
                             break;
                         default:
-                            spdlog::critical("DEFAULT CASE SOMETHING WRONG ALARM");
+                            spdlog::critical("DEFAULT CASE REFLECTIVE BORDER CALC SOMETHING WRONG ALARM");
                     }
                     p->setF(newF);
                 }
@@ -206,7 +204,7 @@ namespace calculator {
                         mirror = {0, 0, static_cast<double>(grid.getLenDim()[2])};
                         break;
                     default:
-                        spdlog::critical("DEFAULT CASE SOMETHING WRONG ALARM");
+                        spdlog::critical("DEFAULT CASE PERIODIC BORDER CALC SOMETHING WRONG ALARM");
                 }
                 for (const auto & n : neigh) {
                     LinkedCell::calcPerNeighbors(grid, n, p, mirror);
@@ -237,86 +235,6 @@ namespace calculator {
 
                 p->setF(p->getF() + force);
                 p_other->setF(p_other->getF() - force);
-            }
-        }
-    }
-
-
-    Particle LinkedCell::generateGhostParticle(const LinkedCellContainer &grid, const Particle *p, int bord) {
-        Particle ghostParticle{};
-        switch (bord) {
-            // LEFT
-            case 0: {
-                // Mirror at Y axis
-                auto mirror = std::array<double, 3>{-1, 1, 1};
-                auto newX = mirror * p->getX();
-                auto newF = mirror * p->getF();
-                ghostParticle.setX(newX);
-                ghostParticle.setF(newF);
-                return ghostParticle;
-            }
-                // RIGHT
-            case 1: {
-                // Mirror for position at right border
-                auto mirrorX = std::array<double, 3>{2 * grid.getDistance(p->getX(),
-                                                                          1), 0, 0};
-                auto newX = mirrorX + p->getX();
-                // Mirror at Y axis
-                auto mirror = std::array<double, 3>{-1, 1, 1};
-                auto newF = mirror * p->getF();
-                ghostParticle.setX(newX);
-                ghostParticle.setF(newF);
-                return ghostParticle;
-            }
-                // UPPER
-            case 2: {
-                // Mirror at X axis
-                auto mirror = std::array<double, 3>{1, -1, 1};
-                auto newX = mirror * p->getX();
-                auto newF = mirror * p->getF();
-                ghostParticle.setX(newX);
-                ghostParticle.setF(newF);
-                return ghostParticle;
-            }
-                // LOWER
-            case 3: {
-                // Mirror for position at lower border
-                auto mirrorX = std::array<double, 3>{0, 2 * grid.getDistance(p->getX(),
-                                                                             3), 0};
-                auto newX = mirrorX + p->getX();
-                // Mirror at X axis
-                auto mirror = std::array<double, 3>{1, -1, 1};
-                auto newF = mirror * p->getF();
-                ghostParticle.setX(newX);
-                ghostParticle.setF(newF);
-                return ghostParticle;
-            }
-                // FRONT
-            case 4: {
-                // Mirror at Z axis
-                auto mirror = std::array<double, 3>{1, 1, -1};
-                auto newX = mirror * p->getX();
-                auto newF = mirror * p->getF();
-                ghostParticle.setX(newX);
-                ghostParticle.setF(newF);
-                return ghostParticle;
-            }
-                // BACK
-            case 5: {
-                // Mirror for position at lower border
-                auto mirrorX = std::array<double, 3>{0, 0, 2 * grid.getDistance(p->getX(),
-                                                                                5)};
-                auto newX = mirrorX + p->getX();
-                // Mirror at X axis
-                auto mirror = std::array<double, 3>{1, 1, -1};
-                auto newF = mirror * p->getF();
-                ghostParticle.setX(newX);
-                ghostParticle.setF(newF);
-                return ghostParticle;
-            }
-                // Shouldn't get to this
-            default: {
-                return ghostParticle;
             }
         }
     }

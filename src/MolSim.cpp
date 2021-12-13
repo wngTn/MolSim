@@ -7,6 +7,7 @@
 #include "physicsCalculator/Gravitation.h"
 #include "physicsCalculator/LennardJones.h"
 #include "physicsCalculator/LinkedCell.h"
+#include "physicsCalculator/Thermostat.h"
 #include "utils/ParticleGenerator.h"
 #include "utils/MaxwellBoltzmannDistribution.h"
 #include "inputReader/XMLReader.h"
@@ -366,6 +367,8 @@ int main(int argc, char *argv[]) {
     auto io = get_io_type();
     auto calc = get_calculator();
 
+    nThermostat = 100;
+
     calc->setDim(DIM);
     calc->setDeltaT(delta_t);
 
@@ -388,6 +391,7 @@ int main(int argc, char *argv[]) {
     // ------ calculation ------ //
     auto start_calc = std::chrono::steady_clock::now();
     // initial setup
+    // TODO setup temperature
     calc->calcX(*particles);
     particles->setup();
     calc->calcF(*particles);
@@ -407,6 +411,10 @@ int main(int argc, char *argv[]) {
         logParticle(*particles);
 
         iteration++;
+
+        // todo apply thermostat stuff using Thermostat::applyTemperature()
+
+
         if (!benchmarking && iteration % writeFrequency == 0) {
             particles->cleanup();
             // setup after cleanup needed to validate pointers for calcX

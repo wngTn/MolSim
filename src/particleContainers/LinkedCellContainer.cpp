@@ -125,6 +125,10 @@ const std::array<int, 3> &LinkedCellContainer::getDim() const {
     return dim;
 }
 
+int LinkedCellContainer::dimensions(){
+    return dim[2]==1 ? 2 : 3;
+}
+
 void LinkedCellContainer::setDim(const std::array<int, 3> &dimV) {
     LinkedCellContainer::dim = dimV;
 }
