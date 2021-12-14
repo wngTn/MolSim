@@ -72,7 +72,7 @@ std::vector<std::array<int, 3>> LinkedCellContainer::getNeighbors(const std::arr
     }
 }
 
-std::tuple<LinkedCellContainer::Border, int> LinkedCellContainer::getBorder(const std::array<int, 3> &currentIndexes, int d) {
+std::tuple<LinkedCellContainer::Border, int> LinkedCellContainer::getBorders(const std::array<int, 3> &currentIndexes, int d) {
     // y value is zero --> upper border
     if (currentIndexes[1] <= 0 && d == 1) {
         return std::make_tuple(border[2], 2);
@@ -209,66 +209,127 @@ PairIterator LinkedCellContainer::pair_end() {
 }
 
 std::vector<std::array<int, 3>>
-LinkedCellContainer::getPerNeighbors(const std::array<int, 3> &currentIndex, int border) {
+LinkedCellContainer::getPerNeighbors(const std::array<int, 3> &currentIndex) {
     std::vector<std::array<int, 3>> neighbors{};
+    // keeps track of the current index
+    std::array<int, 3> cI{};
+    // the actual values
+    int x{}, y{}, z{};
+    // traverse trough x-axis
+    for (cI[0] = currentIndex[0] - 1; cI[0] <= currentIndex[0] + 1; ++cI[0]) {
+        // traverse through y-axis
+        for (cI[1] = currentIndex[1] - 1; cI[1] <= currentIndex[1] + 1; ++cI[1]) {
+            // traverse through z-axis
+            for (cI[2] = ((*this).is2D() ? 0 : currentIndex[2] - 1);
+                 cI[2] <= ((*this).is2D() ? 0 : currentIndex[2] + 1); ++cI[2]) {
 
-    switch (border) {
-        // LEFT
-        case 0:
-            for (int y =  std::max(currentIndex[1] - 1, 0); y <= std::min(currentIndex[1] + 1, dim[1] - 1); ++y){
-                for (int z = ((*this).is2D() ? 0 : std::max(currentIndex[2] - 1, 0)); z <=
-                    ((*this).is2D() ? 0 : std::min(currentIndex[2] + 1, dim[2] - 1)); ++z) {
-                    neighbors.emplace_back(std::array<int, 3>{dim[0] - 1, y, z});
+                x = cI[0];
+                y = cI[1];
+                z = cI[2];
+                // Not even out of bounds
+                if (cI[0] >= 0 && cI[0] < dim[0] &&
+                    cI[1] >= 0 && cI[1] < dim[1] &&
+                    cI[2] >= 0 && cI[2] < dim[2]) {
+                    continue;
                 }
-            }
-            break;
-        // RIGHT
-        case 1:
-            for (int y = std::max(currentIndex[1] - 1, 0); y <= std::min(currentIndex[1] + 1, dim[1] - 1); ++y){
-                for (int z = ((*this).is2D() ? 0 : std::max(currentIndex[2] - 1, 0)); z <=
-                    ((*this).is2D() ? 0 : std::min(currentIndex[2] + 1, dim[2] - 1)); ++z) {
-                    neighbors.emplace_back(std::array<int, 3>{0, y, z});
+                // Border left or right
+                if ((cI[0] < 0 && border[0] == periodic) || (cI[0] >= dim[0] && border[1] == periodic)){
+                    x = (cI[0] + dim[0]) % dim[0];
                 }
-            }
-            break;
-        // UP
-        case 2:
-            for (int x = std::max(currentIndex[0] - 1, 0); x <= std::min(currentIndex[0] + 1, dim[0] - 1); ++x){
-                for (int z = ((*this).is2D() ? 0 : std::max(currentIndex[2] - 1, 0)); z <=
-                    ((*this).is2D() ? 0 : std::min(currentIndex[2] + 1, dim[2] - 1)); ++z) {
-                    neighbors.emplace_back(std::array<int, 3>{x, dim[1] - 1, z});
+                else if (cI[0] < 0 || cI[0] >= dim[0]) {
+                    continue;
                 }
-            }
-            break;
-        // DOWN
-        case 3:
-            for (int x = std::max(currentIndex[0] - 1, 0); x <= std::min(currentIndex[0] + 1, dim[0] - 1); ++x){
-                for (int z = ((*this).is2D() ? 0 : std::max(currentIndex[2] - 1, 0)); z <=
-                    ((*this).is2D() ? 0 : std::min(currentIndex[2] + 1, dim[2] -1)); ++z) {
-                    neighbors.emplace_back(std::array<int, 3>{x, 0, z});
+                // Border up and down
+                if ((cI[1] < 0 && border[2] == periodic) || (cI[1] >= dim[1] && border[3] == periodic)) {
+                    y = (cI[1] + dim[1]) % dim[1];
                 }
-            }
-            break;
-        // FRONT
-        case 4:
-            for (int x = std::max(currentIndex[0] - 1, 0); x <= std::min(currentIndex[0] + 1, dim[0] - 1); ++x){
-                for (int y = std::max(currentIndex[1] - 1, 0); y <= std::min(currentIndex[1] + 1, dim[1] -1); ++y) {
-                    neighbors.emplace_back(std::array<int, 3>{x, y, dim[2] - 1});
+                else if (cI[1] < 0 || cI[1] >= dim[1]) {
+                    continue;
                 }
-            }
-            break;
-        // BACK
-        case 5:
-            for (int x = std::max(currentIndex[0] - 1, 0); x <= std::min(currentIndex[0] + 1, dim[0] - 1); ++x){
-                for (int y = std::max(currentIndex[1] - 1, 0); y <= std::min(currentIndex[1] + 1, dim[1] -1); ++y) {
-                    neighbors.emplace_back(std::array<int, 3>{x, y, 0});
+                // Border front and back
+                if ((cI[2] < 0 && border[4] == periodic) || (cI[2] >= dim[2] && border[5] == periodic)) {
+                    z = (cI[2] + dim[2]) % dim[2];
                 }
+                else if (cI[2] < 0 || cI[2] >= dim[2]) {
+                    continue;
+                }
+                neighbors.emplace_back(std::array<int, 3>{x, y, z});
             }
-            break;
-        default:
-            spdlog::critical("DEFAULT CASE SOMETHING WRONG ALARM AT GETPERNEIGHBORS FUNCTION");
+        }
     }
+//    switch (border) {
+//        // LEFT
+//        case 0:
+//            for (int y =  std::max(currentIndex[1] - 1, 0); y <= std::min(currentIndex[1] + 1, dim[1] - 1); ++y){
+//                for (int z = ((*this).is2D() ? 0 : std::max(currentIndex[2] - 1, 0)); z <=
+//                    ((*this).is2D() ? 0 : std::min(currentIndex[2] + 1, dim[2] - 1)); ++z) {
+//                    neighbors.emplace_back(std::array<int, 3>{dim[0] - 1, y, z});
+//                }
+//            }
+//            break;
+//        // RIGHT
+//        case 1:
+//            for (int y = std::max(currentIndex[1] - 1, 0); y <= std::min(currentIndex[1] + 1, dim[1] - 1); ++y){
+//                for (int z = ((*this).is2D() ? 0 : std::max(currentIndex[2] - 1, 0)); z <=
+//                    ((*this).is2D() ? 0 : std::min(currentIndex[2] + 1, dim[2] - 1)); ++z) {
+//                    neighbors.emplace_back(std::array<int, 3>{0, y, z});
+//                }
+//            }
+//            break;
+//        // UP
+//        case 2:
+//            for (int x = std::max(currentIndex[0] - 1, 0); x <= std::min(currentIndex[0] + 1, dim[0] - 1); ++x){
+//                for (int z = ((*this).is2D() ? 0 : std::max(currentIndex[2] - 1, 0)); z <=
+//                    ((*this).is2D() ? 0 : std::min(currentIndex[2] + 1, dim[2] - 1)); ++z) {
+//                    neighbors.emplace_back(std::array<int, 3>{x, dim[1] - 1, z});
+//                }
+//            }
+//            break;
+//        // DOWN
+//        case 3:
+//            for (int x = std::max(currentIndex[0] - 1, 0); x <= std::min(currentIndex[0] + 1, dim[0] - 1); ++x){
+//                for (int z = ((*this).is2D() ? 0 : std::max(currentIndex[2] - 1, 0)); z <=
+//                    ((*this).is2D() ? 0 : std::min(currentIndex[2] + 1, dim[2] -1)); ++z) {
+//                    neighbors.emplace_back(std::array<int, 3>{x, 0, z});
+//                }
+//            }
+//            break;
+//        // FRONT
+//        case 4:
+//            for (int x = std::max(currentIndex[0] - 1, 0); x <= std::min(currentIndex[0] + 1, dim[0] - 1); ++x){
+//                for (int y = std::max(currentIndex[1] - 1, 0); y <= std::min(currentIndex[1] + 1, dim[1] -1); ++y) {
+//                    neighbors.emplace_back(std::array<int, 3>{x, y, dim[2] - 1});
+//                }
+//            }
+//            break;
+//        // BACK
+//        case 5:
+//            for (int x = std::max(currentIndex[0] - 1, 0); x <= std::min(currentIndex[0] + 1, dim[0] - 1); ++x){
+//                for (int y = std::max(currentIndex[1] - 1, 0); y <= std::min(currentIndex[1] + 1, dim[1] -1); ++y) {
+//                    neighbors.emplace_back(std::array<int, 3>{x, y, 0});
+//                }
+//            }
+//            break;
+//        default:
+//            spdlog::critical("DEFAULT CASE SOMETHING WRONG ALARM AT GETPERNEIGHBORS FUNCTION");
+//    }
     return neighbors;
+}
+
+const std::vector<Particle> &LinkedCellContainer::getParticles() const {
+    return particles;
+}
+
+void LinkedCellContainer::setParticles(const std::vector<Particle> &particlesV) {
+    LinkedCellContainer::particles = particlesV;
+}
+
+const std::array<LinkedCellContainer::Border, 6> &LinkedCellContainer::getBorder() const {
+    return border;
+}
+
+void LinkedCellContainer::setBorder(const std::array<Border, 6> &borderV) {
+    LinkedCellContainer::border = borderV;
 }
 
 
