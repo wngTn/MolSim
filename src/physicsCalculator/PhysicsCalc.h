@@ -22,8 +22,9 @@ public:
      * @brief Constructor with arguments
      * @param delta_t the given delta
      * @param DIM the dimension we are in
+     * @param g gravitational force
      */
-    PhysicsCalc(double delta_t, int DIM) : delta_t(delta_t), DIM(DIM) {}
+    PhysicsCalc(double delta_t, int DIM, double g = 0) : delta_t(delta_t), g{g}, DIM(DIM) {}
 
     PhysicsCalc(const PhysicsCalc &) = default;
 
@@ -32,6 +33,13 @@ public:
      * @param particles the container with the particles
      */
     virtual void calcF(ParticleContainer &particles) = 0;
+
+    [[nodiscard]] double getDeltaT() const;
+
+    [[nodiscard]] double getG() const;
+
+    void setG(double g);
+
     virtual std::string toString() = 0;
 
     // since calcV and calcX are the same for all calc methods, they are not virtual and implemented in PhysicsCalc.cpp
@@ -48,16 +56,18 @@ public:
      */
     virtual void calcV(ParticleContainer &particles) const;
 
-    void setDeltaT(double dt) {
-        delta_t = dt;
-    }
+    void setDeltaT(double deltaT);
 
-    void setDim(int d) {
-        DIM = d;
-    }
+    [[nodiscard]] int getDim() const;
+
+    void setDim(int dim);
 
 protected:
     double delta_t{0.1};
+    /*
+     * The gravitational force that applies to the domain
+     */
+    double g{0};
     int DIM{3};
 
 };

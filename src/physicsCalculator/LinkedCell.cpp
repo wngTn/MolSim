@@ -112,7 +112,6 @@ namespace calculator {
             }
         }
 
-
         for (int d = 0; d < (grid.is2D() ? 2 : 3); ++d) {
             auto[bordType, bord] = grid.getBorders(currentIndexes, d);
             if (bordType == LinkedCellContainer::periodic) {
@@ -169,65 +168,23 @@ namespace calculator {
                     }
                 }
 
-
-                for (const auto & neigh : grid.getPerNeighbors(currentIndexes)) {
-                    // the difference
-                    auto diff = currentIndexes - neigh;
-                    // the mirror we are adding so that the particle gets mirrored
-                    std::array<double, 3> mirror{};
-                    mirror = {
-                            diff[0] == -(grid.getDim()[0] - 1) && diff[0] != 0 ? static_cast<double>(-grid.getLenDim()[0]) : // From left to right
-                            diff[0] == (grid.getDim()[0] - 1) && diff[0] != 0 ? static_cast<double>(grid.getLenDim()[0]) : 0.0, // From right to left
-                            diff[1] == -(grid.getDim()[1] - 1) && diff[1] != 0 ? static_cast<double>(-grid.getLenDim()[1]) :
-                            diff[1] == (grid.getDim()[1] - 1) && diff[1] != 0  ? static_cast<double>(grid.getLenDim()[1]) : 0.0,
-                            diff[2] == -(grid.getDim()[2] - 1) && diff[2] != 0  ? static_cast<double>(-grid.getLenDim()[2]) :
-                            diff[2] == (grid.getDim()[2] - 1) && diff[2] != 0  ? static_cast<double>(grid.getLenDim()[2]) : 0.0};
-                    LinkedCell::calcPerNeighbors(grid, neigh, p, mirror);
+                if (!perBorders.empty()) {
+                    for (const auto & neigh : grid.getPerNeighbors(currentIndexes)) {
+                        // the difference
+                        auto diff = currentIndexes - neigh;
+                        // the mirror we are adding so that the particle gets mirrored
+                        std::array<double, 3> mirror{};
+                        mirror = {
+                                diff[0] == -(grid.getDim()[0] - 1) && diff[0] != 0 ? static_cast<double>(-grid.getLenDim()[0]) : // From left to right
+                                diff[0] == (grid.getDim()[0] - 1) && diff[0] != 0 ? static_cast<double>(grid.getLenDim()[0]) : 0.0, // From right to left
+                                diff[1] == -(grid.getDim()[1] - 1) && diff[1] != 0 ? static_cast<double>(-grid.getLenDim()[1]) :
+                                diff[1] == (grid.getDim()[1] - 1) && diff[1] != 0  ? static_cast<double>(grid.getLenDim()[1]) : 0.0,
+                                diff[2] == -(grid.getDim()[2] - 1) && diff[2] != 0  ? static_cast<double>(-grid.getLenDim()[2]) :
+                                diff[2] == (grid.getDim()[2] - 1) && diff[2] != 0  ? static_cast<double>(grid.getLenDim()[2]) : 0.0};
+                        LinkedCell::calcPerNeighbors(grid, neigh, p, mirror);
+                    }
                 }
 
-//                for (int bord: perBorder) {
-//                    // Indices of the mirrored neighbors
-//                    std::vector<std::array<int, 3>> neigh{};
-//                    // the mirror we are adding so that the particle gets mirrored
-//                    std::array<double, 3> mirror{};
-//                    switch (bord) {
-//                        // LEFT
-//                        case 0:
-//                            neigh = grid.getPerNeighbors(currentIndexes, 0);
-//                            mirror = {static_cast<double>(-grid.getLenDim()[0]), 0, 0};
-//                            break;
-//                            // RIGHT
-//                        case 1:
-//                            neigh = grid.getPerNeighbors(currentIndexes, 1);
-//                            mirror = {static_cast<double>(grid.getLenDim()[0]), 0, 0};
-//                            break;
-//                            // UP
-//                        case 2:
-//                            neigh = grid.getPerNeighbors(currentIndexes, 2);
-//                            mirror = {0, static_cast<double>(-grid.getLenDim()[1]), 0};
-//                            break;
-//                            // DOWN
-//                        case 3:
-//                            neigh = grid.getPerNeighbors(currentIndexes, 3);
-//                            mirror = {0, static_cast<double>(grid.getLenDim()[1]), 0};
-//                            break;
-//                            // FRONT
-//                        case 4:
-//                            neigh = grid.getPerNeighbors(currentIndexes, 4);
-//                            mirror = {0, 0, static_cast<double>(-grid.getLenDim()[2])};
-//                            break;
-//                            // BACK
-//                        case 5:
-//                            neigh = grid.getPerNeighbors(currentIndexes, 5);
-//                            mirror = {0, 0, static_cast<double>(grid.getLenDim()[2])};
-//                            break;
-//                        default:
-//                            spdlog::critical("DEFAULT CASE SOMETHING WRONG ALARM");
-//                    }
-//                    for (const auto & n : neigh) {
-//                        LinkedCell::calcPerNeighbors(grid, n, p, mirror);
-//                    }
-//                }
             }
         }
     }
@@ -344,7 +301,7 @@ namespace calculator {
         auto &grid = static_cast<LinkedCellContainer &>(container);
         for (auto &p: grid) {
             p.setOldF(p.getF());
-            p.setF({0., 0., 0.});
+            p.setF({0., p.getM() * g, 0.});
         }
         // current index we are currently in all 3 axis
         std::array<int, 3> currentIndexes{};
