@@ -5,6 +5,7 @@
 #include <functional>
 #include <spdlog/spdlog.h>
 
+
 #include "Particle.h"
 #include "ParticleContainer.h"
 #include "Cell.h"
@@ -108,7 +109,7 @@ public:
      * @param d the axis we are currently in
      * @return
      */
-    std::tuple<Border, int> getBorder(const std::array<int, 3> & currentIndexes, int d);
+    std::tuple<Border, int> getBorders(const std::array<int, 3> & currentIndexes, int d);
 
     /**
      * Returns a vector of neighbor indices depending on the dimension
@@ -121,10 +122,10 @@ public:
     /**
      * Returns a vector of neighbor indices depending on the border it should be mirrored at
      * @param currentIndex the index of the current cell
-     * @param border the border it is at
+     * @param borders the borders the current index is at
      * @return a vector of indices of the neighbor
      */
-    std::vector<std::array<int, 3>> getPerNeighbors(const std::array<int, 3> & currentIndex, int border);
+    std::vector<std::array<int, 3>> getPerNeighbors(const std::array<int, 3> & currentIndex);
 
     /**
      * Calculates the distance between a position X a border
@@ -166,6 +167,14 @@ public:
     void setRCut(double rCutV);
 
     void setLenDim(const std::array<int, 3> &lenDim);
+
+    const std::vector<Particle> &getParticles() const;
+
+    void setParticles(const std::vector<Particle> &particles);
+
+    const std::array<Border, 6> &getBorder() const;
+
+    void setBorder(const std::array<Border, 6> &border);
 
     /**
      * Has X * Y * Z many elements
