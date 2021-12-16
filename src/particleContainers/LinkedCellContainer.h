@@ -143,6 +143,13 @@ public:
      */
     inline int index(const std::array<int , 3> & currentIndexes);
 
+    /**
+     * Calculates whether the neighbor cell is included as periodic neighbor
+     * @param neighbor the index of the neighbor
+     * @return true if it counts as periodic neighbor, false if not
+     */
+    bool isPeriodic(const std::array<int, 3> & neighbor);
+
 
     /***** Getters *****/
 
