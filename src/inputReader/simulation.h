@@ -3246,6 +3246,71 @@ class calculationInfo_t: public ::xml_schema::type
   //@}
 
   /**
+   * @name gravityFactor
+   *
+   * @brief Accessor and modifier functions for the %gravityFactor
+   * optional element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::decimal gravityFactor_type;
+
+  /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< gravityFactor_type > gravityFactor_optional;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< gravityFactor_type, char, ::xsd::cxx::tree::schema_type::decimal > gravityFactor_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const gravityFactor_optional&
+  gravityFactor () const;
+
+  /**
+   * @brief Return a read-write reference to the element container.
+   *
+   * @return A reference to the optional container.
+   */
+  gravityFactor_optional&
+  gravityFactor ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  gravityFactor (const gravityFactor_type& x);
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  gravityFactor (const gravityFactor_optional& x);
+
+  //@}
+
+  /**
    * @name brownianMotion
    *
    * @brief Accessor and modifier functions for the %brownianMotion
@@ -3451,6 +3516,7 @@ class calculationInfo_t: public ::xml_schema::type
   protected:
   epsilon_optional epsilon_;
   sigma_optional sigma_;
+  gravityFactor_optional gravityFactor_;
   brownianMotion_optional brownianMotion_;
   ::xsd::cxx::tree::one< type_type > type_;
 

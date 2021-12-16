@@ -78,6 +78,7 @@ static double brownianMotionMean;
 
 static double eps = 5;
 static double sigma = 1;
+static double grav = 0;
 
 static bool linkedCell;
 static std::array<int,3> linkedCellSize;
@@ -286,6 +287,7 @@ void parseXML(){
        eps = info.epsilon;
        sigma = info.sigma;
        brownianMotionMean = info.brownianMotionMean;
+       grav = info.gravityFactor;
        if(info.linkedcell){
            linkedCell = info.linkedcell;
            rCut = info.rCut;
@@ -385,8 +387,10 @@ int main(int argc, char *argv[]) {
 
     nThermostat = 100;
 
+    // TODO maybe move to get_calculator oder so
     calc->setDim(DIM);
     calc->setDeltaT(delta_t);
+    calc->setG(grav);
 
     double current_time = start_time;
     int iteration = 0;

@@ -21,6 +21,7 @@ public:
         double sigma;
         double t_end;
         double delta_t;
+        double gravityFactor;
         int writeFrequency;
         double brownianMotionMean;
         // whether randomly generated particles should be used, other inputs discarded if yes

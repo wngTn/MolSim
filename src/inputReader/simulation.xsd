@@ -84,6 +84,7 @@
         <xs:sequence minOccurs = "0">
             <xs:element name="epsilon" type="xs:decimal" />
             <xs:element name="sigma" type="xs:decimal" />
+            <xs:element name="gravityFactor" type="xs:decimal" minOccurs="0"/>
             <xs:element name="brownianMotion" type="xs:decimal" />
         </xs:sequence>
         <xs:attribute name="type" type = "calculatortype_t" use = "required" />

@@ -889,6 +889,30 @@ sigma (const sigma_optional& x)
   this->sigma_ = x;
 }
 
+const calculationInfo_t::gravityFactor_optional& calculationInfo_t::
+gravityFactor () const
+{
+  return this->gravityFactor_;
+}
+
+calculationInfo_t::gravityFactor_optional& calculationInfo_t::
+gravityFactor ()
+{
+  return this->gravityFactor_;
+}
+
+void calculationInfo_t::
+gravityFactor (const gravityFactor_type& x)
+{
+  this->gravityFactor_.set (x);
+}
+
+void calculationInfo_t::
+gravityFactor (const gravityFactor_optional& x)
+{
+  this->gravityFactor_ = x;
+}
+
 const calculationInfo_t::brownianMotion_optional& calculationInfo_t::
 brownianMotion () const
 {
@@ -2263,6 +2287,7 @@ calculationInfo_t (const type_type& type)
 : ::xml_schema::type (),
   epsilon_ (this),
   sigma_ (this),
+  gravityFactor_ (this),
   brownianMotion_ (this),
   type_ (type, this)
 {
@@ -2275,6 +2300,7 @@ calculationInfo_t (const calculationInfo_t& x,
 : ::xml_schema::type (x, f, c),
   epsilon_ (x.epsilon_, f, this),
   sigma_ (x.sigma_, f, this),
+  gravityFactor_ (x.gravityFactor_, f, this),
   brownianMotion_ (x.brownianMotion_, f, this),
   type_ (x.type_, f, this)
 {
@@ -2287,6 +2313,7 @@ calculationInfo_t (const ::xercesc::DOMElement& e,
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
   epsilon_ (this),
   sigma_ (this),
+  gravityFactor_ (this),
   brownianMotion_ (this),
   type_ (this)
 {
@@ -2325,6 +2352,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!this->sigma_)
       {
         this->sigma_.set (sigma_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // gravityFactor
+    //
+    if (n.name () == "gravityFactor" && n.namespace_ ().empty ())
+    {
+      if (!this->gravityFactor_)
+      {
+        this->gravityFactor_.set (gravityFactor_traits::create (i, f, this));
         continue;
       }
     }
@@ -2379,6 +2417,7 @@ operator= (const calculationInfo_t& x)
     static_cast< ::xml_schema::type& > (*this) = x;
     this->epsilon_ = x.epsilon_;
     this->sigma_ = x.sigma_;
+    this->gravityFactor_ = x.gravityFactor_;
     this->brownianMotion_ = x.brownianMotion_;
     this->type_ = x.type_;
   }
@@ -3465,6 +3504,18 @@ operator<< (::xercesc::DOMElement& e, const calculationInfo_t& i)
         e));
 
     s << ::xml_schema::as_decimal(*i.sigma ());
+  }
+
+  // gravityFactor
+  //
+  if (i.gravityFactor ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "gravityFactor",
+        e));
+
+    s << ::xml_schema::as_decimal(*i.gravityFactor ());
   }
 
   // brownianMotion
