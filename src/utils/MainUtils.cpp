@@ -1,79 +1,6 @@
-#include "inputReader/FileReader.h"
-#include "outputWriter/XYZWriter.h"
-#include "outputWriter/VTKWriter.h"
-#include "particleContainers/ParticleContainer.h"
-#include "particleContainers/DirectSumParticleContainer.h"
-#include "physicsCalculator/PhysicsCalc.h"
-#include "physicsCalculator/Gravitation.h"
-#include "physicsCalculator/LennardJones.h"
-#include "physicsCalculator/LinkedCell.h"
-#include "utils/ParticleGenerator.h"
-#include "utils/MaxwellBoltzmannDistribution.h"
-#include "inputReader/XMLReader.h"
+#include "MainUtils.h"
 
-#include <unistd.h>
-#include <memory>
-#include <string>
-#include <iostream>
-#include <spdlog/spdlog.h>
-#include <spdlog/sinks/basic_file_sink.h>
-
-/// Default start_time (end_time - start_time = total_runtime)
-static double start_time = 0;
-/// Default end_time (when to stop the simulation)
-static double end_time = 1000;
-/// Default delta t
-static double delta_t = 0.014;
-
-/// File name of the XML file specifying input parameters
-static std::string xml_file;
-
-/// File name used for the input file
-static std::vector<std::string> filename{};
-
-/// File name of the input to the ParticleGenerator
-static std::vector<std::string> generator_files{};
-
-/// base file name of the output files
-static std::string output_file = "output";
-
-/// Default dimension
-static int DIM = 3;
-
-/// Which IO method to use
-static IOWriter::iotype io_type{IOWriter::unknown};
-
-/// How often output files are generated (every nth file)
-static int writeFrequency = 10;
-
-/// Which Physics calculation method to use
-static PhysicsCalc::calctype calc_type{PhysicsCalc::unknown};
-
-/// Whether to disable logging and IO operations
-static bool benchmarking = false;
-
-/// info for generator from XML file
-static std::vector<ParticleGenerator::ShapeInfo> generatorInfos{};
-
-static bool randomGen = false;
-static bool brownianMotion = false;
-static double brownianMotionMean;
-
-static double eps = 5;
-static double sigma = 1;
-
-static bool linkedCell;
-static std::array<int,3> linkedCellSize;
-static double rCut;
-static std::array<LinkedCellContainer::Border, 6> boundaryConditions;
-
-/**
- * @brief Parse command line arguments and set static values accordingly
- * also generates random input if no input file specified
- * @param argc argc from main
- * @param argv argv from main
- */
-static void get_arguments(int argc, char *argv[]) {
+void MainUtils::get_arguments(int argc, char **argv) {
     const std::string help = "Usage: ./MolSim [-x <xml_file>] [-i <input_file>] [-g <generator_input>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calc>] [-b <brownian_motion_velocity_mean>] [-r]\n"
                              "\tuse -x to specify an XML input file. Overwrites command line options (for options where multiple inputs are allowed, e.g. input files, command line argument is added)\n"
                              "\tuse -i to specify an input file\n"
@@ -150,15 +77,9 @@ static void get_arguments(int argc, char *argv[]) {
                 break;
         }
     }
-
 }
 
-/**
- * @brief Returns the (by cmd line arg) selected IO Method
- * if (somehow) io_type is not set returns VTK
- * @return a pointer to an Writer of the choosen IO Method
- */
-static std::unique_ptr<IOWriter> get_io_type() {
+std::unique_ptr<IOWriter> MainUtils::get_io_type() {
     switch (io_type) {
         case IOWriter::xyz:
             return std::make_unique<outputWriter::XYZWriter>();
@@ -169,11 +90,7 @@ static std::unique_ptr<IOWriter> get_io_type() {
     }
 }
 
-/**
- * @brief Returns the (by cmd line arg) selected Calculation Method
- * @return a pointer to an PhysicsCalc of the choosen Calculation Method
- */
-static std::unique_ptr<PhysicsCalc> get_calculator() {
+std::unique_ptr<PhysicsCalc> MainUtils::get_calculator() {
     switch (calc_type) {
         case PhysicsCalc::gravitation:
             return std::make_unique<calculator::Gravitation>();
@@ -187,14 +104,14 @@ static std::unique_ptr<PhysicsCalc> get_calculator() {
     }
 }
 
-static std::unique_ptr<ParticleContainer> get_container() {
+std::unique_ptr<ParticleContainer> MainUtils::get_container() {
     if(linkedCell){
         return std::make_unique<LinkedCellContainer>(linkedCellSize[0], linkedCellSize[1], linkedCellSize[2], rCut, boundaryConditions);
     }
     return std::make_unique<DirectSumParticleContainer>();
 }
 
-void initializeParticles(ParticleContainer &particles) {
+void MainUtils::initializeParticles(ParticleContainer &particles) {
     // read normal input file
     for(auto& file : filename){
         FileReader::readFile(particles, file);
@@ -219,12 +136,9 @@ void initializeParticles(ParticleContainer &particles) {
     }
     // generate Particles directly specified in XML
     ParticleGenerator::generateParticles(particles, generatorInfos);
-
 }
 
-
-
-void logParticle(ParticleContainer &particles){
+void MainUtils::logParticle(ParticleContainer &particles) {
     spdlog::info("-----------------------------------------------------------------------------------------------"
                  "---------------------------------------------------------------");
     for(auto &p : particles){
@@ -241,7 +155,7 @@ void logParticle(ParticleContainer &particles){
     }
 }
 
-void parseXML(){
+void MainUtils::parseXML() {
     spdlog::info("Starting XML parsing!");
     if(xml_file.empty()) return;
 
@@ -266,24 +180,20 @@ void parseXML(){
 
     calc_type = info.calculatorType;
     if(calc_type == PhysicsCalc::lennardJones){
-       eps = info.epsilon;
-       sigma = info.sigma;
-       brownianMotionMean = info.brownianMotionMean;
-       if(info.linkedcell){
-           linkedCell = info.linkedcell;
-           rCut = info.rCut;
-           linkedCellSize = info.linkedCellSize;
-           boundaryConditions = info.boundaryConditions;
-       }
+        eps = info.epsilon;
+        sigma = info.sigma;
+        brownianMotionMean = info.brownianMotionMean;
+        if(info.linkedcell){
+            linkedCell = info.linkedcell;
+            rCut = info.rCut;
+            linkedCellSize = info.linkedCellSize;
+            boundaryConditions = info.boundaryConditions;
+        }
     }
     spdlog::info("Finished XML parsing!");
-
 }
 
-/**
- * We want to have output here to prevent long simulations with wrong configurations.
- */
-static void printConfig(){
+void MainUtils::printConfig() {
     std::string message = "Your configurations are:\n";
     if(!xml_file.empty()){
         message.append("\u001b[36m\tXML File:\u001b[0m " + xml_file);
@@ -338,16 +248,13 @@ static void printConfig(){
     std::cout << message << "Calculating..." << std::endl;
 }
 
-/**
- *  @brief Creates a logger, which writes everything logged with spdlog into build/logs/molsim.log
- */
-static void initializeLogger() {
+void MainUtils::initializeLogger() {
     auto logger = spdlog::basic_logger_mt("molsim_logger", "./logs/molsim.log");
     spdlog::set_default_logger(logger);
     spdlog::set_level(spdlog::level::off);
 }
 
-int main(int argc, char *argv[]) {
+int MainUtils::main(int argc, char *argv[]) {
     initializeLogger();
 
     auto start_setup = std::chrono::steady_clock::now();
@@ -360,11 +267,13 @@ int main(int argc, char *argv[]) {
 
     printConfig();
 
-    auto particles = get_container();
+    auto particles = MainUtils::get_container();
     initializeParticles(*particles);
 
-    auto io = get_io_type();
-    auto calc = get_calculator();
+    auto io = MainUtils::get_io_type();
+    auto calc = MainUtils::get_calculator();
+
+    nThermostat = 100;
 
     calc->setDim(DIM);
     calc->setDeltaT(delta_t);
@@ -374,11 +283,11 @@ int main(int argc, char *argv[]) {
     // ------ end setup ------ //
     if(benchmarking){
         std::cout
-        << "\u001b[31mYou have chosen the benchmark mode!\u001b[0m" << std::endl
-        << "\u001b[31mElapsed setup time [microseconds]:\u001b[0m "
-        << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start_setup).count()
-        << std::endl
-        << "\u001b[31mIn total there are:\u001b[0m " << particles->size() << " particles." << std::endl;
+                << "\u001b[31mYou have chosen the benchmark mode!\u001b[0m" << std::endl
+                << "\u001b[31mElapsed setup time [microseconds]:\u001b[0m "
+                << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start_setup).count()
+                << std::endl
+                << "\u001b[31mIn total there are:\u001b[0m " << particles->size() << " particles." << std::endl;
     }
 
     spdlog::info(
@@ -388,6 +297,7 @@ int main(int argc, char *argv[]) {
     // ------ calculation ------ //
     auto start_calc = std::chrono::steady_clock::now();
     // initial setup
+    // TODO setup temperature
     calc->calcX(*particles);
     particles->setup();
     calc->calcF(*particles);
@@ -397,16 +307,20 @@ int main(int argc, char *argv[]) {
     // for this loop, we assume: current x, current f and current v are known
     while (current_time < end_time) {
         spdlog::info("Iteration {}: ", iteration);
-        logParticle(*particles);
+        MainUtils::logParticle(*particles);
+
 
         calc->calcX(*particles);
         particles->setup();
         calc->calcF(*particles);
         calc->calcV(*particles);
 
-        logParticle(*particles);
+        MainUtils::logParticle(*particles);
 
         iteration++;
+
+        // todo apply thermostat stuff using Thermostat::applyTemperature()
+
         if (!benchmarking && iteration % writeFrequency == 0) {
             particles->cleanup();
             // setup after cleanup needed to validate pointers for calcX
@@ -419,14 +333,26 @@ int main(int argc, char *argv[]) {
     }
     // ------ end calculation ------ //
     if(benchmarking){
+        auto runtimeDuration =
+                std::chrono::duration_cast<std::chrono::milliseconds>
+                        (std::chrono::steady_clock::now() - start_calc).count();
+        double mups = static_cast<double>(particles->size()) * (end_time/delta_t) /
+                      (static_cast<double>(runtimeDuration) / 1000);
         std::cout
                 << "\u001b[31mElapsed calculation time [milliseconds]:\u001b[0m "
-                << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start_calc).count()
+                << runtimeDuration
                 << std::endl;
-    }else{
+        if (mups > 1000000) {
+            std::cout<<"\u001b[31mMMUPS/s:\u001b[0m "<<mups/1000000<<std::endl;
+        } else {
+            std::cout<<"\u001b[31mMUPS/s:\u001b[0m "<<mups<<std::endl;
+        }
+    } else{
         std::cout << "All files have been written!" << std::endl;
         spdlog::info("All files have been written!");
     }
 
     return 0;
 }
+
+

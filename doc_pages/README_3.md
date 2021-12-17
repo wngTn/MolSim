@@ -153,7 +153,7 @@ This example file shows the **structure** you need to follow:
 For the direct-sum container-type and the gravitation calculator-type, no additional elements are needed inside the `container` or `calculator` element.
 If the generator info is for a `cuboid` shape, the `radius` element has to be replaced with `n1`, `n2` and `n3` elements specifying the dimensions of the cuboid.
 All attributes of the `simulation` element shown in the example are required. There is an additional optional boolean attribute `random` to enable randomly generated particles.
-Some attributes and elements are enum types: For the `outputWriter` attribute only `vtk` and `xyz` are valid, for the calculator `type` attribute only `gravitation` and`lennardjones`, for the generatorInfo `type` attribute only `sphere` and `cuboid`, for the container `type` attribute only `directsum` and `linkedcell` and for the border types only `outflow`,`cyclic` and `reflective`.
+Some attributes and elements are enum types: For the `outputWriter` attribute only `vtk` and `xyz` are valid, for the calculator `type` attribute only `gravitation` and`lennardjones`, for the generatorInfo `type` attribute only `sphere` and `cuboid`, for the container `type` attribute only `directsum` and `linkedcell` and for the border types only `outflow`,`periodic` and `reflective`.
 
 The parser is generated from a XSD file using `xsdcxx cxx-tree --std c++11 --generate-doxygen --generate-serialization --hxx-suffix .h --cxx-suffix .cpp simulation.xsd`
 
@@ -179,7 +179,7 @@ We have implemented three boundary conditions, that is:
 - **Overflow**
   Particles leaving the boundary are set to invalid, which leads to them not being distributed among the Cells and therefore not being part of the calculation anymore. Before writing invalid particles are removed using the erase-remove idiom.
 - **Cyclic**
-  Particles leaving the boundary are emplaced on the opposite end of the domain. This is still very much *WIP*, since forces don't act cyclic. This leads to segfaults for some inputs if a particle is 'teleported' into another Particle on the oppsite side.
+  Particles leaving the boundary are emplaced on the opposite end of the domain. This is still very much *WIP*, since forces don't act periodic. This leads to segfaults for some inputs if a particle is 'teleported' into another Particle on the oppsite side.
 
 # Task 4 - Simulation of a falling drop - Wall #
 

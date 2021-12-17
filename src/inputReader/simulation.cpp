@@ -1346,7 +1346,7 @@ _xsd_border_single_t_convert () const
 const char* const border_single_t::
 _xsd_border_single_t_literals_[3] =
 {
-  "cyclic",
+  "periodic",
   "reflective",
   "outflow"
 };
@@ -1354,8 +1354,8 @@ _xsd_border_single_t_literals_[3] =
 const border_single_t::value border_single_t::
 _xsd_border_single_t_indexes_[3] =
 {
-  ::border_single_t::cyclic,
   ::border_single_t::outflow,
+  ::border_single_t::periodic,
   ::border_single_t::reflective
 };
 

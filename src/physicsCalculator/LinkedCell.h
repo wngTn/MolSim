@@ -62,6 +62,17 @@ namespace calculator {
         void calcNeighbors(LinkedCellContainer &grid, const std::array<int, 3> & neighbors,
                            Particle* p);
 
+        /**
+         * Calculates the forces between p and its neighbor for the periodic boundary
+         * The bord tells this method how to calculate the distance
+         * @param grid the whole container
+         * @param neighbors the neighbor index
+         * @param p the particle we are calculating forces on
+         * @param mirror the array we should add so we get the mirrored position
+         */
+        void calcPerNeighbors(LinkedCellContainer &grid, const std::array<int, 3> & neighbors,
+                              Particle* p, const std::array<double, 3> & mirror) const;
+
         double sigma = 1;
         double epsilon = 5;
         double rCut = 2.5 * epsilon;

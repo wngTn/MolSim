@@ -11,7 +11,7 @@
     <!-- enum type for choosing border type, values cyclic, reflective and outflow allowed -->
     <xs:simpleType name="border_single_t">
         <xs:restriction base="xs:string">
-            <xs:enumeration value ="cyclic"/>
+            <xs:enumeration value ="periodic"/>
             <xs:enumeration value ="reflective"/>
             <xs:enumeration value ="outflow"/>
         </xs:restriction>

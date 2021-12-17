@@ -2,7 +2,7 @@
 
 #include <Particle.h>
 #include <particleContainers/LinkedCellContainer.h>
-#include <physicsCalculator/LinkedCell.h>
+#include "utils/ArrayUtils.h"
 
 /**
 * Simple test to check whether a particle will be added to the container
@@ -129,3 +129,76 @@ INSTANTIATE_TEST_SUITE_P(
                 std::make_tuple(5, 7, 8)
         )
 );
+
+
+/*
+ * Tests whether the getPerNeighbor function returns the correct neighbors
+ */
+
+TEST(LinkedCellContainer, GetPerNeighborFunctionTest) {
+    std::array<LinkedCellContainer::Border, 6> bor{};
+    bor.fill(LinkedCellContainer::periodic);
+    // Corner in 2D 2/2
+    LinkedCellContainer linkedCellContainer = LinkedCellContainer{10, 10, 1, 1., bor};
+    std::array<int, 3> ci = {0, 0, 0};
+    auto result = linkedCellContainer.getPerNeighbors(ci);
+    std::cout<<result<<std::endl;
+    ASSERT_EQ(result.size(), 5);
+
+    //Edge in 2D 1/1
+    ci = {3, 0, 0};
+    result = linkedCellContainer.getPerNeighbors(ci);
+    std::cout<<result<<std::endl;
+    ASSERT_EQ(result.size(), 3);
+
+    // Corner in 3D 3/3
+    LinkedCellContainer linkedCellContainer3D = LinkedCellContainer{10, 10, 10, 1., bor};
+    std::array<int, 3> ci_3D = {0, 0, 0};
+    auto result3D = linkedCellContainer3D.getPerNeighbors(ci_3D);
+    std::cout<<result3D<<std::endl;
+    ASSERT_EQ(result3D.size(), 19);
+
+
+    // Corner in 3D 2/3
+    bor[3] = LinkedCellContainer::outflow;
+
+    // Corner in 2D 1/2
+    linkedCellContainer = LinkedCellContainer{10, 10, 1, 1., bor};
+    ci = {0, 9, 0};
+    result = linkedCellContainer.getPerNeighbors(ci);
+    std::cout<<result<<std::endl;
+    ASSERT_EQ(result.size(), 2);
+
+
+    LinkedCellContainer linkedCellContainer3D2 = LinkedCellContainer{10, 9, 8, 1., bor};
+    ci_3D = {9, 8, 7};
+    result3D = linkedCellContainer3D2.getPerNeighbors(ci_3D);
+    std::cout<<result3D<<std::endl;
+    ASSERT_EQ(result3D.size(), 10);
+
+    // Edge in 3D 2/2
+    ci_3D = {5, 0, 0};
+    result3D = linkedCellContainer3D2.getPerNeighbors(ci_3D);
+    std::cout<<result3D<<std::endl;
+    ASSERT_EQ(result3D.size(), 15);
+
+    // Corner in 3D 1/3
+    bor[1] = LinkedCellContainer::outflow;
+    LinkedCellContainer linkedCellContainer3D1 = LinkedCellContainer{5, 6, 7, 1., bor};
+    ci_3D = {4, 5, 6};
+    result3D = linkedCellContainer3D1.getPerNeighbors(ci_3D);
+    std::cout<<result3D<<std::endl;
+    ASSERT_EQ(result3D.size(), 4);
+
+    // Edge in 3D 1/2
+    ci_3D = {4, 3, 6};
+    result3D = linkedCellContainer3D1.getPerNeighbors(ci_3D);
+    std::cout<<result3D<<std::endl;
+    ASSERT_EQ(result3D.size(), 6);
+
+    // Area in 3D 1/3
+    std::array<int, 3> ci_3D_2 = {0, 5, 5};
+    auto result3D_2 = linkedCellContainer3D.getPerNeighbors(ci_3D_2);
+    ASSERT_EQ(result3D_2.size(), 9);
+    std::cout<<result3D_2<<std::endl;
+}

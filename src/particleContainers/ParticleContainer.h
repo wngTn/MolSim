@@ -96,5 +96,13 @@ public:
      */
     virtual PairIterator pair_end() = 0;
 
+
+    /**
+     * @brief Returns the number of dimensions for this Container
+     */
+     virtual int dimensions() {
+         return 3;
+     };
+
 };
 
