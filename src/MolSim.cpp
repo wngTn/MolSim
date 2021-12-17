@@ -419,11 +419,21 @@ int main(int argc, char *argv[]) {
     }
     // ------ end calculation ------ //
     if(benchmarking){
+        auto runtimeDuration =
+                std::chrono::duration_cast<std::chrono::milliseconds>
+                        (std::chrono::steady_clock::now() - start_calc).count();
+        double mups = static_cast<double>(particles->size()) * (end_time/delta_t) /
+                (static_cast<double>(runtimeDuration) / 1000);
         std::cout
                 << "\u001b[31mElapsed calculation time [milliseconds]:\u001b[0m "
-                << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start_calc).count()
+                << runtimeDuration
                 << std::endl;
-    }else{
+        if (mups > 1000000) {
+            std::cout<<"\u001b[31mMMUPS/s:\u001b[0m "<<mups/1000000<<std::endl;
+        } else {
+            std::cout<<"\u001b[31mMUPS/s:\u001b[0m "<<mups<<std::endl;
+        }
+    } else{
         std::cout << "All files have been written!" << std::endl;
         spdlog::info("All files have been written!");
     }

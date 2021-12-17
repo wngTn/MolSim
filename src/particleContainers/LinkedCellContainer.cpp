@@ -17,7 +17,7 @@ LinkedCellContainer::LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV, s
 
 void LinkedCellContainer::setup() {
     for (auto &it: grid) {
-        it = Cell{};
+        it.clear();
     }
     for (auto &p: particles) {
         if (p.valid) {
@@ -69,6 +69,16 @@ std::vector<std::array<int, 3>> LinkedCellContainer::getNeighbors(const std::arr
         };
         return neighbors;
     }
+}
+
+bool LinkedCellContainer::isPeriodic(const std::array<int, 3> &neighbor) {
+    bool result = true;
+    for (int d = 0, b = 0; d < 3; ++d, b += 2) {
+        if ((neighbor[d] < 0 && border[b] != periodic) || (neighbor[d] > dim[d] - 1 && border[b + 1] != periodic)) {
+            return false;
+        }
+    }
+    return result;
 }
 
 std::tuple<LinkedCellContainer::Border, int>
@@ -209,6 +219,22 @@ PairIterator LinkedCellContainer::pair_end() {
     return {particles, particles.size(), particles.size()};
 }
 
+const std::vector<Particle> &LinkedCellContainer::getParticles() const {
+    return particles;
+}
+
+void LinkedCellContainer::setParticles(const std::vector<Particle> &particlesV) {
+    LinkedCellContainer::particles = particlesV;
+}
+
+const std::array<LinkedCellContainer::Border, 6> &LinkedCellContainer::getBorder() const {
+    return border;
+}
+
+void LinkedCellContainer::setBorder(const std::array<Border, 6> &borderV) {
+    LinkedCellContainer::border = borderV;
+}
+
 std::vector<std::array<int, 3>>
 LinkedCellContainer::getPerNeighbors(const std::array<int, 3> &currentIndex) {
     std::vector<std::array<int, 3>> neighbors{};
@@ -262,33 +288,6 @@ LinkedCellContainer::getPerNeighbors(const std::array<int, 3> &currentIndex) {
     }
     return neighbors;
 }
-
-const std::vector<Particle> &LinkedCellContainer::getParticles() const {
-    return particles;
-}
-
-void LinkedCellContainer::setParticles(const std::vector<Particle> &particlesV) {
-    LinkedCellContainer::particles = particlesV;
-}
-
-const std::array<LinkedCellContainer::Border, 6> &LinkedCellContainer::getBorder() const {
-    return border;
-}
-
-void LinkedCellContainer::setBorder(const std::array<Border, 6> &borderV) {
-    LinkedCellContainer::border = borderV;
-}
-
-bool LinkedCellContainer::isPeriodic(const std::array<int, 3> &neighbor) {
-    bool result = true;
-    for (int d = 0, b = 0; d < 3; ++d, b += 2) {
-        if ((neighbor[d] < 0 && border[b] != periodic) || (neighbor[d] > dim[d] - 1 && border[b + 1] != periodic)) {
-            return false;
-        }
-    }
-    return result;
-}
-
 
 
 

@@ -38,9 +38,7 @@ namespace calculator {
                     auto &curCell = grid.grid[grid.index(currentIndexes)];
 
                     for (auto &it: curCell) {
-                        /*if(!it->valid){
-                            continue;
-                        }*/
+
                         // Checks whether any particle has crossed the boundaries
                         for (int d = 0; d < 3; ++d) {
                             if (it->getX()[d] < 0) {
@@ -50,7 +48,7 @@ namespace calculator {
                                     it->valid = false;
                                     break;
                                 }
-                                    // cyclic
+                                    // periodic
                                 else if (std::get<0>(grid.getBorders(currentIndexes, d)) ==
                                          LinkedCellContainer::periodic) {
                                     // set X to the opposite site
@@ -66,7 +64,7 @@ namespace calculator {
                                     it->valid = false;
                                     break;
                                 }
-                                    // cyclic
+                                    // periodic
                                 else if (std::get<0>(grid.getBorders(currentIndexes, d)) ==
                                          LinkedCellContainer::periodic) {
                                     // set X to the opposite site
@@ -121,9 +119,9 @@ namespace calculator {
          */
         if (!reflBorder.empty()) {
             for (auto &p: grid.grid[grid.index(currentIndexes)]) {
-                if (!p->valid) {
-                    continue;
-                }
+//                if (!p->valid) {
+//                    continue;
+//                }
                 for (int bord: reflBorder) {
                     double r = grid.getDistance(p->getX(), bord);
                     if (r <= reflectDistance) {
@@ -165,6 +163,7 @@ namespace calculator {
                                       const std::array<double, 3> & mirror) const {
         // Loop through the neighbors
         for (auto &p_other: grid.grid[grid.index(neighbors)]) {
+            // This if is important if the domain only has one cell
             if (p != p_other) {
                 auto mirroredX = p_other->getX() + mirror;
                 double sqrd_dist = 0;
@@ -178,10 +177,6 @@ namespace calculator {
 
                     auto force = f * (mirroredX - p->getX());
 
-                    // set old force
-                    // p1->setOldF(p1->getF());
-                    // p2->setOldF(p2->getF());
-
                     p->setF(p->getF() + force);
                     p_other->setF(p_other->getF() - force);
                 }
@@ -189,7 +184,76 @@ namespace calculator {
         }
     }
 
+    void LinkedCell::calcF(ParticleContainer &container) {
+        auto &grid = static_cast<LinkedCellContainer &>(container);
+        for (auto &p: grid) {
+            p.setOldF(p.getF());
+            p.setF({0., p.getM() * g, 0.});
+        }
+        // current index we are currently in all 3 axis
+        std::array<int, 3> currentIndexes{};
+        // iterate through X axis
+        for (currentIndexes[0] = 0; currentIndexes[0] < grid.getDim()[0]; ++currentIndexes[0]) {
+            // iterate through the Y axis
+            for (currentIndexes[1] = 0; currentIndexes[1] < grid.getDim()[1]; ++currentIndexes[1]) {
+                // iterate through the Z axis
+                for (currentIndexes[2] = 0; currentIndexes[2] < grid.getDim()[2]; ++currentIndexes[2]) {
 
+                    // get the Cell in the current index
+                    for (auto &p: grid.grid[grid.index(currentIndexes)]) {
+                        // get all the neighbors
+                        for (const std::array<int, 3> &neighbors: grid.getNeighbors(currentIndexes)) {
+
+                            // Neighbor should be existing
+                            if (neighbors[0] < grid.getDim()[0] && neighbors[1] < grid.getDim()[1] &&
+                                neighbors[2] < grid.getDim()[2] && neighbors[0] >= 0 && neighbors[1] >= 0 &&
+                                neighbors[2] >= 0) {
+                                // Does not bring too much performance benefits
+                                //if (grid.isNeighborInRange(p, neighbors)) {
+                                calcNeighbors(grid, neighbors, p);
+                                //}
+                            }
+                            // Else it is a neighbor out of boundary
+                            else if (grid.isPeriodic(neighbors)){
+                                // neighbor on the other side
+                                std::array<int, 3> neigh{};
+                                for (int d = 0; d < 3; ++d) {
+                                    neigh[d] = (neighbors[d] + grid.getDim()[d]) % grid.getDim()[d];
+                                }
+                                // the mirror we are adding so that the particle gets mirrored
+                                std::array<double, 3> mirror{};
+                                mirror = {
+                                        neighbors[0] == -1 ? static_cast<double>(-grid.getLenDim()[0]) : // From left to right
+                                        neighbors[0] == grid.getDim()[0] ? static_cast<double>(grid.getLenDim()[0]) : 0.0, // From right to left
+                                        neighbors[1] == -1 ? static_cast<double>(-grid.getLenDim()[1]) :
+                                        neighbors[1] == grid.getDim()[1] ? static_cast<double>(grid.getLenDim()[1]) : 0.0,
+                                        neighbors[2] == -1 ? static_cast<double>(-grid.getLenDim()[2]) :
+                                        neighbors[2] == grid.getDim()[2]  ? static_cast<double>(grid.getLenDim()[2]) : 0.0};
+                                LinkedCell::calcPerNeighbors(grid, neigh, p, mirror);
+                            }
+                        }
+                    }
+
+                    // Calculates the forces within a cell
+                    calcFWithinCell(grid.grid[grid.index(currentIndexes)]);
+                    // checks if it is a border cell, if yes also calculate border forces
+                    if (currentIndexes[0] == 0 || currentIndexes[0] == grid.getDim()[0] - 1 ||
+                        currentIndexes[1] == 0 || currentIndexes[1] == grid.getDim()[1] - 1 ||
+                        currentIndexes[2] == 0 || currentIndexes[2] == grid.getDim()[2] - 1) {
+                        reflectiveBoundary(grid, currentIndexes);
+                    }
+                }
+            }
+        }
+    }
+
+    std::string LinkedCell::toString() {
+        return "LinkedCell";
+    }
+
+    /**
+     * Deprecated
+     */
     Particle LinkedCell::generateGhostParticle(const LinkedCellContainer &grid, const Particle *p, int bord) {
         Particle ghostParticle{};
         switch (bord) {
@@ -267,75 +331,6 @@ namespace calculator {
                 return ghostParticle;
             }
         }
-    }
-
-    // TODO go through boundary cells
-    void LinkedCell::calcF(ParticleContainer &container) {
-        auto &grid = static_cast<LinkedCellContainer &>(container);
-        for (auto &p: grid) {
-            p.setOldF(p.getF());
-            p.setF({0., p.getM() * g, 0.});
-        }
-        // current index we are currently in all 3 axis
-        std::array<int, 3> currentIndexes{};
-        // iterate through X axis
-        for (currentIndexes[0] = 0; currentIndexes[0] < grid.getDim()[0]; ++currentIndexes[0]) {
-            // iterate through the Y axis
-            for (currentIndexes[1] = 0; currentIndexes[1] < grid.getDim()[1]; ++currentIndexes[1]) {
-                // iterate through the Z axis
-                for (currentIndexes[2] = 0; currentIndexes[2] < grid.getDim()[2]; ++currentIndexes[2]) {
-
-                    // get the Cell in the current index
-                    for (auto &p: grid.grid[grid.index(currentIndexes)]) {
-                        // get all the neighbors
-                        for (const std::array<int, 3> &neighbors: grid.getNeighbors(currentIndexes)) {
-
-                            // Neighbor should be existing
-                            if (neighbors[0] < grid.getDim()[0] && neighbors[1] < grid.getDim()[1] &&
-                                neighbors[2] < grid.getDim()[2] && neighbors[0] >= 0 && neighbors[1] >= 0 &&
-                                neighbors[2] >= 0) {
-                                // Does not bring too much performance benefits
-                                //if (grid.isNeighborInRange(p, neighbors)) {
-                                calcNeighbors(grid, neighbors, p);
-                                //}
-                            }
-                            // Else it is a neighbor out of boundary
-                            else if (grid.isPeriodic(neighbors)){
-                                // neighbor on the other side
-                                std::array<int, 3> neigh{};
-                                for (int d = 0; d < 3; ++d) {
-                                    neigh[d] = (neighbors[d] + grid.getDim()[d]) % grid.getDim()[d];
-                                }
-                                auto diff = currentIndexes - neigh;
-                                // the mirror we are adding so that the particle gets mirrored
-                                std::array<double, 3> mirror{};
-                                mirror = {
-                                        diff[0] == -(grid.getDim()[0] - 1) && diff[0] != 0 ? static_cast<double>(-grid.getLenDim()[0]) : // From left to right
-                                        diff[0] == (grid.getDim()[0] - 1) && diff[0] != 0 ? static_cast<double>(grid.getLenDim()[0]) : 0.0, // From right to left
-                                        diff[1] == -(grid.getDim()[1] - 1) && diff[1] != 0 ? static_cast<double>(-grid.getLenDim()[1]) :
-                                        diff[1] == (grid.getDim()[1] - 1) && diff[1] != 0  ? static_cast<double>(grid.getLenDim()[1]) : 0.0,
-                                        diff[2] == -(grid.getDim()[2] - 1) && diff[2] != 0  ? static_cast<double>(-grid.getLenDim()[2]) :
-                                        diff[2] == (grid.getDim()[2] - 1) && diff[2] != 0  ? static_cast<double>(grid.getLenDim()[2]) : 0.0};
-                                LinkedCell::calcPerNeighbors(grid, neigh, p, mirror);
-                            }
-                        }
-                    }
-
-                    // Calculates the forces within a cell
-                    calcFWithinCell(grid.grid[grid.index(currentIndexes)]);
-                    // checks if it is a border cell, if yes also calculate border forces
-                    if (currentIndexes[0] == 0 || currentIndexes[0] == grid.getDim()[0] - 1 ||
-                        currentIndexes[1] == 0 || currentIndexes[1] == grid.getDim()[1] - 1 ||
-                        currentIndexes[2] == 0 || currentIndexes[2] == grid.getDim()[2] - 1) {
-                        reflectiveBoundary(grid, currentIndexes);
-                    }
-                }
-            }
-        }
-    }
-
-    std::string LinkedCell::toString() {
-        return "LinkedCell";
     }
 
 }
