@@ -45,15 +45,6 @@ double PhysicsCalc::getDeltaT() const {
     return delta_t;
 }
 
-double PhysicsCalc::getG() const {
-    return g;
-}
-
-void PhysicsCalc::setG(double g) {
-    PhysicsCalc::g = g;
-}
-
-
 int PhysicsCalc::getDim() const {
     return DIM;
 }

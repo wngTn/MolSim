@@ -104,7 +104,7 @@ namespace calculator {
         std::vector<int> reflBorder{};
         // go through all three or two axis and acquire the borders of currentIndex that are reflective
         for (int d = 0; d < (grid.is2D() ? 2 : 3); ++d) {
-            auto[bordType, bord] = grid.getBorders(currentIndexes, d);
+            const auto[bordType, bord] = grid.getBorders(currentIndexes, d);
             if (bordType == LinkedCellContainer::reflective) {
                 reflBorder.push_back(bord);
             }
@@ -188,10 +188,6 @@ namespace calculator {
 
     void LinkedCell::calcF(ParticleContainer &container) {
         auto &grid = static_cast<LinkedCellContainer &>(container);
-        for (auto &p: grid) {
-            p.setOldF(p.getF());
-            p.setF({0., p.getM() * g, 0.});
-        }
         // current index we are currently in all 3 axis
         std::array<int, 3> currentIndexes{};
         // iterate through X axis

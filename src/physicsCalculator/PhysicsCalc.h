@@ -24,7 +24,7 @@ public:
      * @param DIM the dimension we are in
      * @param g gravitational force
      */
-    PhysicsCalc(double delta_t, int DIM, double g = 0) : delta_t(delta_t), g{g}, DIM(DIM) {}
+    PhysicsCalc(double delta_t, int DIM) : delta_t(delta_t), DIM(DIM) {}
 
     PhysicsCalc(const PhysicsCalc &) = default;
 
@@ -36,9 +36,6 @@ public:
 
     [[nodiscard]] double getDeltaT() const;
 
-    [[nodiscard]] double getG() const;
-
-    void setG(double g);
 
     virtual std::string toString() = 0;
 
@@ -64,10 +61,7 @@ public:
 
 protected:
     double delta_t{0.1};
-    /*
-     * The gravitational force that applies to the domain
-     */
-    double g{0};
+
     int DIM{3};
 
 };

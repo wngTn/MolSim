@@ -26,7 +26,7 @@ public:
      * @param borderV the border types of the 6 (3D) or 4 (2D) borders
      */
     LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV, std::array<Border, 6> borderV = std::array<Border, 6>{
-            outflow, outflow, outflow, outflow, outflow, outflow});
+            outflow, outflow, outflow, outflow, outflow, outflow}, double g = 0);
 
     /**
      * Default constructor
@@ -213,6 +213,11 @@ private:
      * This array describes the borders of our domain
      */
     std::array<Border, 6> border{outflow};
+
+    /*
+     * The gravitational force that applies to the domain
+     */
+    double g{};
 };
 
 double LinkedCellContainer::getDistance(const std::array<double, 3> & X, int bord) const {

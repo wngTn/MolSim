@@ -3,7 +3,7 @@
 #include "LinkedCellContainer.h"
 
 
-LinkedCellContainer::LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV, std::array<Border, 6> borderV) :
+LinkedCellContainer::LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV, std::array<Border, 6> borderV, double g) :
         grid{std::vector<Cell>(static_cast<int>(std::floor(Xv / rCutV)) *
                                static_cast<int>(std::floor(Yv / rCutV)) *
                                (static_cast<int>(std::floor(Zv / rCutV)) == 0 ? 1 :
@@ -12,7 +12,7 @@ LinkedCellContainer::LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV, s
                                static_cast<int>(std::floor(Yv / rCutV)),
                                (static_cast<int>(std::floor(Zv / rCutV))) == 0 ? 1 :
                                static_cast<int>(std::floor(Zv / rCutV))}},
-        lenDim{std::array<int, 3>{Xv, Yv, Zv}}, rCut{rCutV}, border{borderV} {}
+        lenDim{std::array<int, 3>{Xv, Yv, Zv}}, rCut{rCutV}, border{borderV}, g{g} {}
 
 
 void LinkedCellContainer::setup() {
@@ -27,6 +27,8 @@ void LinkedCellContainer::setup() {
                         p.getX()[d] * getDim()[d] / getLenDim()[d]));
             }
             auto cellIndex = (*this).index(novelCellIndex);
+            p.setOldF(p.getF());
+            p.setF({0., p.getM() * g, 0.});
             grid[cellIndex].emplace_back(&p);
         }
     }
