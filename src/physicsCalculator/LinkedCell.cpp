@@ -222,11 +222,11 @@ namespace calculator {
                                 std::array<double, 3> mirror{};
                                 mirror = {
                                         neighbors[0] == -1 ? static_cast<double>(-grid.getLenDim()[0]) : // From left to right
-                                        neighbors[0] == grid.getDim()[0] ? static_cast<double>(grid.getLenDim()[0]) : 0.0, // From right to left
+                                        neighbors[0] == grid.getDim()[0] && grid.getDim()[0] != 1 ? static_cast<double>(grid.getLenDim()[0]) : 0.0, // From right to left
                                         neighbors[1] == -1 ? static_cast<double>(-grid.getLenDim()[1]) :
-                                        neighbors[1] == grid.getDim()[1] ? static_cast<double>(grid.getLenDim()[1]) : 0.0,
+                                        neighbors[1] == grid.getDim()[1] && grid.getDim()[1] != 1 ? static_cast<double>(grid.getLenDim()[1]) : 0.0,
                                         neighbors[2] == -1 ? static_cast<double>(-grid.getLenDim()[2]) :
-                                        neighbors[2] == grid.getDim()[2]  ? static_cast<double>(grid.getLenDim()[2]) : 0.0};
+                                        neighbors[2] == grid.getDim()[2] && grid.getDim()[2] != 1 ? static_cast<double>(grid.getLenDim()[2]) : 0.0};
                                 LinkedCell::calcPerNeighbors(grid, neigh, p, mirror);
                             }
                         }
