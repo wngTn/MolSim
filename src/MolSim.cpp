@@ -7,6 +7,7 @@
 #include "physicsCalculator/Gravitation.h"
 #include "physicsCalculator/LennardJones.h"
 #include "physicsCalculator/LinkedCell.h"
+#include "physicsCalculator/Thermostat.h"
 #include "utils/ParticleGenerator.h"
 #include "utils/MaxwellBoltzmannDistribution.h"
 #include "inputReader/XMLReader.h"
@@ -54,6 +55,22 @@ static bool benchmarking = false;
 
 /// info for generator from XML file
 static std::vector<ParticleGenerator::ShapeInfo> generatorInfos{};
+
+/// Thermostat
+static Thermostat thermostat{};
+
+/// time steps to apply temperature
+static int nThermostat;
+
+/// initial temperature
+static double initialTemperature;
+
+/// temperature we want to reach
+static double targetTemperature;
+
+/// max temperature difference in one temperature calculation
+static double maxDeltaTemperature;
+
 
 static bool randomGen = false;
 static bool brownianMotion = false;
@@ -366,6 +383,8 @@ int main(int argc, char *argv[]) {
     auto io = get_io_type();
     auto calc = get_calculator();
 
+    nThermostat = 100;
+
     calc->setDim(DIM);
     calc->setDeltaT(delta_t);
 
@@ -388,6 +407,7 @@ int main(int argc, char *argv[]) {
     // ------ calculation ------ //
     auto start_calc = std::chrono::steady_clock::now();
     // initial setup
+    // TODO setup temperature
     calc->calcX(*particles);
     particles->setup();
     calc->calcF(*particles);
@@ -399,6 +419,7 @@ int main(int argc, char *argv[]) {
         spdlog::info("Iteration {}: ", iteration);
         logParticle(*particles);
 
+
         calc->calcX(*particles);
         particles->setup();
         calc->calcF(*particles);
@@ -407,6 +428,10 @@ int main(int argc, char *argv[]) {
         logParticle(*particles);
 
         iteration++;
+
+        // todo apply thermostat stuff using Thermostat::applyTemperature()
+
+
         if (!benchmarking && iteration % writeFrequency == 0) {
             particles->cleanup();
             // setup after cleanup needed to validate pointers for calcX

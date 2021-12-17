@@ -38,7 +38,9 @@ namespace calculator {
                     auto &curCell = grid.grid[grid.index(currentIndexes)];
 
                     for (auto &it: curCell) {
-
+                        /*if(!it->valid){
+                            continue;
+                        }*/
                         // Checks whether any particle has crossed the boundaries
                         for (int d = 0; d < 3; ++d) {
                             if (it->getX()[d] < 0) {

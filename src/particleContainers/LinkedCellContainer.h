@@ -165,6 +165,8 @@ public:
 
     bool is2D();
 
+    int dimensions() override;
+
 
     /***** Setters *****/
     void setGrid(const std::vector<Cell> &grid);
