@@ -73,7 +73,7 @@ std::vector<std::array<int, 3>> LinkedCellContainer::getNeighbors(const std::arr
     }
 }
 
-bool LinkedCellContainer::isPeriodic(const std::array<int, 3> &neighbor) {
+bool LinkedCellContainer::isPeriodic(const std::array<int, 3> &neighbor) const {
     bool result = true;
     for (int d = 0, b = 0; d < 3; ++d, b += 2) {
         if ((neighbor[d] < 0 && border[b] != periodic) || (neighbor[d] > dim[d] - 1 && border[b + 1] != periodic)) {
@@ -84,7 +84,7 @@ bool LinkedCellContainer::isPeriodic(const std::array<int, 3> &neighbor) {
 }
 
 std::tuple<LinkedCellContainer::Border, int>
-LinkedCellContainer::getBorders(const std::array<int, 3> &currentIndexes, int d) {
+LinkedCellContainer::getBorders(const std::array<int, 3> &currentIndexes, int d) const {
     // y value is zero --> upper border
     if (currentIndexes[1] <= 0 && d == 1) {
         return std::make_tuple(border[2], 2);
