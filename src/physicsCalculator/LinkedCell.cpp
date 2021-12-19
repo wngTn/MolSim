@@ -50,7 +50,7 @@ namespace calculator {
                                     it->valid = false;
                                     break;
                                 }
-                                    // cyclic
+                                    // periodic
                                 else if (std::get<0>(grid.getBorders(currentIndexes, d)) ==
                                          LinkedCellContainer::periodic) {
                                     // set X to the opposite site
@@ -66,7 +66,7 @@ namespace calculator {
                                     it->valid = false;
                                     break;
                                 }
-                                    // cyclic
+                                    // periodic
                                 else if (std::get<0>(grid.getBorders(currentIndexes, d)) ==
                                          LinkedCellContainer::periodic) {
                                     // set X to the opposite site
@@ -102,11 +102,9 @@ namespace calculator {
         double reflectDistance = std::pow(2, 1.0 / 6.0) * sigma;
         // saves the reflective borders of the current cell
         std::vector<int> reflBorder{};
-        // saves the periodic borders of the current cell
-        std::vector<int> perBorders{};
         // go through all three or two axis and acquire the borders of currentIndex that are reflective
         for (int d = 0; d < (grid.is2D() ? 2 : 3); ++d) {
-            auto[bordType, bord] = grid.getBorders(currentIndexes, d);
+            const auto[bordType, bord] = grid.getBorders(currentIndexes, d);
             if (bordType == LinkedCellContainer::reflective) {
                 reflBorder.push_back(bord);
             }
@@ -119,7 +117,6 @@ namespace calculator {
             }
         }
 
-
         /**
          * Border type overview:
          * 0: LEFT
@@ -129,11 +126,11 @@ namespace calculator {
          * 4: FRONT
          * 5: BACK
          */
-        if (!reflBorder.empty() || !perBorders.empty()) {
+        if (!reflBorder.empty()) {
             for (auto &p: grid.grid[grid.index(currentIndexes)]) {
-                if (!p->valid) {
-                    continue;
-                }
+//                if (!p->valid) {
+//                    continue;
+//                }
                 for (int bord: reflBorder) {
                     double r = grid.getDistance(p->getX(), bord);
                     if (r <= reflectDistance) {
@@ -167,24 +164,6 @@ namespace calculator {
                         p->setF(newF);
                     }
                 }
-
-                if (!perBorders.empty()) {
-                    for (const auto & neigh : grid.getPerNeighbors(currentIndexes)) {
-                        // the difference
-                        auto diff = currentIndexes - neigh;
-                        // the mirror we are adding so that the particle gets mirrored
-                        std::array<double, 3> mirror{};
-                        mirror = {
-                                diff[0] == -(grid.getDim()[0] - 1) && diff[0] != 0 ? static_cast<double>(-grid.getLenDim()[0]) : // From left to right
-                                diff[0] == (grid.getDim()[0] - 1) && diff[0] != 0 ? static_cast<double>(grid.getLenDim()[0]) : 0.0, // From right to left
-                                diff[1] == -(grid.getDim()[1] - 1) && diff[1] != 0 ? static_cast<double>(-grid.getLenDim()[1]) :
-                                diff[1] == (grid.getDim()[1] - 1) && diff[1] != 0  ? static_cast<double>(grid.getLenDim()[1]) : 0.0,
-                                diff[2] == -(grid.getDim()[2] - 1) && diff[2] != 0  ? static_cast<double>(-grid.getLenDim()[2]) :
-                                diff[2] == (grid.getDim()[2] - 1) && diff[2] != 0  ? static_cast<double>(grid.getLenDim()[2]) : 0.0};
-                        LinkedCell::calcPerNeighbors(grid, neigh, p, mirror);
-                    }
-                }
-
             }
         }
     }
@@ -193,6 +172,7 @@ namespace calculator {
                                       const std::array<double, 3> & mirror) const {
         // Loop through the neighbors
         for (auto &p_other: grid.grid[grid.index(neighbors)]) {
+            // This if is important if the domain only has one cell
             if (p != p_other) {
                 auto mirroredX = p_other->getX() + mirror;
                 double sqrd_dist = 0;
@@ -206,10 +186,6 @@ namespace calculator {
 
                     auto force = f * (mirroredX - p->getX());
 
-                    // set old force
-                    // p1->setOldF(p1->getF());
-                    // p2->setOldF(p2->getF());
-
                     p->setF(p->getF() + force);
                     p_other->setF(p_other->getF() - force);
                 }
@@ -219,10 +195,6 @@ namespace calculator {
 
     void LinkedCell::calcF(ParticleContainer &container) {
         auto &grid = static_cast<LinkedCellContainer &>(container);
-        for (auto &p: grid) {
-            p.setOldF(p.getF());
-            p.setF({0., p.getM() * g, 0.});
-        }
         // current index we are currently in all 3 axis
         std::array<int, 3> currentIndexes{};
         // iterate through X axis
@@ -246,6 +218,24 @@ namespace calculator {
                                 calcNeighbors(grid, neighbors, p);
                                 //}
                             }
+                            // Else it is a neighbor out of boundary
+                            else if (grid.isPeriodic(neighbors)){
+                                // neighbor on the other side
+                                std::array<int, 3> neigh{};
+                                for (int d = 0; d < 3; ++d) {
+                                    neigh[d] = (neighbors[d] + grid.getDim()[d]) % grid.getDim()[d];
+                                }
+                                // the mirror we are adding so that the particle gets mirrored
+                                std::array<double, 3> mirror{};
+                                mirror = {
+                                        neighbors[0] == -1 ? static_cast<double>(-grid.getLenDim()[0]) : // From left to right
+                                        neighbors[0] == grid.getDim()[0] ? static_cast<double>(grid.getLenDim()[0]) : 0.0, // From right to left
+                                        neighbors[1] == -1 ? static_cast<double>(-grid.getLenDim()[1]) :
+                                        neighbors[1] == grid.getDim()[1] ? static_cast<double>(grid.getLenDim()[1]) : 0.0,
+                                        neighbors[2] == -1 ? static_cast<double>(-grid.getLenDim()[2]) :
+                                        neighbors[2] == grid.getDim()[2]  ? static_cast<double>(grid.getLenDim()[2]) : 0.0};
+                                LinkedCell::calcPerNeighbors(grid, neigh, p, mirror);
+                            }
                         }
                     }
 
@@ -256,7 +246,6 @@ namespace calculator {
                         currentIndexes[1] == 0 || currentIndexes[1] == grid.getDim()[1] - 1 ||
                         currentIndexes[2] == 0 || currentIndexes[2] == grid.getDim()[2] - 1) {
                         reflectiveBoundary(grid, currentIndexes);
-
                     }
                 }
             }

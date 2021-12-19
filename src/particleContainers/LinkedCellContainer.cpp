@@ -3,31 +3,32 @@
 #include "LinkedCellContainer.h"
 
 
-
-LinkedCellContainer::LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV, std::array<Border, 6> borderV) :
-        grid{std::vector<Cell>(static_cast<int>(std::floor(Xv/rCutV))*
-                               static_cast<int>(std::floor(Yv/rCutV))*
-                               (static_cast<int>(std::floor(Zv/rCutV)) == 0 ? 1 :
-                                static_cast<int>(std::floor(Zv/rCutV))))},
-        dim{std::array<int, 3>{static_cast<int>(std::floor(Xv/rCutV)),
-                               static_cast<int>(std::floor(Yv/rCutV)),
-                               (static_cast<int>(std::floor(Zv/rCutV))) == 0 ? 1 :
-                               static_cast<int>(std::floor(Zv/rCutV))}},
-        lenDim{std::array<int, 3>{Xv, Yv, Zv}}, rCut{rCutV}, border{borderV} {}
+LinkedCellContainer::LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV, std::array<Border, 6> borderV, double g) :
+        grid{std::vector<Cell>(static_cast<int>(std::floor(Xv / rCutV)) *
+                               static_cast<int>(std::floor(Yv / rCutV)) *
+                               (static_cast<int>(std::floor(Zv / rCutV)) == 0 ? 1 :
+                                static_cast<int>(std::floor(Zv / rCutV))))},
+        dim{std::array<int, 3>{static_cast<int>(std::floor(Xv / rCutV)),
+                               static_cast<int>(std::floor(Yv / rCutV)),
+                               (static_cast<int>(std::floor(Zv / rCutV))) == 0 ? 1 :
+                               static_cast<int>(std::floor(Zv / rCutV))}},
+        lenDim{std::array<int, 3>{Xv, Yv, Zv}}, rCut{rCutV}, border{borderV}, g{g} {}
 
 
 void LinkedCellContainer::setup() {
-    for(auto & it : grid){
-        it = Cell{};
+    for (auto &it: grid) {
+        it.clear();
     }
-    for(auto &p : particles){
-        if(p.valid){
+    for (auto &p: particles) {
+        if (p.valid) {
             std::array<int, 3> novelCellIndex{};
             for (int d = 0; d < 3; ++d) {
                 novelCellIndex[d] = static_cast<int>(std::floor(
                         p.getX()[d] * getDim()[d] / getLenDim()[d]));
             }
             auto cellIndex = (*this).index(novelCellIndex);
+            p.setOldF(p.getF());
+            p.setF({0., p.getM() * g, 0.});
             grid[cellIndex].emplace_back(&p);
         }
     }
@@ -36,7 +37,7 @@ void LinkedCellContainer::setup() {
 void LinkedCellContainer::cleanup() {
     // use erase-remove idiom
     particles.erase(std::remove_if(particles.begin(),
-                                   particles.end(), [](Particle& p){return !p.valid;}), particles.end());
+                                   particles.end(), [](Particle &p) { return !p.valid; }), particles.end());
 }
 
 std::vector<std::array<int, 3>> LinkedCellContainer::getNeighbors(const std::array<int, 3> &currentIndex) const {
@@ -58,21 +59,32 @@ std::vector<std::array<int, 3>> LinkedCellContainer::getNeighbors(const std::arr
                 std::array<int, 3>{currentIndex[0] + 1, currentIndex[1] + 1, currentIndex[2]},
                 std::array<int, 3>{currentIndex[0] - 1, currentIndex[1] + 1, currentIndex[2]},
 
-                std::array<int, 3>{currentIndex[0], currentIndex[1], currentIndex[2]+1},
-                std::array<int, 3>{currentIndex[0], currentIndex[1]+1, currentIndex[2]+1},
-                std::array<int, 3>{currentIndex[0]+1, currentIndex[1], currentIndex[2]+1},
-                std::array<int, 3>{currentIndex[0]+1, currentIndex[1]+1, currentIndex[2]+1},
-                std::array<int, 3>{currentIndex[0]-1, currentIndex[1], currentIndex[2]+1},
-                std::array<int, 3>{currentIndex[0], currentIndex[1]-1, currentIndex[2]+1},
-                std::array<int, 3>{currentIndex[0]-1, currentIndex[1]-1, currentIndex[2]+1},
-                std::array<int, 3>{currentIndex[0]-1, currentIndex[1]+1, currentIndex[2]+1},
-                std::array<int, 3>{currentIndex[0]+1, currentIndex[1]-1, currentIndex[2]+1},
+                std::array<int, 3>{currentIndex[0], currentIndex[1], currentIndex[2] + 1},
+                std::array<int, 3>{currentIndex[0], currentIndex[1] + 1, currentIndex[2] + 1},
+                std::array<int, 3>{currentIndex[0] + 1, currentIndex[1], currentIndex[2] + 1},
+                std::array<int, 3>{currentIndex[0] + 1, currentIndex[1] + 1, currentIndex[2] + 1},
+                std::array<int, 3>{currentIndex[0] - 1, currentIndex[1], currentIndex[2] + 1},
+                std::array<int, 3>{currentIndex[0], currentIndex[1] - 1, currentIndex[2] + 1},
+                std::array<int, 3>{currentIndex[0] - 1, currentIndex[1] - 1, currentIndex[2] + 1},
+                std::array<int, 3>{currentIndex[0] - 1, currentIndex[1] + 1, currentIndex[2] + 1},
+                std::array<int, 3>{currentIndex[0] + 1, currentIndex[1] - 1, currentIndex[2] + 1},
         };
         return neighbors;
     }
 }
 
-std::tuple<LinkedCellContainer::Border, int> LinkedCellContainer::getBorders(const std::array<int, 3> &currentIndexes, int d) {
+bool LinkedCellContainer::isPeriodic(const std::array<int, 3> &neighbor) {
+    bool result = true;
+    for (int d = 0, b = 0; d < 3; ++d, b += 2) {
+        if ((neighbor[d] < 0 && border[b] != periodic) || (neighbor[d] > dim[d] - 1 && border[b + 1] != periodic)) {
+            return false;
+        }
+    }
+    return result;
+}
+
+std::tuple<LinkedCellContainer::Border, int>
+LinkedCellContainer::getBorders(const std::array<int, 3> &currentIndexes, int d) {
     // y value is zero --> upper border
     if (currentIndexes[1] <= 0 && d == 1) {
         return std::make_tuple(border[2], 2);
@@ -101,7 +113,7 @@ std::tuple<LinkedCellContainer::Border, int> LinkedCellContainer::getBorders(con
     return std::make_tuple(none, -1);
 }
 
-const std::vector<Cell> & LinkedCellContainer::getGrid() const {
+const std::vector<Cell> &LinkedCellContainer::getGrid() const {
     return grid;
 }
 
@@ -150,23 +162,24 @@ void LinkedCellContainer::reserve(size_t size) {
     particles.reserve(size);
 }
 
-void LinkedCellContainer::emplace_back(Particle&& part) {
+void LinkedCellContainer::emplace_back(Particle &&part) {
     particles.emplace_back(part);
 }
 
-void LinkedCellContainer::emplace_back(Particle& part) {
+void LinkedCellContainer::emplace_back(Particle &part) {
     particles.emplace_back(part);
 }
 
-void LinkedCellContainer::emplace_back(const std::array<double, 3>& x, const std::array<double, 3>& v, double m, int t) {
-    particles.emplace_back(x,v,m,t);
+void
+LinkedCellContainer::emplace_back(const std::array<double, 3> &x, const std::array<double, 3> &v, double m, int t) {
+    particles.emplace_back(x, v, m, t);
 }
 
-void LinkedCellContainer::push_back(const Particle&& p) {
+void LinkedCellContainer::push_back(const Particle &&p) {
     particles.push_back(p);
 }
 
-void LinkedCellContainer::push_back(const Particle& p) {
+void LinkedCellContainer::push_back(const Particle &p) {
     particles.push_back(p);
 }
 
@@ -210,6 +223,22 @@ PairIterator LinkedCellContainer::pair_begin() {
 
 PairIterator LinkedCellContainer::pair_end() {
     return {particles, particles.size(), particles.size()};
+}
+
+const std::vector<Particle> &LinkedCellContainer::getParticles() const {
+    return particles;
+}
+
+void LinkedCellContainer::setParticles(const std::vector<Particle> &particlesV) {
+    LinkedCellContainer::particles = particlesV;
+}
+
+const std::array<LinkedCellContainer::Border, 6> &LinkedCellContainer::getBorder() const {
+    return border;
+}
+
+void LinkedCellContainer::setBorder(const std::array<Border, 6> &borderV) {
+    LinkedCellContainer::border = borderV;
 }
 
 std::vector<std::array<int, 3>>
@@ -265,23 +294,6 @@ LinkedCellContainer::getPerNeighbors(const std::array<int, 3> &currentIndex) {
     }
     return neighbors;
 }
-
-const std::vector<Particle> &LinkedCellContainer::getParticles() const {
-    return particles;
-}
-
-void LinkedCellContainer::setParticles(const std::vector<Particle> &particlesV) {
-    LinkedCellContainer::particles = particlesV;
-}
-
-const std::array<LinkedCellContainer::Border, 6> &LinkedCellContainer::getBorder() const {
-    return border;
-}
-
-void LinkedCellContainer::setBorder(const std::array<Border, 6> &borderV) {
-    LinkedCellContainer::border = borderV;
-}
-
 
 
 
