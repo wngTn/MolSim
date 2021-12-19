@@ -57,7 +57,7 @@ static bool benchmarking = false;
 static std::vector<ParticleGenerator::ShapeInfo> generatorInfos{};
 
 /// Thermostat
-static Thermostat thermostat{};
+static Thermostat thermostat;
 
 /// time steps to apply temperature
 static int nThermostat;
@@ -383,6 +383,7 @@ int main(int argc, char *argv[]) {
     auto io = get_io_type();
     auto calc = get_calculator();
 
+    thermostat = {initialTemperature, targetTemperature, maxDeltaTemperature};
     nThermostat = 100;
 
     calc->setDim(DIM);
@@ -428,8 +429,10 @@ int main(int argc, char *argv[]) {
         logParticle(*particles);
 
         iteration++;
-
         // todo apply thermostat stuff using Thermostat::applyTemperature()
+        if((iteration % nThermostat) == 0){
+            thermostat.applyTemperature(*particles);
+        }
 
 
         if (!benchmarking && iteration % writeFrequency == 0) {
