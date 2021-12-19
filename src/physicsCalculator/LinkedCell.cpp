@@ -110,12 +110,13 @@ namespace calculator {
             }
         }
 
-        for (int d = 0; d < (grid.is2D() ? 2 : 3); ++d) {
+        /* idk if this is needed?
+         * for (int d = 0; d < (grid.is2D() ? 2 : 3); ++d) {
             auto[bordType, bord] = grid.getBorders(currentIndexes, d);
             if (bordType == LinkedCellContainer::periodic) {
                 perBorders.push_back(bord);
             }
-        }
+        }*/
 
         /**
          * Border type overview:

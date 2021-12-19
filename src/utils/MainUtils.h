@@ -1,5 +1,6 @@
 #pragma once
 
+#include "utils/Config.h"
 #include "inputReader/FileReader.h"
 #include "outputWriter/XYZWriter.h"
 #include "outputWriter/VTKWriter.h"
@@ -20,6 +21,8 @@
 #include <iostream>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/basic_file_sink.h>
+
+static Config config;
 
 struct MainUtils {
 
@@ -56,9 +59,11 @@ struct MainUtils {
 
     static void initializeLogger();
 
-    static int main(int argc, char *argv[]);
-
 private:
+
+
+
+    /*
     /// Default start_time (end_time - start_time = total_runtime)
     static inline double start_time = 0;
 
@@ -124,6 +129,6 @@ private:
     static inline bool linkedCell;
     static inline std::array<int,3> linkedCellSize;
     static inline double rCut;
-    static inline std::array<LinkedCellContainer::Border, 6> boundaryConditions;
+    static inline std::array<LinkedCellContainer::Border, 6> boundaryConditions; */
 };
 

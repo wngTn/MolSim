@@ -6,12 +6,12 @@ class ParticleGenerator {
 public:
     static void generateParticles(ParticleContainer &particles, const std::string &file);
 
+    static void generateParticles(ParticleContainer &particles, const std::string &file, int startSEIndex);
+
     enum geometric_type{
         cuboid,
         sphere
     };
-
-    static void setStartSEIndex(int);
 
     struct ShapeInfo {
         geometric_type type;
@@ -32,12 +32,13 @@ public:
         // only used for cuboid
         std::array<int,3> N;
     };
-
     static void generateParticles(ParticleContainer &particles, const std::vector<ShapeInfo>& infovec);
+
+    static void generateParticles(ParticleContainer &particles, const std::vector<ShapeInfo>& infovec, int startSEIndex);
 
 private:
 
-    static int current_seindex;
+
 
     /**
      * parses a JSON file and returns the content (if well formed) as a vector of ShapeInfo object
@@ -51,7 +52,7 @@ private:
      * @param particles the ParticleContainer the created cube is stored in
      * @param info the ShapeInfo struct containing the parameters
      */
-    static void generateCuboid(ParticleContainer &particles, const ShapeInfo &info);
+    static void generateCuboid(ParticleContainer &particles, const ShapeInfo &info, int startSEIndex);
 
 
     // this creates a cube and cuts the sphere out of it. not very cool sphere but min distance is kept
@@ -60,7 +61,7 @@ private:
      * @param particles the ParticleContainer the created sphere is stored in
      * @param info the ShapeInfo struct containing the parameters
      */
-    static void generateSphere(ParticleContainer &particles, const ShapeInfo &info);
+    static void generateSphere(ParticleContainer &particles, const ShapeInfo &info, int startSEIndex);
 
     // currently not used, testing other methods for sphere generation
     // this produces veeeery smooth & nice spheres, but the minimum distance is not kept, so not suited for LJP
