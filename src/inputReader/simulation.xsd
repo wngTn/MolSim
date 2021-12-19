@@ -39,6 +39,8 @@
             <xs:element name="v2" type="xs:decimal" />
             <xs:element name="v3" type="xs:decimal" />
             <xs:element name="mass" type="xs:decimal" />
+            <xs:element name="epsilon" type="xs:decimal" />
+            <xs:element name="sigma" type="xs:decimal" />
             <xs:element name="distance" type="xs:decimal" />
             <xs:element name="brownianFactor" type="xs:decimal" />
             <!-- used for brownian motion and generation -->

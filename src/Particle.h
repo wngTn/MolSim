@@ -7,6 +7,9 @@ class Particle {
 
 private:
 
+// index used for determining combined sigma/epsilon values
+    int se_index;
+
     /**
      * Type of the particle. Use it for whatever you want (e.g. to separate
      * molecules belonging to different bodies, matters, and so on)
@@ -95,6 +98,9 @@ public:
             std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg,
             int type = 0);
 
+    Particle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, int type_arg, int index);
+
+
     virtual ~Particle();
 
     [[nodiscard]] const std::array<double, 3> &getX() const;
@@ -108,6 +114,8 @@ public:
     [[nodiscard]] double getM() const;
 
     [[nodiscard]] int getType() const;
+
+    [[nodiscard]] int getSEIndex() const;
 
     /**
      * @param d: dimension

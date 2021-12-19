@@ -11,6 +11,7 @@ public:
         sphere
     };
 
+    static void setStartSEIndex(int);
 
     struct ShapeInfo {
         geometric_type type;
@@ -36,8 +37,7 @@ public:
 
 private:
 
-
-
+    static int current_seindex;
 
     /**
      * parses a JSON file and returns the content (if well formed) as a vector of ShapeInfo object

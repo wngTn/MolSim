@@ -35,6 +35,10 @@ void ParticleGenerator::generateParticles(ParticleContainer &particles, const st
     }
 }
 
+void ParticleGenerator::setStartSEIndex(int i){
+    current_seindex = i;
+}
+
 std::vector<ParticleGenerator::ShapeInfo> ParticleGenerator::readJSON(const std::string &file){
     std::ifstream input_file(file);
     nlohmann::json j;
@@ -82,7 +86,7 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles, const Shape
                 Particle part{};
                 // add browian motion
                 auto tempVel = info.vel + maxwellBoltzmannDistributedVelocity(info.brownianFactor, info.DIM);
-                part = Particle{currentPos, tempVel, info.mass};
+                part = Particle{currentPos, tempVel, info.mass, 0, current_seindex};
                 particles.emplace_back(part);
                 currentPos[0] += info.distance;
             }
@@ -93,6 +97,7 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles, const Shape
         currentPos[1] = info.pos[1];
         currentPos[2] += info.distance;
     }
+    current_seindex++;
 }
 
 void ParticleGenerator::generateSphere(ParticleContainer &particles, const ShapeInfo &info) {
@@ -121,7 +126,7 @@ void ParticleGenerator::generateSphere(ParticleContainer &particles, const Shape
                 if(distance <= info.radius * info.distance + 0.00001){
                     Particle part;
                     auto tempVel = info.vel + maxwellBoltzmannDistributedVelocity(info.brownianFactor, info.DIM);
-                    particles.emplace_back(Particle{currentPos, tempVel, info.mass});
+                    particles.emplace_back(Particle{currentPos, tempVel, info.mass, 0, current_seindex});
                 }
                 currentPos[0] += info.distance;
             }
@@ -132,6 +137,7 @@ void ParticleGenerator::generateSphere(ParticleContainer &particles, const Shape
         currentPos[1] = cubeCorner[1];
         currentPos[2] += info.distance;
     }
+    current_seindex++;
 }
 
 void ParticleGenerator::generateSphere2(ParticleContainer &particles, const ShapeInfo &info) {

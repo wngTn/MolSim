@@ -419,6 +419,42 @@ mass (const mass_type& x)
   this->mass_.set (x);
 }
 
+const generator_info_t::epsilon_type& generator_info_t::
+epsilon () const
+{
+  return this->epsilon_.get ();
+}
+
+generator_info_t::epsilon_type& generator_info_t::
+epsilon ()
+{
+  return this->epsilon_.get ();
+}
+
+void generator_info_t::
+epsilon (const epsilon_type& x)
+{
+  this->epsilon_.set (x);
+}
+
+const generator_info_t::sigma_type& generator_info_t::
+sigma () const
+{
+  return this->sigma_.get ();
+}
+
+generator_info_t::sigma_type& generator_info_t::
+sigma ()
+{
+  return this->sigma_.get ();
+}
+
+void generator_info_t::
+sigma (const sigma_type& x)
+{
+  this->sigma_.set (x);
+}
+
 const generator_info_t::distance_type& generator_info_t::
 distance () const
 {
@@ -1600,6 +1636,8 @@ generator_info_t (const x_type& x,
                   const v2_type& v2,
                   const v3_type& v3,
                   const mass_type& mass,
+                  const epsilon_type& epsilon,
+                  const sigma_type& sigma,
                   const distance_type& distance,
                   const brownianFactor_type& brownianFactor,
                   const dim_type& dim,
@@ -1612,6 +1650,8 @@ generator_info_t (const x_type& x,
   v2_ (v2, this),
   v3_ (v3, this),
   mass_ (mass, this),
+  epsilon_ (epsilon, this),
+  sigma_ (sigma, this),
   distance_ (distance, this),
   brownianFactor_ (brownianFactor, this),
   dim_ (dim, this),
@@ -1635,6 +1675,8 @@ generator_info_t (const generator_info_t& x,
   v2_ (x.v2_, f, this),
   v3_ (x.v3_, f, this),
   mass_ (x.mass_, f, this),
+  epsilon_ (x.epsilon_, f, this),
+  sigma_ (x.sigma_, f, this),
   distance_ (x.distance_, f, this),
   brownianFactor_ (x.brownianFactor_, f, this),
   dim_ (x.dim_, f, this),
@@ -1658,6 +1700,8 @@ generator_info_t (const ::xercesc::DOMElement& e,
   v2_ (this),
   v3_ (this),
   mass_ (this),
+  epsilon_ (this),
+  sigma_ (this),
   distance_ (this),
   brownianFactor_ (this),
   dim_ (this),
@@ -1757,6 +1801,28 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!mass_.present ())
       {
         this->mass_.set (mass_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // epsilon
+    //
+    if (n.name () == "epsilon" && n.namespace_ ().empty ())
+    {
+      if (!epsilon_.present ())
+      {
+        this->epsilon_.set (epsilon_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // sigma
+    //
+    if (n.name () == "sigma" && n.namespace_ ().empty ())
+    {
+      if (!sigma_.present ())
+      {
+        this->sigma_.set (sigma_traits::create (i, f, this));
         continue;
       }
     }
@@ -1890,6 +1956,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "");
   }
 
+  if (!epsilon_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "epsilon",
+      "");
+  }
+
+  if (!sigma_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "sigma",
+      "");
+  }
+
   if (!distance_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
@@ -1952,6 +2032,8 @@ operator= (const generator_info_t& x)
     this->v2_ = x.v2_;
     this->v3_ = x.v3_;
     this->mass_ = x.mass_;
+    this->epsilon_ = x.epsilon_;
+    this->sigma_ = x.sigma_;
     this->distance_ = x.distance_;
     this->brownianFactor_ = x.brownianFactor_;
     this->dim_ = x.dim_;
@@ -3267,6 +3349,28 @@ operator<< (::xercesc::DOMElement& e, const generator_info_t& i)
         e));
 
     s << ::xml_schema::as_decimal(i.mass ());
+  }
+
+  // epsilon
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "epsilon",
+        e));
+
+    s << ::xml_schema::as_decimal(i.epsilon ());
+  }
+
+  // sigma
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "sigma",
+        e));
+
+    s << ::xml_schema::as_decimal(i.sigma ());
   }
 
   // distance
