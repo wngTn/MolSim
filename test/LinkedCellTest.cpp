@@ -103,6 +103,9 @@ TEST(LinkedCellTest, LinkedCellMethodSimpleTest) {
     lj.calcF(particleContainer);
 
     calculator::LinkedCell lc{SIGMA, EPS, 3.};
+    lc.setEpsilonTable({{EPS}});
+    lc.setSigmaTable({{SIGMA}});
+
     lc.calcF(linkedCellContainer);
 
     for (int i = 0; i < 4; ++i) {
@@ -243,6 +246,8 @@ TEST(LinkedCellTest, ReflectiveBoundaryTest) {
     EXPECT_EQ(linkedCellContainer.begin()->getV()[2], 0);
     // calculate next step
     calculator::LinkedCell calc{SIGMA, 1, 1};
+    calc.setEpsilonTable({{1}});
+    calc.setSigmaTable({{1}});
     calc.setDeltaT(0.00005);
     calc.calcX(linkedCellContainer);
     linkedCellContainer.setup();
@@ -293,6 +298,8 @@ TEST(LinkedCellTest, LinkedCellMethodIntermediateTest) {
     lj.calcF(particleContainer);
 
     calculator::LinkedCell lc{SIGMA, EPS, rCut};
+    lc.setEpsilonTable({{EPS}});
+    lc.setSigmaTable({{SIGMA}});
     lc.setDim(3);
     lc.setDeltaT(delta_t);
     lc.calcF(linkedCellContainer);
@@ -365,6 +372,8 @@ TEST(LinkedCellTest, LinkedCellMethodIntermediateTest) {
     lj2.calcF(particleContainer2);
 
     calculator::LinkedCell lc2{SIGMA, EPS, rCut};
+    lc.setEpsilonTable({{EPS}});
+    lc.setSigmaTable({{SIGMA}});
     lc2.setDim(3);
     lc2.setDeltaT(delta_t);
     lc2.calcF(linkedCellContainer2);
