@@ -1,28 +1,31 @@
 #include "utils/MainUtils.h"
 
 int main(int argc, char *argv[]) {
+    Config config{};
+
     MainUtils::initializeLogger();
 
     auto start_setup = std::chrono::steady_clock::now();
 
     // parse cmd line args and set static values accordingly
-    MainUtils::get_arguments(argc, argv);
+    MainUtils::get_arguments(argc, argv, config);
 
     // ------ setup ------ //
-    MainUtils::parseXML();
+    MainUtils::parseXML(config);
 
-    MainUtils::printConfig();
+    MainUtils::printConfig(config);
 
-    auto particles = MainUtils::get_container();
-    MainUtils::initializeParticles(*particles);
+    auto particles = MainUtils::get_container(config);
+    MainUtils::initializeParticles(*particles, config);
 
-    auto io = MainUtils::get_io_type();
-    auto calc = MainUtils::get_calculator();
+    auto io = MainUtils::get_io_type(config);
+    auto calc = MainUtils::get_calculator(config);
 
     // TODO get frome XML
     config.nThermostat = 100;
 
     calc->setDim(config.DIM);
+    std::cout << "main config δt: " << config.delta_t << std::endl;
     calc->setDeltaT(config.delta_t);
 
     double current_time = config.start_time;

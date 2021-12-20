@@ -95,8 +95,8 @@ namespace calculator {
         // p1->setOldF(p1->getF());
         // p2->setOldF(p2->getF());
         if(force[0] > 500 || force[1] > 500 || force[2] > 500){
-            std::cout << "calculated high force with combined σ " << sigmaTable[p1->getSEIndex()][p2->getSEIndex()] << " and combined ε "
-            << epsilonTable[p1->getSEIndex()][p2->getSEIndex()] << std::endl;
+           // std::cout << "calculated high force with combined σ " << sigmaTable[p1->getSEIndex()][p2->getSEIndex()] << " and combined ε "
+           // << epsilonTable[p1->getSEIndex()][p2->getSEIndex()] << std::endl;
         }
 
 

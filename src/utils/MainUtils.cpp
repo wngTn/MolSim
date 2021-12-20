@@ -1,6 +1,6 @@
 #include "MainUtils.h"
 
-void MainUtils::get_arguments(int argc, char **argv) {
+void MainUtils::get_arguments(int argc, char **argv, Config& config) {
     const std::string help = "Usage: ./MolSim [-x <xml_file>] [-i <input_file>] [-g <generator_input>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calc>] [-b <brownian_motion_velocity_mean>] [-r]\n"
                              "\tuse -x to specify an XML input file. Overwrites command line options (for options where multiple inputs are allowed, e.g. input files, command line argument is added)\n"
                              "\tuse -i to specify an input file\n"
@@ -79,7 +79,7 @@ void MainUtils::get_arguments(int argc, char **argv) {
     }
 }
 
-std::unique_ptr<IOWriter> MainUtils::get_io_type() {
+std::unique_ptr<IOWriter> MainUtils::get_io_type(Config& config) {
     switch (config.io_type) {
         case IOWriter::xyz:
             return std::make_unique<outputWriter::XYZWriter>();
@@ -90,7 +90,7 @@ std::unique_ptr<IOWriter> MainUtils::get_io_type() {
     }
 }
 
-std::unique_ptr<PhysicsCalc> MainUtils::get_calculator() {
+std::unique_ptr<PhysicsCalc> MainUtils::get_calculator(Config& config) {
     switch (config.calc_type) {
         case PhysicsCalc::gravitation:
             return std::make_unique<calculator::Gravitation>();
@@ -107,14 +107,14 @@ std::unique_ptr<PhysicsCalc> MainUtils::get_calculator() {
     }
 }
 
-std::unique_ptr<ParticleContainer> MainUtils::get_container() {
+std::unique_ptr<ParticleContainer> MainUtils::get_container(Config& config) {
     if(config.linkedCell){
         return std::make_unique<LinkedCellContainer>(config.linkedCellSize[0], config.linkedCellSize[1], config.linkedCellSize[2], config.rCut, config.boundaryConditions, config.grav);
     }
     return std::make_unique<DirectSumParticleContainer>();
 }
 
-void MainUtils::initializeParticles(ParticleContainer &particles) {
+void MainUtils::initializeParticles(ParticleContainer &particles, Config& config) {
     // read normal input file
     for(auto& file : config.filename){
         FileReader::readFile(particles, file);
@@ -211,7 +211,7 @@ void MainUtils::logParticle(ParticleContainer &particles) {
     }
 }
 
-void MainUtils::parseXML() {
+void MainUtils::parseXML(Config& config) {
     spdlog::info("Starting XML parsing!");
     if(config.xml_file.empty()) return;
 
@@ -225,6 +225,7 @@ void MainUtils::parseXML() {
     config.output_file = info.outputfile;
     config.end_time = info.t_end;
     config.delta_t = info.delta_t;
+    std::cout << "parseXML config ðt: " << config.delta_t << std::endl;
     config.writeFrequency = info.writeFrequency;
     config.randomGen = info.random;
 
@@ -250,7 +251,7 @@ void MainUtils::parseXML() {
     spdlog::info("Finished XML parsing!");
 }
 
-void MainUtils::printConfig() {
+void MainUtils::printConfig(Config& config) {
     std::string message = "Your configurations are:\n";
     if(!config.xml_file.empty()){
         message.append("\u001b[36m\tXML File:\u001b[0m " + config.xml_file);
