@@ -47,11 +47,11 @@ public:
 /// info for generator from XML file
     std::vector <ParticleGenerator::ShapeInfo> generatorInfos{};
 
-/// Thermostat
-    Thermostat thermostat{};
-
 /// time steps to apply temperature
     int nThermostat;
+
+/// whether a thermostat is used
+    bool useThermostat = false;
 
 /// initial temperature
     double initialTemperature;

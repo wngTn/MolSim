@@ -24,6 +24,12 @@ public:
         double gravityFactor;
         int writeFrequency;
         double brownianMotionMean;
+        bool useThermostat;
+        double t_init;
+        double t_target;
+        double delta_temp;
+        int n_thermostat;
+
         // whether randomly generated particles should be used, other inputs discarded if yes
         bool random;
         // output and calculation types

@@ -21,11 +21,9 @@ int main(int argc, char *argv[]) {
     auto io = MainUtils::get_io_type(config);
     auto calc = MainUtils::get_calculator(config);
 
-    // TODO get frome XML
-    config.nThermostat = 100;
+    Thermostat thermostat = MainUtils::get_thermostat(config);
 
     calc->setDim(config.DIM);
-    std::cout << "main config δt: " << config.delta_t << std::endl;
     calc->setDeltaT(config.delta_t);
 
     double current_time = config.start_time;
@@ -47,7 +45,7 @@ int main(int argc, char *argv[]) {
     // ------ calculation ------ //
     auto start_calc = std::chrono::steady_clock::now();
     // initial setup
-    // TODO setup temperature
+    thermostat.setupTemperature(*particles);
     calc->calcX(*particles);
     particles->setup();
     calc->calcF(*particles);
@@ -64,6 +62,10 @@ int main(int argc, char *argv[]) {
         particles->setup();
         calc->calcF(*particles);
         calc->calcV(*particles);
+
+        if(config.useThermostat && iteration % config.nThermostat == 0) {
+            thermostat.applyTemperature(*particles);
+        }
 
         MainUtils::logParticle(*particles);
 

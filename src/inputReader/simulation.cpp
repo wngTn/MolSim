@@ -1043,6 +1043,94 @@ operator= (value v)
 }
 
 
+// thermostat_info_t
+// 
+
+const thermostat_info_t::nThermostat_type& thermostat_info_t::
+nThermostat () const
+{
+  return this->nThermostat_.get ();
+}
+
+thermostat_info_t::nThermostat_type& thermostat_info_t::
+nThermostat ()
+{
+  return this->nThermostat_.get ();
+}
+
+void thermostat_info_t::
+nThermostat (const nThermostat_type& x)
+{
+  this->nThermostat_.set (x);
+}
+
+const thermostat_info_t::Tinit_type& thermostat_info_t::
+Tinit () const
+{
+  return this->Tinit_.get ();
+}
+
+thermostat_info_t::Tinit_type& thermostat_info_t::
+Tinit ()
+{
+  return this->Tinit_.get ();
+}
+
+void thermostat_info_t::
+Tinit (const Tinit_type& x)
+{
+  this->Tinit_.set (x);
+}
+
+const thermostat_info_t::Ttarget_optional& thermostat_info_t::
+Ttarget () const
+{
+  return this->Ttarget_;
+}
+
+thermostat_info_t::Ttarget_optional& thermostat_info_t::
+Ttarget ()
+{
+  return this->Ttarget_;
+}
+
+void thermostat_info_t::
+Ttarget (const Ttarget_type& x)
+{
+  this->Ttarget_.set (x);
+}
+
+void thermostat_info_t::
+Ttarget (const Ttarget_optional& x)
+{
+  this->Ttarget_ = x;
+}
+
+const thermostat_info_t::deltaTemp_optional& thermostat_info_t::
+deltaTemp () const
+{
+  return this->deltaTemp_;
+}
+
+thermostat_info_t::deltaTemp_optional& thermostat_info_t::
+deltaTemp ()
+{
+  return this->deltaTemp_;
+}
+
+void thermostat_info_t::
+deltaTemp (const deltaTemp_type& x)
+{
+  this->deltaTemp_.set (x);
+}
+
+void thermostat_info_t::
+deltaTemp (const deltaTemp_optional& x)
+{
+  this->deltaTemp_ = x;
+}
+
+
 // simulation_t
 // 
 
@@ -1170,6 +1258,36 @@ void simulation_t::
 generatorInfo (const generatorInfo_sequence& s)
 {
   this->generatorInfo_ = s;
+}
+
+const simulation_t::thermostat_optional& simulation_t::
+thermostat () const
+{
+  return this->thermostat_;
+}
+
+simulation_t::thermostat_optional& simulation_t::
+thermostat ()
+{
+  return this->thermostat_;
+}
+
+void simulation_t::
+thermostat (const thermostat_type& x)
+{
+  this->thermostat_.set (x);
+}
+
+void simulation_t::
+thermostat (const thermostat_optional& x)
+{
+  this->thermostat_ = x;
+}
+
+void simulation_t::
+thermostat (::std::unique_ptr< thermostat_type > x)
+{
+  this->thermostat_.set (std::move (x));
 }
 
 const simulation_t::t_end_type& simulation_t::
@@ -2582,6 +2700,148 @@ _xsd_outputwriter_t_indexes_[2] =
   ::outputwriter_t::xyz
 };
 
+// thermostat_info_t
+//
+
+thermostat_info_t::
+thermostat_info_t (const nThermostat_type& nThermostat,
+                   const Tinit_type& Tinit)
+: ::xml_schema::type (),
+  nThermostat_ (nThermostat, this),
+  Tinit_ (Tinit, this),
+  Ttarget_ (this),
+  deltaTemp_ (this)
+{
+}
+
+thermostat_info_t::
+thermostat_info_t (const thermostat_info_t& x,
+                   ::xml_schema::flags f,
+                   ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  nThermostat_ (x.nThermostat_, f, this),
+  Tinit_ (x.Tinit_, f, this),
+  Ttarget_ (x.Ttarget_, f, this),
+  deltaTemp_ (x.deltaTemp_, f, this)
+{
+}
+
+thermostat_info_t::
+thermostat_info_t (const ::xercesc::DOMElement& e,
+                   ::xml_schema::flags f,
+                   ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  nThermostat_ (this),
+  Tinit_ (this),
+  Ttarget_ (this),
+  deltaTemp_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    this->parse (p, f);
+  }
+}
+
+void thermostat_info_t::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // nThermostat
+    //
+    if (n.name () == "nThermostat" && n.namespace_ ().empty ())
+    {
+      if (!nThermostat_.present ())
+      {
+        this->nThermostat_.set (nThermostat_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // Tinit
+    //
+    if (n.name () == "Tinit" && n.namespace_ ().empty ())
+    {
+      if (!Tinit_.present ())
+      {
+        this->Tinit_.set (Tinit_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // Ttarget
+    //
+    if (n.name () == "Ttarget" && n.namespace_ ().empty ())
+    {
+      if (!this->Ttarget_)
+      {
+        this->Ttarget_.set (Ttarget_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // deltaTemp
+    //
+    if (n.name () == "deltaTemp" && n.namespace_ ().empty ())
+    {
+      if (!this->deltaTemp_)
+      {
+        this->deltaTemp_.set (deltaTemp_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    break;
+  }
+
+  if (!nThermostat_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "nThermostat",
+      "");
+  }
+
+  if (!Tinit_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "Tinit",
+      "");
+  }
+}
+
+thermostat_info_t* thermostat_info_t::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class thermostat_info_t (*this, f, c);
+}
+
+thermostat_info_t& thermostat_info_t::
+operator= (const thermostat_info_t& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->nThermostat_ = x.nThermostat_;
+    this->Tinit_ = x.Tinit_;
+    this->Ttarget_ = x.Ttarget_;
+    this->deltaTemp_ = x.deltaTemp_;
+  }
+
+  return *this;
+}
+
+thermostat_info_t::
+~thermostat_info_t ()
+{
+}
+
 // simulation_t
 //
 
@@ -2600,6 +2860,7 @@ simulation_t (const container_type& container,
   generatorFile_ (this),
   outputFile_ (outputFile, this),
   generatorInfo_ (this),
+  thermostat_ (this),
   t_end_ (t_end, this),
   delta_t_ (delta_t, this),
   writeFrequency_ (writeFrequency, this),
@@ -2623,6 +2884,7 @@ simulation_t (::std::unique_ptr< container_type > container,
   generatorFile_ (this),
   outputFile_ (outputFile, this),
   generatorInfo_ (this),
+  thermostat_ (this),
   t_end_ (t_end, this),
   delta_t_ (delta_t, this),
   writeFrequency_ (writeFrequency, this),
@@ -2642,6 +2904,7 @@ simulation_t (const simulation_t& x,
   generatorFile_ (x.generatorFile_, f, this),
   outputFile_ (x.outputFile_, f, this),
   generatorInfo_ (x.generatorInfo_, f, this),
+  thermostat_ (x.thermostat_, f, this),
   t_end_ (x.t_end_, f, this),
   delta_t_ (x.delta_t_, f, this),
   writeFrequency_ (x.writeFrequency_, f, this),
@@ -2661,6 +2924,7 @@ simulation_t (const ::xercesc::DOMElement& e,
   generatorFile_ (this),
   outputFile_ (this),
   generatorInfo_ (this),
+  thermostat_ (this),
   t_end_ (this),
   delta_t_ (this),
   writeFrequency_ (this),
@@ -2757,6 +3021,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
 
       this->generatorInfo_.push_back (::std::move (r));
       continue;
+    }
+
+    // thermostat
+    //
+    if (n.name () == "thermostat" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< thermostat_type > r (
+        thermostat_traits::create (i, f, this));
+
+      if (!this->thermostat_)
+      {
+        this->thermostat_.set (::std::move (r));
+        continue;
+      }
     }
 
     break;
@@ -2868,6 +3146,7 @@ operator= (const simulation_t& x)
     this->generatorFile_ = x.generatorFile_;
     this->outputFile_ = x.outputFile_;
     this->generatorInfo_ = x.generatorInfo_;
+    this->thermostat_ = x.thermostat_;
     this->t_end_ = x.t_end_;
     this->delta_t_ = x.delta_t_;
     this->writeFrequency_ = x.writeFrequency_;
@@ -3666,6 +3945,58 @@ operator<< (::xml_schema::list_stream& l,
 }
 
 void
+operator<< (::xercesc::DOMElement& e, const thermostat_info_t& i)
+{
+  e << static_cast< const ::xml_schema::type& > (i);
+
+  // nThermostat
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "nThermostat",
+        e));
+
+    s << i.nThermostat ();
+  }
+
+  // Tinit
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Tinit",
+        e));
+
+    s << ::xml_schema::as_decimal(i.Tinit ());
+  }
+
+  // Ttarget
+  //
+  if (i.Ttarget ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Ttarget",
+        e));
+
+    s << ::xml_schema::as_decimal(*i.Ttarget ());
+  }
+
+  // deltaTemp
+  //
+  if (i.deltaTemp ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "deltaTemp",
+        e));
+
+    s << ::xml_schema::as_decimal(*i.deltaTemp ());
+  }
+}
+
+void
 operator<< (::xercesc::DOMElement& e, const simulation_t& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
@@ -3743,6 +4074,18 @@ operator<< (::xercesc::DOMElement& e, const simulation_t& i)
         e));
 
     s << *b;
+  }
+
+  // thermostat
+  //
+  if (i.thermostat ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "thermostat",
+        e));
+
+    s << *i.thermostat ();
   }
 
   // t_end

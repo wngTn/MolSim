@@ -114,6 +114,13 @@ std::unique_ptr<ParticleContainer> MainUtils::get_container(Config& config) {
     return std::make_unique<DirectSumParticleContainer>();
 }
 
+Thermostat MainUtils::get_thermostat(Config& config) {
+    if(!config.useThermostat){
+        return Thermostat{};
+    }
+    return Thermostat{config.initialTemperature, config.targetTemperature, config.maxDeltaTemperature};
+}
+
 void MainUtils::initializeParticles(ParticleContainer &particles, Config& config) {
     // read normal input file
     for(auto& file : config.filename){
@@ -172,7 +179,7 @@ void MainUtils::buildSETable(std::vector<std::pair<int, std::pair<double, double
             epsilonTable[t2][t1] = eps_mixed;
         }
     }
-    for_each(sigmaTable.begin(),
+    /*for_each(sigmaTable.begin(),
              sigmaTable.end(),
              [](const auto & row ) {
                  for_each(row.begin(), row.end(),
@@ -191,7 +198,7 @@ void MainUtils::buildSETable(std::vector<std::pair<int, std::pair<double, double
                           });
                  std::cout<<std::endl;
              });
-    std::cout<<std::endl;
+    std::cout<<std::endl;*/
 }
 
 void MainUtils::logParticle(ParticleContainer &particles) {
@@ -225,7 +232,6 @@ void MainUtils::parseXML(Config& config) {
     config.output_file = info.outputfile;
     config.end_time = info.t_end;
     config.delta_t = info.delta_t;
-    std::cout << "parseXML config ðt: " << config.delta_t << std::endl;
     config.writeFrequency = info.writeFrequency;
     config.randomGen = info.random;
 
@@ -247,6 +253,12 @@ void MainUtils::parseXML(Config& config) {
             config.boundaryConditions = info.boundaryConditions;
         }
         config.grav = info.gravityFactor;
+    }
+    config.useThermostat = info.useThermostat;
+    if(info.useThermostat){
+        config.initialTemperature = info.t_init;
+        config.targetTemperature = info.t_target;
+        config.maxDeltaTemperature = info.delta_temp;
     }
     spdlog::info("Finished XML parsing!");
 }
@@ -285,6 +297,15 @@ void MainUtils::printConfig(Config& config) {
         case PhysicsCalc::unknown:
         default:
             message.append("Lennard-Jones-Potential (Default)").append(config.linkedCell?" (LinkedCellCalculation)\n":"\n");
+    }
+    if(config.useThermostat){
+        message.append("\u001b[36m\tThermostat:\u001b[0m ").append("nThermostat: ").append(std::to_string(config.nThermostat)).append(", Tinit: ").append(std::to_string(config.initialTemperature));
+        message.append(", Ttarget: ").append(std::to_string(config.targetTemperature));
+        if(abs(config.maxDeltaTemperature - DBL_MAX) < 10){
+            message.append(", maxDeltaT: infinity\n");
+        }else{
+            message.append(", maxDeltaT: ").append(std::to_string(config.maxDeltaTemperature) + "\n");
+        }
     }
     message.append("\u001b[36m\tWriter:\u001b[0m ");
     switch (config.io_type) {

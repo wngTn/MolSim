@@ -100,6 +100,15 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:complexType name="thermostat_info_t">
+        <xs:sequence>
+            <xs:element name="nThermostat" type="xs:integer" />
+            <xs:element name="Tinit" type="xs:decimal" />
+            <xs:element name="Ttarget" type="xs:decimal" minOccurs="0"/>
+            <xs:element name="deltaTemp" type="xs:decimal" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
     <!-- everything the simulation needs -->
     <xs:complexType name="simulation_t">
         <xs:sequence>
@@ -111,6 +120,7 @@
             <xs:element minOccurs = "0" maxOccurs="unbounded" name="generatorFile" type="xs:string" />
             <xs:element name="outputFile" type="xs:string" />
             <xs:element minOccurs = "0" maxOccurs="unbounded" name="generatorInfo" type="generator_info_t"/>
+            <xs:element minOccurs = "0" name = "thermostat" type="thermostat_info_t" />
         </xs:sequence>
         <xs:attribute name="t_end" type="xs:decimal" use="required"/>
         <xs:attribute name="delta_t" type="xs:decimal" use="required"/>

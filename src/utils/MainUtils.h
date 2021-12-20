@@ -52,6 +52,7 @@ struct MainUtils {
     static std::unique_ptr<PhysicsCalc> get_calculator(Config& config);
 
     static std::unique_ptr<ParticleContainer> get_container(Config& config);
+    static Thermostat get_thermostat(Config& config);
 
     static void initializeParticles(ParticleContainer &particles, Config& config);
 

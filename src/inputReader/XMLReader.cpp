@@ -1,4 +1,6 @@
 #include <iostream>
+#include <float.h>
+
 #include "XMLReader.h"
 
 
@@ -43,6 +45,15 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
         info.calculatorType = PhysicsCalc::lennardJones;
     }else{
         info.calculatorType = PhysicsCalc::gravitation;
+    }
+
+    if(sim->thermostat().present()){
+        info.useThermostat = true;
+        info.t_init = sim->thermostat()->Tinit();
+        info.t_target = sim->thermostat()->Ttarget().present() ? sim->thermostat()->Ttarget().get() : info.t_init;
+        info.delta_temp = sim->thermostat()->deltaTemp().present() ? sim->thermostat()->deltaTemp().get() : DBL_MAX;
+    }else{
+        info.useThermostat = false;
     }
 
     info.delta_t = sim->delta_t();
