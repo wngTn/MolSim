@@ -22,7 +22,11 @@
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/basic_file_sink.h>
 
+// make config singleton?
 static Config config;
+
+static std::vector<std::vector<double>> sigmaTable;
+static std::vector<std::vector<double>> epsilonTable;
 
 struct MainUtils {
 
@@ -61,6 +65,7 @@ struct MainUtils {
 
 private:
 
+    static void buildSETable(std::vector<std::pair<int, std::pair<double, double>>> &mapping);
 
 
     /*

@@ -29,7 +29,12 @@ void LinkedCellContainer::setup() {
             auto cellIndex = (*this).index(novelCellIndex);
             p.setOldF(p.getF());
             p.setF({0., p.getM() * g, 0.});
-            grid[cellIndex].emplace_back(&p);
+            if(cellIndex < 0 || cellIndex >= grid.size()){
+                //std::cout << "ALARM\n";
+            }else{
+                grid[cellIndex].emplace_back(&p);
+            }
+
         }
     }
 }

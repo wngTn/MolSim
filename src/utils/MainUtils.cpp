@@ -98,7 +98,10 @@ std::unique_ptr<PhysicsCalc> MainUtils::get_calculator() {
         case PhysicsCalc::unknown:
         default:
             if(config.linkedCell){
-                return std::make_unique<calculator::LinkedCell>(config.sigma, config.eps, config.rCut);
+                auto c = std::make_unique<calculator::LinkedCell>(config.sigma, config.eps, config.rCut);
+                c->setSigmaTable(sigmaTable);
+                c->setEpsilonTable(epsilonTable);
+                return c;
             }
             return std::make_unique<calculator::LennardJones>(config.sigma, config.eps);
     }
@@ -130,14 +133,65 @@ void MainUtils::initializeParticles(ParticleContainer &particles) {
     if (config.brownianMotion) {
         initializeBrownianMotion(particles, config.brownianMotionMean);
     }
+    // if there are already generated particles, those have type 0
+    auto typeToSE = std::vector<std::pair<int, std::pair<double,double>>>{};
+    if((!config.filename.empty() || config.randomGen) && config.calc_type == PhysicsCalc::lennardJones){
+        typeToSE.push_back({0, {config.sigma, config.eps}});
+    }
     // generate Particles from generator input JSONs
     for(auto& genFile : config.generator_files){
         // TODO handle se index
-        ParticleGenerator::generateParticles(particles, genFile);
+        auto newTypeToSe = ParticleGenerator::generateParticles(particles, genFile, typeToSE.size());
+        typeToSE.insert(typeToSE.begin(), newTypeToSe.begin(), newTypeToSe.end());
     }
     // generate Particles directly specified in XML
     // TODO handle se index
-    ParticleGenerator::generateParticles(particles, config.generatorInfos);
+    auto newTypeToSe = ParticleGenerator::generateParticles(particles, config.generatorInfos);
+    typeToSE.insert(typeToSE.begin(), newTypeToSe.begin(), newTypeToSe.end());
+    if(config.calc_type == PhysicsCalc::lennardJones && config.linkedCell){
+        buildSETable(typeToSE);
+    }
+
+}
+
+void MainUtils::buildSETable(std::vector<std::pair<int, std::pair<double, double>>> &mapping){
+    auto temp = std::vector<double>{};
+    // fill 2D vectors with zeroes
+    temp.assign(mapping.size(), 0.0);
+    sigmaTable.assign(mapping.size(), temp);
+    epsilonTable.assign(mapping.size(), temp);
+
+    for(auto& [t1, p1] : mapping){
+        for(auto& [t2, p2] : mapping){
+            double sigma_mixed = (p1.second + p2.second) / 2;
+            double eps_mixed = sqrt(p1.first * p2.first);
+
+            sigmaTable[t1][t2] = sigma_mixed;
+            sigmaTable[t2][t1] = sigma_mixed;
+            epsilonTable[t1][t2] = eps_mixed;
+            epsilonTable[t2][t1] = eps_mixed;
+        }
+    }
+    for_each(sigmaTable.begin(),
+             sigmaTable.end(),
+             [](const auto & row ) {
+                 for_each(row.begin(), row.end(),
+                          [](const auto & elem){
+                              std::cout<<elem<<", ";
+                          });
+                 std::cout<<std::endl;
+             });
+    std::cout<<std::endl;
+    for_each(epsilonTable.begin(),
+             epsilonTable.end(),
+             [](const auto & row ) {
+                 for_each(row.begin(), row.end(),
+                          [](const auto & elem){
+                              std::cout<<elem<<", ";
+                          });
+                 std::cout<<std::endl;
+             });
+    std::cout<<std::endl;
 }
 
 void MainUtils::logParticle(ParticleContainer &particles) {
@@ -191,9 +245,7 @@ void MainUtils::parseXML() {
             config.linkedCellSize = info.linkedCellSize;
             config.boundaryConditions = info.boundaryConditions;
         }
-
         config.grav = info.gravityFactor;
-
     }
     spdlog::info("Finished XML parsing!");
 }

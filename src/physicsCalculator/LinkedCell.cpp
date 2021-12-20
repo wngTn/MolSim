@@ -99,7 +99,8 @@ namespace calculator {
 
     void LinkedCell::reflectiveBoundary(LinkedCellContainer &grid, const std::array<int, 3> &currentIndexes) const {
         // We only reflect at this distance
-        double reflectDistance = std::pow(2, 1.0 / 6.0) * sigma;
+        //double reflectDistance = std::pow(2, 1.0 / 6.0) * sigma;
+        double reflectDistanceFactor = std::pow(2, 1.0 / 6.0);
         // saves the reflective borders of the current cell
         std::vector<int> reflBorder{};
         // go through all three or two axis and acquire the borders of currentIndex that are reflective
@@ -134,10 +135,15 @@ namespace calculator {
 //                }
                 for (int bord: reflBorder) {
                     double r = grid.getDistance(p->getX(), bord);
+                    // reflect distance depending on different sigma for each particle
+                    double sig = sigmaTable[p->getSEIndex()][p->getSEIndex()];
+                    double reflectDistance = reflectDistanceFactor * sig;
                     if (r <= reflectDistance) {
-                        double s = (sigma * sigma) / (r * r);
+                        //double s = (sigma * sigma) / (r * r);
+
+                        double s = (sig * sig) / (r * r);
                         s = s * s * s;
-                        auto force = -24 * epsilon / r * s * (1 - 2 * s);
+                        auto force = -24 * epsilonTable[p->getSEIndex()][p->getSEIndex()] / r * s * (1 - 2 * s);
                         // auto force = -24 * epsilon * (1/(r)) * pow((sigma/(r)), 6) * (1 - 2 * (pow((sigma/(r)), 6)));
                         auto newF{p->getF()};
                         switch (bord) {
@@ -181,9 +187,11 @@ namespace calculator {
                     sqrd_dist += LinkedCell::sqr(mirroredX[i] - p->getX()[i]);
                 }
                 if (sqrd_dist <= LinkedCell::sqr(rCut)) {
-                    double s = sqr(sigma) / sqrd_dist;
+                    //double s = sqr(sigma) / sqrd_dist;
+                    double s = sqr(sigmaTable[p->getSEIndex()][p_other->getSEIndex()]) / sqrd_dist;
                     s = s * s * s; // s = sqr(s) * s
-                    double f = 24 * epsilon * s / sqrd_dist * (1 - 2 * s);
+                    //double f = 24 * epsilon * s / sqrd_dist * (1 - 2 * s);
+                    double f = 24 * epsilonTable[p->getSEIndex()][p_other->getSEIndex()] * s / sqrd_dist * (1 - 2 * s);
 
                     auto force = f * (mirroredX - p->getX());
 
@@ -251,6 +259,14 @@ namespace calculator {
                 }
             }
         }
+    }
+
+    void LinkedCell::setSigmaTable(const std::vector<std::vector<double>> &sT) {
+        LinkedCell::sigmaTable = sT;
+    }
+
+    void LinkedCell::setEpsilonTable(const std::vector<std::vector<double>> &eT) {
+        LinkedCell::epsilonTable = eT;
     }
 
     std::string LinkedCell::toString() {

@@ -4,9 +4,9 @@
 
 class ParticleGenerator {
 public:
-    static void generateParticles(ParticleContainer &particles, const std::string &file);
+    static std::vector<std::pair<int, std::pair<double,double>>> generateParticles(ParticleContainer &particles, const std::string &file);
 
-    static void generateParticles(ParticleContainer &particles, const std::string &file, int startSEIndex);
+    static std::vector<std::pair<int, std::pair<double,double>>> generateParticles(ParticleContainer &particles, const std::string &file, int startSEIndex);
 
     enum geometric_type{
         cuboid,
@@ -22,6 +22,10 @@ public:
         std::array<double,3> vel;
         // mass of particles
         double mass;
+
+        double sigma;
+
+        double epsilon;
         // distance between particles
         double distance;
         // mean velocity of brownian motion
@@ -32,9 +36,9 @@ public:
         // only used for cuboid
         std::array<int,3> N;
     };
-    static void generateParticles(ParticleContainer &particles, const std::vector<ShapeInfo>& infovec);
+    static std::vector<std::pair<int, std::pair<double,double>>> generateParticles(ParticleContainer &particles, const std::vector<ShapeInfo>& infovec);
 
-    static void generateParticles(ParticleContainer &particles, const std::vector<ShapeInfo>& infovec, int startSEIndex);
+    static std::vector<std::pair<int, std::pair<double,double>>> generateParticles(ParticleContainer &particles, const std::vector<ShapeInfo>& infovec, int startSEIndex);
 
 private:
 

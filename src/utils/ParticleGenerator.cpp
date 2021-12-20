@@ -8,35 +8,44 @@
 
 #include <nlohmann/json.hpp>
 
-void ParticleGenerator::generateParticles(ParticleContainer &particles, const std::vector<ShapeInfo>& infovec, int startSEIndex) {
+std::vector<std::pair<int, std::pair<double,double>>> ParticleGenerator::generateParticles(ParticleContainer &particles, const std::vector<ShapeInfo>& infovec, int startSEIndex) {
     int index = startSEIndex;
+    std::vector<std::pair<int, std::pair<double,double>>> mapping {};
     for(auto &info : infovec){
         switch (info.type){
             case cuboid:
                 generateCuboid(particles, info, index);
+                mapping.push_back({index, {info.epsilon, info.sigma}});
                 break;
             case sphere:
                 generateSphere(particles, info, index);
+                mapping.push_back({index, {info.epsilon, info.sigma}});
                 break;
         }
         index++;
     }
+    return mapping;
 }
 
-void ParticleGenerator::generateParticles(ParticleContainer &particles, const std::string &file, int startSEIndex) {
+std::vector<std::pair<int, std::pair<double,double>>> ParticleGenerator::generateParticles(ParticleContainer &particles, const std::string &file, int startSEIndex) {
     std::vector<ShapeInfo> infovec = readJSON(file);
     int index = startSEIndex;
+    std::vector<std::pair<int, std::pair<double,double>>> mapping {};
+
     for(auto &info : infovec){
         switch (info.type){
             case cuboid:
                 generateCuboid(particles, info, index);
+                mapping.push_back({index, {info.epsilon, info.sigma}});
                 break;
             case sphere:
                 generateSphere(particles, info, index);
+                mapping.push_back({index, {info.epsilon, info.sigma}});
                 break;
         }
         index++;
     }
+    return mapping;
 }
 
 std::vector<ParticleGenerator::ShapeInfo> ParticleGenerator::readJSON(const std::string &file){
@@ -86,7 +95,7 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles, const Shape
                 Particle part{};
                 // add browian motion
                 auto tempVel = info.vel + maxwellBoltzmannDistributedVelocity(info.brownianFactor, info.DIM);
-                part = Particle{currentPos, tempVel, info.mass, 0, current_seindex};
+                part = Particle{currentPos, tempVel, info.mass, current_seindex, current_seindex};
                 particles.emplace_back(part);
                 currentPos[0] += info.distance;
             }
@@ -129,7 +138,7 @@ void ParticleGenerator::generateSphere(ParticleContainer &particles, const Shape
                 if(distance <= info.radius * info.distance + 0.00001){
                     Particle part;
                     auto tempVel = info.vel + maxwellBoltzmannDistributedVelocity(info.brownianFactor, info.DIM);
-                    particles.emplace_back(Particle{currentPos, tempVel, info.mass, 0, current_seindex});
+                    particles.emplace_back(Particle{currentPos, tempVel, info.mass, current_seindex, current_seindex});
                 }
                 currentPos[0] += info.distance;
             }
@@ -180,10 +189,10 @@ void ParticleGenerator::generateSphere2(ParticleContainer &particles, const Shap
     }
 }
 
-void ParticleGenerator::generateParticles(ParticleContainer &particles, const std::string &file) {
-    generateParticles(particles, file, 0);
+std::vector<std::pair<int, std::pair<double,double>>> ParticleGenerator::generateParticles(ParticleContainer &particles, const std::string &file) {
+    return generateParticles(particles, file, 0);
 }
 
-void ParticleGenerator::generateParticles(ParticleContainer &particles, const std::vector<ShapeInfo> &infovec) {
-    generateParticles(particles, infovec, 0);
+std::vector<std::pair<int, std::pair<double,double>>> ParticleGenerator::generateParticles(ParticleContainer &particles, const std::vector<ShapeInfo> &infovec) {
+    return generateParticles(particles, infovec, 0);
 }

@@ -120,6 +120,9 @@ void XMLReader::insertGeneratorInfo(std::vector<ParticleGenerator::ShapeInfo>& g
             break;
     }
 
+    shapeInfo.sigma = info.sigma();
+    shapeInfo.epsilon = info.epsilon();
+
     genInfos.push_back(shapeInfo);
 }
 
