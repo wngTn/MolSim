@@ -7,7 +7,7 @@ struct Cell {
     /**
      * Normal default constructor
      */
-    Cell() : particles{std::vector<Particle*>{}} {};
+    Cell();
 
     void setParticles(const std::vector<Particle*> &particlesV) {
         Cell::particles = particlesV;
@@ -71,11 +71,45 @@ struct Cell {
      */
     void toString();
 
+    [[nodiscard]] const std::array<int, 3> &getIndex() const;
+
+    void setIndex(const std::array<int, 3> &indexV);
+
+    [[nodiscard]] const std::vector<std::array<int, 3>> &getNeighbors2D() const;
+
+    void setNeighbors2D(const std::vector<std::array<int, 3>> &neighbors2DV);
+
+    [[nodiscard]] const std::vector<std::array<int, 3>> &getNeighbors3D() const;
+
+    void setNeighbors3D(const std::vector<std::array<int, 3>> &neighbors3DV);
+
+    void setNeighbors2D();
+
+    void setNeighbors3D();
+
+
+
 private:
+
     /**
      * The Particles in each cell
      */
     std::vector<Particle*> particles;
+
+    /**
+     * The index of the cell
+     */
+    std::array<int, 3> index{};
+
+    /**
+     * The 2D neighbors of this cell
+     */
+    std::vector<std::array<int, 3>> neighbors2D{};
+
+    /**
+     * The 3D neighbors of this cell
+     */
+    std::vector<std::array<int, 3>> neighbors3D{};
 
 };
 

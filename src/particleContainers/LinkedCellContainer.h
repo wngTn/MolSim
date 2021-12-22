@@ -109,14 +109,7 @@ public:
      * @param d the axis we are currently in
      * @return
      */
-    std::tuple<Border, int> getBorders(const std::array<int, 3> & currentIndexes, int d);
-
-    /**
-     * Returns a vector of neighbor indices depending on the dimension
-     * @param currentIndex the current index of our particle
-     * @return a vector of the indices of the neighbor
-     */
-    [[nodiscard]] std::vector<std::array<int, 3>> getNeighbors (const std::array<int, 3> & currentIndex) const;
+    [[nodiscard]] std::tuple<Border, int> getBorders(const std::array<int, 3> & currentIndexes, int d) const;
 
 
     /**
@@ -143,14 +136,14 @@ public:
      * @param currentIndexes the current indexes in the three dimensions
      * @return The index
      */
-    inline int index(const std::array<int , 3> & currentIndexes);
+    [[nodiscard]] inline int index(const std::array<int , 3> & currentIndexes) const;
 
     /**
      * Calculates whether the neighbor cell is included as periodic neighbor
      * @param neighbor the index of the neighbor
      * @return true if it counts as periodic neighbor, false if not
      */
-    bool isPeriodic(const std::array<int, 3> & neighbor);
+    [[nodiscard]] bool isPeriodic(const std::array<int, 3> & neighbor) const;
 
 
     /***** Getters *****/
@@ -264,6 +257,6 @@ bool inline LinkedCellContainer::isNeighborInRange(const Particle *p, const std:
     return distance <= midPointEdgeRange + rCut;
 }
 
-int LinkedCellContainer::index(const std::array<int, 3> &currentIndexes) {
+int LinkedCellContainer::index(const std::array<int, 3> &currentIndexes) const {
     return currentIndexes[0] + dim[0] * (currentIndexes[1] + dim[1] * currentIndexes[2]);
 }
