@@ -35,45 +35,53 @@ namespace calculator {
                 // iterate through the Z axis
                 for (currentIndexes[2] = 0; currentIndexes[2] < grid.getDim()[2]; ++currentIndexes[2]) {
 
-                    auto &curCell = grid.grid[grid.index(currentIndexes)];
+                    // checks if it is a border cell
+                    if (currentIndexes[0] == 0 || currentIndexes[0] == grid.getDim()[0] - 1 ||
+                        currentIndexes[1] == 0 || currentIndexes[1] == grid.getDim()[1] - 1 ||
+                        currentIndexes[2] == 0 || currentIndexes[2] == grid.getDim()[2] - 1) {
 
-                    for (auto &it: curCell) {
-                        /*if(!it->valid){
-                            continue;
-                        }*/
-                        // Checks whether any particle has crossed the boundaries
-                        for (int d = 0; d < 3; ++d) {
-                            if (it->getX()[d] < 0) {
-                                // outflow, removing the particle
-                                if (std::get<0>(grid.getBorders(currentIndexes, d)) == LinkedCellContainer::outflow) {
-                                    spdlog::info("Removing Particle");
-                                    it->valid = false;
-                                    break;
-                                }
-                                    // periodic
-                                else if (std::get<0>(grid.getBorders(currentIndexes, d)) ==
-                                         LinkedCellContainer::periodic) {
-                                    // set X to the opposite site
-                                    spdlog::info("Particle was at d: {} and position {} {} {} now at {}", d,
-                                                 it->getX()[0], it->getX()[1], it->getX()[2],
-                                                 grid.getLenDim()[d] + it->getX()[d]);
-                                    it->setX(d, grid.getLenDim()[d] + it->getX()[d]);
-                                }
-                            } else if (it->getX()[d] >= grid.getLenDim()[d]) {
-                                // outflow, removing the particle
-                                if (std::get<0>(grid.getBorders(currentIndexes, d)) == LinkedCellContainer::outflow) {
-                                    spdlog::info("Removing Particle");
-                                    it->valid = false;
-                                    break;
-                                }
-                                    // periodic
-                                else if (std::get<0>(grid.getBorders(currentIndexes, d)) ==
-                                         LinkedCellContainer::periodic) {
-                                    // set X to the opposite site
-                                    spdlog::info("Particle was at d: {} and position {} {} {} now at {}", d,
-                                                 it->getX()[0], it->getX()[1], it->getX()[2],
-                                                 it->getX()[d] - grid.getLenDim()[d]);
-                                    it->setX(d, it->getX()[d] - grid.getLenDim()[d]);
+                        auto &curCell = grid.grid[grid.index(currentIndexes)];
+
+                        for (auto &it: curCell) {
+                            /*if(!it->valid){
+                                continue;
+                            }*/
+                            // Checks whether any particle has crossed the boundaries
+                            for (int d = 0; d < 3; ++d) {
+                                if (it->getX()[d] < 0) {
+                                    // outflow, removing the particle
+                                    if (std::get<0>(grid.getBorders(currentIndexes, d)) ==
+                                        LinkedCellContainer::outflow) {
+                                        spdlog::info("Removing Particle");
+                                        it->valid = false;
+                                        break;
+                                    }
+                                        // periodic
+                                    else if (std::get<0>(grid.getBorders(currentIndexes, d)) ==
+                                             LinkedCellContainer::periodic) {
+                                        // set X to the opposite site
+                                        spdlog::info("Particle was at d: {} and position {} {} {} now at {}", d,
+                                                     it->getX()[0], it->getX()[1], it->getX()[2],
+                                                     grid.getLenDim()[d] + it->getX()[d]);
+                                        it->setX(d, grid.getLenDim()[d] + it->getX()[d]);
+                                    }
+                                } else if (it->getX()[d] >= grid.getLenDim()[d]) {
+                                    // outflow, removing the particle
+                                    if (std::get<0>(grid.getBorders(currentIndexes, d)) ==
+                                        LinkedCellContainer::outflow) {
+                                        spdlog::info("Removing Particle");
+                                        it->valid = false;
+                                        break;
+                                    }
+                                        // periodic
+                                    else if (std::get<0>(grid.getBorders(currentIndexes, d)) ==
+                                             LinkedCellContainer::periodic) {
+                                        // set X to the opposite site
+                                        spdlog::info("Particle was at d: {} and position {} {} {} now at {}", d,
+                                                     it->getX()[0], it->getX()[1], it->getX()[2],
+                                                     it->getX()[d] - grid.getLenDim()[d]);
+                                        it->setX(d, it->getX()[d] - grid.getLenDim()[d]);
+                                    }
                                 }
                             }
                         }
@@ -200,7 +208,10 @@ namespace calculator {
                     // get the Cell in the current index
                     for (auto &p: grid.grid[grid.index(currentIndexes)]) {
                         // get all the neighbors
-                        for (const std::array<int, 3> &neighbors: grid.getNeighbors(currentIndexes)) {
+                        for (const std::array<int, 3> &neighbors :
+                            (grid.is2D() ?
+                                grid.grid[grid.index(currentIndexes)].getNeighbors2D()
+                                : grid.grid[grid.index(currentIndexes)].getNeighbors3D())) {
 
                             // Neighbor should be existing
                             if (neighbors[0] < grid.getDim()[0] && neighbors[1] < grid.getDim()[1] &&

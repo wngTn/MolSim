@@ -12,7 +12,27 @@ LinkedCellContainer::LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV, s
                                static_cast<int>(std::floor(Yv / rCutV)),
                                (static_cast<int>(std::floor(Zv / rCutV))) == 0 ? 1 :
                                static_cast<int>(std::floor(Zv / rCutV))}},
-        lenDim{std::array<int, 3>{Xv, Yv, Zv}}, rCut{rCutV}, border{borderV}, g{g} {}
+        lenDim{std::array<int, 3>{Xv, Yv, Zv}}, rCut{rCutV}, border{borderV}, g{g} {
+    int i{0};
+    std::array<int, 3> currentIndexes{};
+    // iterate through Z axis
+    for (currentIndexes[2] = 0; currentIndexes[2] < dim[2]; ++currentIndexes[2]) {
+        // iterate through the Y axis
+        for (currentIndexes[1] = 0; currentIndexes[1] < dim[1]; ++currentIndexes[1]) {
+            // iterate through the X axis
+            for (currentIndexes[0] = 0; currentIndexes[0] < dim[0]; ++currentIndexes[0]) {
+                grid[i].setIndex(currentIndexes);
+                if (is2D()) {
+                    grid[i].setNeighbors2D();
+                }
+                else {
+                    grid[i].setNeighbors3D();
+                }
+                i++;
+            }
+        }
+    }
+}
 
 
 void LinkedCellContainer::setup() {
@@ -38,39 +58,6 @@ void LinkedCellContainer::cleanup() {
     // use erase-remove idiom
     particles.erase(std::remove_if(particles.begin(),
                                    particles.end(), [](Particle &p) { return !p.valid; }), particles.end());
-}
-
-std::vector<std::array<int, 3>> LinkedCellContainer::getNeighbors(const std::array<int, 3> &currentIndex) const {
-    // We are in 2D
-    if (LinkedCellContainer::getDim()[2] == 1) {
-        std::vector<std::array<int, 3>> neighbors(4);
-        neighbors = {
-                std::array<int, 3>{currentIndex[0], currentIndex[1] + 1, currentIndex[2]},
-                std::array<int, 3>{currentIndex[0] + 1, currentIndex[1], currentIndex[2]},
-                std::array<int, 3>{currentIndex[0] + 1, currentIndex[1] + 1, currentIndex[2]},
-                std::array<int, 3>{currentIndex[0] - 1, currentIndex[1] + 1, currentIndex[2]}
-        };
-        return neighbors;
-    } else {
-        std::vector<std::array<int, 3>> neighbors(13);
-        neighbors = {
-                std::array<int, 3>{currentIndex[0], currentIndex[1] + 1, currentIndex[2]},
-                std::array<int, 3>{currentIndex[0] + 1, currentIndex[1], currentIndex[2]},
-                std::array<int, 3>{currentIndex[0] + 1, currentIndex[1] + 1, currentIndex[2]},
-                std::array<int, 3>{currentIndex[0] - 1, currentIndex[1] + 1, currentIndex[2]},
-
-                std::array<int, 3>{currentIndex[0], currentIndex[1], currentIndex[2] + 1},
-                std::array<int, 3>{currentIndex[0], currentIndex[1] + 1, currentIndex[2] + 1},
-                std::array<int, 3>{currentIndex[0] + 1, currentIndex[1], currentIndex[2] + 1},
-                std::array<int, 3>{currentIndex[0] + 1, currentIndex[1] + 1, currentIndex[2] + 1},
-                std::array<int, 3>{currentIndex[0] - 1, currentIndex[1], currentIndex[2] + 1},
-                std::array<int, 3>{currentIndex[0], currentIndex[1] - 1, currentIndex[2] + 1},
-                std::array<int, 3>{currentIndex[0] - 1, currentIndex[1] - 1, currentIndex[2] + 1},
-                std::array<int, 3>{currentIndex[0] - 1, currentIndex[1] + 1, currentIndex[2] + 1},
-                std::array<int, 3>{currentIndex[0] + 1, currentIndex[1] - 1, currentIndex[2] + 1},
-        };
-        return neighbors;
-    }
 }
 
 bool LinkedCellContainer::isPeriodic(const std::array<int, 3> &neighbor) const {

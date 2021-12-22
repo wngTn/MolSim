@@ -111,13 +111,6 @@ public:
      */
     [[nodiscard]] std::tuple<Border, int> getBorders(const std::array<int, 3> & currentIndexes, int d) const;
 
-    /**
-     * Returns a vector of neighbor indices depending on the dimension
-     * @param currentIndex the current index of our particle
-     * @return a vector of the indices of the neighbor
-     */
-    [[nodiscard]] std::vector<std::array<int, 3>> getNeighbors (const std::array<int, 3> & currentIndex) const;
-
 
     /**
      * Returns a vector of neighbor indices depending on the border it should be mirrored at
