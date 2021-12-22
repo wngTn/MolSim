@@ -85,7 +85,7 @@ int main(int argc, char *argv[]) {
     }
     if(config.checkpointing){
         CheckpointWriter::writeCheckpoint(config.checkpointOutput, *particles, *calc, iteration);
-        std::cout << "Wrote checkpoint\n";
+        std::cout << "Wrote current state to checkpoint file: " << config.checkpointOutput << std::endl;
     }
     // ------ end calculation ------ //
     if(config.benchmarking){

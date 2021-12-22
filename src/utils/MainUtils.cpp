@@ -271,6 +271,14 @@ void MainUtils::printConfig(Config& config) {
         }
     }
 
+    if(!config.checkpointInput.empty()){
+        message.append("\n\u001b[36m\tCheckpoint Input:\u001b[0m ").append(config.checkpointInput);
+    }
+
+    if(config.checkpointing){
+        message.append("\n\u001b[36m\tCheckpoint Output:\u001b[0m ").append(config.checkpointOutput);
+    }
+
     if(!config.generatorInfos.empty()){
         message.append("\n\u001b[36m\tGenerator Input (XML):\u001b[0m " + std::to_string(config.generatorInfos.size()));
     }
