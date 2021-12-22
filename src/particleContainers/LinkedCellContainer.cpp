@@ -12,7 +12,27 @@ LinkedCellContainer::LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV, s
                                static_cast<int>(std::floor(Yv / rCutV)),
                                (static_cast<int>(std::floor(Zv / rCutV))) == 0 ? 1 :
                                static_cast<int>(std::floor(Zv / rCutV))}},
-        lenDim{std::array<int, 3>{Xv, Yv, Zv}}, rCut{rCutV}, border{borderV}, g{g} {}
+        lenDim{std::array<int, 3>{Xv, Yv, Zv}}, rCut{rCutV}, border{borderV}, g{g} {
+    int i{0};
+    std::array<int, 3> currentIndexes{};
+    // iterate through Z axis
+    for (currentIndexes[2] = 0; currentIndexes[2] < dim[2]; ++currentIndexes[2]) {
+        // iterate through the Y axis
+        for (currentIndexes[1] = 0; currentIndexes[1] < dim[1]; ++currentIndexes[1]) {
+            // iterate through the X axis
+            for (currentIndexes[0] = 0; currentIndexes[0] < dim[0]; ++currentIndexes[0]) {
+                grid[i].setIndex(currentIndexes);
+                if (is2D()) {
+                    grid[i].setNeighbors2D();
+                }
+                else {
+                    grid[i].setNeighbors3D();
+                }
+                i++;
+            }
+        }
+    }
+}
 
 
 void LinkedCellContainer::setup() {
@@ -45,40 +65,7 @@ void LinkedCellContainer::cleanup() {
                                    particles.end(), [](Particle &p) { return !p.valid; }), particles.end());
 }
 
-std::vector<std::array<int, 3>> LinkedCellContainer::getNeighbors(const std::array<int, 3> &currentIndex) const {
-    // We are in 2D
-    if (LinkedCellContainer::getDim()[2] == 1) {
-        std::vector<std::array<int, 3>> neighbors(4);
-        neighbors = {
-                std::array<int, 3>{currentIndex[0], currentIndex[1] + 1, currentIndex[2]},
-                std::array<int, 3>{currentIndex[0] + 1, currentIndex[1], currentIndex[2]},
-                std::array<int, 3>{currentIndex[0] + 1, currentIndex[1] + 1, currentIndex[2]},
-                std::array<int, 3>{currentIndex[0] - 1, currentIndex[1] + 1, currentIndex[2]}
-        };
-        return neighbors;
-    } else {
-        std::vector<std::array<int, 3>> neighbors(13);
-        neighbors = {
-                std::array<int, 3>{currentIndex[0], currentIndex[1] + 1, currentIndex[2]},
-                std::array<int, 3>{currentIndex[0] + 1, currentIndex[1], currentIndex[2]},
-                std::array<int, 3>{currentIndex[0] + 1, currentIndex[1] + 1, currentIndex[2]},
-                std::array<int, 3>{currentIndex[0] - 1, currentIndex[1] + 1, currentIndex[2]},
-
-                std::array<int, 3>{currentIndex[0], currentIndex[1], currentIndex[2] + 1},
-                std::array<int, 3>{currentIndex[0], currentIndex[1] + 1, currentIndex[2] + 1},
-                std::array<int, 3>{currentIndex[0] + 1, currentIndex[1], currentIndex[2] + 1},
-                std::array<int, 3>{currentIndex[0] + 1, currentIndex[1] + 1, currentIndex[2] + 1},
-                std::array<int, 3>{currentIndex[0] - 1, currentIndex[1], currentIndex[2] + 1},
-                std::array<int, 3>{currentIndex[0], currentIndex[1] - 1, currentIndex[2] + 1},
-                std::array<int, 3>{currentIndex[0] - 1, currentIndex[1] - 1, currentIndex[2] + 1},
-                std::array<int, 3>{currentIndex[0] - 1, currentIndex[1] + 1, currentIndex[2] + 1},
-                std::array<int, 3>{currentIndex[0] + 1, currentIndex[1] - 1, currentIndex[2] + 1},
-        };
-        return neighbors;
-    }
-}
-
-bool LinkedCellContainer::isPeriodic(const std::array<int, 3> &neighbor) {
+bool LinkedCellContainer::isPeriodic(const std::array<int, 3> &neighbor) const {
     bool result = true;
     for (int d = 0, b = 0; d < 3; ++d, b += 2) {
         if ((neighbor[d] < 0 && border[b] != periodic) || (neighbor[d] > dim[d] - 1 && border[b + 1] != periodic)) {
@@ -89,7 +76,7 @@ bool LinkedCellContainer::isPeriodic(const std::array<int, 3> &neighbor) {
 }
 
 std::tuple<LinkedCellContainer::Border, int>
-LinkedCellContainer::getBorders(const std::array<int, 3> &currentIndexes, int d) {
+LinkedCellContainer::getBorders(const std::array<int, 3> &currentIndexes, int d) const {
     // y value is zero --> upper border
     if (currentIndexes[1] <= 0 && d == 1) {
         return std::make_tuple(border[2], 2);
