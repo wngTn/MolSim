@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
     calc->setDeltaT(config.delta_t);
 
     double current_time = config.start_time;
-    int iteration = 0;
+    int iteration = config.start_iteration;
     // ------ end setup ------ //
     if(config.benchmarking){
         std::cout
@@ -82,6 +82,10 @@ int main(int argc, char *argv[]) {
         }
 
         current_time += config.delta_t;
+    }
+    if(config.checkpointing){
+        CheckpointWriter::writeCheckpoint(config.checkpointOutput, *particles, *calc, iteration);
+        std::cout << "Wrote checkpoint\n";
     }
     // ------ end calculation ------ //
     if(config.benchmarking){

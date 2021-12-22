@@ -156,3 +156,21 @@ std::ostream &operator<<(std::ostream &stream, Particle &p) {
     stream << p.toString();
     return stream;
 }
+
+
+
+void to_json(nlohmann::json& j, const Particle& p){
+    j = nlohmann::json{{"type", p.getType()}, {"se_index", p.getSEIndex()},
+                       {"force", p.getF()}, {"oldForce", p.getOldF()}, {"pos",p.getX()},
+                       {"vel", p.getV()}, {"mass", p.getM()}};
+}
+
+void from_json(const nlohmann::json&j, Particle& p){
+    j.at("type").get_to(p.type);
+    j.at("se_index").get_to(p.se_index);
+    j.at("force").get_to(p.f);
+    j.at("oldForce").get_to(p.old_f);
+    j.at("pos").get_to(p.x);
+    j.at("vel").get_to(p.v);
+    j.at("mass").get_to(p.m);
+}

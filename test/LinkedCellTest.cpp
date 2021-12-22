@@ -372,8 +372,8 @@ TEST(LinkedCellTest, LinkedCellMethodIntermediateTest) {
     lj2.calcF(particleContainer2);
 
     calculator::LinkedCell lc2{SIGMA, EPS, rCut};
-    lc.setEpsilonTable({{EPS}});
-    lc.setSigmaTable({{SIGMA}});
+    lc2.setEpsilonTable({{EPS}});
+    lc2.setSigmaTable({{SIGMA}});
     lc2.setDim(3);
     lc2.setDeltaT(delta_t);
     lc2.calcF(linkedCellContainer2);

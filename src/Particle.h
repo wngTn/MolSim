@@ -3,6 +3,8 @@
 #include <array>
 #include <string>
 
+#include "nlohmann/json.hpp"
+
 class Particle {
 
 private:
@@ -182,8 +184,16 @@ public:
      */
     [[nodiscard]] std::string toString() const;
 
+    friend void to_json(nlohmann::json&, const Particle&);
+    friend void from_json(const nlohmann::json&, Particle&);
 
 };
+
+
+//void to_json(json&, const Particle&);
+
+//void from_json(const json&, Particle& p);
+
 
 /**
  * @brief Overloaded << operator for easy console prints

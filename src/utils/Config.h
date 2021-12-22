@@ -8,6 +8,8 @@
 
 struct Config {
 public:
+/// iteration to start with, used for checkpointing
+    int start_iteration;
 /// Default start_time (end_time - start_time = total_runtime)
     double start_time = 0;
 
@@ -28,6 +30,15 @@ public:
 
 /// base file name of the output files
     std::string output_file = "output";
+
+/// whether checkpointing is used
+    bool checkpointing;
+
+/// input file from a previous checkpoint
+    std::string checkpointInput;
+
+/// filename for checkpointing output
+    std::string checkpointOutput;
 
 /// Default dimension
     int DIM = 3;

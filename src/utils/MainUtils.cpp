@@ -101,6 +101,7 @@ std::unique_ptr<PhysicsCalc> MainUtils::get_calculator(Config& config) {
                 auto c = std::make_unique<calculator::LinkedCell>(config.sigma, config.eps, config.rCut);
                 c->setSigmaTable(sigmaTable);
                 c->setEpsilonTable(epsilonTable);
+                c->setMapping(se_mapping);
                 return c;
             }
             return std::make_unique<calculator::LennardJones>(config.sigma, config.eps);
@@ -141,22 +142,26 @@ void MainUtils::initializeParticles(ParticleContainer &particles, Config& config
         initializeBrownianMotion(particles, config.brownianMotionMean);
     }
     // if there are already generated particles, those have type 0
-    auto typeToSE = std::vector<std::pair<int, std::pair<double,double>>>{};
     if((!config.filename.empty() || config.randomGen) && config.calc_type == PhysicsCalc::lennardJones){
-        typeToSE.push_back({0, {config.sigma, config.eps}});
+        se_mapping.push_back({0, {config.sigma, config.eps}});
     }
+
+    if(!config.checkpointInput.empty()){
+        CheckpointReader::readCheckpoint(config.checkpointInput, particles, se_mapping, config);
+    }
+
     // generate Particles from generator input JSONs
     for(auto& genFile : config.generator_files){
         // TODO handle se index
-        auto newTypeToSe = ParticleGenerator::generateParticles(particles, genFile, typeToSE.size());
-        typeToSE.insert(typeToSE.begin(), newTypeToSe.begin(), newTypeToSe.end());
+        auto newTypeToSe = ParticleGenerator::generateParticles(particles, genFile, sigmaTable.size() + se_mapping.size());
+        se_mapping.insert(se_mapping.begin(), newTypeToSe.begin(), newTypeToSe.end());
     }
     // generate Particles directly specified in XML
-    // TODO handle se index
-    auto newTypeToSe = ParticleGenerator::generateParticles(particles, config.generatorInfos);
-    typeToSE.insert(typeToSE.begin(), newTypeToSe.begin(), newTypeToSe.end());
+    // adapt for checkpointing
+    auto newTypeToSe = ParticleGenerator::generateParticles(particles, config.generatorInfos, sigmaTable.size() + se_mapping.size());
+    se_mapping.insert(se_mapping.begin(), newTypeToSe.begin(), newTypeToSe.end());
     if(config.calc_type == PhysicsCalc::lennardJones && config.linkedCell){
-        buildSETable(typeToSE);
+        buildSETable(se_mapping);
     }
 
 }
@@ -179,26 +184,6 @@ void MainUtils::buildSETable(std::vector<std::pair<int, std::pair<double, double
             epsilonTable[t2][t1] = eps_mixed;
         }
     }
-    /*for_each(sigmaTable.begin(),
-             sigmaTable.end(),
-             [](const auto & row ) {
-                 for_each(row.begin(), row.end(),
-                          [](const auto & elem){
-                              std::cout<<elem<<", ";
-                          });
-                 std::cout<<std::endl;
-             });
-    std::cout<<std::endl;
-    for_each(epsilonTable.begin(),
-             epsilonTable.end(),
-             [](const auto & row ) {
-                 for_each(row.begin(), row.end(),
-                          [](const auto & elem){
-                              std::cout<<elem<<", ";
-                          });
-                 std::cout<<std::endl;
-             });
-    std::cout<<std::endl;*/
 }
 
 void MainUtils::logParticle(ParticleContainer &particles) {
@@ -260,6 +245,10 @@ void MainUtils::parseXML(Config& config) {
         config.targetTemperature = info.t_target;
         config.maxDeltaTemperature = info.delta_temp;
     }
+    config.checkpointing = !info.checkpointOutput.empty();
+    config.checkpointOutput = info.checkpointOutput;
+    config.checkpointInput = info.checkpointInput;
+
     spdlog::info("Finished XML parsing!");
 }
 

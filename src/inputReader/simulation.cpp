@@ -1290,6 +1290,66 @@ thermostat (::std::unique_ptr< thermostat_type > x)
   this->thermostat_.set (std::move (x));
 }
 
+const simulation_t::checkpointInput_optional& simulation_t::
+checkpointInput () const
+{
+  return this->checkpointInput_;
+}
+
+simulation_t::checkpointInput_optional& simulation_t::
+checkpointInput ()
+{
+  return this->checkpointInput_;
+}
+
+void simulation_t::
+checkpointInput (const checkpointInput_type& x)
+{
+  this->checkpointInput_.set (x);
+}
+
+void simulation_t::
+checkpointInput (const checkpointInput_optional& x)
+{
+  this->checkpointInput_ = x;
+}
+
+void simulation_t::
+checkpointInput (::std::unique_ptr< checkpointInput_type > x)
+{
+  this->checkpointInput_.set (std::move (x));
+}
+
+const simulation_t::checkpointOutput_optional& simulation_t::
+checkpointOutput () const
+{
+  return this->checkpointOutput_;
+}
+
+simulation_t::checkpointOutput_optional& simulation_t::
+checkpointOutput ()
+{
+  return this->checkpointOutput_;
+}
+
+void simulation_t::
+checkpointOutput (const checkpointOutput_type& x)
+{
+  this->checkpointOutput_.set (x);
+}
+
+void simulation_t::
+checkpointOutput (const checkpointOutput_optional& x)
+{
+  this->checkpointOutput_ = x;
+}
+
+void simulation_t::
+checkpointOutput (::std::unique_ptr< checkpointOutput_type > x)
+{
+  this->checkpointOutput_.set (std::move (x));
+}
+
 const simulation_t::t_end_type& simulation_t::
 t_end () const
 {
@@ -2861,6 +2921,8 @@ simulation_t (const container_type& container,
   outputFile_ (outputFile, this),
   generatorInfo_ (this),
   thermostat_ (this),
+  checkpointInput_ (this),
+  checkpointOutput_ (this),
   t_end_ (t_end, this),
   delta_t_ (delta_t, this),
   writeFrequency_ (writeFrequency, this),
@@ -2885,6 +2947,8 @@ simulation_t (::std::unique_ptr< container_type > container,
   outputFile_ (outputFile, this),
   generatorInfo_ (this),
   thermostat_ (this),
+  checkpointInput_ (this),
+  checkpointOutput_ (this),
   t_end_ (t_end, this),
   delta_t_ (delta_t, this),
   writeFrequency_ (writeFrequency, this),
@@ -2905,6 +2969,8 @@ simulation_t (const simulation_t& x,
   outputFile_ (x.outputFile_, f, this),
   generatorInfo_ (x.generatorInfo_, f, this),
   thermostat_ (x.thermostat_, f, this),
+  checkpointInput_ (x.checkpointInput_, f, this),
+  checkpointOutput_ (x.checkpointOutput_, f, this),
   t_end_ (x.t_end_, f, this),
   delta_t_ (x.delta_t_, f, this),
   writeFrequency_ (x.writeFrequency_, f, this),
@@ -2925,6 +2991,8 @@ simulation_t (const ::xercesc::DOMElement& e,
   outputFile_ (this),
   generatorInfo_ (this),
   thermostat_ (this),
+  checkpointInput_ (this),
+  checkpointOutput_ (this),
   t_end_ (this),
   delta_t_ (this),
   writeFrequency_ (this),
@@ -3033,6 +3101,34 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!this->thermostat_)
       {
         this->thermostat_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // checkpointInput
+    //
+    if (n.name () == "checkpointInput" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< checkpointInput_type > r (
+        checkpointInput_traits::create (i, f, this));
+
+      if (!this->checkpointInput_)
+      {
+        this->checkpointInput_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // checkpointOutput
+    //
+    if (n.name () == "checkpointOutput" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< checkpointOutput_type > r (
+        checkpointOutput_traits::create (i, f, this));
+
+      if (!this->checkpointOutput_)
+      {
+        this->checkpointOutput_.set (::std::move (r));
         continue;
       }
     }
@@ -3147,6 +3243,8 @@ operator= (const simulation_t& x)
     this->outputFile_ = x.outputFile_;
     this->generatorInfo_ = x.generatorInfo_;
     this->thermostat_ = x.thermostat_;
+    this->checkpointInput_ = x.checkpointInput_;
+    this->checkpointOutput_ = x.checkpointOutput_;
     this->t_end_ = x.t_end_;
     this->delta_t_ = x.delta_t_;
     this->writeFrequency_ = x.writeFrequency_;
@@ -4086,6 +4184,30 @@ operator<< (::xercesc::DOMElement& e, const simulation_t& i)
         e));
 
     s << *i.thermostat ();
+  }
+
+  // checkpointInput
+  //
+  if (i.checkpointInput ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "checkpointInput",
+        e));
+
+    s << *i.checkpointInput ();
+  }
+
+  // checkpointOutput
+  //
+  if (i.checkpointOutput ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "checkpointOutput",
+        e));
+
+    s << *i.checkpointOutput ();
   }
 
   // t_end

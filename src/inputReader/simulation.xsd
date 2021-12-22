@@ -121,6 +121,8 @@
             <xs:element name="outputFile" type="xs:string" />
             <xs:element minOccurs = "0" maxOccurs="unbounded" name="generatorInfo" type="generator_info_t"/>
             <xs:element minOccurs = "0" name = "thermostat" type="thermostat_info_t" />
+            <xs:element minOccurs = "0" name = "checkpointInput" type="xs:string" />
+            <xs:element minOccurs = "0" name = "checkpointOutput" type="xs:string" />
         </xs:sequence>
         <xs:attribute name="t_end" type="xs:decimal" use="required"/>
         <xs:attribute name="delta_t" type="xs:decimal" use="required"/>

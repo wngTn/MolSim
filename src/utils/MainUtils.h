@@ -14,6 +14,8 @@
 #include "utils/ParticleGenerator.h"
 #include "utils/MaxwellBoltzmannDistribution.h"
 #include "inputReader/XMLReader.h"
+#include "outputWriter/CheckpointWriter.h"
+#include "inputReader/CheckpointReader.h"
 
 #include <unistd.h>
 #include <memory>
@@ -27,8 +29,11 @@
 
 static std::vector<std::vector<double>> sigmaTable;
 static std::vector<std::vector<double>> epsilonTable;
+static std::vector<std::pair<int, std::pair<double,double>>> se_mapping;
+
 
 struct MainUtils {
+
 
     /**
      * @brief Parse command line arguments and set static values accordingly
@@ -63,6 +68,8 @@ struct MainUtils {
     static void printConfig(Config& config);
 
     static void initializeLogger();
+
+
 
 private:
 

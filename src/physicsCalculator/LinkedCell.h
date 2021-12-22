@@ -7,11 +7,16 @@
 #include "utils/ArrayUtils.h"
 #include "spdlog/spdlog.h"
 
+#include "nlohmann/json.hpp"
+
 namespace calculator {
     class LinkedCell : public PhysicsCalc{
 
     public:
-        LinkedCell(double sigma, double epsilon, double rCut) : sigma(sigma), epsilon(epsilon), rCut{rCut}{};
+        LinkedCell(double sigma, double epsilon, double rCut) : sigma(sigma), epsilon(epsilon), rCut{rCut}{
+            epsilonTable = {{epsilon}};
+            sigmaTable = {{sigma}};
+        };
 
         std::string toString() override;
 
@@ -48,6 +53,8 @@ namespace calculator {
 
         void setEpsilonTable(const std::vector<std::vector<double>> &epsilonTable);
 
+        void setMapping(std::vector<std::pair<int, std::pair<double, double>>>& mapping);
+
     private:
 
         inline void ljforce(Particle* p1, Particle* p2, double sqrd_dist) const;
@@ -74,6 +81,14 @@ namespace calculator {
 
         std::vector<std::vector<double>> sigmaTable = {{0.0}};
         std::vector<std::vector<double>> epsilonTable = {{0.0}};
+        std::vector<std::pair<int, std::pair<double, double>>> mapping = {};
+
+        using json = nlohmann::json;
+
+        friend void to_json(json&, const LinkedCell&);
+
+        friend void from_json(const json&, LinkedCell& p);
+
     };
 
     template<typename T>
@@ -94,15 +109,16 @@ namespace calculator {
         // set old force
         // p1->setOldF(p1->getF());
         // p2->setOldF(p2->getF());
-        if(force[0] > 500 || force[1] > 500 || force[2] > 500){
-           // std::cout << "calculated high force with combined σ " << sigmaTable[p1->getSEIndex()][p2->getSEIndex()] << " and combined ε "
-           // << epsilonTable[p1->getSEIndex()][p2->getSEIndex()] << std::endl;
-        }
+        //if(force[0] > 500 || force[1] > 500 || force[2] > 500){
+            //std::cout << "calculated force with combined σ " << sigmaTable[p1->getSEIndex()][p2->getSEIndex()] << " and combined ε "
+            //<< epsilonTable[p1->getSEIndex()][p2->getSEIndex()] << std::endl;
+        //}
 
 
         p1->setF(p1->getF() + force);
         p2->setF(p2->getF() - force);
     }
+
 }
 
 

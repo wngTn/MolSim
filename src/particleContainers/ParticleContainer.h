@@ -104,5 +104,13 @@ public:
          return 3;
      };
 
+
+
+    friend void to_json(nlohmann::json& j, const ParticleContainer& container);
+
+    friend void from_json(const nlohmann::json&j, ParticleContainer& container);
+
 };
+
+using json = nlohmann::json;
 

@@ -269,8 +269,21 @@ namespace calculator {
         LinkedCell::epsilonTable = eT;
     }
 
+    void LinkedCell::setMapping(std::vector<std::pair<int, std::pair<double, double>>> & map) {
+        LinkedCell::mapping = map;
+    }
+
     std::string LinkedCell::toString() {
         return "LinkedCell";
+    }
+
+    void to_json(json& j, const LinkedCell& p){
+        j = nlohmann::json{{"mapping", p.mapping}};
+    }
+
+    void from_json(const nlohmann::json&j, LinkedCell& p){
+        j.at("mapping").get_to(p.mapping);
+        //j.at("epsilonTable").get_to(p.epsilonTable);
     }
 
 }

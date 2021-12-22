@@ -81,6 +81,18 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
 
     info.outputfile = sim->outputFile();
 
+    if(sim->checkpointInput().present()){
+        info.checkpointInput = sim->checkpointInput().get();
+    }else{
+        info.checkpointInput = "";
+    }
+
+    if(sim->checkpointOutput().present()){
+        info.checkpointOutput = sim->checkpointOutput().get();
+    }else{
+        info.checkpointOutput = "";
+    }
+
     info.generatorInputFiles = std::vector<std::string>{};
     for(auto& ginpf : sim->generatorFile()){
         info.generatorInputFiles.push_back(ginpf);
