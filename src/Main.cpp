@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
         auto runtimeDuration =
                 std::chrono::duration_cast<std::chrono::milliseconds>
                         (std::chrono::steady_clock::now() - start_calc).count();
-        double mups = static_cast<double>(particles->size()) * (config.end_time/config.delta_t) /
+        double mups = static_cast<double>(particles->size()) * iteration /
                       (static_cast<double>(runtimeDuration) / 1000);
         std::cout
                 << "\u001b[31mElapsed calculation time [milliseconds]:\u001b[0m "
