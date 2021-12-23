@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<simulation t_end="40" delta_t="0.0005" writeFrequency="50" outputWriter="vtk">
+<simulation t_end="40" delta_t="0.0005" writeFrequency="100" outputWriter="vtk">
      <container type="linkedcell">
         <rCut>3</rCut>
         <domainSizeX>303</domainSizeX>
@@ -22,10 +22,6 @@
     </calculator>
     <outputFile>output</outputFile>
     <checkpointInput>checkpoint_task3.json</checkpointInput>
-    <thermostat>
-        <nThermostat>1000</nThermostat>
-        <Tinit>0.5</Tinit>
-    </thermostat>
     <generatorInfo type="sphere">
         <x>150</x>
         <y>150</y>

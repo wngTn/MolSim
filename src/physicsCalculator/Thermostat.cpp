@@ -3,6 +3,7 @@
 #include "utils/MaxwellBoltzmannDistribution.h"
 
 #include <algorithm>
+#include <iostream>
 
 
 Thermostat::Thermostat(double initialTemperature, double targetTemperature, double maxDeltaTemperature)
@@ -24,7 +25,7 @@ double Thermostat::calculateCurrentTemp(ParticleContainer &particles){
 
 void Thermostat::scaleVelocities(ParticleContainer &particles, double beta) {
     for(auto &p : particles){
-        beta * p.getV();
+        p.setV(beta * p.getV());
     }
 }
 
