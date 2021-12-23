@@ -41,7 +41,7 @@ private:
     /**
      * Mass of this particle
      */
-    double m{};
+    double m{1};
 
 public:
     /**
