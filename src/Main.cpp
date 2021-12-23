@@ -45,12 +45,14 @@ int main(int argc, char *argv[]) {
     // ------ calculation ------ //
     auto start_calc = std::chrono::steady_clock::now();
     // initial setup
-    thermostat.setupTemperature(*particles);
+    if(config.useThermostat){
+        thermostat.setupTemperature(*particles);
+    }
     calc->calcX(*particles);
     particles->setup();
     calc->calcF(*particles);
     if (!config.benchmarking){
-        io->write(*particles, "output", iteration);
+        io->write(*particles, config.output_file, iteration);
     }
     // for this loop, we assume: current x, current f and current v are known
     while (current_time < config.end_time) {
