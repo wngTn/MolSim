@@ -13,7 +13,7 @@ Members:
 
 In this assignment we have used the compiler `g++ 11.1.0`.
 
-The run instructions and flags have changed slightly since last assignment:
+The run instructions and flags did not change since last assigment.
 
 ```shell
 ./MolSim [-x <XML_file>] [-i <input_file>] [-g <generator input>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calculator>] [-b <brownian_motion_velocity_mean>] [-r] [-m <execution_mode>]
@@ -286,7 +286,7 @@ Other measurements are still not too intelligible, for instance that the <tt>mov
 
 ## G++ vs ICPC ##
 
-We compared the <tt>g++ 10.2.0</tt> compiler with the <tt>icpc 2021.4</tt> compiler.
+We compared the <tt>g++ 10.2.0</tt> compiler with the <tt>icpc 2021.4</tt> compiler on the linux cluster.
 
 For both measurements we used this batch file:
 
@@ -317,15 +317,16 @@ CMake with icpc:
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/dss/dsshome1/lrz/sys/spack/.oneapi/opt/x86_64/intel-oneapi-compilers/2021.4.0-gcc-42kpqil/compiler/2021.4.0/linux/bin/intel64/icpc -DCMAKE_C_COMPILER=/dss/dsshome1/lrz/sys/spack/.oneapi/opt/x86_64/intel-oneapi-compilers/2021.4.0-gcc-42kpqil/compiler/2021.4.0/linux/bin/intel64/icc -DCMAKE_CXX_FLAGS="-O3 -ip -ipo -fast" ..
 ```
 
-Results:
+### Results ###
 
 ![](https://codimd.s3.shivering-isles.com/demo/uploads/cf07017085644abeba9f4568d.jpg)
 
+Intel takes the lead in this round!
 
 
 # Task 5.1 - Tuning the sequential Performance Part 1 #
 
-> ⚠️ **Codebase**: The following benchmarks and profiling have been done with the code base of assignment 3.
+> ⚠️ **Codebase**: The following benchmarks and profiling have been done with the code base of assignment 3 and input files from assignment 3.
 
 
 ## Profiling (DTrace) ##
@@ -339,12 +340,12 @@ In this example we have used the **Falling Drop** input file from assignment 3.
 Results are:
 
 - `calculator::LinkedCell::calcF` using ~83% of total sample time
-    - `calculator::LinkedCell::calcNeighbors` using ~75% of the sample time of its father `calcF`
-        - `calculator::LinkedCell::ljforce` using ~55% of the sample time of its father `calcNeighbors`
+  - `calculator::LinkedCell::calcNeighbors` using ~75% of the sample time of its father `calcF`
+    - `calculator::LinkedCell::ljforce` using ~55% of the sample time of its father `calcNeighbors`
 
-    - `calculator::LinkedCell::calcFWithinCell` using ~18 % of the sample time of its father `calcF`
-    - `calculator::LinkedCell::reflectiveBoundary` using ~7% of the sample time of its  father `calcF`
-    - `LinkedCellContainer::getNeighbors` using ~7% of the sample time of its father `calcF`
+  - `calculator::LinkedCell::calcFWithinCell` using ~18 % of the sample time of its father `calcF`
+  - `calculator::LinkedCell::reflectiveBoundary` using ~7% of the sample time of its  father `calcF`
+  - `LinkedCellContainer::getNeighbors` using ~7% of the sample time of its father `calcF`
 
 ## Profiling (Perf) ##
 
@@ -461,22 +462,22 @@ We were astonished about the 7% the `getNeighbors` method uses as sample time in
 Therefore we have added three member-attributes to the `Cell` class:
 - ```cpp=
     struct Cell {
-    /* Implementation */
-    private:
+        /* Implementation */
+        private:
+            /**
+         * The index of the cell
+         */
+        std::array<int, 3> index{};
+
         /**
-     * The index of the cell
-     */
-    std::array<int, 3> index{};
+         * The 2D neighbors of this cell
+         */
+        std::vector<std::array<int, 3>> neighbors2D{};
 
-    /**
-     * The 2D neighbors of this cell
-     */
-    std::vector<std::array<int, 3>> neighbors2D{};
-
-    /**
-     * The 3D neighbors of this cell
-     */
-    std::vector<std::array<int, 3>> neighbors3D{};
+        /**
+         * The 3D neighbors of this cell
+         */
+        std::vector<std::array<int, 3>> neighbors3D{};
     }
     ```
 
@@ -519,9 +520,9 @@ It has:
 Results are:
 
 - `calculator::LinkedCell::calcF` using ~84% of total sample time
-    - `calculator::LinkedCell::calcNeighbors` using **~63%** of the sample time of its father `calcF`
-    - `calculator::LinkedCell::calcFWithinCell` using **~14%** of the sample time of its father `calcF`
-    - `Particle::getX` using **~11%** of the sample time of its father `calcF`
+  - `calculator::LinkedCell::calcNeighbors` using **~63%** of the sample time of its father `calcF`
+  - `calculator::LinkedCell::calcFWithinCell` using **~14%** of the sample time of its father `calcF`
+  - `Particle::getX` using **~11%** of the sample time of its father `calcF`
 
 
 ## Squared Distance Calculation (Failure) ##
@@ -552,7 +553,7 @@ This change might not seem too dire, however, looking at *Quickbench*, these cha
 ![](https://codimd.s3.shivering-isles.com/demo/uploads/cf07017085644abeba9f45689.png)
 
 
-Almost twice as fast!
+Almost thrice as fast!
 
 Naturally, we abolished the loops and exchanged these three lines of code immediately.
 
@@ -560,9 +561,9 @@ Naturally, we abolished the loops and exchanged these three lines of code immedi
 
 Profiling with <tt>Dtrace</tt>, we had following results:
 - `calculator::LinkedCell::calcF` using ~86% of total sample time
-    - `calculator::LinkedCell::calcNeighbors` using **~73%** of the sample time of its father `calcF`
-    - `calculator::LinkedCell::calcFWithinCell` using **~12%** of the sample time of its father `calcF`
-    - `Particle::getX` using **~4%** of the sample time of its father `calcF`
+  - `calculator::LinkedCell::calcNeighbors` using **~73%** of the sample time of its father `calcF`
+  - `calculator::LinkedCell::calcFWithinCell` using **~12%** of the sample time of its father `calcF`
+  - `Particle::getX` using **~4%** of the sample time of its father `calcF`
 
 
 However, when we saw the runtime results, we were literally crying. These were tested with the `input/files/assignment_4/big_benchmark_test.xml` file.
@@ -573,40 +574,24 @@ However, when we saw the runtime results, we were literally crying. These were t
 After hours of contemplating we came to the conclusion that it must have something to do with memory alignment, references that are returned from `getX()` and some compiler magic. Nevertheless, we were kind of devastated.
 
 
-## Intel Compiler ##
-> ⛔️ **Intel Compiler**: We were not able to compile our code with icpc.
-
-We tried:
-
-```shell=
-$ which icpc
-/dss/dsshome1/lrz/sys/spack/release/21.1.1/opt/x86_64/intel/19.0.5-gcc-uglchea/compilers_and_libraries_2019.5.281/linux/bin/intel64/icpc
-
-$ which icc
-/dss/dsshome1/lrz/sys/spack/release/21.1.1/opt/x86_64/intel/19.0.5-gcc-uglchea/compilers_and_libraries_2019.5.281/linux/bin/intel64/icc
-```
-
-And then building the `Makefile` with:
-
-```shell=
-cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/dss/dsshome1/lrz/sys/spack/release/21.1.1/opt/x86_64/intel/19.0.5-gcc-uglchea/compilers_and_libraries_2019.5.281/linux/bin/intel64/icpc -DCMAKE_C_COMPILER=/dss/dsshome1/lrz/sys/spack/release/21.1.1/opt/x86_64/intel/19.0.5-gcc-uglchea/compilers_and_libraries_2019.5.281/linux/bin/intel64/icc
-```
-
-Compiling the project with `make -j` seems to be in vain, though - leading us to an awful lot of compiler errors.
-
-Even if we try to load
-
-
 ## Contest 1 (Sequential) ##
 
 Using our input file for task 2 with the end time set to 0.5 (to only get 1000 iterations) we had the following results on the Linux-Cluster:
 
-The input we used:
-- compiled with g++ 10.2.0
+The compiler we used:
+- compilation with g++ 10.2.0
 
 ```shell=
 $ cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/dss/dsshome1/lrz/sys/spack/release/21.1.1/opt/x86_64/gcc/10.2.0-gcc-ll77x2s/bin/g++ -DCMAKE_C_COMPILER=//dss/dsshome1/lrz/sys/spack/release/21.1.1/opt/x86_64/gcc/10.2.0-gcc-ll77x2s/bin/gcc ..
 ```
+- compilation with icpc 2021.4
+
+```shell=
+$ cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/dss/dsshome1/lrz/sys/spack/.oneapi/opt/x86_64/intel-oneapi-compilers/2021.4.0-gcc-42kpqil/compiler/2021.4.0/linux/bin/intel64/icpc -DCMAKE_C_COMPILER=/dss/dsshome1/lrz/sys/spack/.oneapi/opt/x86_64/intel-oneapi-compilers/2021.4.0-gcc-42kpqil/compiler/2021.4.0/linux/bin/intel64/icc -DCMAKE_CXX_FLAGS="-O3 -ip -ipo -fast" ..
+```
+
+The batch file used:
+
 ```
 #!/bin/bash
 
@@ -625,9 +610,21 @@ module load xerces-c
 ./MolSim/build/MolSim -x MolSim/input/files/assignment_4/input_week4_task2_big.xml -m benchmark
 ```
 
+### Result ###
+
+![](https://codimd.s3.shivering-isles.com/demo/uploads/cf07017085644abeba9f4568e.jpg)
+
+Table 4: Comparison of different compilers on input file of task 2
+
+|Input File|Compiler|MUPS/s|
+|---|---|---|
+|`input_week4_task2_big.xml`|<tt>g++ 10.2.0</tt>|899200|
+|`input_week4_task2_big.xml`|<tt>icpc 2021.4</tt>|929368|
 
 
 # Miscellaneous #
+
+### Water only liquid when frozen? ###
 
 We noticed one additional thing due to a bug in the code:
 In the thermostat we forgot to set the new scaled velocities and therefore didn't have any cooling for task 3.
@@ -638,30 +635,13 @@ We don't know why the particles need to be cooled so much (the β for scaling th
 
 Maybe it's just not possible to simulate water with the basic calculation methods we use without cooling it or maybe the excersise was specifically designed to have this behaviour, so the instructor directly notices when the cooling isn't correct.
 
+[Here](https://nextcloud.in.tum.de/index.php/s/t2KW2YYRwgK5jTH) videos of both simulations can be seen.
 
+### Cache misses ###
 
+We also tried to measure cache misses using the command `perf stat -e task-clock,cycles,instructions,cache-references,cache-misses`, but that didn't really give us any valuable information.
+The % of cache misses depends a lot on how filled the cell grid is, e.g. for a 10x10 square in the middle of a big domain we had 2-10% cache misses for a 200x200 domain and 35 - 55% misses for a 100x100 domain. This of course is due to the fact, that there are more cache references because there are way more cells. The absolute number of cache misses stayed the same for both domains.
 
+The first 100 iterations of the big simulation from task 2 had around 10% cache misses, but we don't really know whether this is good or bad and didn't really manage to consistently change this number. It's highly fluctuating as well: for some runs the same input even had ~50% misses.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+tldr: analyzing cache misses not useful
