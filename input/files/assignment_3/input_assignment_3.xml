@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<simulation t_end="10" delta_t="0.00005" writeFrequency="100" outputWriter="vtk">
+<simulation t_end="5" delta_t="0.00005" writeFrequency="100" outputWriter="vtk">
     <container type="linkedcell">
         <rCut>3.0</rCut>
         <domainSizeX>120</domainSizeX>
@@ -32,5 +32,7 @@
         <brownianFactor>0.1</brownianFactor>
         <dim>2</dim>
         <radius>15</radius>
+        <epsilon>5</epsilon>
+        <sigma>1</sigma>
     </generatorInfo>
 </simulation>
