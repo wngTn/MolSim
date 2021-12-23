@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<simulation t_end="40" delta_t="0.0005" writeFrequency="50" outputWriter="vtk">
+     <container type="linkedcell">
+        <rCut>3</rCut>
+        <domainSizeX>303</domainSizeX>
+        <domainSizeY>180</domainSizeY>
+        <domainSizeZ>1</domainSizeZ>
+        <borderType>
+            <left>reflective</left>
+            <right>reflective</right>
+            <upper>reflective</upper>
+            <lower>reflective</lower>
+            <front>outflow</front>
+            <back>outflow</back>
+        </borderType>
+    </container>
+    <calculator type="lennardjones">
+        <epsilon>1.0</epsilon>
+        <sigma>1.2</sigma>
+        <brownianMotion>0.0</brownianMotion>
+        <gravityFactor>-12.44</gravityFactor>
+    </calculator>
+    <outputFile>output</outputFile>
+    <checkpointInput>checkpoint_task3.json</checkpointInput>
+    <thermostat>
+        <nThermostat>1000</nThermostat>
+        <Tinit>0.5</Tinit>
+    </thermostat>
+    <generatorInfo type="sphere">
+        <x>150</x>
+        <y>150</y>
+        <z>0.0</z>
+        <v1>0.0</v1>
+        <v2>0.0</v2>
+        <v3>0.0</v3>
+        <mass>1.0</mass>
+        <distance>1.2</distance>
+        <brownianFactor>0.0</brownianFactor>
+        <dim>2</dim>
+        <epsilon>1.0</epsilon>
+        <sigma>1.2</sigma>
+        <radius>20</radius>
+    </generatorInfo>
+</simulation>

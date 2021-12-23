@@ -1,4 +1,6 @@
 #include <iostream>
+#include <float.h>
+
 #include "XMLReader.h"
 
 
@@ -35,9 +37,24 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
         info.epsilon = sim->calculator().epsilon().get();
         info.sigma = sim->calculator().sigma().get();
         info.brownianMotionMean = sim->calculator().brownianMotion().get();
+        if(sim->calculator().gravityFactor().present()){
+            info.gravityFactor = sim->calculator().gravityFactor().get();
+        }else{
+            info.gravityFactor = 0.0;
+        }
         info.calculatorType = PhysicsCalc::lennardJones;
     }else{
         info.calculatorType = PhysicsCalc::gravitation;
+    }
+
+    if(sim->thermostat().present()){
+        info.useThermostat = true;
+        info.n_thermostat = sim->thermostat()->nThermostat();
+        info.t_init = sim->thermostat()->Tinit();
+        info.t_target = sim->thermostat()->Ttarget().present() ? sim->thermostat()->Ttarget().get() : info.t_init;
+        info.delta_temp = sim->thermostat()->deltaTemp().present() ? sim->thermostat()->deltaTemp().get() : DBL_MAX;
+    }else{
+        info.useThermostat = false;
     }
 
     info.delta_t = sim->delta_t();
@@ -64,6 +81,18 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
     }
 
     info.outputfile = sim->outputFile();
+
+    if(sim->checkpointInput().present()){
+        info.checkpointInput = sim->checkpointInput().get();
+    }else{
+        info.checkpointInput = "";
+    }
+
+    if(sim->checkpointOutput().present()){
+        info.checkpointOutput = sim->checkpointOutput().get();
+    }else{
+        info.checkpointOutput = "";
+    }
 
     info.generatorInputFiles = std::vector<std::string>{};
     for(auto& ginpf : sim->generatorFile()){
@@ -114,6 +143,9 @@ void XMLReader::insertGeneratorInfo(std::vector<ParticleGenerator::ShapeInfo>& g
             shapeInfo.type = ParticleGenerator::sphere;
             break;
     }
+
+    shapeInfo.sigma = info.sigma();
+    shapeInfo.epsilon = info.epsilon();
 
     genInfos.push_back(shapeInfo);
 }

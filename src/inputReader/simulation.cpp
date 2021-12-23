@@ -419,6 +419,42 @@ mass (const mass_type& x)
   this->mass_.set (x);
 }
 
+const generator_info_t::epsilon_type& generator_info_t::
+epsilon () const
+{
+  return this->epsilon_.get ();
+}
+
+generator_info_t::epsilon_type& generator_info_t::
+epsilon ()
+{
+  return this->epsilon_.get ();
+}
+
+void generator_info_t::
+epsilon (const epsilon_type& x)
+{
+  this->epsilon_.set (x);
+}
+
+const generator_info_t::sigma_type& generator_info_t::
+sigma () const
+{
+  return this->sigma_.get ();
+}
+
+generator_info_t::sigma_type& generator_info_t::
+sigma ()
+{
+  return this->sigma_.get ();
+}
+
+void generator_info_t::
+sigma (const sigma_type& x)
+{
+  this->sigma_.set (x);
+}
+
 const generator_info_t::distance_type& generator_info_t::
 distance () const
 {
@@ -889,6 +925,30 @@ sigma (const sigma_optional& x)
   this->sigma_ = x;
 }
 
+const calculationInfo_t::gravityFactor_optional& calculationInfo_t::
+gravityFactor () const
+{
+  return this->gravityFactor_;
+}
+
+calculationInfo_t::gravityFactor_optional& calculationInfo_t::
+gravityFactor ()
+{
+  return this->gravityFactor_;
+}
+
+void calculationInfo_t::
+gravityFactor (const gravityFactor_type& x)
+{
+  this->gravityFactor_.set (x);
+}
+
+void calculationInfo_t::
+gravityFactor (const gravityFactor_optional& x)
+{
+  this->gravityFactor_ = x;
+}
+
 const calculationInfo_t::brownianMotion_optional& calculationInfo_t::
 brownianMotion () const
 {
@@ -980,6 +1040,94 @@ operator= (value v)
   ::xml_schema::string (_xsd_outputwriter_t_literals_[v]);
 
   return *this;
+}
+
+
+// thermostat_info_t
+// 
+
+const thermostat_info_t::nThermostat_type& thermostat_info_t::
+nThermostat () const
+{
+  return this->nThermostat_.get ();
+}
+
+thermostat_info_t::nThermostat_type& thermostat_info_t::
+nThermostat ()
+{
+  return this->nThermostat_.get ();
+}
+
+void thermostat_info_t::
+nThermostat (const nThermostat_type& x)
+{
+  this->nThermostat_.set (x);
+}
+
+const thermostat_info_t::Tinit_type& thermostat_info_t::
+Tinit () const
+{
+  return this->Tinit_.get ();
+}
+
+thermostat_info_t::Tinit_type& thermostat_info_t::
+Tinit ()
+{
+  return this->Tinit_.get ();
+}
+
+void thermostat_info_t::
+Tinit (const Tinit_type& x)
+{
+  this->Tinit_.set (x);
+}
+
+const thermostat_info_t::Ttarget_optional& thermostat_info_t::
+Ttarget () const
+{
+  return this->Ttarget_;
+}
+
+thermostat_info_t::Ttarget_optional& thermostat_info_t::
+Ttarget ()
+{
+  return this->Ttarget_;
+}
+
+void thermostat_info_t::
+Ttarget (const Ttarget_type& x)
+{
+  this->Ttarget_.set (x);
+}
+
+void thermostat_info_t::
+Ttarget (const Ttarget_optional& x)
+{
+  this->Ttarget_ = x;
+}
+
+const thermostat_info_t::deltaTemp_optional& thermostat_info_t::
+deltaTemp () const
+{
+  return this->deltaTemp_;
+}
+
+thermostat_info_t::deltaTemp_optional& thermostat_info_t::
+deltaTemp ()
+{
+  return this->deltaTemp_;
+}
+
+void thermostat_info_t::
+deltaTemp (const deltaTemp_type& x)
+{
+  this->deltaTemp_.set (x);
+}
+
+void thermostat_info_t::
+deltaTemp (const deltaTemp_optional& x)
+{
+  this->deltaTemp_ = x;
 }
 
 
@@ -1110,6 +1258,96 @@ void simulation_t::
 generatorInfo (const generatorInfo_sequence& s)
 {
   this->generatorInfo_ = s;
+}
+
+const simulation_t::thermostat_optional& simulation_t::
+thermostat () const
+{
+  return this->thermostat_;
+}
+
+simulation_t::thermostat_optional& simulation_t::
+thermostat ()
+{
+  return this->thermostat_;
+}
+
+void simulation_t::
+thermostat (const thermostat_type& x)
+{
+  this->thermostat_.set (x);
+}
+
+void simulation_t::
+thermostat (const thermostat_optional& x)
+{
+  this->thermostat_ = x;
+}
+
+void simulation_t::
+thermostat (::std::unique_ptr< thermostat_type > x)
+{
+  this->thermostat_.set (std::move (x));
+}
+
+const simulation_t::checkpointInput_optional& simulation_t::
+checkpointInput () const
+{
+  return this->checkpointInput_;
+}
+
+simulation_t::checkpointInput_optional& simulation_t::
+checkpointInput ()
+{
+  return this->checkpointInput_;
+}
+
+void simulation_t::
+checkpointInput (const checkpointInput_type& x)
+{
+  this->checkpointInput_.set (x);
+}
+
+void simulation_t::
+checkpointInput (const checkpointInput_optional& x)
+{
+  this->checkpointInput_ = x;
+}
+
+void simulation_t::
+checkpointInput (::std::unique_ptr< checkpointInput_type > x)
+{
+  this->checkpointInput_.set (std::move (x));
+}
+
+const simulation_t::checkpointOutput_optional& simulation_t::
+checkpointOutput () const
+{
+  return this->checkpointOutput_;
+}
+
+simulation_t::checkpointOutput_optional& simulation_t::
+checkpointOutput ()
+{
+  return this->checkpointOutput_;
+}
+
+void simulation_t::
+checkpointOutput (const checkpointOutput_type& x)
+{
+  this->checkpointOutput_.set (x);
+}
+
+void simulation_t::
+checkpointOutput (const checkpointOutput_optional& x)
+{
+  this->checkpointOutput_ = x;
+}
+
+void simulation_t::
+checkpointOutput (::std::unique_ptr< checkpointOutput_type > x)
+{
+  this->checkpointOutput_.set (std::move (x));
 }
 
 const simulation_t::t_end_type& simulation_t::
@@ -1576,6 +1814,8 @@ generator_info_t (const x_type& x,
                   const v2_type& v2,
                   const v3_type& v3,
                   const mass_type& mass,
+                  const epsilon_type& epsilon,
+                  const sigma_type& sigma,
                   const distance_type& distance,
                   const brownianFactor_type& brownianFactor,
                   const dim_type& dim,
@@ -1588,6 +1828,8 @@ generator_info_t (const x_type& x,
   v2_ (v2, this),
   v3_ (v3, this),
   mass_ (mass, this),
+  epsilon_ (epsilon, this),
+  sigma_ (sigma, this),
   distance_ (distance, this),
   brownianFactor_ (brownianFactor, this),
   dim_ (dim, this),
@@ -1611,6 +1853,8 @@ generator_info_t (const generator_info_t& x,
   v2_ (x.v2_, f, this),
   v3_ (x.v3_, f, this),
   mass_ (x.mass_, f, this),
+  epsilon_ (x.epsilon_, f, this),
+  sigma_ (x.sigma_, f, this),
   distance_ (x.distance_, f, this),
   brownianFactor_ (x.brownianFactor_, f, this),
   dim_ (x.dim_, f, this),
@@ -1634,6 +1878,8 @@ generator_info_t (const ::xercesc::DOMElement& e,
   v2_ (this),
   v3_ (this),
   mass_ (this),
+  epsilon_ (this),
+  sigma_ (this),
   distance_ (this),
   brownianFactor_ (this),
   dim_ (this),
@@ -1733,6 +1979,28 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!mass_.present ())
       {
         this->mass_.set (mass_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // epsilon
+    //
+    if (n.name () == "epsilon" && n.namespace_ ().empty ())
+    {
+      if (!epsilon_.present ())
+      {
+        this->epsilon_.set (epsilon_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // sigma
+    //
+    if (n.name () == "sigma" && n.namespace_ ().empty ())
+    {
+      if (!sigma_.present ())
+      {
+        this->sigma_.set (sigma_traits::create (i, f, this));
         continue;
       }
     }
@@ -1866,6 +2134,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "");
   }
 
+  if (!epsilon_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "epsilon",
+      "");
+  }
+
+  if (!sigma_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "sigma",
+      "");
+  }
+
   if (!distance_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
@@ -1928,6 +2210,8 @@ operator= (const generator_info_t& x)
     this->v2_ = x.v2_;
     this->v3_ = x.v3_;
     this->mass_ = x.mass_;
+    this->epsilon_ = x.epsilon_;
+    this->sigma_ = x.sigma_;
     this->distance_ = x.distance_;
     this->brownianFactor_ = x.brownianFactor_;
     this->dim_ = x.dim_;
@@ -2263,6 +2547,7 @@ calculationInfo_t (const type_type& type)
 : ::xml_schema::type (),
   epsilon_ (this),
   sigma_ (this),
+  gravityFactor_ (this),
   brownianMotion_ (this),
   type_ (type, this)
 {
@@ -2275,6 +2560,7 @@ calculationInfo_t (const calculationInfo_t& x,
 : ::xml_schema::type (x, f, c),
   epsilon_ (x.epsilon_, f, this),
   sigma_ (x.sigma_, f, this),
+  gravityFactor_ (x.gravityFactor_, f, this),
   brownianMotion_ (x.brownianMotion_, f, this),
   type_ (x.type_, f, this)
 {
@@ -2287,6 +2573,7 @@ calculationInfo_t (const ::xercesc::DOMElement& e,
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
   epsilon_ (this),
   sigma_ (this),
+  gravityFactor_ (this),
   brownianMotion_ (this),
   type_ (this)
 {
@@ -2325,6 +2612,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!this->sigma_)
       {
         this->sigma_.set (sigma_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // gravityFactor
+    //
+    if (n.name () == "gravityFactor" && n.namespace_ ().empty ())
+    {
+      if (!this->gravityFactor_)
+      {
+        this->gravityFactor_.set (gravityFactor_traits::create (i, f, this));
         continue;
       }
     }
@@ -2379,6 +2677,7 @@ operator= (const calculationInfo_t& x)
     static_cast< ::xml_schema::type& > (*this) = x;
     this->epsilon_ = x.epsilon_;
     this->sigma_ = x.sigma_;
+    this->gravityFactor_ = x.gravityFactor_;
     this->brownianMotion_ = x.brownianMotion_;
     this->type_ = x.type_;
   }
@@ -2461,6 +2760,148 @@ _xsd_outputwriter_t_indexes_[2] =
   ::outputwriter_t::xyz
 };
 
+// thermostat_info_t
+//
+
+thermostat_info_t::
+thermostat_info_t (const nThermostat_type& nThermostat,
+                   const Tinit_type& Tinit)
+: ::xml_schema::type (),
+  nThermostat_ (nThermostat, this),
+  Tinit_ (Tinit, this),
+  Ttarget_ (this),
+  deltaTemp_ (this)
+{
+}
+
+thermostat_info_t::
+thermostat_info_t (const thermostat_info_t& x,
+                   ::xml_schema::flags f,
+                   ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  nThermostat_ (x.nThermostat_, f, this),
+  Tinit_ (x.Tinit_, f, this),
+  Ttarget_ (x.Ttarget_, f, this),
+  deltaTemp_ (x.deltaTemp_, f, this)
+{
+}
+
+thermostat_info_t::
+thermostat_info_t (const ::xercesc::DOMElement& e,
+                   ::xml_schema::flags f,
+                   ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  nThermostat_ (this),
+  Tinit_ (this),
+  Ttarget_ (this),
+  deltaTemp_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    this->parse (p, f);
+  }
+}
+
+void thermostat_info_t::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // nThermostat
+    //
+    if (n.name () == "nThermostat" && n.namespace_ ().empty ())
+    {
+      if (!nThermostat_.present ())
+      {
+        this->nThermostat_.set (nThermostat_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // Tinit
+    //
+    if (n.name () == "Tinit" && n.namespace_ ().empty ())
+    {
+      if (!Tinit_.present ())
+      {
+        this->Tinit_.set (Tinit_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // Ttarget
+    //
+    if (n.name () == "Ttarget" && n.namespace_ ().empty ())
+    {
+      if (!this->Ttarget_)
+      {
+        this->Ttarget_.set (Ttarget_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // deltaTemp
+    //
+    if (n.name () == "deltaTemp" && n.namespace_ ().empty ())
+    {
+      if (!this->deltaTemp_)
+      {
+        this->deltaTemp_.set (deltaTemp_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    break;
+  }
+
+  if (!nThermostat_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "nThermostat",
+      "");
+  }
+
+  if (!Tinit_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "Tinit",
+      "");
+  }
+}
+
+thermostat_info_t* thermostat_info_t::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class thermostat_info_t (*this, f, c);
+}
+
+thermostat_info_t& thermostat_info_t::
+operator= (const thermostat_info_t& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->nThermostat_ = x.nThermostat_;
+    this->Tinit_ = x.Tinit_;
+    this->Ttarget_ = x.Ttarget_;
+    this->deltaTemp_ = x.deltaTemp_;
+  }
+
+  return *this;
+}
+
+thermostat_info_t::
+~thermostat_info_t ()
+{
+}
+
 // simulation_t
 //
 
@@ -2479,6 +2920,9 @@ simulation_t (const container_type& container,
   generatorFile_ (this),
   outputFile_ (outputFile, this),
   generatorInfo_ (this),
+  thermostat_ (this),
+  checkpointInput_ (this),
+  checkpointOutput_ (this),
   t_end_ (t_end, this),
   delta_t_ (delta_t, this),
   writeFrequency_ (writeFrequency, this),
@@ -2502,6 +2946,9 @@ simulation_t (::std::unique_ptr< container_type > container,
   generatorFile_ (this),
   outputFile_ (outputFile, this),
   generatorInfo_ (this),
+  thermostat_ (this),
+  checkpointInput_ (this),
+  checkpointOutput_ (this),
   t_end_ (t_end, this),
   delta_t_ (delta_t, this),
   writeFrequency_ (writeFrequency, this),
@@ -2521,6 +2968,9 @@ simulation_t (const simulation_t& x,
   generatorFile_ (x.generatorFile_, f, this),
   outputFile_ (x.outputFile_, f, this),
   generatorInfo_ (x.generatorInfo_, f, this),
+  thermostat_ (x.thermostat_, f, this),
+  checkpointInput_ (x.checkpointInput_, f, this),
+  checkpointOutput_ (x.checkpointOutput_, f, this),
   t_end_ (x.t_end_, f, this),
   delta_t_ (x.delta_t_, f, this),
   writeFrequency_ (x.writeFrequency_, f, this),
@@ -2540,6 +2990,9 @@ simulation_t (const ::xercesc::DOMElement& e,
   generatorFile_ (this),
   outputFile_ (this),
   generatorInfo_ (this),
+  thermostat_ (this),
+  checkpointInput_ (this),
+  checkpointOutput_ (this),
   t_end_ (this),
   delta_t_ (this),
   writeFrequency_ (this),
@@ -2636,6 +3089,48 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
 
       this->generatorInfo_.push_back (::std::move (r));
       continue;
+    }
+
+    // thermostat
+    //
+    if (n.name () == "thermostat" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< thermostat_type > r (
+        thermostat_traits::create (i, f, this));
+
+      if (!this->thermostat_)
+      {
+        this->thermostat_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // checkpointInput
+    //
+    if (n.name () == "checkpointInput" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< checkpointInput_type > r (
+        checkpointInput_traits::create (i, f, this));
+
+      if (!this->checkpointInput_)
+      {
+        this->checkpointInput_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // checkpointOutput
+    //
+    if (n.name () == "checkpointOutput" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< checkpointOutput_type > r (
+        checkpointOutput_traits::create (i, f, this));
+
+      if (!this->checkpointOutput_)
+      {
+        this->checkpointOutput_.set (::std::move (r));
+        continue;
+      }
     }
 
     break;
@@ -2747,6 +3242,9 @@ operator= (const simulation_t& x)
     this->generatorFile_ = x.generatorFile_;
     this->outputFile_ = x.outputFile_;
     this->generatorInfo_ = x.generatorInfo_;
+    this->thermostat_ = x.thermostat_;
+    this->checkpointInput_ = x.checkpointInput_;
+    this->checkpointOutput_ = x.checkpointOutput_;
     this->t_end_ = x.t_end_;
     this->delta_t_ = x.delta_t_;
     this->writeFrequency_ = x.writeFrequency_;
@@ -3230,6 +3728,28 @@ operator<< (::xercesc::DOMElement& e, const generator_info_t& i)
     s << ::xml_schema::as_decimal(i.mass ());
   }
 
+  // epsilon
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "epsilon",
+        e));
+
+    s << ::xml_schema::as_decimal(i.epsilon ());
+  }
+
+  // sigma
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "sigma",
+        e));
+
+    s << ::xml_schema::as_decimal(i.sigma ());
+  }
+
   // distance
   //
   {
@@ -3467,6 +3987,18 @@ operator<< (::xercesc::DOMElement& e, const calculationInfo_t& i)
     s << ::xml_schema::as_decimal(*i.sigma ());
   }
 
+  // gravityFactor
+  //
+  if (i.gravityFactor ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "gravityFactor",
+        e));
+
+    s << ::xml_schema::as_decimal(*i.gravityFactor ());
+  }
+
   // brownianMotion
   //
   if (i.brownianMotion ())
@@ -3508,6 +4040,58 @@ operator<< (::xml_schema::list_stream& l,
             const outputwriter_t& i)
 {
   l << static_cast< const ::xml_schema::string& > (i);
+}
+
+void
+operator<< (::xercesc::DOMElement& e, const thermostat_info_t& i)
+{
+  e << static_cast< const ::xml_schema::type& > (i);
+
+  // nThermostat
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "nThermostat",
+        e));
+
+    s << i.nThermostat ();
+  }
+
+  // Tinit
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Tinit",
+        e));
+
+    s << ::xml_schema::as_decimal(i.Tinit ());
+  }
+
+  // Ttarget
+  //
+  if (i.Ttarget ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Ttarget",
+        e));
+
+    s << ::xml_schema::as_decimal(*i.Ttarget ());
+  }
+
+  // deltaTemp
+  //
+  if (i.deltaTemp ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "deltaTemp",
+        e));
+
+    s << ::xml_schema::as_decimal(*i.deltaTemp ());
+  }
 }
 
 void
@@ -3588,6 +4172,42 @@ operator<< (::xercesc::DOMElement& e, const simulation_t& i)
         e));
 
     s << *b;
+  }
+
+  // thermostat
+  //
+  if (i.thermostat ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "thermostat",
+        e));
+
+    s << *i.thermostat ();
+  }
+
+  // checkpointInput
+  //
+  if (i.checkpointInput ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "checkpointInput",
+        e));
+
+    s << *i.checkpointInput ();
+  }
+
+  // checkpointOutput
+  //
+  if (i.checkpointOutput ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "checkpointOutput",
+        e));
+
+    s << *i.checkpointOutput ();
   }
 
   // t_end

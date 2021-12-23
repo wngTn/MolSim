@@ -4,13 +4,14 @@
 
 class ParticleGenerator {
 public:
-    static void generateParticles(ParticleContainer &particles, const std::string &file);
+    static std::vector<std::pair<int, std::pair<double,double>>> generateParticles(ParticleContainer &particles, const std::string &file);
+
+    static std::vector<std::pair<int, std::pair<double,double>>> generateParticles(ParticleContainer &particles, const std::string &file, int startSEIndex);
 
     enum geometric_type{
         cuboid,
         sphere
     };
-
 
     struct ShapeInfo {
         geometric_type type;
@@ -21,6 +22,10 @@ public:
         std::array<double,3> vel;
         // mass of particles
         double mass;
+
+        double sigma;
+
+        double epsilon;
         // distance between particles
         double distance;
         // mean velocity of brownian motion
@@ -31,11 +36,11 @@ public:
         // only used for cuboid
         std::array<int,3> N;
     };
+    static std::vector<std::pair<int, std::pair<double,double>>> generateParticles(ParticleContainer &particles, const std::vector<ShapeInfo>& infovec);
 
-    static void generateParticles(ParticleContainer &particles, const std::vector<ShapeInfo>& infovec);
+    static std::vector<std::pair<int, std::pair<double,double>>> generateParticles(ParticleContainer &particles, const std::vector<ShapeInfo>& infovec, int startSEIndex);
 
 private:
-
 
 
 
@@ -51,7 +56,7 @@ private:
      * @param particles the ParticleContainer the created cube is stored in
      * @param info the ShapeInfo struct containing the parameters
      */
-    static void generateCuboid(ParticleContainer &particles, const ShapeInfo &info);
+    static void generateCuboid(ParticleContainer &particles, const ShapeInfo &info, int startSEIndex);
 
 
     // this creates a cube and cuts the sphere out of it. not very cool sphere but min distance is kept
@@ -60,7 +65,7 @@ private:
      * @param particles the ParticleContainer the created sphere is stored in
      * @param info the ShapeInfo struct containing the parameters
      */
-    static void generateSphere(ParticleContainer &particles, const ShapeInfo &info);
+    static void generateSphere(ParticleContainer &particles, const ShapeInfo &info, int startSEIndex);
 
     // currently not used, testing other methods for sphere generation
     // this produces veeeery smooth & nice spheres, but the minimum distance is not kept, so not suited for LJP

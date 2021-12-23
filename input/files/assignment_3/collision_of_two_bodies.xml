@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<simulation t_end="20" delta_t="0.0005" writeFrequency="50" outputWriter="vtk">
+<simulation t_end="20.0" delta_t="0.0005" writeFrequency="50" outputWriter="vtk">
     <container type="linkedcell">
         <rCut>3.0</rCut>
         <domainSizeX>180</domainSizeX>
@@ -34,6 +34,8 @@
         <n2>20</n2>
         <n3>1</n3>
         <dim>2</dim>
+        <epsilon>5</epsilon>
+        <sigma>1</sigma>
     </generatorInfo>
     <generatorInfo type="cuboid">
         <x>70.0</x>
@@ -49,5 +51,7 @@
         <n2>20</n2>
         <n3>1</n3>
         <dim>2</dim>
+        <epsilon>4.9</epsilon>
+        <sigma>1.1</sigma>
     </generatorInfo>
 </simulation>

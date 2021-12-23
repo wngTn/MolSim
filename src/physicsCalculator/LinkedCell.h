@@ -7,11 +7,16 @@
 #include "utils/ArrayUtils.h"
 #include "spdlog/spdlog.h"
 
+#include "nlohmann/json.hpp"
+
 namespace calculator {
     class LinkedCell : public PhysicsCalc{
 
     public:
-        LinkedCell(double sigma, double epsilon, double rCut) : sigma(sigma), epsilon(epsilon), rCut{rCut}{};
+        LinkedCell(double sigma, double epsilon, double rCut) : sigma(sigma), epsilon(epsilon), rCut{rCut}{
+            epsilonTable = {{epsilon}};
+            sigmaTable = {{sigma}};
+        };
 
         std::string toString() override;
 
@@ -43,15 +48,12 @@ namespace calculator {
          */
         void calcFWithinCell(Cell & cell);
 
-        /**
-         * Generates a ghost particle on the other side of the border
-         * @param grid the LinkedCellContainer
-         * @param p the Particle that should be mirrored
-         * @param bord the border it should be mirrored from
-         * @return the ghost particle on the other side of the border
-         * \note{This method is not as efficient as using a formula to calculate the force, thus not used}
-         */
-        static Particle generateGhostParticle(const LinkedCellContainer & grid, const Particle* p, int bord);
+
+        void setSigmaTable(const std::vector<std::vector<double>> &sigmaTable);
+
+        void setEpsilonTable(const std::vector<std::vector<double>> &epsilonTable);
+
+        void setMapping(std::vector<std::pair<int, std::pair<double, double>>>& mapping);
 
     private:
 
@@ -76,6 +78,17 @@ namespace calculator {
         double sigma = 1;
         double epsilon = 5;
         double rCut = 2.5 * epsilon;
+
+        std::vector<std::vector<double>> sigmaTable = {{0.0}};
+        std::vector<std::vector<double>> epsilonTable = {{0.0}};
+        std::vector<std::pair<int, std::pair<double, double>>> mapping = {};
+
+        using json = nlohmann::json;
+
+        friend void to_json(json&, const LinkedCell&);
+
+        friend void from_json(const json&, LinkedCell& p);
+
     };
 
     template<typename T>
@@ -85,19 +98,27 @@ namespace calculator {
 
     void LinkedCell::ljforce(Particle* p1, Particle* p2, double sqrd_dist) const {
 
-        double s = sqr(sigma) / sqrd_dist;
+        //double s = sqr(sigma) / sqrd_dist;
+        double s = sqr(sigmaTable[p1->getSEIndex()][p2->getSEIndex()]) / sqrd_dist;
         s = s * s * s; // s = sqr(s) * s
-        double f = 24 * epsilon * s / sqrd_dist * (1 - 2 * s);
+        //  double f = 24 * epsilon * s / sqrd_dist * (1 - 2 * s);
+        double f = 24 * epsilonTable[p1->getSEIndex()][p2->getSEIndex()] * s / sqrd_dist * (1 - 2 * s);
 
         auto force = f * (p2->getX() - p1->getX());
 
         // set old force
         // p1->setOldF(p1->getF());
         // p2->setOldF(p2->getF());
+        //if(force[0] > 500 || force[1] > 500 || force[2] > 500){
+            //std::cout << "calculated force with combined σ " << sigmaTable[p1->getSEIndex()][p2->getSEIndex()] << " and combined ε "
+            //<< epsilonTable[p1->getSEIndex()][p2->getSEIndex()] << std::endl;
+        //}
+
 
         p1->setF(p1->getF() + force);
         p2->setF(p2->getF() - force);
     }
+
 }
 
 
