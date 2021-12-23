@@ -244,6 +244,7 @@ void MainUtils::parseXML(Config& config) {
         config.initialTemperature = info.t_init;
         config.targetTemperature = info.t_target;
         config.maxDeltaTemperature = info.delta_temp;
+        config.nThermostat = info.n_thermostat;
     }
     config.checkpointing = !info.checkpointOutput.empty();
     config.checkpointOutput = info.checkpointOutput;

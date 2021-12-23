@@ -102,7 +102,7 @@
 
     <xs:complexType name="thermostat_info_t">
         <xs:sequence>
-            <xs:element name="nThermostat" type="xs:integer" />
+            <xs:element name="nThermostat" type="xs:int" />
             <xs:element name="Tinit" type="xs:decimal" />
             <xs:element name="Ttarget" type="xs:decimal" minOccurs="0"/>
             <xs:element name="deltaTemp" type="xs:decimal" minOccurs="0"/>

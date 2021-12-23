@@ -3786,7 +3786,7 @@ class thermostat_info_t: public ::xml_schema::type
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::integer nThermostat_type;
+  typedef ::xml_schema::int_ nThermostat_type;
 
   /**
    * @brief Element traits type.
