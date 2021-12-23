@@ -48,13 +48,9 @@ void LinkedCellContainer::setup() {
             }
             auto cellIndex = (*this).index(novelCellIndex);
             p.setOldF(p.getF());
+            // here gravitational force is applied
             p.setF({0., p.getM() * g, 0.});
-            if(cellIndex < 0 || cellIndex >= grid.size()){
-                //std::cout << "ALARM\n";
-            }else{
-                grid[cellIndex].emplace_back(&p);
-            }
-
+            grid[cellIndex].emplace_back(&p);
         }
     }
 }
