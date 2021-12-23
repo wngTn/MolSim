@@ -21,7 +21,7 @@
         <brownianMotion>0.0</brownianMotion>
     </calculator>
     <outputFile>output</outputFile>
-    <inputFile>../input/files/eingabe-sonne.txt</inputFile>
+    <inputFile>../input/files/assignment_1/eingabe-sonne.txt</inputFile>
     <inputFile>../input/files/someInput.txt</inputFile>
     <generatorFile>../input/files/genFile.json</generatorFile>
     <generatorFile>../input/files/genFile2.json</generatorFile>
