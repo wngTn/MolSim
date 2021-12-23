@@ -8,8 +8,9 @@ namespace calculator {
             for (auto it2 = it; it2 != cell.end(); ++it2) {
                 if (*it != *it2) {
                     double sqrd_dist = 0;
-                    auto temp = LinkedCell::sqr((*it)->getX() - (*it2)->getX());
-                    sqrd_dist = temp[0] + temp[1] + temp[2];
+                    for (int i = 0; i < DIM; i++) {
+                        sqrd_dist += LinkedCell::sqr((*it2)->getX()[i] - (*it)->getX()[i]);
+                    }
                     LinkedCell::ljforce((*it), (*it2), sqrd_dist);
                 }
             }
@@ -95,8 +96,9 @@ namespace calculator {
         // Loops through every particle of the neighbor
         for (auto &p_other: grid.grid[grid.index(neighbors)]) {
             double sqrd_dist = 0;
-            auto temp = LinkedCell::sqr(p_other->getX() - p->getX());
-            sqrd_dist = temp[0] + temp[1] + temp[2];
+            for (int i = 0; i < DIM; i++) {
+                sqrd_dist += LinkedCell::sqr(p_other->getX()[i] - p->getX()[i]);
+            }
             if (sqrd_dist <= LinkedCell::sqr(rCut)) {
                 LinkedCell::ljforce(p, p_other, sqrd_dist);
             }
@@ -189,8 +191,9 @@ namespace calculator {
             if (p != p_other) {
                 auto mirroredX = p_other->getX() + mirror;
                 double sqrd_dist = 0;
-                auto temp = LinkedCell::sqr(mirroredX - p->getX());
-                sqrd_dist = temp[0] + temp[1] + temp[2];
+                for (int i = 0; i < DIM; i++) {
+                    sqrd_dist += LinkedCell::sqr(mirroredX[i] - p->getX()[i]);
+                }
                 if (sqrd_dist <= LinkedCell::sqr(rCut)) {
                     //double s = sqr(sigma) / sqrd_dist;
                     double s = sqr(sigmaTable[p->getSEIndex()][p_other->getSEIndex()]) / sqrd_dist;
