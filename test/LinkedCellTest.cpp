@@ -2,6 +2,7 @@
 
 #include <Particle.h>
 #include <physicsCalculator/LinkedCell.h>
+#include "utils/ArrayUtils.h"
 
 
 /*
@@ -416,4 +417,149 @@ TEST(LinkedCellTest, LinkedCellMethodIntermediateTest) {
         EXPECT_LE(fabs(p1.getV()[1] - p2.getV()[1]), EPSILON_VALUE);
         EXPECT_LE(fabs(p1.getV()[2] - p2.getV()[2]), EPSILON_VALUE);
     }
+}
+
+/**
+ * Tests whether the periodic forces are correctly calculated in 2D
+ */
+TEST(LinkedCellTest, PeriodicBoundary2DTest) {
+    double EPSILON_VALUE = 0.000000001 ;
+
+    std::array<LinkedCellContainer::Border, 6> bor{};
+    bor.fill(LinkedCellContainer::periodic);
+    LinkedCellContainer linkedCellContainer = LinkedCellContainer{5, 5, 1, 1., bor};
+
+    Particle p1 = Particle{1};
+    Particle p2 = Particle{2};
+    Particle p3 = Particle{3};
+    Particle p4 = Particle{4};
+
+    p1.setX({1.5, 1.4, 0.});
+    p2.setX({2.45, 1.6, 0.});
+    p3.setX({0.5, 4.6, 0.});
+    p4.setX({4.55, 4.4, 0.});
+
+    linkedCellContainer.particles.emplace_back(p1);
+    linkedCellContainer.particles.emplace_back(p2);
+    linkedCellContainer.particles.emplace_back(p3);
+    linkedCellContainer.particles.emplace_back(p4);
+
+    linkedCellContainer.setup();
+
+    calculator::LinkedCell lc = calculator::LinkedCell{1.2, 1.0, 1.};
+
+    lc.calcF(linkedCellContainer);
+
+    auto pa = findParticle(linkedCellContainer, 1);
+    auto pb = findParticle(linkedCellContainer, 2);
+    std::cout<<"F1 of P1 is: "<<pa.getF()[0]<<" F1 of P2 is: "<<pb.getF()[0]<<std::endl;
+    std::cout<<"F2 of P1 is: "<<pa.getF()[1]<<" F2 of P2 is: "<<pb.getF()[1]<<std::endl;
+    std::cout<<"F3 of P1 is: "<<pa.getF()[2]<<" F3 of P2 is: "<<pb.getF()[2]<<std::endl;
+
+    auto pc = findParticle(linkedCellContainer, 3);
+    auto pd = findParticle(linkedCellContainer, 4);
+    std::cout<<"F1 of P1 is: "<<pc.getF()[0]<<" F1 of P2 is: "<<pd.getF()[0]<<std::endl;
+    std::cout<<"F2 of P1 is: "<<pc.getF()[1]<<" F2 of P2 is: "<<pd.getF()[1]<<std::endl;
+    std::cout<<"F3 of P1 is: "<<pc.getF()[2]<<" F3 of P2 is: "<<pd.getF()[2]<<std::endl;
+
+    EXPECT_LE(fabs(pa.getF()[0] - pd.getF()[0]), EPSILON_VALUE);
+    EXPECT_LE(fabs(pa.getF()[1] - pd.getF()[1]), EPSILON_VALUE);
+    EXPECT_LE(fabs(pa.getF()[2] - pd.getF()[2]), EPSILON_VALUE);
+
+    EXPECT_LE(fabs(pb.getF()[0] - pc.getF()[0]), EPSILON_VALUE);
+    EXPECT_LE(fabs(pb.getF()[1] - pc.getF()[1]), EPSILON_VALUE);
+    EXPECT_LE(fabs(pb.getF()[2] - pc.getF()[2]), EPSILON_VALUE);
+
+
+}
+
+/**
+ * Tests whether the periodic forces are correctly calculated in 3D
+ */
+TEST(LinkedCellTest, PeriodicBoundary3DTest) {
+    double EPSILON_VALUE = 0.000000001 ;
+
+    std::array<LinkedCellContainer::Border, 6> bor{};
+    bor.fill(LinkedCellContainer::periodic);
+    LinkedCellContainer linkedCellContainer = LinkedCellContainer{5, 5, 5, 1., bor};
+
+    Particle p1 = Particle{1};
+    Particle p2 = Particle{2};
+    Particle p3 = Particle{3};
+    Particle p4 = Particle{4};
+
+    p1.setX({1.5, 1.4, 1.2});
+    p2.setX({2.4, 1.6, 1.4});
+    p3.setX({0.5, 4.6, 4.4});
+    p4.setX({4.6, 4.4, 4.2});
+
+    linkedCellContainer.particles.emplace_back(p1);
+    linkedCellContainer.particles.emplace_back(p2);
+    linkedCellContainer.particles.emplace_back(p3);
+    linkedCellContainer.particles.emplace_back(p4);
+
+    linkedCellContainer.setup();
+
+    calculator::LinkedCell lc = calculator::LinkedCell{1.2, 1.0, 1.};
+
+    lc.calcF(linkedCellContainer);
+
+    auto pa = findParticle(linkedCellContainer, 1);
+    auto pb = findParticle(linkedCellContainer, 2);
+    std::cout<<"F1 of P1 is: "<<pa.getF()[0]<<" F1 of P2 is: "<<pb.getF()[0]<<std::endl;
+    std::cout<<"F2 of P1 is: "<<pa.getF()[1]<<" F2 of P2 is: "<<pb.getF()[1]<<std::endl;
+    std::cout<<"F3 of P1 is: "<<pa.getF()[2]<<" F3 of P2 is: "<<pb.getF()[2]<<std::endl;
+
+    auto pc = findParticle(linkedCellContainer, 3);
+    auto pd = findParticle(linkedCellContainer, 4);
+    std::cout<<"F1 of P1 is: "<<pc.getF()[0]<<" F1 of P2 is: "<<pd.getF()[0]<<std::endl;
+    std::cout<<"F2 of P1 is: "<<pc.getF()[1]<<" F2 of P2 is: "<<pd.getF()[1]<<std::endl;
+    std::cout<<"F3 of P1 is: "<<pc.getF()[2]<<" F3 of P2 is: "<<pd.getF()[2]<<std::endl;
+
+    EXPECT_LE(fabs(pa.getF()[0] - pd.getF()[0]), EPSILON_VALUE);
+    EXPECT_LE(fabs(pa.getF()[1] - pd.getF()[1]), EPSILON_VALUE);
+    EXPECT_LE(fabs(pa.getF()[2] - pd.getF()[2]), EPSILON_VALUE);
+
+    EXPECT_LE(fabs(pb.getF()[0] - pc.getF()[0]), EPSILON_VALUE);
+    EXPECT_LE(fabs(pb.getF()[1] - pc.getF()[1]), EPSILON_VALUE);
+    EXPECT_LE(fabs(pb.getF()[2] - pc.getF()[2]), EPSILON_VALUE);
+}
+
+/**
+ * Tests whether the particles go through the borders
+ * One particle from top right to bottom left, and one from top right to bottom left
+ */
+TEST(LinkedCellContainer, PeriodicBoundaryTransitionTest) {
+    double EPSILON_VALUE = 0.000000001 ;
+
+    std::array<LinkedCellContainer::Border, 6> bor{};
+    bor.fill(LinkedCellContainer::periodic);
+    LinkedCellContainer linkedCellContainer = LinkedCellContainer{5, 5, 1, 1., bor};
+
+    Particle p1 = Particle{1};
+    Particle p2 = Particle{2};
+
+
+    p1.setX({0.0, 0.0, 0.0});
+    p2.setX({4.99, 0.0, 0.0});
+
+    p1.setF({-0.05, -0.05, 0.0});
+    p2.setF({0.5, -0.5, 0.0});
+
+    p1.setV({-0.05, -0.05, 0.0});
+    p2.setV({0.5, -0.5, 0.0});
+
+    linkedCellContainer.particles.emplace_back(p1);
+    linkedCellContainer.particles.emplace_back(p2);
+
+
+    linkedCellContainer.setup();
+
+    calculator::LinkedCell lc = calculator::LinkedCell{1.2, 1.0, 1.};
+
+    lc.calcX(linkedCellContainer);
+    linkedCellContainer.setup();
+
+    ASSERT_EQ(linkedCellContainer.grid[24].getParticles().size(), 1);
+    ASSERT_EQ(linkedCellContainer.grid[20].getParticles().size(), 1);
 }

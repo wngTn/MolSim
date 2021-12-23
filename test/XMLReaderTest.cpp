@@ -25,11 +25,11 @@ protected:
 
 
     void readGeneratorInfoFromXML() {
-        info = XMLReader::readFile("../../input/files/collision_of_two_bodies.xml");
+        info = XMLReader::readFile("../../input/files/assignment_3/collision_of_two_bodies.xml");
     }
 
     void readFilesFromXML(){
-        info = XMLReader::readFile("../../input/files/test.xml");
+        info = XMLReader::readFile("../../input/files/assignment_3/test.xml");
     }
 
 
@@ -110,7 +110,7 @@ TEST_F(XMLReaderTest, XMLInfoTest2){
     EXPECT_EQ(info.generatorInputFiles[1], "../input/files/genFile2.json");
 
     EXPECT_EQ(info.inputFiles.size(), 2);
-    EXPECT_EQ(info.inputFiles[0], "../input/files/eingabe-sonne.txt");
+    EXPECT_EQ(info.inputFiles[0], "../input/files/assignment_1/eingabe-sonne.txt");
     EXPECT_EQ(info.inputFiles[1], "../input/files/someInput.txt");
 
 }
