@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<simulation t_end="50" delta_t="0.0005" writeFrequency="100" outputWriter="vtk">
+     <container type="linkedcell">
+        <rCut>3</rCut>
+        <domainSizeX>200</domainSizeX>
+        <domainSizeY>200</domainSizeY>
+        <domainSizeZ>1</domainSizeZ>
+        <borderType>
+            <left>reflective</left>
+            <right>reflective</right>
+            <upper>reflective</upper>
+            <lower>reflective</lower>
+            <front>outflow</front>
+            <back>outflow</back>
+        </borderType>
+    </container>
+    <calculator type="lennardjones">
+        <epsilon>1.0</epsilon>
+        <sigma>1.2</sigma>
+        <brownianMotion>0.0</brownianMotion>
+        <gravityFactor>0</gravityFactor>
+    </calculator>
+    <outputFile>output</outputFile>
+    <generatorInfo type="cuboid">
+        <x>20</x>
+        <y>20</y>
+        <z>0.0</z>
+        <v1>0.0</v1>
+        <v2>0.0</v2>
+        <v3>0.0</v3>
+        <mass>1.0</mass>
+        <distance>1.2</distance>
+        <brownianFactor>0.0</brownianFactor>
+        <dim>2</dim>
+        <epsilon>1.0</epsilon>
+        <sigma>1.2</sigma>
+        <n1>120</n1>
+        <n2>120</n2>
+        <n3>1</n3>
+    </generatorInfo>
+</simulation>
