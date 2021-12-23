@@ -152,13 +152,11 @@ void MainUtils::initializeParticles(ParticleContainer &particles, Config& config
 
     // generate Particles from generator input JSONs
     for(auto& genFile : config.generator_files){
-        // TODO handle se index
-        auto newTypeToSe = ParticleGenerator::generateParticles(particles, genFile, sigmaTable.size() + se_mapping.size());
+        auto newTypeToSe = ParticleGenerator::generateParticles(particles, genFile, static_cast<int>(sigmaTable.size() + se_mapping.size()));
         se_mapping.insert(se_mapping.begin(), newTypeToSe.begin(), newTypeToSe.end());
     }
     // generate Particles directly specified in XML
-    // adapt for checkpointing
-    auto newTypeToSe = ParticleGenerator::generateParticles(particles, config.generatorInfos, sigmaTable.size() + se_mapping.size());
+    auto newTypeToSe = ParticleGenerator::generateParticles(particles, config.generatorInfos, static_cast<int>(sigmaTable.size() + se_mapping.size()));
     se_mapping.insert(se_mapping.begin(), newTypeToSe.begin(), newTypeToSe.end());
     if(config.calc_type == PhysicsCalc::lennardJones && config.linkedCell){
         buildSETable(se_mapping);
