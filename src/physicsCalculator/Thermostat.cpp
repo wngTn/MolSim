@@ -3,7 +3,6 @@
 #include "utils/MaxwellBoltzmannDistribution.h"
 
 #include <algorithm>
-#include <iostream>
 
 
 Thermostat::Thermostat(double initialTemperature, double targetTemperature, double maxDeltaTemperature)
@@ -20,7 +19,7 @@ double Thermostat::calculateKineticEnergy(ParticleContainer &particles) {
 }
 
 double Thermostat::calculateCurrentTemp(ParticleContainer &particles){
-    return 2 * calculateKineticEnergy(particles) / particles.size() / particles.dimensions();
+    return 2 * calculateKineticEnergy(particles) / static_cast<int>(particles.size()) / particles.dimensions();
 }
 
 void Thermostat::scaleVelocities(ParticleContainer &particles, double beta) {
@@ -29,7 +28,7 @@ void Thermostat::scaleVelocities(ParticleContainer &particles, double beta) {
     }
 }
 
-void Thermostat::applyTemperature(ParticleContainer &particles){
+void Thermostat::applyTemperature(ParticleContainer &particles) const{
     double temp = calculateCurrentTemp(particles);
     double newTemp;
     if(temp > targetTemperature){
@@ -46,10 +45,10 @@ void Thermostat::applyTemperature(ParticleContainer &particles){
 }
 
 // check if _all_ velocities are zero, if yes apply BrownianMotion using init temp
-// ofc we could check that during particle generation and pass that information along etc
+// ofc we could check that during particle generation and pass that information along etc.
 // but this is executed once (1) at startup so who cares
 // also scale velocities to init temperature
-void Thermostat::setupTemperature(ParticleContainer &particles){
+void Thermostat::setupTemperature(ParticleContainer &particles) const{
     // this is bc mass is often 1 -> sqrt(1) easy, /1 easy as well -> only 1 complex sqrt calculation
     // works bc sqrt(a/b) = sqrt(a)/sqrt(b)
     double tempFactor = sqrt(initialTemperature);
