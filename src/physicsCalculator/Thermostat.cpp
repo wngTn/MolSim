@@ -47,6 +47,7 @@ void Thermostat::applyTemperature(ParticleContainer &particles){
 // check if _all_ velocities are zero, if yes apply BrownianMotion using init temp
 // ofc we could check that during particle generation and pass that information along etc
 // but this is executed once (1) at startup so who cares
+// also scale velocities to init temperature
 void Thermostat::setupTemperature(ParticleContainer &particles){
     // this is bc mass is often 1 -> sqrt(1) easy, /1 easy as well -> only 1 complex sqrt calculation
     // works bc sqrt(a/b) = sqrt(a)/sqrt(b)
@@ -58,5 +59,6 @@ void Thermostat::setupTemperature(ParticleContainer &particles){
             p.setV(p.getV() + maxwellBoltzmannDistributedVelocity(tempFactor/sqrt(p.getM()), particles.dimensions()));
         }
     }
+    scaleVelocities(particles, sqrt(initialTemperature / calculateCurrentTemp(particles)));
 }
 

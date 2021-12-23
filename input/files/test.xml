@@ -37,5 +37,7 @@
         <brownianFactor>0.1</brownianFactor>
         <dim>3</dim>
         <radius>0</radius>
+        <epsilon>1.</epsilon>
+        <sigma>1.</sigma>
     </generatorInfo>
 </simulation>

@@ -8,31 +8,44 @@
 
 #include <nlohmann/json.hpp>
 
-void ParticleGenerator::generateParticles(ParticleContainer &particles, const std::vector<ShapeInfo>& infovec) {
+std::vector<std::pair<int, std::pair<double,double>>> ParticleGenerator::generateParticles(ParticleContainer &particles, const std::vector<ShapeInfo>& infovec, int startSEIndex) {
+    int index = startSEIndex;
+    std::vector<std::pair<int, std::pair<double,double>>> mapping {};
     for(auto &info : infovec){
         switch (info.type){
             case cuboid:
-                generateCuboid(particles, info);
+                generateCuboid(particles, info, index);
+                mapping.push_back({index, {info.epsilon, info.sigma}});
                 break;
             case sphere:
-                generateSphere(particles, info);
+                generateSphere(particles, info, index);
+                mapping.push_back({index, {info.epsilon, info.sigma}});
                 break;
         }
+        index++;
     }
+    return mapping;
 }
 
-void ParticleGenerator::generateParticles(ParticleContainer &particles, const std::string &file) {
+std::vector<std::pair<int, std::pair<double,double>>> ParticleGenerator::generateParticles(ParticleContainer &particles, const std::string &file, int startSEIndex) {
     std::vector<ShapeInfo> infovec = readJSON(file);
+    int index = startSEIndex;
+    std::vector<std::pair<int, std::pair<double,double>>> mapping {};
+
     for(auto &info : infovec){
         switch (info.type){
             case cuboid:
-                generateCuboid(particles, info);
+                generateCuboid(particles, info, index);
+                mapping.push_back({index, {info.epsilon, info.sigma}});
                 break;
             case sphere:
-                generateSphere(particles, info);
+                generateSphere(particles, info, index);
+                mapping.push_back({index, {info.epsilon, info.sigma}});
                 break;
         }
+        index++;
     }
+    return mapping;
 }
 
 std::vector<ParticleGenerator::ShapeInfo> ParticleGenerator::readJSON(const std::string &file){
@@ -69,20 +82,20 @@ std::vector<ParticleGenerator::ShapeInfo> ParticleGenerator::readJSON(const std:
     return vec;
 }
 
-void ParticleGenerator::generateCuboid(ParticleContainer &particles, const ShapeInfo &info) {
+void ParticleGenerator::generateCuboid(ParticleContainer &particles, const ShapeInfo &info, int startSEIndex) {
     // reserve amount of particles we are going to create
     int total_count = info.N[0] * info.N[1] * info.N[2];
     particles.reserve(total_count);
 
     std::array<double, 3> currentPos{info.pos};
-
+    int current_seindex = startSEIndex;
     for(int z = 0; z < (info.DIM == 3 ? info.N[2] : 1); z++){
         for(int y = 0; y < info.N[1]; y++){
             for(int x = 0; x < info.N[0]; x++){
                 Particle part{};
                 // add browian motion
                 auto tempVel = info.vel + maxwellBoltzmannDistributedVelocity(info.brownianFactor, info.DIM);
-                part = Particle{currentPos, tempVel, info.mass};
+                part = Particle{currentPos, tempVel, info.mass, current_seindex, current_seindex};
                 particles.emplace_back(part);
                 currentPos[0] += info.distance;
             }
@@ -95,7 +108,7 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles, const Shape
     }
 }
 
-void ParticleGenerator::generateSphere(ParticleContainer &particles, const ShapeInfo &info) {
+void ParticleGenerator::generateSphere(ParticleContainer &particles, const ShapeInfo &info, int startSEIndex) {
     // get parameters for cube generation
     std::vector<int> edges = {2*info.radius,2 * info.radius,2 * info.radius};
     std::array<double,3> cubeCorner = {info.pos[0]-(info.radius*info.distance),
@@ -105,6 +118,10 @@ void ParticleGenerator::generateSphere(ParticleContainer &particles, const Shape
     if(info.DIM == 2){
         currentPos[2] = info.pos[2];
     }
+
+    int current_seindex = startSEIndex;
+
+
     // ratio of volume of maximum inscribed sphere to cube is pi/6 ~= 0.523...
     int count = floor(pow((2*info.radius+1),3) * 0.523598775598f);
     particles.reserve(count);
@@ -121,7 +138,7 @@ void ParticleGenerator::generateSphere(ParticleContainer &particles, const Shape
                 if(distance <= info.radius * info.distance + 0.00001){
                     Particle part;
                     auto tempVel = info.vel + maxwellBoltzmannDistributedVelocity(info.brownianFactor, info.DIM);
-                    particles.emplace_back(Particle{currentPos, tempVel, info.mass});
+                    particles.emplace_back(Particle{currentPos, tempVel, info.mass, current_seindex, current_seindex});
                 }
                 currentPos[0] += info.distance;
             }
@@ -155,7 +172,7 @@ void ParticleGenerator::generateSphere2(ParticleContainer &particles, const Shap
     i.pos = {-(height*info.distance),
              -(height*info.distance),
              -(height*info.distance)};
-    generateCuboid(particles, i);
+    generateCuboid(particles, i, 0);
 
     for(Particle &p : particles){
         // std::cout << "X before scaling: " << p.getX();
@@ -170,4 +187,12 @@ void ParticleGenerator::generateSphere2(ParticleContainer &particles, const Shap
         double z = p.getX()[2] * sqrt(1 - (x2 + y2) / 2 + (x2 * y2) / 3);
         p.setX({x*info.radius,y*info.radius,z*info.radius});
     }
+}
+
+std::vector<std::pair<int, std::pair<double,double>>> ParticleGenerator::generateParticles(ParticleContainer &particles, const std::string &file) {
+    return generateParticles(particles, file, 0);
+}
+
+std::vector<std::pair<int, std::pair<double,double>>> ParticleGenerator::generateParticles(ParticleContainer &particles, const std::vector<ShapeInfo> &infovec) {
+    return generateParticles(particles, infovec, 0);
 }

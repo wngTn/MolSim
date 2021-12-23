@@ -39,6 +39,8 @@
             <xs:element name="v2" type="xs:decimal" />
             <xs:element name="v3" type="xs:decimal" />
             <xs:element name="mass" type="xs:decimal" />
+            <xs:element name="epsilon" type="xs:decimal" />
+            <xs:element name="sigma" type="xs:decimal" />
             <xs:element name="distance" type="xs:decimal" />
             <xs:element name="brownianFactor" type="xs:decimal" />
             <!-- used for brownian motion and generation -->
@@ -84,6 +86,7 @@
         <xs:sequence minOccurs = "0">
             <xs:element name="epsilon" type="xs:decimal" />
             <xs:element name="sigma" type="xs:decimal" />
+            <xs:element name="gravityFactor" type="xs:decimal" minOccurs="0"/>
             <xs:element name="brownianMotion" type="xs:decimal" />
         </xs:sequence>
         <xs:attribute name="type" type = "calculatortype_t" use = "required" />
@@ -97,6 +100,15 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:complexType name="thermostat_info_t">
+        <xs:sequence>
+            <xs:element name="nThermostat" type="xs:int" />
+            <xs:element name="Tinit" type="xs:decimal" />
+            <xs:element name="Ttarget" type="xs:decimal" minOccurs="0"/>
+            <xs:element name="deltaTemp" type="xs:decimal" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
     <!-- everything the simulation needs -->
     <xs:complexType name="simulation_t">
         <xs:sequence>
@@ -108,6 +120,9 @@
             <xs:element minOccurs = "0" maxOccurs="unbounded" name="generatorFile" type="xs:string" />
             <xs:element name="outputFile" type="xs:string" />
             <xs:element minOccurs = "0" maxOccurs="unbounded" name="generatorInfo" type="generator_info_t"/>
+            <xs:element minOccurs = "0" name = "thermostat" type="thermostat_info_t" />
+            <xs:element minOccurs = "0" name = "checkpointInput" type="xs:string" />
+            <xs:element minOccurs = "0" name = "checkpointOutput" type="xs:string" />
         </xs:sequence>
         <xs:attribute name="t_end" type="xs:decimal" use="required"/>
         <xs:attribute name="delta_t" type="xs:decimal" use="required"/>

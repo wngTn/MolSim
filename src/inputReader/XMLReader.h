@@ -21,8 +21,15 @@ public:
         double sigma;
         double t_end;
         double delta_t;
+        double gravityFactor;
         int writeFrequency;
         double brownianMotionMean;
+        bool useThermostat;
+        double t_init;
+        double t_target;
+        double delta_temp;
+        int n_thermostat;
+
         // whether randomly generated particles should be used, other inputs discarded if yes
         bool random;
         // output and calculation types
@@ -32,6 +39,10 @@ public:
         std::vector<std::string> inputFiles;
         // the base name of the output files
         std::string outputfile;
+        // an optional saved checkpoint as input in json format
+        std::string checkpointInput;
+        // the name of the checkpointFile, empty if no checkpointing used
+        std::string checkpointOutput;
         // ParticleGenerator input that has directly been specified in the XML file
         std::vector<ParticleGenerator::ShapeInfo> generatorInfos;
         // input files (JSON) for the ParticleGenerator, for specifications see info about ParticleGenerator

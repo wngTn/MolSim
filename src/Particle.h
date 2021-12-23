@@ -3,9 +3,14 @@
 #include <array>
 #include <string>
 
+#include "nlohmann/json.hpp"
+
 class Particle {
 
 private:
+
+// index used for determining combined sigma/epsilon values
+    int se_index;
 
     /**
      * Type of the particle. Use it for whatever you want (e.g. to separate
@@ -95,6 +100,9 @@ public:
             std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg,
             int type = 0);
 
+    Particle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, int type_arg, int index);
+
+
     virtual ~Particle();
 
     [[nodiscard]] const std::array<double, 3> &getX() const;
@@ -108,6 +116,8 @@ public:
     [[nodiscard]] double getM() const;
 
     [[nodiscard]] int getType() const;
+
+    [[nodiscard]] int getSEIndex() const;
 
     /**
      * @param d: dimension
@@ -174,8 +184,16 @@ public:
      */
     [[nodiscard]] std::string toString() const;
 
+    friend void to_json(nlohmann::json&, const Particle&);
+    friend void from_json(const nlohmann::json&, Particle&);
 
 };
+
+
+//void to_json(json&, const Particle&);
+
+//void from_json(const json&, Particle& p);
+
 
 /**
  * @brief Overloaded << operator for easy console prints
