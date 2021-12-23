@@ -71,8 +71,6 @@ int main(int argc, char *argv[]) {
 
         iteration++;
 
-        // todo apply thermostat stuff using Thermostat::applyTemperature()
-
         if (!config.benchmarking && iteration % config.writeFrequency == 0) {
             particles->cleanup();
             // setup after cleanup needed to validate pointers for calcX
