@@ -45,12 +45,14 @@ int main(int argc, char *argv[]) {
     // ------ calculation ------ //
     auto start_calc = std::chrono::steady_clock::now();
     // initial setup
-    thermostat.setupTemperature(*particles);
+    if(config.useThermostat){
+        thermostat.setupTemperature(*particles);
+    }
     calc->calcX(*particles);
     particles->setup();
     calc->calcF(*particles);
     if (!config.benchmarking){
-        io->write(*particles, "output", iteration);
+        io->write(*particles, config.output_file, iteration);
     }
     // for this loop, we assume: current x, current f and current v are known
     while (current_time < config.end_time) {
@@ -71,8 +73,6 @@ int main(int argc, char *argv[]) {
 
         iteration++;
 
-        // todo apply thermostat stuff using Thermostat::applyTemperature()
-
         if (!config.benchmarking && iteration % config.writeFrequency == 0) {
             particles->cleanup();
             // setup after cleanup needed to validate pointers for calcX
@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
         auto runtimeDuration =
                 std::chrono::duration_cast<std::chrono::milliseconds>
                         (std::chrono::steady_clock::now() - start_calc).count();
-        double mups = static_cast<double>(particles->size()) * (config.end_time/config.delta_t) /
+        double mups = static_cast<double>(particles->size()) * iteration /
                       (static_cast<double>(runtimeDuration) / 1000);
         std::cout
                 << "\u001b[31mElapsed calculation time [milliseconds]:\u001b[0m "

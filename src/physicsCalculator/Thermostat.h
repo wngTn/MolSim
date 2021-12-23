@@ -13,16 +13,16 @@
 
         Thermostat(double initialTemperature, double targetTemperature, double maxDeltaTemperature);
 
-        void setupTemperature(ParticleContainer &particles);
+        void setupTemperature(ParticleContainer &particles) const;
 
-        void applyTemperature(ParticleContainer &particles);
+        void applyTemperature(ParticleContainer &particles) const;
 
 
     private:
 
-        double calculateKineticEnergy(ParticleContainer &particles);
-        double calculateCurrentTemp(ParticleContainer &particles);
-        void scaleVelocities(ParticleContainer &particles, double beta);
+        static double calculateKineticEnergy(ParticleContainer &particles);
+        static double calculateCurrentTemp(ParticleContainer &particles);
+        static void scaleVelocities(ParticleContainer &particles, double beta);
 
         double initialTemperature;
         double targetTemperature;

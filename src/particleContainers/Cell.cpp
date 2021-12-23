@@ -63,7 +63,7 @@ void Cell::setNeighbors3D(const std::vector<std::array<int, 3>> &neighbors3DV) {
     Cell::neighbors3D = neighbors3DV;
 }
 
-Cell::Cell() : particles{std::vector<Particle*>{}}{};
+Cell::Cell() : particles{std::vector<Particle*>{}}{}
 
 void Cell::setNeighbors2D() {
     Cell::neighbors2D = {

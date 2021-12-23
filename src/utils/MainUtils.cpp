@@ -152,13 +152,11 @@ void MainUtils::initializeParticles(ParticleContainer &particles, Config& config
 
     // generate Particles from generator input JSONs
     for(auto& genFile : config.generator_files){
-        // TODO handle se index
-        auto newTypeToSe = ParticleGenerator::generateParticles(particles, genFile, sigmaTable.size() + se_mapping.size());
+        auto newTypeToSe = ParticleGenerator::generateParticles(particles, genFile, static_cast<int>(sigmaTable.size() + se_mapping.size()));
         se_mapping.insert(se_mapping.begin(), newTypeToSe.begin(), newTypeToSe.end());
     }
     // generate Particles directly specified in XML
-    // adapt for checkpointing
-    auto newTypeToSe = ParticleGenerator::generateParticles(particles, config.generatorInfos, sigmaTable.size() + se_mapping.size());
+    auto newTypeToSe = ParticleGenerator::generateParticles(particles, config.generatorInfos, static_cast<int>(sigmaTable.size() + se_mapping.size()));
     se_mapping.insert(se_mapping.begin(), newTypeToSe.begin(), newTypeToSe.end());
     if(config.calc_type == PhysicsCalc::lennardJones && config.linkedCell){
         buildSETable(se_mapping);
@@ -254,75 +252,82 @@ void MainUtils::parseXML(Config& config) {
 }
 
 void MainUtils::printConfig(Config& config) {
-    std::string message = "Your configurations are:\n";
+    std::stringstream s;
+    s << "Your configurations are:" << std::endl;
     if(!config.xml_file.empty()){
-        message.append("\u001b[36m\tXML File:\u001b[0m " + config.xml_file);
+        s << "\u001b[36m\tXML File:\u001b[0m " << config.xml_file << std::endl;
     }
     if(!config.filename.empty()){
-        message.append("\n\u001b[36m\tFilenames:\u001b[0m ");
+       s << "\u001b[36m\tFilenames:\u001b[0m ";
         for(auto& f : config.filename){
-            message.append(f + " ");
+            s << f << " ";
         }
+        s << std::endl;
     }
 
     if(!config.generator_files.empty()){
-        message.append("\n\u001b[36m\tGenerator Input Files:\u001b[0m ");
+        s << "\u001b[36m\tGenerator Input Files:\u001b[0m ";
         for(auto& f : config.generator_files){
-            message.append(f + " ");
+           s << f << " ";
         }
+        s << std::endl;
     }
 
     if(!config.checkpointInput.empty()){
-        message.append("\n\u001b[36m\tCheckpoint Input:\u001b[0m ").append(config.checkpointInput);
+        s << "\u001b[36m\tCheckpoint Input:\u001b[0m " << config.checkpointInput << std::endl;
     }
 
     if(config.checkpointing){
-        message.append("\n\u001b[36m\tCheckpoint Output:\u001b[0m ").append(config.checkpointOutput);
+       s << "\u001b[36m\tCheckpoint Output:\u001b[0m " << config.checkpointOutput << std::endl;
     }
 
     if(!config.generatorInfos.empty()){
-        message.append("\n\u001b[36m\tGenerator Input (XML):\u001b[0m " + std::to_string(config.generatorInfos.size()));
+       s << "\u001b[36m\tGenerator Input (XML):\u001b[0m " << config.generatorInfos.size()  << std::endl;
     }
-    message.append("\n\u001b[36m\tContainer:\u001b[0m ").append(config.linkedCell?"LinkedCellContainer\n":"DirectSumContainer\n");
-    message.append("\u001b[36m\tCalculator:\u001b[0m ");
+    s << "\u001b[36m\tContainer:\u001b[0m " << (config.linkedCell?"LinkedCellContainer":"DirectSumContainer") << std::endl;
+    s << "\u001b[36m\tCalculator:\u001b[0m ";
     switch (config.calc_type) {
         case PhysicsCalc::gravitation:
-            message.append("Gravitation\n");
+            s << "Gravitation";
             break;
         case PhysicsCalc::lennardJones:
-            message.append("Lennard-Jones-Potential").append(config.linkedCell?" (LinkedCellCalculation)\n":"\n");
+            s << "Lennard-Jones-Potential"<< (config.linkedCell?" (LinkedCellCalculation)":"");
             break;
         case PhysicsCalc::unknown:
         default:
-            message.append("Lennard-Jones-Potential (Default)").append(config.linkedCell?" (LinkedCellCalculation)\n":"\n");
+            s << "Lennard-Jones-Potential (Default)" << (config.linkedCell?" (LinkedCellCalculation)":"");
     }
+    s << std::endl;
     if(config.useThermostat){
-        message.append("\u001b[36m\tThermostat:\u001b[0m ").append("nThermostat: ").append(std::to_string(config.nThermostat)).append(", Tinit: ").append(std::to_string(config.initialTemperature));
-        message.append(", Ttarget: ").append(std::to_string(config.targetTemperature));
+        s << "\u001b[36m\tThermostat:\u001b[0m " << "nThermostat: " << config.nThermostat << ", Tinit: " << config.initialTemperature;
+        s << ", Ttarget: " << config.targetTemperature;
         if(abs(config.maxDeltaTemperature - DBL_MAX) < 10){
-            message.append(", maxDeltaT: infinity\n");
+            s << ", maxDeltaT: infinity";
         }else{
-            message.append(", maxDeltaT: ").append(std::to_string(config.maxDeltaTemperature) + "\n");
+           s << ", maxDeltaT: " << config.maxDeltaTemperature;
         }
+        s << std::endl;
     }
-    message.append("\u001b[36m\tWriter:\u001b[0m ");
+    s << "\u001b[36m\tWriter:\u001b[0m ";
     switch (config.io_type) {
         case IOWriter::vtk:
-            message.append("VTK-Writer\n");
+            s << "VTK-Writer";
             break;
         case IOWriter::xyz:
-            message.append("XYZ-Writer\n");
+            s << "XYZ-Writer";
             break;
         case IOWriter::unknown:
         default:
-            message.append("VTK-Writer (Default)\n");
+            s << "VTK-Writer (Default)";
     }
-    message.append("\u001b[36m\tWrite Frequency:\u001b[0m ").append(std::to_string(config.writeFrequency));
-    if(config.randomGen) message.append("\n\u001b[36m\tRandom Generation\u001b[0m (This needs Python3)\n");
-    message.append("\n\u001b[36m\tBrownianMotion:\u001b[0m ").append(std::to_string(config.brownianMotionMean));
-    message.append("\n\u001b[36m\tEnd_time:\u001b[0m ").append(std::to_string(config.end_time)).append(config.end_time == 1000 ? " (Default)\n" : "\n");
-    message.append("\u001b[36m\tDelta_t:\u001b[0m ").append(std::to_string(config.delta_t)).append(config.delta_t == 0.014 ? " (Default)\n" : "\n");
-    std::cout << message << "Calculating..." << std::endl;
+    s << std::endl;
+    s << "\u001b[36m\tWrite Frequency:\u001b[0m " << config.writeFrequency << std::endl;
+    if(config.randomGen) s << "\u001b[36m\tRandom Generation\u001b[0m (This needs Python3)" << std::endl;
+    s << "\u001b[36m\tBrownianMotion:\u001b[0m " << config.brownianMotionMean << std::endl;
+    s << "\u001b[36m\tEnd_time:\u001b[0m " << config.end_time << std::endl;
+    s << "\u001b[36m\tDelta_t:\u001b[0m " << config.delta_t << std::endl;
+   s << "\u001b[36m\tGravitational Factor:\u001b[0m " << config.grav << std::endl;
+    std::cout << s.str() << "Calculating..." << std::endl;
 }
 
 void MainUtils::initializeLogger() {
