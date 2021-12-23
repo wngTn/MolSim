@@ -38,18 +38,18 @@ TEST(ThermostatTest, IncreaseTemperatureTest){
     double initTemperature = 4.0;
     double targetTemperature = 20.0;
     double maxDeltaTemperature = 2.0;
+    double EPSILON_VALUE = 0.00001;
 
     Thermostat thermostat = {initTemperature, targetTemperature, maxDeltaTemperature};
     calculator::LinkedCell calc = {1, 1, 1};
 
-    LinkedCellContainer particles = LinkedCellContainer(3, 3, 3, 1, std::array<LinkedCellContainer::Border, 6>{
+    LinkedCellContainer particles = LinkedCellContainer(6, 6, 6, 1, std::array<LinkedCellContainer::Border, 6>{
             LinkedCellContainer::reflective, LinkedCellContainer::reflective, LinkedCellContainer::reflective,
             LinkedCellContainer::reflective, LinkedCellContainer::reflective, LinkedCellContainer::reflective});
-    //      {0.5, 0.5, 0.5}         {1, 1, 1}
-    particles.particles.emplace_back(std::array<double, 3>{0.5, 0.5, 0.5},
+    particles.particles.emplace_back(std::array<double, 3>{1, 1, 1},
                                      std::array<double, 3>{0, 1, 0},
                                      1);
-    particles.particles.emplace_back(std::array<double, 3>{2.9, 2.9, 2.9},
+    particles.particles.emplace_back(std::array<double, 3>{1.9, 1.9, 1.9},
                                      std::array<double, 3>{0, 1, 0},
                                      1);
     for (auto it = particles.particles.begin(); it != particles.particles.end(); ++it) {
@@ -69,29 +69,29 @@ TEST(ThermostatTest, IncreaseTemperatureTest){
     thermostat.applyTemperature(particles);
     double endTemp = ThermostatTest::testingCalculateCurrentTemp(particles);
     // tests if the temperature has increased
-    EXPECT_LE(abs(endTemp - startTemp), maxDeltaTemperature);
+    EXPECT_LE(fabs((endTemp - startTemp) - maxDeltaTemperature), EPSILON_VALUE);
 }
 
 TEST(ThermostatTest, DecreaseTemperatureTest){
     double initTemperature = 20.0;
     double targetTemperature = 4.0;
     double maxDeltaTemperature = 2.0;
+    double EPSILON_VALUE = 0.00001;
 
     Thermostat thermostat = {initTemperature, targetTemperature, maxDeltaTemperature};
     calculator::LinkedCell calc = {1, 1, 1};
 
-    LinkedCellContainer particles = LinkedCellContainer(3, 3, 3, 1, std::array<LinkedCellContainer::Border, 6>{
+    LinkedCellContainer particles = LinkedCellContainer(6, 6, 6, 1, std::array<LinkedCellContainer::Border, 6>{
             LinkedCellContainer::reflective, LinkedCellContainer::reflective, LinkedCellContainer::reflective,
             LinkedCellContainer::reflective, LinkedCellContainer::reflective, LinkedCellContainer::reflective});
-    //      {0.5, 0.5, 0.5}         {1, 1, 1}
-    particles.particles.emplace_back(std::array<double, 3>{0.5, 0.5, 0.5},
+    particles.particles.emplace_back(std::array<double, 3>{1, 1, 1},
                                      std::array<double, 3>{0, 1, 0},
                                      1);
-    particles.particles.emplace_back(std::array<double, 3>{2.9, 2.9, 2.9},
+    particles.particles.emplace_back(std::array<double, 3>{1.9, 1.9, 1.9},
                                      std::array<double, 3>{0, 1, 0},
                                      1);
     for (auto it = particles.particles.begin(); it != particles.particles.end(); ++it) {
-    particles.grid[0].emplace_back(&(*it));
+        particles.grid[0].emplace_back(&(*it));
     }
     particles.setup();
     // tests if all particles are added to the domain
@@ -106,30 +106,30 @@ TEST(ThermostatTest, DecreaseTemperatureTest){
     double startTemp = ThermostatTest::testingCalculateCurrentTemp(particles);
     thermostat.applyTemperature(particles);
     double endTemp = ThermostatTest::testingCalculateCurrentTemp(particles);
-    // tests if the temperature has increased
-    EXPECT_LE(abs(endTemp - startTemp), maxDeltaTemperature);
+    // tests if the temperature has decreased
+    EXPECT_LE(fabs((startTemp - endTemp) - maxDeltaTemperature), EPSILON_VALUE);
 }
 
 TEST(ThermostatTest, HoldingTemperatureTest){
     double initTemperature = 20.0;
     double targetTemperature = 20.0;
     double maxDeltaTemperature = 2.0;
+    double EPSILON_VALUE = 0.00001;
 
     Thermostat thermostat = {initTemperature, targetTemperature, maxDeltaTemperature};
     calculator::LinkedCell calc = {1, 1, 1};
 
-    LinkedCellContainer particles = LinkedCellContainer(3, 3, 3, 1, std::array<LinkedCellContainer::Border, 6>{
+    LinkedCellContainer particles = LinkedCellContainer(6, 6, 6, 1, std::array<LinkedCellContainer::Border, 6>{
             LinkedCellContainer::reflective, LinkedCellContainer::reflective, LinkedCellContainer::reflective,
             LinkedCellContainer::reflective, LinkedCellContainer::reflective, LinkedCellContainer::reflective});
-    //      {0.5, 0.5, 0.5}         {1, 1, 1}
-    particles.particles.emplace_back(std::array<double, 3>{0.5, 0.5, 0.5},
-            std::array<double, 3>{0, 1, 0},
-    1);
-    particles.particles.emplace_back(std::array<double, 3>{2.9, 2.9, 2.9},
-            std::array<double, 3>{0, 1, 0},
-    1);
+    particles.particles.emplace_back(std::array<double, 3>{1, 1, 1},
+                                     std::array<double, 3>{0, 1, 0},
+                                     1);
+    particles.particles.emplace_back(std::array<double, 3>{1.9, 1.9, 1.9},
+                                     std::array<double, 3>{0, 1, 0},
+                                     1);
     for (auto it = particles.particles.begin(); it != particles.particles.end(); ++it) {
-    particles.grid[0].emplace_back(&(*it));
+        particles.grid[0].emplace_back(&(*it));
     }
     particles.setup();
     // tests if all particles are added to the domain
@@ -144,7 +144,7 @@ TEST(ThermostatTest, HoldingTemperatureTest){
     double startTemp = ThermostatTest::testingCalculateCurrentTemp(particles);
     thermostat.applyTemperature(particles);
     double endTemp = ThermostatTest::testingCalculateCurrentTemp(particles);
-    // tests if the temperature has increased
-    EXPECT_EQ(startTemp, endTemp);
+    // tests if the temperature has changed
+    EXPECT_LE(fabs(startTemp - endTemp), EPSILON_VALUE);
 }
 
