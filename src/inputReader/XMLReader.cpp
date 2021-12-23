@@ -1,5 +1,5 @@
 #include <iostream>
-#include <float.h>
+#include <cfloat>
 
 #include "XMLReader.h"
 
