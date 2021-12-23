@@ -10,7 +10,7 @@
 
 
 > <span style="color:red">**NOTE**: This is not the README of the assignment. It is simply a README for the whole project. The READMEs
-> for the assignments can be found in the `./doc_pages` directory.</span>.
+> for the assignments can be found in the `./doc_pages` directory.</span>
 
 
 # Warning # 
@@ -88,20 +88,22 @@ Also, you need the xerces-c library for the parsers we use in the program:
 The general program call is:
 
 ```shell
-./MolSim [-i <input_file>] [-g <generator input>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calculator>] [-b <brownian_motion_velocity_mean>] [-r] [-m <execution_mode>]
+./MolSim [-x <XML_file>] [-i <input_file>] [-g <generator input>] [-e <end_time>] [-d <delta_t>] [-w <writer>] [-c <calculator>] [-b <brownian_motion_velocity_mean>] [-r] [-m <execution_mode>]
 ```
 
-| Flag   | Possible Values | Explanation | Default |
-|----------|:-------------:|-------------| ------- |
-| `i` |  `path/to/file` | This is the relative or absolute path to your `input_file`. | *None*
-| `g` |  `path/to/file`| Specify an input file used for the ParticleGenerator. | *None*
-| `e` |  \<double> | The end_time value | 1000
-| `d` | \<double> | The delta_t value | 0.14
-| `w` | v, vtk, x, xyz | Specifies the output writer, consequently also the output file format | v (vtk)
-| `c` | g, grav, gravitation, lj, lennardjones | Declares what forces between the particles should be calculated | lj (lennardjones)
-| `b` | \<double> | The <tt>brownian motion velocity mean</tt>. **Will be discarded for the JSON file generated particles** | *None*
-| `r` | *None* | Specifies whether random particles should be generated. | *None*
-| `m` | normal, debug, benchmark | Specifies which execution mode should be used. **Debug** to enable logging, **normal** to disable logging or **benchmark** to disable all output files | normal
+| Flag |            Possible Values             | Explanation                                                                                                                                            | Default           |
+|------|:--------------------------------------:|--------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------|
+| `i`  |             `path/to/file`             | This is the relative or absolute path to your `input_file`.                                                                                            | *None*            |
+| `x`  |             `path/to/file`             | This is the relative or absolute path to your `XML_file`.                                                                                              | *None*            |
+| `g`  |             `path/to/file`             | Specify an input file used for the ParticleGenerator.                                                                                                  | *None*            |
+| `e`  |               \<double>                | The end_time value                                                                                                                                     | 1000              |
+| `d`  |               \<double>                | The delta_t value                                                                                                                                      | 0.14              |
+| `w`  |             v, vtk, x, xyz             | Specifies the output writer, consequently also the output file format                                                                                  | v (vtk)           |
+| `c`  | g, grav, gravitation, lj, lennardjones | Declares what forces between the particles should be calculated                                                                                        | lj (lennardjones) |
+| `b`  |               \<double>                | The <tt>brownian motion velocity mean</tt>. **Will be discarded for the JSON file generated particles**                                                | *None*            |
+| `r`  |                 *None*                 | Specifies whether random particles should be generated.                                                                                                | *None*            |
+| `m`  |        normal, debug, benchmark        | Specifies which execution mode should be used. **Debug** to enable logging, **normal** to disable logging or **benchmark** to disable all output files | normal            |
+
 
 > ⚠️ **Random generated files** only support the input file format of assignment 1. Also, you will need Python 3 to use it.
 
