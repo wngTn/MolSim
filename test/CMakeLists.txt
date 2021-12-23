@@ -13,7 +13,7 @@ if(BUILD_TEST)
     set(Test_Sources
             ParticleContainerTest.cpp
             LennardJonesTest.cpp
-            MainTest.cpp LinkedCellContainerTest.cpp LinkedCellTest.cpp XMLReaderTest.cpp ParticleTest.cpp)
+            MainTest.cpp LinkedCellContainerTest.cpp LinkedCellTest.cpp XMLReaderTest.cpp ParticleTest.cpp ThermostatTest.cpp)
 
     # add the files to our executable
     add_executable(${This} ${Test_Sources})
