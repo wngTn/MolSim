@@ -36,8 +36,6 @@ void Cell::toString() {
 }
 
 void Cell::clear() {
-    for (auto e : particles) {
-        delete e;
-    }
+    particles.clear();
 }
 

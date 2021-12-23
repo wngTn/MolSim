@@ -77,7 +77,7 @@ target_compile_features(${ThisLib}
         )
 
 # create our executable main target
-add_executable(${This} ${CMAKE_CURRENT_SOURCE_DIR}/src/MolSim.cpp)
+add_executable(${This} ${CMAKE_CURRENT_SOURCE_DIR}/src/Main.cpp)
 # link our libraries to that target
 target_link_libraries(${This} lib::${ThisLib})
 

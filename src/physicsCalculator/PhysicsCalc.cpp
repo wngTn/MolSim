@@ -32,3 +32,20 @@ void PhysicsCalc::calcX(ParticleContainer &particles) const {
 
     }
 }
+
+void PhysicsCalc::setDeltaT(double dt) {
+    delta_t = dt;
+}
+
+void PhysicsCalc::setDim(int d) {
+    DIM = d;
+}
+
+double PhysicsCalc::getDeltaT() const {
+    return delta_t;
+}
+
+int PhysicsCalc::getDim() const {
+    return DIM;
+}
+
