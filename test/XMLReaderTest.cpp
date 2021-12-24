@@ -32,6 +32,9 @@ protected:
         info = XMLReader::readFile("../../input/files/assignment_3/test.xml");
     }
 
+    void readThermostatInfoFromXML(){
+        info = XMLReader::readFile("../../input/files/assignment_4/xml_parser_test_input.xml");
+    }
 
 };
 
@@ -113,4 +116,17 @@ TEST_F(XMLReaderTest, XMLInfoTest2){
     EXPECT_EQ(info.inputFiles[0], "../input/files/assignment_1/eingabe-sonne.txt");
     EXPECT_EQ(info.inputFiles[1], "../input/files/someInput.txt");
 
+}
+
+/**
+ * Tests input parsing for thermostat
+ */
+TEST_F(XMLReaderTest, XMLInfoThermostatTest){
+    XMLReaderTest::readThermostatInfoFromXML();
+    // tests correct reading of the thermostat specifications
+    EXPECT_TRUE(info.useThermostat);
+    EXPECT_EQ(info.t_init, 0.5);
+    EXPECT_EQ(info.t_target, 40.0);
+    EXPECT_EQ(info.delta_temp, 2.0);
+    EXPECT_EQ(info.n_thermostat, 1000);
 }

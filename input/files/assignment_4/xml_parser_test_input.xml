@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<simulation t_end="0.5" delta_t="0.0005" writeFrequency="50" outputWriter="vtk">
+    <container type="linkedcell">
+        <rCut>123.45</rCut>
+        <domainSizeX>123</domainSizeX>
+        <domainSizeY>123</domainSizeY>
+        <domainSizeZ>123</domainSizeZ>
+        <borderType>
+            <left>periodic</left>
+            <right>periodic</right>
+            <upper>periodic</upper>
+            <lower>periodic</lower>
+            <front>periodic</front>
+            <back>periodic</back>
+        </borderType>
+    </container>
+    <calculator type="lennardjones">
+        <epsilon>123.45</epsilon>
+        <sigma>123.45</sigma>
+        <gravityFactor>5</gravityFactor>
+        <brownianMotion>123.45</brownianMotion>
+    </calculator>
+    <outputFile>str1234</outputFile>
+    <thermostat>
+        <nThermostat>1000</nThermostat>
+        <Tinit>0.5</Tinit>
+        <Ttarget>40.0</Ttarget>
+        <deltaTemp>2.0</deltaTemp>
+    </thermostat>
+    <generatorInfo type="sphere">
+        <x>50</x>
+        <y>50</y>
+        <z>0.0</z>
+        <v1>0.0</v1>
+        <v2>0.0</v2>
+        <v3>0.0</v3>
+        <mass>1.0</mass>
+        <distance>1.2</distance>
+        <brownianFactor>0.0</brownianFactor>
+        <dim>2</dim>
+        <epsilon>1.0</epsilon>
+        <sigma>1.2</sigma>
+        <radius>20</radius>
+    </generatorInfo>
+</simulation>
