@@ -91,6 +91,8 @@ Accordingly we updated the XML format and added the following elements (`Ttarget
 
 # Task 2 - Simulation of the Rayleigh-Taylor instability #
 
+See the `Task_2_Big.avi` file [here](https://nextcloud.in.tum.de/index.php/s/i9dLLoLQzTCatj8) for a video of the simulation.
+
 ## ~~Cyclic~~ Periodic Boundaries ##
 
 Periodic boundaries can be specified in the XML-file as:
@@ -112,7 +114,6 @@ If the other side is a *reflective* border and a particle crosses the border, it
 
 If the other side is an *outflow* border, a particle on the *outflow* border can get too close to the particle at the *periodic* border, making the particle at the *periodic* border go AWOL.
 
-
 ## Gravitational force ##
 
 Gravity is applied in the `setUp()` method in the `LinkedCellContainer` class. Instead of initializing the force of every particle with `std::array<double, 3>{0., 0. 0.}`, we instead initialize them with `std::array<double, 3>{0., particle.getM() * g, 0.}`, where `g` is the gravitational factor *g_grav*.
@@ -127,6 +128,8 @@ To keep the `type` attribute usable for other things, we introduced another attr
 
 
 # Task 3 - Simulation of a falling drop - Liquid #
+
+See the `Task_3_Correct_Thermostat.avi` file [here](https://nextcloud.in.tum.de/index.php/s/i9dLLoLQzTCatj8) for a video of the simulation of this task.
 
 ## Checkpointing ##
 
