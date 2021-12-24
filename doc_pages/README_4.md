@@ -81,12 +81,12 @@ We implemented a thermostat using the given formulas. The `Thermostat::applyTemp
 For the calculation of the kinetic energy, we added a `dotProduct` method in the `ArrayUtils` class.
 Accordingly we updated the XML format and added the following elements (`Ttarget` and `deltaTemp` are optional):
 ```xml
-    <thermostat>
-        <nThermostat>1000</nThermostat>
-        <Tinit>40.0</Tinit>
-        <Ttarget>25.5</Ttarget>
-        <deltaTemp>2.0</deltaTemp>
-    </thermostat>
+<thermostat>
+  <nThermostat>1000</nThermostat>
+  <Tinit>40.0</Tinit>
+  <Ttarget>25.5</Ttarget>
+  <deltaTemp>2.0</deltaTemp>
+</thermostat>
 ```
 
 # Task 2 - Simulation of the Rayleigh-Taylor instability #
@@ -97,12 +97,12 @@ Periodic boundaries can be specified in the XML-file as:
 
 ```xml
 <borderType>
-    <left>periodic</left>
-    <right>periodic</right>
-    <upper>periodic</upper>
-    <lower>periodic</lower>
-    <front>periodic</front>
-    <back>periodic</back>
+  <left>periodic</left>
+  <right>periodic</right>
+  <upper>periodic</upper>
+  <lower>periodic</lower>
+  <front>periodic</front>
+  <back>periodic</back>
 </borderType>
 ```
 
@@ -319,7 +319,7 @@ cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/dss/dsshome1/lrz/sys/spac
 
 ### Results ###
 
-![](https://codimd.s3.shivering-isles.com/demo/uploads/cf07017085644abeba9f4568d.jpg)
+![](../media/week_4/compiler_comparison.jpg)
 
 Intel takes the lead in this round!
 
@@ -402,16 +402,11 @@ Analogously, the templated `calcF` method looked like this:
 
 ### Results ###
 
-Alas, the results were sobering, as it did not reduce the run time - in contrary, it increased the runtime. The compile time was not documented, but naturally it increased, too, albeit it was not drastically.
+Alas, the results were sobering, as it did not reduce the run time - in contrary, it increased the runtime a few seconds. The compile time was not documented, but naturally it increased, too, albeit it was not drastically.
 
-Table 1: Comparison of our implementation and the non polymorphic templated implementation.
-
-| Input File                             | Version                  | Device             | Run Time in seconds |
-|----------------------------------------|--------------------------|--------------------|---------------------|
-| Collision of Two Bodies (Assignment 3) | Polymorphy (untemplated) | MacBook Pro M1 Pro | ~38s                |
-| Collision of Two Bodies (Assignment 3) | Templated                | MacBook Pro M1 Pro | **~43s**            |
-| Falling Drop (Assignment 3)            | Polymorphy (untemplated) | MacBook Pro M1 Pro | ~52s                |
-| Falling Drop (Assignment 3)            | Templated                | MacBook Pro M1 Pro | **~64s**            |
+**Blue is our previous implementation, green the new implementation**
+![](../media/week_4/templates_vs_polymorphy.jpg)
+*Tested on the MacBook Pro M1 Pro*
 
 ## Using templates and constexpr recklessly (Success?) ##
 
@@ -436,21 +431,16 @@ We did not approach this solution with any hope of a better performance - we wer
 We also did not document the compile time; albeit, with header files that have gotten twice or thrice as big, the compile time surely gained a few seconds. However, we have compiled the refactored code on a **MacBook M1 Pro** with `make -j` and thus, we did not notice a huge change in compile time performance as this laptop is blazingly fast (before refactoring: 12s with compiling the tests).
 
 
-Table 2: Comparison of our implementation and templating every method in the `LinkeCell` and `LinkedCellContainer` class.
-
-| Input File                             | Version                  | Device             | Run Time in seconds |
-|----------------------------------------|--------------------------|--------------------|---------------------|
-| Collision of Two Bodies (Assignment 3) | Polymorphy (untemplated) | MacBook Pro M1 Pro | ~38s                |
-| Collision of Two Bodies (Assignment 3) | Templated                | MacBook Pro M1 Pro | **~35s**            |
-| Falling Drop (Assignment 3)            | Polymorphy (untemplated) | MacBook Pro M1 Pro | ~52s                |
-| Falling Drop (Assignment 3)            | Templated                | MacBook Pro M1 Pro | **~46s**            |
+**Blue is our previous implementation, green the new implementation**
+![](../media/week_4/templating_everything.jpg)
+*Tested on the MacBook Pro M1 Pro*
 
 Eureka! We made the code faster! **But how? We did not even make use of why templates have been introduced - that is using the same method with different parameter types, neither constexpr.**
 
 We concluded that it must have been be pure luck, changing the order of the code might have helped the compiler to identify more ways to improve the code. It simply did not make sense how merely templating every method (that are only called with the same parameter typ!) helped the runtime. However, in the end templates did make the run time seconds to crumble! Even though, we do not know why.
 
 After heavy disputes, we did abolish this change in the end in fear of questions like:
-- A: *"Why did you templated every method, even though you call them with the same parameter type everytime?"*
+- A: *"Why did you template every method, even though you call them with the same parameter type everytime?"*
 - B: *"It made the code faster"*
 - A: *"And why is that?"*
 - B: *"Hmm... must've been magic"*
@@ -485,13 +475,9 @@ This way we only have to calculate the neighbors once, that is when the LinkedCe
 
 **We were successful in reaping the fruits of our optimization!** The sample time of the `getNeighbors` method went naturally to 0%, the run time, however, also decreased:
 
-Table 3: Comparison of our implementation and the new neighbors acquisition method
-|Input File|Version|Device|Run Time in seconds|
-|---|---|---|---|
-|Collision of Two Bodies (Assignment 3)|`getNeighbor()`|MacBook Pro M1 Pro |~38s|
-|Collision of Two Bodies (Assignment 3)|with attributes|  MacBook Pro M1 Pro|**~37s**|
-|Falling Drop (Assignment 3)|`getNeighbor()` |MacBook Pro M1 Pro|~52s|
-|Falling Drop (Assignment 3)|with attributes|MacBook Pro M1 Pro| **~48s**
+**Blue is our previous implementation, green the new implementation**
+![](../media/week_4/get_neighbors_benchmarks.jpg)
+*Tested on the MacBook Pro M1 Pro*
 
 
 ## You learn from your mistakes ##
@@ -550,7 +536,7 @@ Therefore, we seeked for ways to minimize these `getX()` calls, resulting in fol
 
 This change might not seem too dire, however, looking at *Quickbench*, these changes do have a noticeable impact:
 
-![](https://codimd.s3.shivering-isles.com/demo/uploads/cf07017085644abeba9f45689.png)
+![](../media/week_4/loop_vs_arrayutils_quickbench.png)
 
 
 Almost thrice as fast!
@@ -566,9 +552,11 @@ Profiling with <tt>Dtrace</tt>, we had following results:
   - `Particle::getX` using **~4%** of the sample time of its father `calcF`
 
 
-However, when we saw the runtime results, we were literally crying. These were tested with the `input/files/assignment_4/big_benchmark_test.xml` file.
+However, when we saw the runtime results, we were literally crying. These were tested with the `input/files/assignment_4/big_benchmark_test.xml` file on the MacBook Pro M1 Pro.
 
-![](https://codimd.s3.shivering-isles.com/demo/uploads/cf07017085644abeba9f4568b.jpg)
+**Blue is our previous implementation, green the new implementation**
+![](../media/week_4/loop_vs_arrayutils_runtime.jpg)
+
 
 
 After hours of contemplating we came to the conclusion that it must have something to do with memory alignment, references that are returned from `getX()` and some compiler magic. Nevertheless, we were kind of devastated.
@@ -612,17 +600,22 @@ module load xerces-c
 
 ### Result ###
 
-![](https://codimd.s3.shivering-isles.com/demo/uploads/cf07017085644abeba9f4568e.jpg)
+![](../media/week_4/contest_compiler_comparison.jpg)
 
 Table 4: Comparison of different compilers on input file of task 2
 
-|Input File|Compiler|MUPS/s|
-|---|---|---|
-|`input_week4_task2_big.xml`|<tt>g++ 10.2.0</tt>|899200|
-|`input_week4_task2_big.xml`|<tt>icpc 2021.4</tt>|929368|
+| Input File                  | Compiler             | MUPS/s |
+|-----------------------------|----------------------|--------|
+| `input_week4_task2_big.xml` | <tt>g++ 10.2.0</tt>  | 899200 |
+| `input_week4_task2_big.xml` | <tt>icpc 2021.4</tt> | 929368 |
 
 
 # Miscellaneous #
+
+### More simulations ###
+
+More simulations can be found here:
+https://nextcloud.in.tum.de/index.php/s/i9dLLoLQzTCatj8
 
 ### Water only liquid when frozen? ###
 
@@ -635,7 +628,7 @@ We don't know why the particles need to be cooled so much (the β for scaling th
 
 Maybe it's just not possible to simulate water with the basic calculation methods we use without cooling it or maybe the excersise was specifically designed to have this behaviour, so the instructor directly notices when the cooling isn't correct.
 
-[Here](https://nextcloud.in.tum.de/index.php/s/t2KW2YYRwgK5jTH) videos of both simulations can be seen.
+[Here](https://nextcloud.in.tum.de/index.php/s/i9dLLoLQzTCatj8) videos of both simulations can be seen.
 
 ### Cache misses ###
 
