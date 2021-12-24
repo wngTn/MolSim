@@ -81,7 +81,7 @@ We implemented a thermostat using the given formulas. The `Thermostat::applyTemp
 For the calculation of the kinetic energy, we added a `dotProduct` method in the `ArrayUtils` class.
 Accordingly we updated the XML format and added the following elements (`Ttarget` and `deltaTemp` are optional):
 ```xml
-    <thermostat>
+<thermostat>
   <nThermostat>1000</nThermostat>
   <Tinit>40.0</Tinit>
   <Ttarget>25.5</Ttarget>
@@ -611,6 +611,11 @@ Table 4: Comparison of different compilers on input file of task 2
 
 
 # Miscellaneous #
+
+### More simulations ###
+
+More simulations can be found here:
+https://nextcloud.in.tum.de/index.php/s/i9dLLoLQzTCatj8
 
 ### Water only liquid when frozen? ###
 
