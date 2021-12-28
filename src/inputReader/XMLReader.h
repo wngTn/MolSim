@@ -47,6 +47,13 @@ public:
         std::vector<ParticleGenerator::ShapeInfo> generatorInfos;
         // input files (JSON) for the ParticleGenerator, for specifications see info about ParticleGenerator
         std::vector<std::string> generatorInputFiles;
+        // iteration, when base Force is reset
+        int baseForceReset;
+        bool resetBaseForce;
+
+        bool membrane;
+        double rZero;
+        double stiffnessConstant;
         //stuff used for linked cell
         bool linkedcell;
         std::array<int,3> linkedCellSize;

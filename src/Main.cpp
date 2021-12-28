@@ -48,7 +48,9 @@ int main(int argc, char *argv[]) {
     if(config.useThermostat){
         thermostat.setupTemperature(*particles);
     }
-    calc->calcX(*particles);
+    //calc->calcX(*particles);
+    //two times setup is needed, so that oldF (which is used when writing) is set to the initial baseForce
+    particles->setup();
     particles->setup();
     calc->calcF(*particles);
     if (!config.benchmarking){
@@ -79,6 +81,10 @@ int main(int argc, char *argv[]) {
             particles->setup();
             // uses abstract write method overwritten by specific IO method
             io->write(*particles, config.output_file, iteration);
+        }
+
+        if(config.resetBaseForce && iteration == config.resetBaseForceIteration){
+            particles->reset_base_force();
         }
 
         current_time += config.delta_t;

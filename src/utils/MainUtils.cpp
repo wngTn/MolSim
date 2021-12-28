@@ -102,6 +102,9 @@ std::unique_ptr<PhysicsCalc> MainUtils::get_calculator(Config& config) {
                 c->setSigmaTable(sigmaTable);
                 c->setEpsilonTable(epsilonTable);
                 c->setMapping(se_mapping);
+                c->setMembrane(config.membrane);
+                c->setRZero(config.rZero);
+                c->setStiffnessConstant(config.stiffnessConstant);
                 return c;
             }
             return std::make_unique<calculator::LennardJones>(config.sigma, config.eps);
@@ -248,6 +251,14 @@ void MainUtils::parseXML(Config& config) {
     config.checkpointOutput = info.checkpointOutput;
     config.checkpointInput = info.checkpointInput;
 
+    config.resetBaseForceIteration = info.baseForceReset;
+    config.resetBaseForce = info.resetBaseForce;
+
+    if(info.membrane){
+        config.membrane = true;
+        config.rZero = info.rZero;
+        config.stiffnessConstant = info.stiffnessConstant;
+    }
     spdlog::info("Finished XML parsing!");
 }
 

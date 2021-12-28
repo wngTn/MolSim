@@ -13,8 +13,16 @@ public:
         sphere
     };
 
+    enum behaviour_type{
+        normal,
+        membrane,
+        immovable
+    };
+
     struct ShapeInfo {
         geometric_type type;
+
+        behaviour_type behaviour;
         // for sphere AND cuboid
         // C: lower left front side corner, S: center
         std::array<double,3> pos;
@@ -35,6 +43,11 @@ public:
         int radius;
         // only used for cuboid
         std::array<int,3> N;
+        // base Force applied to each particle for each time step. only applied until reset
+        std::array<double,3> baseForce;
+        // this is kind ugly but easy
+        // stores info for special particles: position (in grid), special force, special start V, special mass
+        std::vector<std::tuple<std::array<int,3>, std::array<double,3>, std::array<double,3>, double>> specialParticles;
     };
     static std::vector<std::pair<int, std::pair<double,double>>> generateParticles(ParticleContainer &particles, const std::vector<ShapeInfo>& infovec);
 
@@ -71,6 +84,5 @@ private:
     // this produces veeeery smooth & nice spheres, but the minimum distance is not kept, so not suited for LJP
     // also not optimized at all bc still WIP
     static void generateSphere2(ParticleContainer &particles, const ShapeInfo & info);
-
 };
 

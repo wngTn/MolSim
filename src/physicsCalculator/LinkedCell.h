@@ -55,9 +55,17 @@ namespace calculator {
 
         void setMapping(std::vector<std::pair<int, std::pair<double, double>>>& mapping);
 
+        void setRZero(double rZ);
+
+        void setStiffnessConstant(double stiffnessConstant);
+
+        void setMembrane(bool mem);
+
     private:
 
         inline void ljforce(Particle* p1, Particle* p2, double sqrd_dist) const;
+
+        void harmonic_potential(Particle* p1, Particle* p2, double sqrd_dist) const;
 
         void reflectiveBoundary(LinkedCellContainer & grid, const std::array<int, 3> & currentIndexes) const;
 
@@ -75,9 +83,19 @@ namespace calculator {
         void calcPerNeighbors(LinkedCellContainer &grid, const std::array<int, 3> & neighbors,
                               Particle* p, const std::array<double, 3> & mirror) const;
 
+        static bool gridNeighbors(std::array<int,3> index1, std::array<int,3> index2);
+
         double sigma = 1;
+
         double epsilon = 5;
         double rCut = 2.5 * epsilon;
+        // average bond length of molecule pair, used for membrane
+        double rZero;
+        // used for membrane
+        double stiffnessConstant;
+
+        // whether any membranes exist, used only to shortcut some checks
+        bool membrane = false;
 
         std::vector<std::vector<double>> sigmaTable = {{0.0}};
         std::vector<std::vector<double>> epsilonTable = {{0.0}};
@@ -113,12 +131,12 @@ namespace calculator {
             //std::cout << "calculated force with combined σ " << sigmaTable[p1->getSEIndex()][p2->getSEIndex()] << " and combined ε "
             //<< epsilonTable[p1->getSEIndex()][p2->getSEIndex()] << std::endl;
         //}
-
-
         p1->setF(p1->getF() + force);
         p2->setF(p2->getF() - force);
     }
 
+    constexpr double SIXTH_ROOT_OF_TWO = 1.12246204830937298;
+    constexpr double SQR_ROOT_OF_TWO = 1.4142135623730950488;
 }
 
 

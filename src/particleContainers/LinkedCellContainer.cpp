@@ -49,7 +49,10 @@ void LinkedCellContainer::setup() {
             auto cellIndex = (*this).index(novelCellIndex);
             p.setOldF(p.getF());
             // here gravitational force is applied
-            p.setF({0., p.getM() * g, 0.});
+            // p.setF({0., p.getM() * g, 0.});
+            // set Force to baseForce + g*m
+            p.applyBaseForceAndGrav(g);
+
             grid[cellIndex].emplace_back(&p);
         }
     }

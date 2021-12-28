@@ -43,6 +43,19 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
             info.gravityFactor = 0.0;
         }
         info.calculatorType = PhysicsCalc::lennardJones;
+        if(sim->calculator().baseForceTime().present()){
+            info.resetBaseForce = true;
+            info.baseForceReset = floor(sim->calculator().baseForceTime().get() / sim->delta_t());
+        }
+        if(sim->calculator().rZero().present() && sim->calculator().stiffnessConstant().present()){
+            info.membrane = true;
+            info.rZero = sim->calculator().rZero().get();
+            info.stiffnessConstant = sim->calculator().rZero().get();
+        }else{
+            info.membrane = false;
+            info.rZero = 0;
+            info.stiffnessConstant = 0;
+        }
     }else{
         info.calculatorType = PhysicsCalc::gravitation;
     }
@@ -146,6 +159,28 @@ void XMLReader::insertGeneratorInfo(std::vector<ParticleGenerator::ShapeInfo>& g
 
     shapeInfo.sigma = info.sigma();
     shapeInfo.epsilon = info.epsilon();
+
+    if(info.behaviour().present() && info.behaviour().get() == behaviour_t::membrane){
+        shapeInfo.behaviour = ParticleGenerator::membrane;
+    }
+
+    shapeInfo.specialParticles = {};
+    for(auto& sp : info.special_particle()){
+        auto pos = std::array<int,3>{sp.position().x(), sp.position().y(), sp.position().z()};
+        auto vel = shapeInfo.vel;
+        auto force = std::array<double,3>{0.,0.,0.};
+        auto mass = shapeInfo.mass;
+        if(sp.vel().present()){
+            vel = {sp.vel()->x(),sp.vel()->y(),sp.vel()->z()};
+        }
+        if(sp.force().present()){
+            force = {sp.force()->x(),sp.force()->y(),sp.force()->z()};
+        }
+        if(sp.mass().present()){
+            mass = sp.mass().get();
+        }
+        shapeInfo.specialParticles.emplace_back(pos,force,vel,mass);
+    }
 
     genInfos.push_back(shapeInfo);
 }

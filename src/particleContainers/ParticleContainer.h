@@ -104,6 +104,7 @@ public:
          return 3;
      };
 
+     void reset_base_force();
 
 
     friend void to_json(nlohmann::json& j, const ParticleContainer& container);

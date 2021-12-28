@@ -19,6 +19,11 @@ public:
 /// Default delta t
     double delta_t = 0.014;
 
+/// iteration, when baseForce is reset to 0
+    int resetBaseForceIteration;
+    ///
+    bool resetBaseForce;
+
 /// File name of the XML file specifying input parameters
     std::string xml_file;
 
@@ -81,6 +86,11 @@ public:
     double eps = 5.;
     double sigma = 1.;
     double grav;
+
+    // whether a membrane is used
+    bool membrane = false;
+    double rZero;
+    double stiffnessConstant;
 
     bool linkedCell;
     std::array<int, 3> linkedCellSize;
