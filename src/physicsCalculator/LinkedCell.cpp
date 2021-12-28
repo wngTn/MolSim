@@ -11,7 +11,6 @@ namespace calculator {
                     for (int i = 0; i < DIM; i++) {
                         sqrd_dist += LinkedCell::sqr((*it2)->getX()[i] - (*it)->getX()[i]);
                     }
-                    // TODO membrane
                     //LinkedCell::ljforce((*it), (*it2), sqrd_dist);
                     if(!membrane || !(*it)->membrane || !(*it2)->membrane){
                         if (sqrd_dist <= LinkedCell::sqr(rCut)) {
