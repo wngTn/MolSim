@@ -83,9 +83,9 @@
     <xs:complexType name="containerinfo_t">
         <xs:sequence minOccurs = "0">
             <xs:element name="rCut" type="xs:decimal"/>
-            <xs:element name="domainSizeX" type="xs:int"  />
-            <xs:element name="domainSizeY" type="xs:int"  />
-            <xs:element name="domainSizeZ" type="xs:int" />
+            <xs:element name="domainSizeX" type="xs:decimal"  />
+            <xs:element name="domainSizeY" type="xs:decimal"  />
+            <xs:element name="domainSizeZ" type="xs:decimal" />
             <xs:element name="borderType" type="border_t" />
         </xs:sequence>
         <xs:attribute name="type" type="containertype_t" use="required" />
@@ -123,6 +123,24 @@
         <xs:attribute name="excludeY" type="xs:boolean" use="optional" />
     </xs:complexType>
 
+    <xs:simpleType name="statistics_type_t">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="thermodynamical" />
+            <xs:enumeration value="densityVelocity" />
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <xs:complexType name="statistics_t">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="noBins" type="xs:int" />
+            <xs:element name="file" type="xs:string" />
+            <xs:element name="frequency" type="xs:int" />
+        </xs:sequence>
+        <xs:attribute name="type" type="statistics_type_t" use="required" />
+    </xs:complexType>
+
+
     <xs:complexType name="array_int_3">
         <xs:attribute name="x" type="xs:int" use="required" />
         <xs:attribute name="y" type="xs:int" use="required" />
@@ -158,6 +176,7 @@
             <xs:element minOccurs = "0" name = "thermostat" type="thermostat_info_t" />
             <xs:element minOccurs = "0" name = "checkpointInput" type="xs:string" />
             <xs:element minOccurs = "0" name = "checkpointOutput" type="xs:string" />
+            <xs:element minOccurs = "0" name = "statistics" type="statistics_t" />
         </xs:sequence>
         <xs:attribute name="t_end" type="xs:decimal" use="required"/>
         <xs:attribute name="delta_t" type="xs:decimal" use="required"/>

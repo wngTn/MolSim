@@ -627,6 +627,8 @@ class containerinfo_t;
 class calculationInfo_t;
 class outputwriter_t;
 class thermostat_info_t;
+class statistics_type_t;
+class statistics_t;
 class array_int_3;
 class array_float_3;
 class special_particle_t;
@@ -3089,7 +3091,7 @@ class containerinfo_t: public ::xml_schema::type
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::int_ domainSizeX_type;
+  typedef ::xml_schema::decimal domainSizeX_type;
 
   /**
    * @brief Element optional container type.
@@ -3099,7 +3101,7 @@ class containerinfo_t: public ::xml_schema::type
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< domainSizeX_type, char > domainSizeX_traits;
+  typedef ::xsd::cxx::tree::traits< domainSizeX_type, char, ::xsd::cxx::tree::schema_type::decimal > domainSizeX_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element
@@ -3154,7 +3156,7 @@ class containerinfo_t: public ::xml_schema::type
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::int_ domainSizeY_type;
+  typedef ::xml_schema::decimal domainSizeY_type;
 
   /**
    * @brief Element optional container type.
@@ -3164,7 +3166,7 @@ class containerinfo_t: public ::xml_schema::type
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< domainSizeY_type, char > domainSizeY_traits;
+  typedef ::xsd::cxx::tree::traits< domainSizeY_type, char, ::xsd::cxx::tree::schema_type::decimal > domainSizeY_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element
@@ -3219,7 +3221,7 @@ class containerinfo_t: public ::xml_schema::type
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::int_ domainSizeZ_type;
+  typedef ::xml_schema::decimal domainSizeZ_type;
 
   /**
    * @brief Element optional container type.
@@ -3229,7 +3231,7 @@ class containerinfo_t: public ::xml_schema::type
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< domainSizeZ_type, char > domainSizeZ_traits;
+  typedef ::xsd::cxx::tree::traits< domainSizeZ_type, char, ::xsd::cxx::tree::schema_type::decimal > domainSizeZ_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element
@@ -4641,6 +4643,478 @@ class thermostat_info_t: public ::xml_schema::type
   Ttarget_optional Ttarget_;
   deltaTemp_optional deltaTemp_;
   excludeY_optional excludeY_;
+
+  //@endcond
+};
+
+/**
+ * @brief Enumeration class corresponding to the %statistics_type_t
+ * schema type.
+ */
+class statistics_type_t: public ::xml_schema::string
+{
+  public:
+
+  /**
+   * @brief Underlying enum type.
+   */
+  enum value
+  {
+    thermodynamical,
+    densityVelocity
+  };
+
+  /**
+   * @brief Create an instance from the underlying enum value.
+   *
+   * @param v A enum value.
+   */
+  statistics_type_t (value v);
+
+  /**
+   * @brief Create an instance from a C string.
+   *
+   * @param v A string value.
+   */
+  statistics_type_t (const char* v);
+
+  /**
+   * @brief Create an instance from a string.
+   *
+   * @param v A string value.
+   */
+  statistics_type_t (const ::std::string& v);
+
+  /**
+   * @brief Create an instance from the base value.
+   *
+   * @param v A base value.
+   */
+  statistics_type_t (const ::xml_schema::string& v);
+
+  /**
+   * @brief Create an instance from a DOM element.
+   *
+   * @param e A DOM element to extract the data from.
+   * @param f Flags to create the new instance with.
+   * @param c A pointer to the object that will contain the new
+   * instance.
+   */
+  statistics_type_t (const ::xercesc::DOMElement& e,
+                     ::xml_schema::flags f = 0,
+                     ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Create an instance from a DOM attribute.
+   *
+   * @param a A DOM attribute to extract the data from.
+   * @param f Flags to create the new instance with.
+   * @param c A pointer to the object that will contain the new
+   * instance.
+   */
+  statistics_type_t (const ::xercesc::DOMAttr& a,
+                     ::xml_schema::flags f = 0,
+                     ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Create an instance from a string fragment.
+   *
+   * @param s A string fragment to extract the data from.
+   * @param e A pointer to DOM element containing the string fragment.
+   * @param f Flags to create the new instance with.
+   * @param c A pointer to the object that will contain the new
+   * instance.
+   */
+  statistics_type_t (const ::std::string& s,
+                     const ::xercesc::DOMElement* e,
+                     ::xml_schema::flags f = 0,
+                     ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy constructor.
+   *
+   * @param x An instance to make a copy of.
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   *
+   * For polymorphic object models use the @c _clone function instead.
+   */
+  statistics_type_t (const statistics_type_t& x,
+                     ::xml_schema::flags f = 0,
+                     ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy the instance polymorphically.
+   *
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   * @return A pointer to the dynamically allocated copy.
+   *
+   * This function ensures that the dynamic type of the instance is
+   * used for copying and should be used for polymorphic object
+   * models instead of the copy constructor.
+   */
+  virtual statistics_type_t*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  /**
+   * @brief Assign the underlying enum value.
+   *
+   * @param v A enum value.
+   * @return A refernce to the instance.
+   */
+  statistics_type_t&
+  operator= (value v);
+
+  /**
+   * @brief Implicit conversion operator to the underlying
+   * enum value.
+   *
+   * @return A enum value.
+   */
+  virtual
+  operator value () const
+  {
+    return _xsd_statistics_type_t_convert ();
+  }
+
+  //@cond
+
+  protected:
+  value
+  _xsd_statistics_type_t_convert () const;
+
+  public:
+  static const char* const _xsd_statistics_type_t_literals_[2];
+  static const value _xsd_statistics_type_t_indexes_[2];
+
+  //@endcond
+};
+
+/**
+ * @brief Class corresponding to the %statistics_t schema type.
+ *
+ * @nosubgrouping
+ */
+class statistics_t: public ::xml_schema::type
+{
+  public:
+  /**
+   * @name noBins
+   *
+   * @brief Accessor and modifier functions for the %noBins
+   * optional element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::int_ noBins_type;
+
+  /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< noBins_type > noBins_optional;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< noBins_type, char > noBins_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const noBins_optional&
+  noBins () const;
+
+  /**
+   * @brief Return a read-write reference to the element container.
+   *
+   * @return A reference to the optional container.
+   */
+  noBins_optional&
+  noBins ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  noBins (const noBins_type& x);
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  noBins (const noBins_optional& x);
+
+  //@}
+
+  /**
+   * @name file
+   *
+   * @brief Accessor and modifier functions for the %file
+   * required element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::string file_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< file_type, char > file_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const file_type&
+  file () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  file_type&
+  file ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  file (const file_type& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly
+   * instead of making a copy.
+   */
+  void
+  file (::std::unique_ptr< file_type > p);
+
+  //@}
+
+  /**
+   * @name frequency
+   *
+   * @brief Accessor and modifier functions for the %frequency
+   * required element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::int_ frequency_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< frequency_type, char > frequency_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const frequency_type&
+  frequency () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  frequency_type&
+  frequency ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  frequency (const frequency_type& x);
+
+  //@}
+
+  /**
+   * @name type
+   *
+   * @brief Accessor and modifier functions for the %type
+   * required attribute.
+   */
+  //@{
+
+  /**
+   * @brief Attribute type.
+   */
+  typedef ::statistics_type_t type_type;
+
+  /**
+   * @brief Attribute traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< type_type, char > type_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the attribute.
+   *
+   * @return A constant reference to the attribute.
+   */
+  const type_type&
+  type () const;
+
+  /**
+   * @brief Return a read-write reference to the attribute.
+   *
+   * @return A reference to the attribute.
+   */
+  type_type&
+  type ();
+
+  /**
+   * @brief Set the attribute value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the attribute.
+   */
+  void
+  type (const type_type& x);
+
+  /**
+   * @brief Set the attribute value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly
+   * instead of making a copy.
+   */
+  void
+  type (::std::unique_ptr< type_type > p);
+
+  //@}
+
+  /**
+   * @name Constructors
+   */
+  //@{
+
+  /**
+   * @brief Create an instance from the ultimate base and
+   * initializers for required elements and attributes.
+   */
+  statistics_t (const file_type&,
+                const frequency_type&,
+                const type_type&);
+
+  /**
+   * @brief Create an instance from a DOM element.
+   *
+   * @param e A DOM element to extract the data from.
+   * @param f Flags to create the new instance with.
+   * @param c A pointer to the object that will contain the new
+   * instance.
+   */
+  statistics_t (const ::xercesc::DOMElement& e,
+                ::xml_schema::flags f = 0,
+                ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy constructor.
+   *
+   * @param x An instance to make a copy of.
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   *
+   * For polymorphic object models use the @c _clone function instead.
+   */
+  statistics_t (const statistics_t& x,
+                ::xml_schema::flags f = 0,
+                ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy the instance polymorphically.
+   *
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   * @return A pointer to the dynamically allocated copy.
+   *
+   * This function ensures that the dynamic type of the instance is
+   * used for copying and should be used for polymorphic object
+   * models instead of the copy constructor.
+   */
+  virtual statistics_t*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  /**
+   * @brief Copy assignment operator.
+   *
+   * @param x An instance to make a copy of.
+   * @return A reference to itself.
+   *
+   * For polymorphic object models use the @c _clone function instead.
+   */
+  statistics_t&
+  operator= (const statistics_t& x);
+
+  //@}
+
+  /**
+   * @brief Destructor.
+   */
+  virtual 
+  ~statistics_t ();
+
+  // Implementation.
+  //
+
+  //@cond
+
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  noBins_optional noBins_;
+  ::xsd::cxx::tree::one< file_type > file_;
+  ::xsd::cxx::tree::one< frequency_type > frequency_;
+  ::xsd::cxx::tree::one< type_type > type_;
 
   //@endcond
 };
@@ -6108,6 +6582,82 @@ class simulation_t: public ::xml_schema::type
   //@}
 
   /**
+   * @name statistics
+   *
+   * @brief Accessor and modifier functions for the %statistics
+   * optional element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::statistics_t statistics_type;
+
+  /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< statistics_type > statistics_optional;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< statistics_type, char > statistics_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const statistics_optional&
+  statistics () const;
+
+  /**
+   * @brief Return a read-write reference to the element container.
+   *
+   * @return A reference to the optional container.
+   */
+  statistics_optional&
+  statistics ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  statistics (const statistics_type& x);
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  statistics (const statistics_optional& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  statistics (::std::unique_ptr< statistics_type > p);
+
+  //@}
+
+  /**
    * @name t_end
    *
    * @brief Accessor and modifier functions for the %t_end
@@ -6483,6 +7033,7 @@ class simulation_t: public ::xml_schema::type
   thermostat_optional thermostat_;
   checkpointInput_optional checkpointInput_;
   checkpointOutput_optional checkpointOutput_;
+  statistics_optional statistics_;
   ::xsd::cxx::tree::one< t_end_type > t_end_;
   ::xsd::cxx::tree::one< delta_t_type > delta_t_;
   ::xsd::cxx::tree::one< writeFrequency_type > writeFrequency_;
@@ -6833,6 +7384,19 @@ operator<< (::xml_schema::list_stream&,
 
 void
 operator<< (::xercesc::DOMElement&, const thermostat_info_t&);
+
+void
+operator<< (::xercesc::DOMElement&, const statistics_type_t&);
+
+void
+operator<< (::xercesc::DOMAttr&, const statistics_type_t&);
+
+void
+operator<< (::xml_schema::list_stream&,
+            const statistics_type_t&);
+
+void
+operator<< (::xercesc::DOMElement&, const statistics_t&);
 
 void
 operator<< (::xercesc::DOMElement&, const array_int_3&);

@@ -22,6 +22,7 @@ int main(int argc, char *argv[]) {
     auto calc = MainUtils::get_calculator(config);
 
     Thermostat thermostat = MainUtils::get_thermostat(config);
+    auto stats = MainUtils::get_statistics_logger(config);
 
     calc->setDim(config.DIM);
     calc->setDeltaT(config.delta_t);
@@ -55,12 +56,14 @@ int main(int argc, char *argv[]) {
     calc->calcF(*particles);
     if (!config.benchmarking){
         io->write(*particles, config.output_file, iteration);
+        if(config.useStatistics){
+            stats->writeStatistics(*particles, iteration);
+        }
     }
     // for this loop, we assume: current x, current f and current v are known
     while (current_time < config.end_time) {
         spdlog::info("Iteration {}: ", iteration);
         MainUtils::logParticle(*particles);
-
 
         calc->calcX(*particles);
         particles->setup();
@@ -81,6 +84,10 @@ int main(int argc, char *argv[]) {
             particles->setup();
             // uses abstract write method overwritten by specific IO method
             io->write(*particles, config.output_file, iteration);
+        }
+
+        if(iteration % config.statsFrequency == 0){
+            stats->writeStatistics(*particles, iteration);
         }
 
         if(config.resetBaseForce && iteration == config.resetBaseForceIteration){

@@ -24,6 +24,11 @@
         <nThermostat>10</nThermostat>
         <Tinit>40</Tinit>
     </thermostat>
+    <statistics type="densityVelocity">
+        <noBins>50</noBins>
+        <file>statistics.csv</file>
+        <frequency>1000</frequency>
+    </statistics>
     <outputFile>output</outputFile>
     <!-- left wall -->
     <generatorInfo type="cuboid" behaviour="immovable">

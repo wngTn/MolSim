@@ -125,6 +125,22 @@ Thermostat MainUtils::get_thermostat(Config& config) {
     return Thermostat{config.initialTemperature, config.targetTemperature, config.maxDeltaTemperature, config.thermostatExcludeY};
 }
 
+std::unique_ptr<StatisticsLogger> MainUtils::get_statistics_logger(Config& config) {
+    if(!config.useStatistics){
+        // idk what to do here? TODO figure out what to return here
+        return nullptr;
+    }
+    switch (config.statsType){
+
+        case StatisticsLogger::densityVelocityProfile: {
+            return std::make_unique<statistics::DensityVelocityProfile>(config.statsFile, config.noBins);}
+        default:
+        case StatisticsLogger::thermodynamic:
+            // TODO add something
+            return nullptr;
+    }
+}
+
 void MainUtils::initializeParticles(ParticleContainer &particles, Config& config) {
     // read normal input file
     for(auto& file : config.filename){
@@ -260,6 +276,15 @@ void MainUtils::parseXML(Config& config) {
         config.rZero = info.rZero;
         config.stiffnessConstant = info.stiffnessConstant;
     }
+
+    if(info.useStatistics){
+        config.useStatistics = true;
+        config.statsFrequency = info.statsFrequency;
+        config.statsFile = info.statsFile;
+        config.noBins = info.noBins;
+        config.statsType = info.statsType;
+    }
+
     spdlog::info("Finished XML parsing!");
 }
 

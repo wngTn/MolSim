@@ -1,9 +1,10 @@
 #pragma once
 
-#include <outputWriter/IOWriter.h>
-#include <physicsCalculator/PhysicsCalc.h>
-#include <physicsCalculator/Thermostat.h>
-#include <particleContainers/LinkedCellContainer.h>
+#include "outputWriter/IOWriter.h"
+#include "physicsCalculator/PhysicsCalc.h"
+#include "physicsCalculator/Thermostat.h"
+#include "particleContainers/LinkedCellContainer.h"
+#include "statistics/StatisticsLogger.h"
 #include "ParticleGenerator.h"
 
 struct Config {
@@ -96,8 +97,13 @@ public:
     double stiffnessConstant;
 
     bool linkedCell;
-    std::array<int, 3> linkedCellSize;
+    std::array<double, 3> linkedCellSize;
     double rCut;
     std::array<LinkedCellContainer::Border, 6> boundaryConditions;
 
+    bool useStatistics;
+    int statsFrequency;
+    std::string statsFile;
+    StatisticsLogger::statisticstype statsType;
+    int noBins;
 };

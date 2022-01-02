@@ -90,6 +90,23 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
             break;
     }
 
+    if(sim->statistics().present()){
+        info.useStatistics = true;
+        info.statsFile = sim->statistics().get().file();
+        info.statsFrequency = sim->statistics().get().frequency();
+        switch(sim->statistics()->type()){
+            case statistics_type_t::thermodynamical:
+                info.statsType = StatisticsLogger::thermodynamic;
+                info.noBins = 0;
+                break;
+            case statistics_type_t::densityVelocity:
+                info.statsType = StatisticsLogger::densityVelocityProfile;
+                info.noBins = sim->statistics()->noBins().get();
+                break;
+        }
+
+    }
+
     info.inputFiles = std::vector<std::string>{};
     for(auto& inpf : sim->inputFile()){
         info.inputFiles.push_back(inpf);

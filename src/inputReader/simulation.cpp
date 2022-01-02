@@ -1320,6 +1320,145 @@ excludeY (const excludeY_optional& x)
 }
 
 
+// statistics_type_t
+// 
+
+statistics_type_t::
+statistics_type_t (value v)
+: ::xml_schema::string (_xsd_statistics_type_t_literals_[v])
+{
+}
+
+statistics_type_t::
+statistics_type_t (const char* v)
+: ::xml_schema::string (v)
+{
+}
+
+statistics_type_t::
+statistics_type_t (const ::std::string& v)
+: ::xml_schema::string (v)
+{
+}
+
+statistics_type_t::
+statistics_type_t (const ::xml_schema::string& v)
+: ::xml_schema::string (v)
+{
+}
+
+statistics_type_t::
+statistics_type_t (const statistics_type_t& v,
+                   ::xml_schema::flags f,
+                   ::xml_schema::container* c)
+: ::xml_schema::string (v, f, c)
+{
+}
+
+statistics_type_t& statistics_type_t::
+operator= (value v)
+{
+  static_cast< ::xml_schema::string& > (*this) = 
+  ::xml_schema::string (_xsd_statistics_type_t_literals_[v]);
+
+  return *this;
+}
+
+
+// statistics_t
+// 
+
+const statistics_t::noBins_optional& statistics_t::
+noBins () const
+{
+  return this->noBins_;
+}
+
+statistics_t::noBins_optional& statistics_t::
+noBins ()
+{
+  return this->noBins_;
+}
+
+void statistics_t::
+noBins (const noBins_type& x)
+{
+  this->noBins_.set (x);
+}
+
+void statistics_t::
+noBins (const noBins_optional& x)
+{
+  this->noBins_ = x;
+}
+
+const statistics_t::file_type& statistics_t::
+file () const
+{
+  return this->file_.get ();
+}
+
+statistics_t::file_type& statistics_t::
+file ()
+{
+  return this->file_.get ();
+}
+
+void statistics_t::
+file (const file_type& x)
+{
+  this->file_.set (x);
+}
+
+void statistics_t::
+file (::std::unique_ptr< file_type > x)
+{
+  this->file_.set (std::move (x));
+}
+
+const statistics_t::frequency_type& statistics_t::
+frequency () const
+{
+  return this->frequency_.get ();
+}
+
+statistics_t::frequency_type& statistics_t::
+frequency ()
+{
+  return this->frequency_.get ();
+}
+
+void statistics_t::
+frequency (const frequency_type& x)
+{
+  this->frequency_.set (x);
+}
+
+const statistics_t::type_type& statistics_t::
+type () const
+{
+  return this->type_.get ();
+}
+
+statistics_t::type_type& statistics_t::
+type ()
+{
+  return this->type_.get ();
+}
+
+void statistics_t::
+type (const type_type& x)
+{
+  this->type_.set (x);
+}
+
+void statistics_t::
+type (::std::unique_ptr< type_type > x)
+{
+  this->type_.set (std::move (x));
+}
+
+
 // array_int_3
 // 
 
@@ -1765,6 +1904,36 @@ void simulation_t::
 checkpointOutput (::std::unique_ptr< checkpointOutput_type > x)
 {
   this->checkpointOutput_.set (std::move (x));
+}
+
+const simulation_t::statistics_optional& simulation_t::
+statistics () const
+{
+  return this->statistics_;
+}
+
+simulation_t::statistics_optional& simulation_t::
+statistics ()
+{
+  return this->statistics_;
+}
+
+void simulation_t::
+statistics (const statistics_type& x)
+{
+  this->statistics_.set (x);
+}
+
+void simulation_t::
+statistics (const statistics_optional& x)
+{
+  this->statistics_ = x;
+}
+
+void simulation_t::
+statistics (::std::unique_ptr< statistics_type > x)
+{
+  this->statistics_.set (std::move (x));
 }
 
 const simulation_t::t_end_type& simulation_t::
@@ -3478,6 +3647,231 @@ thermostat_info_t::
 {
 }
 
+// statistics_type_t
+//
+
+statistics_type_t::
+statistics_type_t (const ::xercesc::DOMElement& e,
+                   ::xml_schema::flags f,
+                   ::xml_schema::container* c)
+: ::xml_schema::string (e, f, c)
+{
+  _xsd_statistics_type_t_convert ();
+}
+
+statistics_type_t::
+statistics_type_t (const ::xercesc::DOMAttr& a,
+                   ::xml_schema::flags f,
+                   ::xml_schema::container* c)
+: ::xml_schema::string (a, f, c)
+{
+  _xsd_statistics_type_t_convert ();
+}
+
+statistics_type_t::
+statistics_type_t (const ::std::string& s,
+                   const ::xercesc::DOMElement* e,
+                   ::xml_schema::flags f,
+                   ::xml_schema::container* c)
+: ::xml_schema::string (s, e, f, c)
+{
+  _xsd_statistics_type_t_convert ();
+}
+
+statistics_type_t* statistics_type_t::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class statistics_type_t (*this, f, c);
+}
+
+statistics_type_t::value statistics_type_t::
+_xsd_statistics_type_t_convert () const
+{
+  ::xsd::cxx::tree::enum_comparator< char > c (_xsd_statistics_type_t_literals_);
+  const value* i (::std::lower_bound (
+                    _xsd_statistics_type_t_indexes_,
+                    _xsd_statistics_type_t_indexes_ + 2,
+                    *this,
+                    c));
+
+  if (i == _xsd_statistics_type_t_indexes_ + 2 || _xsd_statistics_type_t_literals_[*i] != *this)
+  {
+    throw ::xsd::cxx::tree::unexpected_enumerator < char > (*this);
+  }
+
+  return *i;
+}
+
+const char* const statistics_type_t::
+_xsd_statistics_type_t_literals_[2] =
+{
+  "thermodynamical",
+  "densityVelocity"
+};
+
+const statistics_type_t::value statistics_type_t::
+_xsd_statistics_type_t_indexes_[2] =
+{
+  ::statistics_type_t::densityVelocity,
+  ::statistics_type_t::thermodynamical
+};
+
+// statistics_t
+//
+
+statistics_t::
+statistics_t (const file_type& file,
+              const frequency_type& frequency,
+              const type_type& type)
+: ::xml_schema::type (),
+  noBins_ (this),
+  file_ (file, this),
+  frequency_ (frequency, this),
+  type_ (type, this)
+{
+}
+
+statistics_t::
+statistics_t (const statistics_t& x,
+              ::xml_schema::flags f,
+              ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  noBins_ (x.noBins_, f, this),
+  file_ (x.file_, f, this),
+  frequency_ (x.frequency_, f, this),
+  type_ (x.type_, f, this)
+{
+}
+
+statistics_t::
+statistics_t (const ::xercesc::DOMElement& e,
+              ::xml_schema::flags f,
+              ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  noBins_ (this),
+  file_ (this),
+  frequency_ (this),
+  type_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, true);
+    this->parse (p, f);
+  }
+}
+
+void statistics_t::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // noBins
+    //
+    if (n.name () == "noBins" && n.namespace_ ().empty ())
+    {
+      if (!this->noBins_)
+      {
+        this->noBins_.set (noBins_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // file
+    //
+    if (n.name () == "file" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< file_type > r (
+        file_traits::create (i, f, this));
+
+      if (!file_.present ())
+      {
+        this->file_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // frequency
+    //
+    if (n.name () == "frequency" && n.namespace_ ().empty ())
+    {
+      if (!frequency_.present ())
+      {
+        this->frequency_.set (frequency_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    break;
+  }
+
+  if (!file_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "file",
+      "");
+  }
+
+  if (!frequency_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "frequency",
+      "");
+  }
+
+  while (p.more_attributes ())
+  {
+    const ::xercesc::DOMAttr& i (p.next_attribute ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    if (n.name () == "type" && n.namespace_ ().empty ())
+    {
+      this->type_.set (type_traits::create (i, f, this));
+      continue;
+    }
+  }
+
+  if (!type_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_attribute< char > (
+      "type",
+      "");
+  }
+}
+
+statistics_t* statistics_t::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class statistics_t (*this, f, c);
+}
+
+statistics_t& statistics_t::
+operator= (const statistics_t& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->noBins_ = x.noBins_;
+    this->file_ = x.file_;
+    this->frequency_ = x.frequency_;
+    this->type_ = x.type_;
+  }
+
+  return *this;
+}
+
+statistics_t::
+~statistics_t ()
+{
+}
+
 // array_int_3
 //
 
@@ -3888,6 +4282,7 @@ simulation_t (const container_type& container,
   thermostat_ (this),
   checkpointInput_ (this),
   checkpointOutput_ (this),
+  statistics_ (this),
   t_end_ (t_end, this),
   delta_t_ (delta_t, this),
   writeFrequency_ (writeFrequency, this),
@@ -3914,6 +4309,7 @@ simulation_t (::std::unique_ptr< container_type > container,
   thermostat_ (this),
   checkpointInput_ (this),
   checkpointOutput_ (this),
+  statistics_ (this),
   t_end_ (t_end, this),
   delta_t_ (delta_t, this),
   writeFrequency_ (writeFrequency, this),
@@ -3936,6 +4332,7 @@ simulation_t (const simulation_t& x,
   thermostat_ (x.thermostat_, f, this),
   checkpointInput_ (x.checkpointInput_, f, this),
   checkpointOutput_ (x.checkpointOutput_, f, this),
+  statistics_ (x.statistics_, f, this),
   t_end_ (x.t_end_, f, this),
   delta_t_ (x.delta_t_, f, this),
   writeFrequency_ (x.writeFrequency_, f, this),
@@ -3958,6 +4355,7 @@ simulation_t (const ::xercesc::DOMElement& e,
   thermostat_ (this),
   checkpointInput_ (this),
   checkpointOutput_ (this),
+  statistics_ (this),
   t_end_ (this),
   delta_t_ (this),
   writeFrequency_ (this),
@@ -4098,6 +4496,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // statistics
+    //
+    if (n.name () == "statistics" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< statistics_type > r (
+        statistics_traits::create (i, f, this));
+
+      if (!this->statistics_)
+      {
+        this->statistics_.set (::std::move (r));
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -4210,6 +4622,7 @@ operator= (const simulation_t& x)
     this->thermostat_ = x.thermostat_;
     this->checkpointInput_ = x.checkpointInput_;
     this->checkpointOutput_ = x.checkpointOutput_;
+    this->statistics_ = x.statistics_;
     this->t_end_ = x.t_end_;
     this->delta_t_ = x.delta_t_;
     this->writeFrequency_ = x.writeFrequency_;
@@ -4917,7 +5330,7 @@ operator<< (::xercesc::DOMElement& e, const containerinfo_t& i)
         "domainSizeX",
         e));
 
-    s << *i.domainSizeX ();
+    s << ::xml_schema::as_decimal(*i.domainSizeX ());
   }
 
   // domainSizeY
@@ -4929,7 +5342,7 @@ operator<< (::xercesc::DOMElement& e, const containerinfo_t& i)
         "domainSizeY",
         e));
 
-    s << *i.domainSizeY ();
+    s << ::xml_schema::as_decimal(*i.domainSizeY ());
   }
 
   // domainSizeZ
@@ -4941,7 +5354,7 @@ operator<< (::xercesc::DOMElement& e, const containerinfo_t& i)
         "domainSizeZ",
         e));
 
-    s << *i.domainSizeZ ();
+    s << ::xml_schema::as_decimal(*i.domainSizeZ ());
   }
 
   // borderType
@@ -5149,6 +5562,76 @@ operator<< (::xercesc::DOMElement& e, const thermostat_info_t& i)
         e));
 
     a << *i.excludeY ();
+  }
+}
+
+void
+operator<< (::xercesc::DOMElement& e, const statistics_type_t& i)
+{
+  e << static_cast< const ::xml_schema::string& > (i);
+}
+
+void
+operator<< (::xercesc::DOMAttr& a, const statistics_type_t& i)
+{
+  a << static_cast< const ::xml_schema::string& > (i);
+}
+
+void
+operator<< (::xml_schema::list_stream& l,
+            const statistics_type_t& i)
+{
+  l << static_cast< const ::xml_schema::string& > (i);
+}
+
+void
+operator<< (::xercesc::DOMElement& e, const statistics_t& i)
+{
+  e << static_cast< const ::xml_schema::type& > (i);
+
+  // noBins
+  //
+  if (i.noBins ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "noBins",
+        e));
+
+    s << *i.noBins ();
+  }
+
+  // file
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "file",
+        e));
+
+    s << i.file ();
+  }
+
+  // frequency
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "frequency",
+        e));
+
+    s << i.frequency ();
+  }
+
+  // type
+  //
+  {
+    ::xercesc::DOMAttr& a (
+      ::xsd::cxx::xml::dom::create_attribute (
+        "type",
+        e));
+
+    a << i.type ();
   }
 }
 
@@ -5397,6 +5880,18 @@ operator<< (::xercesc::DOMElement& e, const simulation_t& i)
         e));
 
     s << *i.checkpointOutput ();
+  }
+
+  // statistics
+  //
+  if (i.statistics ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "statistics",
+        e));
+
+    s << *i.statistics ();
   }
 
   // t_end
