@@ -13,7 +13,9 @@ Thermostat::Thermostat(double initialTemperature, double targetTemperature, doub
 double Thermostat::calculateKineticEnergy(ParticleContainer &particles) {
     double totalEnergy = 0;
     for(auto &p: particles){
-        totalEnergy += p.getM() * (ArrayUtils::dotProduct(p.getV(), p.getV()));
+        if(!p.immovable){
+            totalEnergy += p.getM() * (ArrayUtils::dotProduct(p.getV(), p.getV()));
+        }
     }
     return totalEnergy * 0.5;
 }
@@ -24,7 +26,9 @@ double Thermostat::calculateCurrentTemp(ParticleContainer &particles){
 
 void Thermostat::scaleVelocities(ParticleContainer &particles, double beta) {
     for(auto &p : particles){
-        p.setV(beta * p.getV());
+        if(!p.immovable){
+            p.setV(beta * p.getV());
+        }
     }
 }
 
@@ -56,7 +60,9 @@ void Thermostat::setupTemperature(ParticleContainer &particles) const{
     if(std::all_of(particles.begin(), particles.end(), [](auto& p){
         return p.getV()[0]==0 && p.getV()[1]==0 && p.getV()[2]==0;})){
         for(auto &p : particles){
-            p.setV(p.getV() + maxwellBoltzmannDistributedVelocity(tempFactor/sqrt(p.getM()), particles.dimensions()));
+            if(!p.immovable){
+                p.setV(p.getV() + maxwellBoltzmannDistributedVelocity(tempFactor/sqrt(p.getM()), particles.dimensions()));
+            }
         }
     }
     scaleVelocities(particles, sqrt(initialTemperature / calculateCurrentTemp(particles)));

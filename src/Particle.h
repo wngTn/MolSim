@@ -51,14 +51,21 @@ private:
     /**
      * original index of the particle in the grid generated. used for membranes
      */
-     std::array<int,3> gridIndex;
+     std::array<int,3> gridIndex{};
 
 
 public:
+
+
     /**
      * Whether this particle is still valid and should be printed/used for calculations
      */
     bool valid;
+
+    /**
+    * Whether this particle is fixed in position or can move
+    */
+    bool immovable = false;
 
     /**
      * whether the Particle is part of a membrane -> different calculation
@@ -140,6 +147,8 @@ public:
     void setMembrane(bool membrane);
 
     void setGridIndex(std::array<int,3>& index);
+
+    void setImmovable(bool immovable);
 
     /**
      * sets the base force for a particle

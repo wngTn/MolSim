@@ -13,7 +13,7 @@ namespace calculator {
                     }
                     //LinkedCell::ljforce((*it), (*it2), sqrd_dist);
                     if(!membrane || !(*it)->membrane || !(*it2)->membrane){
-                        if (sqrd_dist <= LinkedCell::sqr(rCut)) {
+                        if (sqrd_dist <= LinkedCell::sqr(rCut) && !((*it)->immovable && (*it2)->immovable)) {
                             LinkedCell::ljforce(*it, *it2, sqrd_dist);
                         }
                     }else{
@@ -107,6 +107,7 @@ namespace calculator {
                                    Particle *p) {
         // Loops through every particle of the neighbor
         for (auto &p_other: grid.grid[grid.index(neighbors)]) {
+            if(p->immovable && p_other->immovable) continue;
             double sqrd_dist = 0;
             for (int i = 0; i < DIM; i++) {
                 sqrd_dist += LinkedCell::sqr(p_other->getX()[i] - p->getX()[i]);
@@ -206,6 +207,7 @@ namespace calculator {
 
     void LinkedCell::calcPerNeighbors(LinkedCellContainer &grid, const std::array<int, 3> &neighbors, Particle *p,
                                       const std::array<double, 3> & mirror) const {
+        if(p->immovable) return;
         // Loop through the neighbors
         for (auto &p_other: grid.grid[grid.index(neighbors)]) {
             // This if is important if the domain only has one cell

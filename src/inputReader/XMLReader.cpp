@@ -160,8 +160,19 @@ void XMLReader::insertGeneratorInfo(std::vector<ParticleGenerator::ShapeInfo>& g
     shapeInfo.sigma = info.sigma();
     shapeInfo.epsilon = info.epsilon();
 
-    if(info.behaviour().present() && info.behaviour().get() == behaviour_t::membrane){
-        shapeInfo.behaviour = ParticleGenerator::membrane;
+    if(info.behaviour().present()){
+        switch (info.behaviour().get()){
+            case behaviour_t::membrane:
+                shapeInfo.behaviour = ParticleGenerator::membrane;
+                break;
+            case behaviour_t::immovable:
+                shapeInfo.behaviour = ParticleGenerator::immovable;
+                break;
+            case behaviour_t::normal:
+            default:
+                shapeInfo.behaviour = ParticleGenerator::normal;
+                break;
+        }
     }
 
     shapeInfo.specialParticles = {};

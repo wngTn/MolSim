@@ -115,15 +115,24 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles, const Shape
                 part = Particle{currentPos, tempVel, m, current_seindex, current_seindex};
                 part.setBaseForce(baseF);
 
-                if(info.behaviour == ParticleGenerator::membrane){
-                    part.setMembrane(true);
-                    auto i = std::array<int,3>{x,y,z};
-                    part.setGridIndex(i);
-                }else{
-                    part.setMembrane(false);
-                    auto i = std::array<int,3>{-1,-1,-1};
-                    part.setGridIndex(i);
+                switch(info.behaviour){
+                    case membrane: { // extra scope, so index is not visible in other cases -> no initialization bypassing
+                        part.setMembrane(true);
+                        part.setImmovable(false);
+                        auto index = std::array<int,3>{x,y,z};
+                        part.setGridIndex(index);
+                        break;}
+                    case immovable:
+                        part.setImmovable(true);
+                        part.setMembrane(false);
+                        break;
+                    case normal:
+                    default:
+                        part.setMembrane(false);
+                        part.setImmovable(false);
+                        break;
                 }
+
                 particles.emplace_back(part);
                 currentPos[0] += info.distance;
             }

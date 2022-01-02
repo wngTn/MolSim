@@ -90,9 +90,9 @@ namespace calculator {
         double epsilon = 5;
         double rCut = 2.5 * epsilon;
         // average bond length of molecule pair, used for membrane
-        double rZero;
+        double rZero{};
         // used for membrane
-        double stiffnessConstant;
+        double stiffnessConstant{};
 
         // whether any membranes exist, used only to shortcut some checks
         bool membrane = false;
@@ -115,7 +115,6 @@ namespace calculator {
     }
 
     void LinkedCell::ljforce(Particle* p1, Particle* p2, double sqrd_dist) const {
-
         //double s = sqr(sigma) / sqrd_dist;
         double s = sqr(sigmaTable[p1->getSEIndex()][p2->getSEIndex()]) / sqrd_dist;
         s = s * s * s; // s = sqr(s) * s
