@@ -120,6 +120,7 @@
             <xs:element name="Ttarget" type="xs:decimal" minOccurs="0"/>
             <xs:element name="deltaTemp" type="xs:decimal" minOccurs="0"/>
         </xs:sequence>
+        <xs:attribute name="excludeY" type="xs:boolean" use="optional" />
     </xs:complexType>
 
     <xs:complexType name="array_int_3">

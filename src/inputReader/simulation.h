@@ -4490,6 +4490,71 @@ class thermostat_info_t: public ::xml_schema::type
   //@}
 
   /**
+   * @name excludeY
+   *
+   * @brief Accessor and modifier functions for the %excludeY
+   * optional attribute.
+   */
+  //@{
+
+  /**
+   * @brief Attribute type.
+   */
+  typedef ::xml_schema::boolean excludeY_type;
+
+  /**
+   * @brief Attribute optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< excludeY_type > excludeY_optional;
+
+  /**
+   * @brief Attribute traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< excludeY_type, char > excludeY_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the attribute
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const excludeY_optional&
+  excludeY () const;
+
+  /**
+   * @brief Return a read-write reference to the attribute container.
+   *
+   * @return A reference to the optional container.
+   */
+  excludeY_optional&
+  excludeY ();
+
+  /**
+   * @brief Set the attribute value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the attribute.
+   */
+  void
+  excludeY (const excludeY_type& x);
+
+  /**
+   * @brief Set the attribute value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the attribute.
+   * Otherwise the attribute container is set the 'not present' state.
+   */
+  void
+  excludeY (const excludeY_optional& x);
+
+  //@}
+
+  /**
    * @name Constructors
    */
   //@{
@@ -4575,6 +4640,7 @@ class thermostat_info_t: public ::xml_schema::type
   ::xsd::cxx::tree::one< Tinit_type > Tinit_;
   Ttarget_optional Ttarget_;
   deltaTemp_optional deltaTemp_;
+  excludeY_optional excludeY_;
 
   //@endcond
 };

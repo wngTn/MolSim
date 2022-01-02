@@ -29,6 +29,7 @@ public:
         double t_target;
         double delta_temp;
         int n_thermostat;
+        bool excludeY;
 
         // whether randomly generated particles should be used, other inputs discarded if yes
         bool random;

@@ -75,6 +75,9 @@ public:
 /// temperature we want to reach
     double targetTemperature;
 
+/// whether the Y coordinate should be excluded for temperature calculations
+    bool thermostatExcludeY;
+
 /// max temperature difference in one temperature calculation
     double maxDeltaTemperature;
 

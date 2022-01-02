@@ -66,6 +66,8 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
         info.t_init = sim->thermostat()->Tinit();
         info.t_target = sim->thermostat()->Ttarget().present() ? sim->thermostat()->Ttarget().get() : info.t_init;
         info.delta_temp = sim->thermostat()->deltaTemp().present() ? sim->thermostat()->deltaTemp().get() : DBL_MAX;
+
+        info.excludeY = sim->thermostat()->excludeY().present() && sim->thermostat()->excludeY().get();
     }else{
         info.useThermostat = false;
     }

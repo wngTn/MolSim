@@ -1295,6 +1295,30 @@ deltaTemp (const deltaTemp_optional& x)
   this->deltaTemp_ = x;
 }
 
+const thermostat_info_t::excludeY_optional& thermostat_info_t::
+excludeY () const
+{
+  return this->excludeY_;
+}
+
+thermostat_info_t::excludeY_optional& thermostat_info_t::
+excludeY ()
+{
+  return this->excludeY_;
+}
+
+void thermostat_info_t::
+excludeY (const excludeY_type& x)
+{
+  this->excludeY_.set (x);
+}
+
+void thermostat_info_t::
+excludeY (const excludeY_optional& x)
+{
+  this->excludeY_ = x;
+}
+
 
 // array_int_3
 // 
@@ -3305,7 +3329,8 @@ thermostat_info_t (const nThermostat_type& nThermostat,
   nThermostat_ (nThermostat, this),
   Tinit_ (Tinit, this),
   Ttarget_ (this),
-  deltaTemp_ (this)
+  deltaTemp_ (this),
+  excludeY_ (this)
 {
 }
 
@@ -3317,7 +3342,8 @@ thermostat_info_t (const thermostat_info_t& x,
   nThermostat_ (x.nThermostat_, f, this),
   Tinit_ (x.Tinit_, f, this),
   Ttarget_ (x.Ttarget_, f, this),
-  deltaTemp_ (x.deltaTemp_, f, this)
+  deltaTemp_ (x.deltaTemp_, f, this),
+  excludeY_ (x.excludeY_, f, this)
 {
 }
 
@@ -3329,11 +3355,12 @@ thermostat_info_t (const ::xercesc::DOMElement& e,
   nThermostat_ (this),
   Tinit_ (this),
   Ttarget_ (this),
-  deltaTemp_ (this)
+  deltaTemp_ (this),
+  excludeY_ (this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
-    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, true);
     this->parse (p, f);
   }
 }
@@ -3408,6 +3435,19 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "Tinit",
       "");
   }
+
+  while (p.more_attributes ())
+  {
+    const ::xercesc::DOMAttr& i (p.next_attribute ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    if (n.name () == "excludeY" && n.namespace_ ().empty ())
+    {
+      this->excludeY_.set (excludeY_traits::create (i, f, this));
+      continue;
+    }
+  }
 }
 
 thermostat_info_t* thermostat_info_t::
@@ -3427,6 +3467,7 @@ operator= (const thermostat_info_t& x)
     this->Tinit_ = x.Tinit_;
     this->Ttarget_ = x.Ttarget_;
     this->deltaTemp_ = x.deltaTemp_;
+    this->excludeY_ = x.excludeY_;
   }
 
   return *this;
@@ -5096,6 +5137,18 @@ operator<< (::xercesc::DOMElement& e, const thermostat_info_t& i)
         e));
 
     s << ::xml_schema::as_decimal(*i.deltaTemp ());
+  }
+
+  // excludeY
+  //
+  if (i.excludeY ())
+  {
+    ::xercesc::DOMAttr& a (
+      ::xsd::cxx::xml::dom::create_attribute (
+        "excludeY",
+        e));
+
+    a << *i.excludeY ();
   }
 }
 

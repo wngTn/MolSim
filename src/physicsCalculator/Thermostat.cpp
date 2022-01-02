@@ -3,28 +3,53 @@
 #include "utils/MaxwellBoltzmannDistribution.h"
 
 #include <algorithm>
+#include <iostream>
 
 
-Thermostat::Thermostat(double initialTemperature, double targetTemperature, double maxDeltaTemperature)
+Thermostat::Thermostat(double initialTemperature, double targetTemperature, double maxDeltaTemperature, bool exludeY)
         : initialTemperature(initialTemperature), targetTemperature(targetTemperature),
-          maxDeltaTemperature(maxDeltaTemperature) {}
+          maxDeltaTemperature(maxDeltaTemperature), excludeY(exludeY) {}
+
+double Thermostat::calculateMeanYVelocity(ParticleContainer &container) {
+    double totalYVel = std::accumulate(container.begin(), container.end(), 0, [](double acc, auto&p){return acc + p.getX()[1];});
+    return totalYVel/static_cast<int>(container.size());
+}
 
 
-double Thermostat::calculateKineticEnergy(ParticleContainer &particles) {
+double Thermostat::calculateKineticEnergy(ParticleContainer &particles, bool exclY) {
     double totalEnergy = 0;
+    double meanYVel = 0.;
+    if(exclY){
+        meanYVel = calculateMeanYVelocity(particles);
+    }
     for(auto &p: particles){
         if(!p.immovable){
-            totalEnergy += p.getM() * (ArrayUtils::dotProduct(p.getV(), p.getV()));
+            std::array<double,3> v{};
+            if(exclY){
+                v = p.getV() - std::array<double,3>{0.,meanYVel,0.};
+            }else{
+                v = p.getV();
+            }
+            totalEnergy += p.getM() * (ArrayUtils::dotProduct(v, v));
         }
     }
     return totalEnergy * 0.5;
 }
 
-double Thermostat::calculateCurrentTemp(ParticleContainer &particles){
-    return 2 * calculateKineticEnergy(particles) / static_cast<int>(particles.size()) / particles.dimensions();
+double Thermostat::calculateCurrentTemp(ParticleContainer &particles, bool exclY){
+    return 2 * calculateKineticEnergy(particles, exclY) / static_cast<int>(particles.size()) / particles.dimensions();
 }
 
-void Thermostat::scaleVelocities(ParticleContainer &particles, double beta) {
+void Thermostat::scaleVelocities(ParticleContainer &particles, double beta, bool exclY) {
+    if(exclY){
+        std::array<double,3> b = {beta, 1.0, beta};
+        for(auto &p : particles){
+            if(!p.immovable){
+                p.setV(b * p.getV());
+            }
+        }
+        return;
+    }
     for(auto &p : particles){
         if(!p.immovable){
             p.setV(beta * p.getV());
@@ -33,7 +58,7 @@ void Thermostat::scaleVelocities(ParticleContainer &particles, double beta) {
 }
 
 void Thermostat::applyTemperature(ParticleContainer &particles) const{
-    double temp = calculateCurrentTemp(particles);
+    double temp = calculateCurrentTemp(particles, excludeY);
     double newTemp;
     if(temp > targetTemperature){
         newTemp = std::max(targetTemperature, temp-maxDeltaTemperature);
@@ -45,7 +70,7 @@ void Thermostat::applyTemperature(ParticleContainer &particles) const{
         return;
     }
     double beta = sqrt(newTemp/temp);
-    scaleVelocities(particles, beta);
+    scaleVelocities(particles, beta, excludeY);
 }
 
 // check if _all_ velocities are zero, if yes apply BrownianMotion using init temp
@@ -61,10 +86,12 @@ void Thermostat::setupTemperature(ParticleContainer &particles) const{
         return p.getV()[0]==0 && p.getV()[1]==0 && p.getV()[2]==0;})){
         for(auto &p : particles){
             if(!p.immovable){
-                p.setV(p.getV() + maxwellBoltzmannDistributedVelocity(tempFactor/sqrt(p.getM()), particles.dimensions()));
+                std::array<double,3> exclY = {1.0,excludeY?0.0:1.0,1.0};
+                p.setV(p.getV() + (exclY * maxwellBoltzmannDistributedVelocity(tempFactor/sqrt(p.getM()), particles.dimensions())));
             }
         }
     }
-    scaleVelocities(particles, sqrt(initialTemperature / calculateCurrentTemp(particles)));
+    scaleVelocities(particles, sqrt(initialTemperature / calculateCurrentTemp(particles, excludeY)), excludeY);
 }
+
 

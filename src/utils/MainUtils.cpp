@@ -122,7 +122,7 @@ Thermostat MainUtils::get_thermostat(Config& config) {
     if(!config.useThermostat){
         return Thermostat{};
     }
-    return Thermostat{config.initialTemperature, config.targetTemperature, config.maxDeltaTemperature};
+    return Thermostat{config.initialTemperature, config.targetTemperature, config.maxDeltaTemperature, config.thermostatExcludeY};
 }
 
 void MainUtils::initializeParticles(ParticleContainer &particles, Config& config) {
@@ -246,6 +246,7 @@ void MainUtils::parseXML(Config& config) {
         config.targetTemperature = info.t_target;
         config.maxDeltaTemperature = info.delta_temp;
         config.nThermostat = info.n_thermostat;
+        config.thermostatExcludeY = info.excludeY;
     }
     config.checkpointing = !info.checkpointOutput.empty();
     config.checkpointOutput = info.checkpointOutput;
