@@ -3,7 +3,8 @@
 #include "LinkedCellContainer.h"
 
 
-LinkedCellContainer::LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV, std::array<Border, 6> borderV, double g) :
+LinkedCellContainer::LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV, std::array<Border, 6> borderV, double g,
+                                         Strategy strategy) :
         grid{std::vector<Cell>(static_cast<int>(std::floor(Xv / rCutV)) *
                                static_cast<int>(std::floor(Yv / rCutV)) *
                                (static_cast<int>(std::floor(Zv / rCutV)) == 0 ? 1 :
@@ -12,7 +13,8 @@ LinkedCellContainer::LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV, s
                                static_cast<int>(std::floor(Yv / rCutV)),
                                (static_cast<int>(std::floor(Zv / rCutV))) == 0 ? 1 :
                                static_cast<int>(std::floor(Zv / rCutV))}},
-        lenDim{std::array<int, 3>{Xv, Yv, Zv}}, rCut{rCutV}, border{borderV}, g{g} {
+        lenDim{std::array<int, 3>{Xv, Yv, Zv}}, rCut{rCutV}, border{borderV}, g{g}, strategy{strategy} {
+    // Initialize the grid
     int i{0};
     std::array<int, 3> currentIndexes{};
     // iterate through Z axis
@@ -29,6 +31,75 @@ LinkedCellContainer::LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV, s
                     grid[i].setNeighbors3D();
                 }
                 i++;
+            }
+        }
+    }
+    // Create the vector with indices for the threads
+    if(strategy == primitive) {
+        // get the greatest dimension
+        // X is the greatest dimension
+        if (dim[0] == std::max({dim[0], dim[1], dim[2]})) {
+            threadOffset = 1;
+            indicesThreadVector = std::vector<std::vector<int>>(dim[0]/2);
+            for (currentIndexes[0] = 0; currentIndexes[0] < dim[0]/2; ++currentIndexes[0]) {
+                for (currentIndexes[2] = 0; currentIndexes[2] < dim[2]; ++currentIndexes[2]) {
+                    for (currentIndexes[1] = 0; currentIndexes[1] < dim[1]; ++currentIndexes[1]) {
+                        indicesThreadVector[currentIndexes[0]]
+                        .push_back(index({currentIndexes[0] * 2, currentIndexes[1], currentIndexes[2]}));
+                    }
+                }
+            }
+            // We have an uneven dimension
+            if (dim[0] % 2 == 1) {
+                for (currentIndexes[2] = 0; currentIndexes[2] < dim[2]; ++currentIndexes[2]) {
+                    for (currentIndexes[1] = 0; currentIndexes[1] < dim[1]; ++currentIndexes[1]) {
+                        residualThreadVector
+                            .push_back(index({dim[0] - 1, currentIndexes[1], currentIndexes[2]}));
+                    }
+                }
+            }
+        }
+        // Y is the greatest dimension
+        else if (dim[1] == std::max({dim[0], dim[1], dim[2]})) {
+            indicesThreadVector = std::vector<std::vector<int>>(dim[1]/2);
+            threadOffset = dim[0];
+            for (currentIndexes[1] = 0; currentIndexes[1] < dim[1]/2; ++currentIndexes[1]) {
+                for (currentIndexes[2] = 0; currentIndexes[2] < dim[2]; ++currentIndexes[2]) {
+                    for (currentIndexes[0] = 0; currentIndexes[0] < dim[0]; ++currentIndexes[0]) {
+                        indicesThreadVector[currentIndexes[1]]
+                                .push_back(index({currentIndexes[0], currentIndexes[1]*2, currentIndexes[2]}));
+                    }
+                }
+            }
+            // We have an uneven dimension
+            if (dim[1] % 2 == 1) {
+                for (currentIndexes[2] = 0; currentIndexes[2] < dim[2]; ++currentIndexes[2]) {
+                    for (currentIndexes[0] = 0; currentIndexes[0] < dim[0]; ++currentIndexes[0]) {
+                        residualThreadVector
+                                .push_back(index({currentIndexes[0], dim[1] - 1, currentIndexes[2]}));
+                    }
+                }
+            }
+        }
+        // Z is the greatest dimension
+        else if (dim[2] == std::max({dim[0], dim[1], dim[2]})) {
+            indicesThreadVector = std::vector<std::vector<int>>(dim[2]/2);
+            threadOffset = dim[0] * dim[1];
+            for (currentIndexes[2] = 0; currentIndexes[2] < dim[2]/2; ++currentIndexes[2]) {
+                for (currentIndexes[1] = 0; currentIndexes[1] < dim[1]; ++currentIndexes[1]) {
+                    for (currentIndexes[0] = 0; currentIndexes[0] < dim[0]; ++currentIndexes[0]) {
+                        indicesThreadVector[currentIndexes[2]]
+                                .push_back(index({currentIndexes[0], currentIndexes[1], currentIndexes[2]*2}));
+                    }
+                }
+            }
+            if (dim[2] % 2 == 1) {
+                for (currentIndexes[1] = 0; currentIndexes[1] < dim[1]; ++currentIndexes[1]) {
+                    for (currentIndexes[0] = 0; currentIndexes[0] < dim[0]; ++currentIndexes[0]) {
+                        residualThreadVector
+                                .push_back(index({currentIndexes[0], currentIndexes[1], dim[2] - 1}));
+                    }
+                }
             }
         }
     }
@@ -281,6 +352,46 @@ LinkedCellContainer::getPerNeighbors(const std::array<int, 3> &currentIndex) {
         }
     }
     return neighbors;
+}
+
+double LinkedCellContainer::getG() const {
+    return g;
+}
+
+void LinkedCellContainer::setG(double g) {
+    LinkedCellContainer::g = g;
+}
+
+const std::vector<std::vector<int>> &LinkedCellContainer::getIndicesThreadVector() const {
+    return indicesThreadVector;
+}
+
+void LinkedCellContainer::setIndicesThreadVector(const std::vector<std::vector<int>> &indicesThreadVector) {
+    LinkedCellContainer::indicesThreadVector = indicesThreadVector;
+}
+
+int LinkedCellContainer::getThreadOffset() const {
+    return threadOffset;
+}
+
+void LinkedCellContainer::setThreadOffset(int threadOffset) {
+    LinkedCellContainer::threadOffset = threadOffset;
+}
+
+const std::vector<int> &LinkedCellContainer::getResidualThreadVector() const {
+    return residualThreadVector;
+}
+
+void LinkedCellContainer::setResidualThreadVector(const std::vector<int> &residualThreadVector) {
+    LinkedCellContainer::residualThreadVector = residualThreadVector;
+}
+
+LinkedCellContainer::Strategy LinkedCellContainer::getStrategy() const {
+    return strategy;
+}
+
+void LinkedCellContainer::setStrategy(LinkedCellContainer::Strategy strategy) {
+    LinkedCellContainer::strategy = strategy;
 }
 
 
