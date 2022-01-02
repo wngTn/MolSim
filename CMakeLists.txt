@@ -70,6 +70,15 @@ target_link_libraries(${ThisLib}
         spdlog::spdlog
         nlohmann_json::nlohmann_json
         )
+
+# link targets with openmp
+find_package(OpenMP)
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(${ThisLib}
+            PUBLIC
+            OpenMP::OpenMP_CXX)
+endif()
+
 # set c++ to 17
 target_compile_features(${ThisLib}
         PUBLIC
@@ -80,6 +89,9 @@ target_compile_features(${ThisLib}
 add_executable(${This} ${CMAKE_CURRENT_SOURCE_DIR}/src/Main.cpp)
 # link our libraries to that target
 target_link_libraries(${This} lib::${ThisLib})
+
+
+
 
 # activate all compiler warnings. Clean up your code :P
 # depending on the compiler different flags are used
