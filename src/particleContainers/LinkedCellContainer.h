@@ -25,7 +25,7 @@ public:
      * @param rCutV the r_cut value
      * @param borderV the border types of the 6 (3D) or 4 (2D) borders
      */
-    LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV, std::array<Border, 6> borderV = std::array<Border, 6>{
+    LinkedCellContainer(double Xv, double Yv, double Zv, double rCutV, std::array<Border, 6> borderV = std::array<Border, 6>{
             outflow, outflow, outflow, outflow, outflow, outflow}, double g = 0);
 
     /**
@@ -154,7 +154,7 @@ public:
 
     [[nodiscard]] const std::array<int, 3> &getDim() const;
 
-    [[nodiscard]] const std::array<int, 3> &getLenDim() const;
+    [[nodiscard]] const std::array<double, 3> &getLenDim() const;
 
     bool is2D();
 
@@ -168,7 +168,7 @@ public:
 
     void setRCut(double rCutV);
 
-    void setLenDim(const std::array<int, 3> &lenDim);
+    void setLenDim(const std::array<double, 3> &lenDim);
 
     [[nodiscard]] const std::vector<Particle> &getParticles() const;
 
@@ -199,7 +199,7 @@ private:
      * The array describes how long the domain of the respective dimensions should've been
      * lenDim[0] = X, lenDim[1] = Y, lenDim[2] = Z
      */
-    std::array<int, 3>lenDim{};
+    std::array<double, 3>lenDim{};
     double rCut{};
 
     /**
@@ -237,14 +237,14 @@ bool inline LinkedCellContainer::isNeighborInRange(const Particle *p, const std:
     double midPointEdgeRange{};
     for (int d = 0; (dim[2] == 1) ? d < 2 : d < 3; ++d) {
         midPointEdgeRange += static_cast<double>(lenDim[d]) / static_cast<double>(dim[d]) *
-                static_cast<double>(lenDim[d]) / static_cast<double>(dim[d]);
+                lenDim[d] / dim[d];
     }
     midPointEdgeRange = sqrt(midPointEdgeRange);
 
     // position of the neighborCell middle point
     std::array<double, 3> neighborPos{};
     for (int d = 0; (dim[2] == 1) ? d < 2 : d < 3; ++d) {
-        neighborPos[d] = neighbor[d] * (static_cast<double>(lenDim[d]) / static_cast<double>(dim[d]));
+        neighborPos[d] = neighbor[d] * (lenDim[d] / dim[d]);
     }
 
     // Distance between these points

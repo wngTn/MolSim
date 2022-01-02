@@ -11,7 +11,19 @@ namespace calculator {
                     for (int i = 0; i < DIM; i++) {
                         sqrd_dist += LinkedCell::sqr((*it2)->getX()[i] - (*it)->getX()[i]);
                     }
-                    LinkedCell::ljforce((*it), (*it2), sqrd_dist);
+                    //LinkedCell::ljforce((*it), (*it2), sqrd_dist);
+                    if(!membrane || !(*it)->membrane || !(*it2)->membrane){
+                        if (sqrd_dist <= LinkedCell::sqr(rCut) && !((*it)->immovable && (*it2)->immovable)) {
+                            LinkedCell::ljforce(*it, *it2, sqrd_dist);
+                        }
+                    }else{
+                        if(sqrd_dist <= sqr(SIXTH_ROOT_OF_TWO * sigmaTable[(*it)->getSEIndex()][(*it2)->getSEIndex()])){
+                            LinkedCell::ljforce(*it, *it2, sqrd_dist);
+                        }
+                        if(gridNeighbors((*it)->getGridIndex(), (*it2)->getGridIndex())){
+                            LinkedCell::harmonic_potential(*it, *it2, sqrd_dist);
+                        }
+                    }
                 }
             }
         }
@@ -95,12 +107,22 @@ namespace calculator {
                                    Particle *p) {
         // Loops through every particle of the neighbor
         for (auto &p_other: grid.grid[grid.index(neighbors)]) {
+            if(p->immovable && p_other->immovable) continue;
             double sqrd_dist = 0;
             for (int i = 0; i < DIM; i++) {
                 sqrd_dist += LinkedCell::sqr(p_other->getX()[i] - p->getX()[i]);
             }
-            if (sqrd_dist <= LinkedCell::sqr(rCut)) {
-                LinkedCell::ljforce(p, p_other, sqrd_dist);
+            if(!membrane || !p->membrane || !p_other->membrane){
+                if (sqrd_dist <= LinkedCell::sqr(rCut)) {
+                    LinkedCell::ljforce(p, p_other, sqrd_dist);
+                }
+            }else{
+                if(sqrd_dist <= sqr(SIXTH_ROOT_OF_TWO * sigmaTable[p_other->getSEIndex()][p->getSEIndex()])){
+                    LinkedCell::ljforce(p, p_other, sqrd_dist);
+                }
+                if(gridNeighbors(p->getGridIndex(), p_other->getGridIndex())){
+                    LinkedCell::harmonic_potential(p, p_other, sqrd_dist);
+                }
             }
         }
     }
@@ -108,7 +130,7 @@ namespace calculator {
     void LinkedCell::reflectiveBoundary(LinkedCellContainer &grid, const std::array<int, 3> &currentIndexes) const {
         // We only reflect at this distance
         //double reflectDistance = std::pow(2, 1.0 / 6.0) * sigma;
-        double reflectDistanceFactor = std::pow(2, 1.0 / 6.0);
+        //double reflectDistanceFactor = std::pow(2, 1.0 / 6.0);
         // saves the reflective borders of the current cell
         std::vector<int> reflBorder{};
         // go through all three or two axis and acquire the borders of currentIndex that are reflective
@@ -145,7 +167,7 @@ namespace calculator {
                     double r = grid.getDistance(p->getX(), bord);
                     // reflect distance depending on different sigma for each particle
                     double sig = sigmaTable[p->getSEIndex()][p->getSEIndex()];
-                    double reflectDistance = reflectDistanceFactor * sig;
+                    double reflectDistance = SIXTH_ROOT_OF_TWO * sig;
                     if (r <= reflectDistance) {
                         //double s = (sigma * sigma) / (r * r);
 
@@ -185,6 +207,7 @@ namespace calculator {
 
     void LinkedCell::calcPerNeighbors(LinkedCellContainer &grid, const std::array<int, 3> &neighbors, Particle *p,
                                       const std::array<double, 3> & mirror) const {
+        if(p->immovable) return;
         // Loop through the neighbors
         for (auto &p_other: grid.grid[grid.index(neighbors)]) {
             // This if is important if the domain only has one cell
@@ -272,6 +295,23 @@ namespace calculator {
         }
     }
 
+    void LinkedCell::harmonic_potential(Particle *p1, Particle *p2, double sqrd_dist) const {
+        double factor = SQR_ROOT_OF_TWO;
+        double distance = sqrt(sqrd_dist);
+        // if orthogonal neighbors
+        if(abs(p1->getGridIndex()[0]-p2->getGridIndex()[0]) + abs(p1->getGridIndex()[1]-p2->getGridIndex()[1]) + abs(p1->getGridIndex()[2]-p2->getGridIndex()[2]) == 1){
+            factor = 1;
+        }
+        auto f = stiffnessConstant * (distance - factor * rZero) * (1./distance) * (p2->getX() - p1->getX());
+        p1->setF(p1->getF() + f);
+        p2->setF(p2->getF() - f);
+
+    }
+
+    bool LinkedCell::gridNeighbors(std::array<int, 3> index1, std::array<int, 3> index2) {
+        return abs(index1[0]-index2[0]) <= 1 && abs(index1[1]-index2[1]) <= 1 && abs(index1[2]-index2[2]) <= 1;
+    }
+
     void LinkedCell::setSigmaTable(const std::vector<std::vector<double>> &sT) {
         LinkedCell::sigmaTable = sT;
     }
@@ -282,6 +322,19 @@ namespace calculator {
 
     void LinkedCell::setMapping(std::vector<std::pair<int, std::pair<double, double>>> & map) {
         LinkedCell::mapping = map;
+    }
+
+
+    void LinkedCell::setRZero(double rZ) {
+        LinkedCell::rZero = rZ;
+    }
+
+    void LinkedCell::setStiffnessConstant(double sC) {
+        LinkedCell::stiffnessConstant = sC;
+    }
+
+    void LinkedCell::setMembrane(bool mem) {
+        LinkedCell::membrane = mem;
     }
 
     std::string LinkedCell::toString() {

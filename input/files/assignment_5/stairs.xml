@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<simulation t_end="5" delta_t="0.0005" writeFrequency="100" outputWriter="vtk">
+    <container type="linkedcell">
+        <rCut>4.0</rCut>
+        <domainSizeX>120</domainSizeX>
+        <domainSizeY>120</domainSizeY>
+        <domainSizeZ>13</domainSizeZ>
+        <borderType>
+            <left>reflective</left>
+            <right>reflective</right>
+            <upper>reflective</upper>
+            <lower>reflective</lower>
+            <front>reflective</front>
+            <back>reflective</back>
+        </borderType>
+    </container>
+    <calculator type="lennardjones">
+        <epsilon>1</epsilon>
+        <sigma>1</sigma>
+        <brownianMotion>0.0</brownianMotion>
+        <gravityFactor>-2</gravityFactor>
+    </calculator>
+    <outputFile>output</outputFile>
+    <thermostat>
+        <nThermostat>1000</nThermostat>
+        <Tinit>0.5</Tinit>
+    </thermostat>
+    <generatorInfo type="sphere">
+        <x>6</x>
+        <y>42</y>
+        <z>6</z>
+        <v1>0.0</v1>
+        <v2>-1.0</v2>
+        <v3>0.0</v3>
+        <mass>1.0</mass>
+        <distance>1.2</distance>
+        <brownianFactor>0.0</brownianFactor>
+        <dim>3</dim>
+        <radius>4</radius>
+        <epsilon>1</epsilon>
+        <sigma>1.2</sigma>
+    </generatorInfo>
+    <generatorInfo type="cuboid" behaviour="immovable">
+        <x>0.5</x>
+        <y>1</y>
+        <z>0.5</z>
+        <v1>0.0</v1>
+        <v2>0.0</v2>
+        <v3>0.0</v3>
+        <mass>1.0</mass>
+        <distance>1.2</distance>
+        <brownianFactor>0.0</brownianFactor>
+        <dim>3</dim>
+        <n1>10</n1>
+        <n2>30</n2>
+        <n3>10</n3>
+        <epsilon>1</epsilon>
+        <sigma>1</sigma>
+    </generatorInfo>
+    <generatorInfo type="cuboid" behaviour="immovable">
+        <x>12.5</x>
+        <y>1</y>
+        <z>0.5</z>
+        <v1>0.0</v1>
+        <v2>0.0</v2>
+        <v3>0.0</v3>
+        <mass>1.0</mass>
+        <distance>1.2</distance>
+        <brownianFactor>0.0</brownianFactor>
+        <dim>3</dim>
+        <n1>10</n1>
+        <n2>20</n2>
+        <n3>10</n3>
+        <epsilon>1</epsilon>
+        <sigma>1</sigma>
+    </generatorInfo>
+    <generatorInfo type="cuboid" behaviour="immovable">
+        <x>24.5</x>
+        <y>1</y>
+        <z>0.5</z>
+        <v1>0.0</v1>
+        <v2>0.0</v2>
+        <v3>0.0</v3>
+        <mass>1.0</mass>
+        <distance>1.2</distance>
+        <brownianFactor>0.0</brownianFactor>
+        <dim>3</dim>
+        <n1>10</n1>
+        <n2>10</n2>
+        <n3>10</n3>
+        <epsilon>1</epsilon>
+        <sigma>1</sigma>
+    </generatorInfo>
+</simulation>

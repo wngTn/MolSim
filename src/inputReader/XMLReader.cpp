@@ -43,6 +43,19 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
             info.gravityFactor = 0.0;
         }
         info.calculatorType = PhysicsCalc::lennardJones;
+        if(sim->calculator().baseForceTime().present()){
+            info.resetBaseForce = true;
+            info.baseForceReset = floor(sim->calculator().baseForceTime().get() / sim->delta_t());
+        }
+        if(sim->calculator().rZero().present() && sim->calculator().stiffnessConstant().present()){
+            info.membrane = true;
+            info.rZero = sim->calculator().rZero().get();
+            info.stiffnessConstant = sim->calculator().rZero().get();
+        }else{
+            info.membrane = false;
+            info.rZero = 0;
+            info.stiffnessConstant = 0;
+        }
     }else{
         info.calculatorType = PhysicsCalc::gravitation;
     }
@@ -53,6 +66,8 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
         info.t_init = sim->thermostat()->Tinit();
         info.t_target = sim->thermostat()->Ttarget().present() ? sim->thermostat()->Ttarget().get() : info.t_init;
         info.delta_temp = sim->thermostat()->deltaTemp().present() ? sim->thermostat()->deltaTemp().get() : DBL_MAX;
+
+        info.excludeY = sim->thermostat()->excludeY().present() && sim->thermostat()->excludeY().get();
     }else{
         info.useThermostat = false;
     }
@@ -73,6 +88,23 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
         case outputwriter_t::xyz:
             info.outputWriterType = IOWriter::xyz;
             break;
+    }
+
+    if(sim->statistics().present()){
+        info.useStatistics = true;
+        info.statsFile = sim->statistics().get().file();
+        info.statsFrequency = sim->statistics().get().frequency();
+        switch(sim->statistics()->type()){
+            case statistics_type_t::thermodynamical:
+                info.statsType = StatisticsLogger::thermodynamic;
+                info.noBins = 0;
+                break;
+            case statistics_type_t::densityVelocity:
+                info.statsType = StatisticsLogger::densityVelocityProfile;
+                info.noBins = sim->statistics()->noBins().get();
+                break;
+        }
+
     }
 
     info.inputFiles = std::vector<std::string>{};
@@ -146,6 +178,39 @@ void XMLReader::insertGeneratorInfo(std::vector<ParticleGenerator::ShapeInfo>& g
 
     shapeInfo.sigma = info.sigma();
     shapeInfo.epsilon = info.epsilon();
+
+    if(info.behaviour().present()){
+        switch (info.behaviour().get()){
+            case behaviour_t::membrane:
+                shapeInfo.behaviour = ParticleGenerator::membrane;
+                break;
+            case behaviour_t::immovable:
+                shapeInfo.behaviour = ParticleGenerator::immovable;
+                break;
+            case behaviour_t::normal:
+            default:
+                shapeInfo.behaviour = ParticleGenerator::normal;
+                break;
+        }
+    }
+
+    shapeInfo.specialParticles = {};
+    for(auto& sp : info.special_particle()){
+        auto pos = std::array<int,3>{sp.position().x(), sp.position().y(), sp.position().z()};
+        auto vel = shapeInfo.vel;
+        auto force = std::array<double,3>{0.,0.,0.};
+        auto mass = shapeInfo.mass;
+        if(sp.vel().present()){
+            vel = {sp.vel()->x(),sp.vel()->y(),sp.vel()->z()};
+        }
+        if(sp.force().present()){
+            force = {sp.force()->x(),sp.force()->y(),sp.force()->z()};
+        }
+        if(sp.mass().present()){
+            mass = sp.mass().get();
+        }
+        shapeInfo.specialParticles.emplace_back(pos,force,vel,mass);
+    }
 
     genInfos.push_back(shapeInfo);
 }

@@ -14,3 +14,10 @@ void from_json(const nlohmann::json&j, ParticleContainer& container){
     }
 }
 
+void ParticleContainer::reset_base_force(){
+    std::array<double,3> f{0.,0.,0.};
+    for(auto &p : *this){
+        p.setBaseForce(f);
+    }
+}
+

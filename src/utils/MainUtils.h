@@ -16,6 +16,8 @@
 #include "inputReader/XMLReader.h"
 #include "outputWriter/CheckpointWriter.h"
 #include "inputReader/CheckpointReader.h"
+#include "statistics/StatisticsLogger.h"
+#include "statistics/DensityVelocityProfile.h"
 
 #include <unistd.h>
 #include <memory>
@@ -59,6 +61,7 @@ struct MainUtils {
 
     static std::unique_ptr<ParticleContainer> get_container(Config& config);
     static Thermostat get_thermostat(Config& config);
+    static std::unique_ptr<StatisticsLogger> get_statistics_logger(Config& config);
 
     static void initializeParticles(ParticleContainer &particles, Config& config);
 

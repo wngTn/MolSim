@@ -88,14 +88,51 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles, const Shape
     particles.reserve(total_count);
 
     std::array<double, 3> currentPos{info.pos};
+    std::array<double,3> vel{};
+    std::array<double,3> baseF{};
+    double m;
     int current_seindex = startSEIndex;
     for(int z = 0; z < (info.DIM == 3 ? info.N[2] : 1); z++){
         for(int y = 0; y < info.N[1]; y++){
             for(int x = 0; x < info.N[0]; x++){
                 Particle part{};
+                // check if particle is one of the "special" particles
+                auto it = std::find_if(info.specialParticles.begin(), info.specialParticles.end(),
+                                       [x,y,z](auto& s){
+                                           return x == std::get<0>(s)[0] && y==std::get<0>(s)[1] && z == std::get<0>(s)[2];});
+                if(it != info.specialParticles.end()){
+                    baseF = std::get<1>(*it);
+                    vel = std::get<2>(*it);
+                    m = std::get<3>(*it);
+                }else{
+                    vel = info.vel;
+                    baseF = info.baseForce;
+                    m = info.mass;
+                }
+
                 // add browian motion
-                auto tempVel = info.vel + maxwellBoltzmannDistributedVelocity(info.brownianFactor, info.DIM);
-                part = Particle{currentPos, tempVel, info.mass, current_seindex, current_seindex};
+                auto tempVel = vel + maxwellBoltzmannDistributedVelocity(info.brownianFactor, info.DIM);
+                part = Particle{currentPos, tempVel, m, current_seindex, current_seindex};
+                part.setBaseForce(baseF);
+
+                switch(info.behaviour){
+                    case membrane: { // extra scope, so index is not visible in other cases -> no initialization bypassing
+                        part.setMembrane(true);
+                        part.setImmovable(false);
+                        auto index = std::array<int,3>{x,y,z};
+                        part.setGridIndex(index);
+                        break;}
+                    case immovable:
+                        part.setImmovable(true);
+                        part.setMembrane(false);
+                        break;
+                    case normal:
+                    default:
+                        part.setMembrane(false);
+                        part.setImmovable(false);
+                        break;
+                }
+
                 particles.emplace_back(part);
                 currentPos[0] += info.distance;
             }
@@ -106,6 +143,7 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles, const Shape
         currentPos[1] = info.pos[1];
         currentPos[2] += info.distance;
     }
+
 }
 
 void ParticleGenerator::generateSphere(ParticleContainer &particles, const ShapeInfo &info, int startSEIndex) {
@@ -196,3 +234,4 @@ std::vector<std::pair<int, std::pair<double,double>>> ParticleGenerator::generat
 std::vector<std::pair<int, std::pair<double,double>>> ParticleGenerator::generateParticles(ParticleContainer &particles, const std::vector<ShapeInfo> &infovec) {
     return generateParticles(particles, infovec, 0);
 }
+
