@@ -271,14 +271,14 @@ namespace calculator {
         case LinkedCellContainer::primitive: case LinkedCellContainer::primitiveFit :
 #pragma omp parallel shared(grid) default(none)
             {
-#pragma omp for
+#pragma omp for schedule(dynamic)
                 for (size_t i = 0; i < grid.getIndicesThreadVector().size(); ++i) {
                     for (int pos: grid.getIndicesThreadVector()[i]) {
                         calcFCell(grid.grid[pos], grid);
                     }
                 }
 
-#pragma omp for
+#pragma omp for schedule(dynamic)
                 for (size_t i = 0; i < grid.getIndicesThreadVector().size(); ++i) {
                     for (int pos: grid.getIndicesThreadVector()[i]) {
                         calcFCell(grid.grid[pos + grid.getThreadOffset()], grid);
