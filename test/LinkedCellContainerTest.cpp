@@ -280,4 +280,21 @@ TEST(LinkedCellContainer, IndicesThreadVectorTest) {
     ref1 = std::vector<int>{4, 9, 14, 19};
     ASSERT_TRUE(linkedCellContainer6.getResidualThreadVector() == ref1);
     std::cout<<linkedCellContainer6.getResidualThreadVector()<<std::endl;
+
+    // We use primitiveFit
+    LinkedCellContainer linkedCellContainer7 = LinkedCellContainer{5, 3, 4, 1., bor, 0, LinkedCellContainer::Strategy::primitiveFit};
+    result = linkedCellContainer7.getIndicesThreadVector();
+    ref1 = std::vector<int>{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
+    ref2 = std::vector<int>{30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44};
+    ASSERT_TRUE(result[0] == ref1);
+    ASSERT_TRUE(result[1] == ref2);
+    for (const auto & v : result) {
+        std::cout<<v<<std::endl;
+    }
+
+    LinkedCellContainer linkedCellContainer8 = LinkedCellContainer{120, 120, 13, 4., bor, 0, LinkedCellContainer::Strategy::primitiveFit};
+    result = linkedCellContainer8.getIndicesThreadVector();
+    for (const auto & v : result) {
+        std::cout<<v<<std::endl;
+    }
 }

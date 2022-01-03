@@ -14,7 +14,11 @@ class LinkedCellContainer : public ParticleContainer{
 public:
 
     enum Border {outflow, periodic, reflective, none};
-    enum Strategy{primitive, naught};
+    /**
+     * primitive: we split along the greatest dimension
+     * primitiveFit: we split along the y axis (2D) or z axis(3D) for better memory access
+     */
+    enum Strategy{primitive, primitiveFit, naught};
 
     /***********************************************************************/
 
@@ -28,7 +32,7 @@ public:
      * @param strategy the multi threading strategy that should be used
      */
     LinkedCellContainer(double Xv, double Yv, double Zv, double rCutV, std::array<Border, 6> borderV = std::array<Border, 6>{
-            outflow, outflow, outflow, outflow, outflow, outflow}, double g = 0, Strategy strategy = naught);
+            outflow, outflow, outflow, outflow, outflow, outflow}, double g = 0, Strategy strategy = primitiveFit);
 
     /**
      * Default constructor

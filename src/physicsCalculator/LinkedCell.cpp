@@ -268,7 +268,7 @@ namespace calculator {
     void LinkedCell::calcF(ParticleContainer &container) {
         auto &grid = static_cast<LinkedCellContainer &>(container);
         switch (grid.getStrategy()) {
-            case LinkedCellContainer::primitive:
+        case LinkedCellContainer::primitive: case LinkedCellContainer::primitiveFit :
 #pragma omp parallel shared(grid) default(none)
             {
 #pragma omp for
