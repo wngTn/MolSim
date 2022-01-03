@@ -52,10 +52,11 @@ namespace calculator {
                 currentIndexes[1] == 0 || currentIndexes[1] == gridLC.getDim()[1] - 1 ||
                 currentIndexes[2] == 0 || currentIndexes[2] == gridLC.getDim()[2] - 1) {
                 for (auto & p : curCell) {
+                    auto newX = p->getX() + delta_t * (p->getV() + delta_t * 0.5 / p->getM() * p->getF());
+                    p->setX(newX);
                     // Checks whether any particle has crossed the boundaries
                     for (int d = 0; d < (gridLC.is2D() ? 2 : 3); ++d) {
-                        auto newX = p->getX()[d] + delta_t * (p->getV()[d] + delta_t * 0.5 / p->getM() * p->getF()[d]);
-                        if (newX < 0) {
+                        if (p->getX()[d] < 0) {
                             // outflow, removing the particle
                             if (std::get<0>(gridLC.getBorders(currentIndexes, d)) ==
                                 LinkedCellContainer::outflow) {
@@ -70,9 +71,9 @@ namespace calculator {
                                 spdlog::info("Particle was at d: {} and position {} {} {} now at {}", d,
                                              p->getX()[0], p->getX()[1], p->getX()[2],
                                              gridLC.getLenDim()[d] + p->getX()[d]);
-                                p->setX(d, gridLC.getLenDim()[d] + newX);
+                                p->setX(d, gridLC.getLenDim()[d] + p->getX()[d]);
                             }
-                        } else if (newX >= gridLC.getLenDim()[d]) {
+                        } else if (p->getX()[d] >= gridLC.getLenDim()[d]) {
                             // outflow, removing the particle
                             if (std::get<0>(gridLC.getBorders(currentIndexes, d)) ==
                                 LinkedCellContainer::outflow) {
@@ -80,14 +81,14 @@ namespace calculator {
                                 p->valid = false;
                                 break;
                             }
-                                // periodic
+                            // periodic
                             else if (std::get<0>(gridLC.getBorders(currentIndexes, d)) ==
                                      LinkedCellContainer::periodic) {
                                 // set X to the opposite site
                                 spdlog::info("Particle was at d: {} and position {} {} {} now at {}", d,
                                              p->getX()[0], p->getX()[1], p->getX()[2],
                                              p->getX()[d] - gridLC.getLenDim()[d]);
-                                p->setX(d, newX - gridLC.getLenDim()[d]);
+                                p->setX(d, p->getX()[d] - gridLC.getLenDim()[d]);
                             }
                         }
                     }
