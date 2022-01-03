@@ -22,6 +22,7 @@ int main(int argc, char *argv[]) {
     auto calc = MainUtils::get_calculator(config);
 
     Thermostat thermostat = MainUtils::get_thermostat(config);
+    auto stats = MainUtils::get_statistics_logger(config);
 
     calc->setDim(config.DIM);
     calc->setDeltaT(config.delta_t);
@@ -48,24 +49,28 @@ int main(int argc, char *argv[]) {
     if(config.useThermostat){
         thermostat.setupTemperature(*particles);
     }
-    calc->calcX(*particles);
+    //calc->calcX(*particles);
+    //two times setup is needed, so that oldF (which is used when writing) is set to the initial baseForce
+    particles->setup();
     particles->setup();
     calc->calcF(*particles);
     if (!config.benchmarking){
         io->write(*particles, config.output_file, iteration);
+        if(config.useStatistics){
+            stats->writeStatistics(*particles, iteration);
+        }
     }
     // for this loop, we assume: current x, current f and current v are known
     while (current_time < config.end_time) {
         spdlog::info("Iteration {}: ", iteration);
         MainUtils::logParticle(*particles);
 
-
         calc->calcX(*particles);
         particles->setup();
         calc->calcF(*particles);
         calc->calcV(*particles);
 
-        if(config.useThermostat && iteration % config.nThermostat == 0) {
+        if(config.useThermostat && iteration % config.nThermostat == 0) [[unlikely]] {
             thermostat.applyTemperature(*particles);
         }
 
@@ -73,12 +78,20 @@ int main(int argc, char *argv[]) {
 
         iteration++;
 
-        if (!config.benchmarking && iteration % config.writeFrequency == 0) {
+        if (!config.benchmarking && iteration % config.writeFrequency == 0) [[unlikely]] {
             particles->cleanup();
             // setup after cleanup needed to validate pointers for calcX
             particles->setup();
             // uses abstract write method overwritten by specific IO method
             io->write(*particles, config.output_file, iteration);
+        }
+
+        if(iteration % config.statsFrequency == 0){
+            stats->writeStatistics(*particles, iteration);
+        }
+
+        if(config.resetBaseForce && iteration == config.resetBaseForceIteration){
+            particles->reset_base_force();
         }
 
         current_time += config.delta_t;

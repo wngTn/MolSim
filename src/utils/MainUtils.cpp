@@ -102,6 +102,9 @@ std::unique_ptr<PhysicsCalc> MainUtils::get_calculator(Config& config) {
                 c->setSigmaTable(sigmaTable);
                 c->setEpsilonTable(epsilonTable);
                 c->setMapping(se_mapping);
+                c->setMembrane(config.membrane);
+                c->setRZero(config.rZero);
+                c->setStiffnessConstant(config.stiffnessConstant);
                 return c;
             }
             return std::make_unique<calculator::LennardJones>(config.sigma, config.eps);
@@ -119,7 +122,23 @@ Thermostat MainUtils::get_thermostat(Config& config) {
     if(!config.useThermostat){
         return Thermostat{};
     }
-    return Thermostat{config.initialTemperature, config.targetTemperature, config.maxDeltaTemperature};
+    return Thermostat{config.initialTemperature, config.targetTemperature, config.maxDeltaTemperature, config.thermostatExcludeY};
+}
+
+std::unique_ptr<StatisticsLogger> MainUtils::get_statistics_logger(Config& config) {
+    if(!config.useStatistics){
+        // idk what to do here? TODO figure out what to return here
+        return nullptr;
+    }
+    switch (config.statsType){
+
+        case StatisticsLogger::densityVelocityProfile: {
+            return std::make_unique<statistics::DensityVelocityProfile>(config.statsFile, config.noBins);}
+        default:
+        case StatisticsLogger::thermodynamic:
+            // TODO add something
+            return nullptr;
+    }
 }
 
 void MainUtils::initializeParticles(ParticleContainer &particles, Config& config) {
@@ -243,10 +262,28 @@ void MainUtils::parseXML(Config& config) {
         config.targetTemperature = info.t_target;
         config.maxDeltaTemperature = info.delta_temp;
         config.nThermostat = info.n_thermostat;
+        config.thermostatExcludeY = info.excludeY;
     }
     config.checkpointing = !info.checkpointOutput.empty();
     config.checkpointOutput = info.checkpointOutput;
     config.checkpointInput = info.checkpointInput;
+
+    config.resetBaseForceIteration = info.baseForceReset;
+    config.resetBaseForce = info.resetBaseForce;
+
+    if(info.membrane){
+        config.membrane = true;
+        config.rZero = info.rZero;
+        config.stiffnessConstant = info.stiffnessConstant;
+    }
+
+    if(info.useStatistics){
+        config.useStatistics = true;
+        config.statsFrequency = info.statsFrequency;
+        config.statsFile = info.statsFile;
+        config.noBins = info.noBins;
+        config.statsType = info.statsType;
+    }
 
     spdlog::info("Finished XML parsing!");
 }

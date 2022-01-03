@@ -82,7 +82,7 @@ endif()
 # set c++ to 17
 target_compile_features(${ThisLib}
         PUBLIC
-        cxx_std_17
+        cxx_std_20
         )
 
 # create our executable main target

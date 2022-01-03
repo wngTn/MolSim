@@ -29,6 +29,14 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:simpleType name="behaviour_t">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="normal"/>
+            <xs:enumeration value="membrane"/>
+            <xs:enumeration value="immovable"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <!-- info for the particle generator, n1,n2,n3 and radius optional, rest mandatory -->
     <xs:complexType name ="generator_info_t">
         <xs:sequence>
@@ -49,8 +57,10 @@
             <xs:element minOccurs="0" name="n2" type="xs:int" />
             <xs:element minOccurs="0" name="n3" type="xs:int" />
             <xs:element minOccurs="0" name="radius" type="xs:int" />
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="special_particle" type="special_particle_t" />
         </xs:sequence>
         <xs:attribute name="type" type="geometric_t" use="required"/>
+        <xs:attribute name="behaviour" type="behaviour_t" use="optional"/>
     </xs:complexType>
 
     <!-- enum type for choosing container type, values linkedcell and directsum allowed -->
@@ -73,9 +83,9 @@
     <xs:complexType name="containerinfo_t">
         <xs:sequence minOccurs = "0">
             <xs:element name="rCut" type="xs:decimal"/>
-            <xs:element name="domainSizeX" type="xs:int"  />
-            <xs:element name="domainSizeY" type="xs:int"  />
-            <xs:element name="domainSizeZ" type="xs:int" />
+            <xs:element name="domainSizeX" type="xs:decimal"  />
+            <xs:element name="domainSizeY" type="xs:decimal"  />
+            <xs:element name="domainSizeZ" type="xs:decimal" />
             <xs:element name="borderType" type="border_t" />
         </xs:sequence>
         <xs:attribute name="type" type="containertype_t" use="required" />
@@ -88,6 +98,9 @@
             <xs:element name="sigma" type="xs:decimal" />
             <xs:element name="gravityFactor" type="xs:decimal" minOccurs="0"/>
             <xs:element name="brownianMotion" type="xs:decimal" />
+            <xs:element name="baseForceTime" type="xs:decimal" minOccurs="0" />
+            <xs:element name="rZero" type="xs:decimal" minOccurs="0" />
+            <xs:element name="stiffnessConstant" type="xs:decimal" minOccurs="0" />
         </xs:sequence>
         <xs:attribute name="type" type = "calculatortype_t" use = "required" />
     </xs:complexType>
@@ -107,6 +120,46 @@
             <xs:element name="Ttarget" type="xs:decimal" minOccurs="0"/>
             <xs:element name="deltaTemp" type="xs:decimal" minOccurs="0"/>
         </xs:sequence>
+        <xs:attribute name="excludeY" type="xs:boolean" use="optional" />
+    </xs:complexType>
+
+    <xs:simpleType name="statistics_type_t">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="thermodynamical" />
+            <xs:enumeration value="densityVelocity" />
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <xs:complexType name="statistics_t">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="noBins" type="xs:int" />
+            <xs:element name="file" type="xs:string" />
+            <xs:element name="frequency" type="xs:int" />
+        </xs:sequence>
+        <xs:attribute name="type" type="statistics_type_t" use="required" />
+    </xs:complexType>
+
+
+    <xs:complexType name="array_int_3">
+        <xs:attribute name="x" type="xs:int" use="required" />
+        <xs:attribute name="y" type="xs:int" use="required" />
+        <xs:attribute name="z" type="xs:int" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="array_float_3">
+        <xs:attribute name="x" type="xs:decimal" use="required" />
+        <xs:attribute name="y" type="xs:decimal" use="required" />
+        <xs:attribute name="z" type="xs:decimal" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="special_particle_t">
+        <xs:sequence>
+            <xs:element name="position" type="array_int_3" />
+            <xs:element minOccurs="0" name="force" type="array_float_3" />
+            <xs:element minOccurs="0" name="vel" type="array_float_3" />
+            <xs:element minOccurs="0" name="mass" type="xs:decimal" />
+        </xs:sequence>
     </xs:complexType>
 
     <!-- everything the simulation needs -->
@@ -123,6 +176,7 @@
             <xs:element minOccurs = "0" name = "thermostat" type="thermostat_info_t" />
             <xs:element minOccurs = "0" name = "checkpointInput" type="xs:string" />
             <xs:element minOccurs = "0" name = "checkpointOutput" type="xs:string" />
+            <xs:element minOccurs = "0" name = "statistics" type="statistics_t" />
         </xs:sequence>
         <xs:attribute name="t_end" type="xs:decimal" use="required"/>
         <xs:attribute name="delta_t" type="xs:decimal" use="required"/>

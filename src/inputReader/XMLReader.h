@@ -3,6 +3,7 @@
 #include "../physicsCalculator/PhysicsCalc.h"
 #include "../utils/ParticleGenerator.h"
 #include "../particleContainers/LinkedCellContainer.h"
+#include "../statistics/StatisticsLogger.h"
 #include "simulation.h"
 
 #include <vector>
@@ -29,6 +30,7 @@ public:
         double t_target;
         double delta_temp;
         int n_thermostat;
+        bool excludeY;
 
         // whether randomly generated particles should be used, other inputs discarded if yes
         bool random;
@@ -47,11 +49,24 @@ public:
         std::vector<ParticleGenerator::ShapeInfo> generatorInfos;
         // input files (JSON) for the ParticleGenerator, for specifications see info about ParticleGenerator
         std::vector<std::string> generatorInputFiles;
+        // iteration, when base Force is reset
+        int baseForceReset;
+        bool resetBaseForce;
+
+        bool membrane;
+        double rZero;
+        double stiffnessConstant;
         //stuff used for linked cell
         bool linkedcell;
-        std::array<int,3> linkedCellSize;
+        std::array<double,3> linkedCellSize;
         double rCut;
         std::array<LinkedCellContainer::Border, 6> boundaryConditions;
+
+        bool useStatistics;
+        int statsFrequency;
+        std::string statsFile;
+        StatisticsLogger::statisticstype statsType;
+        int noBins;
     };
 
     static XMLInfo readFile(const std::string& s);

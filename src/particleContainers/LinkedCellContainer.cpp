@@ -3,7 +3,7 @@
 #include "LinkedCellContainer.h"
 
 
-LinkedCellContainer::LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV, std::array<Border, 6> borderV, double g,
+LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double rCutV, std::array<Border, 6> borderV, double g,
                                          Strategy strategy) :
         grid{std::vector<Cell>(static_cast<int>(std::floor(Xv / rCutV)) *
                                static_cast<int>(std::floor(Yv / rCutV)) *
@@ -13,7 +13,7 @@ LinkedCellContainer::LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV, s
                                static_cast<int>(std::floor(Yv / rCutV)),
                                (static_cast<int>(std::floor(Zv / rCutV))) == 0 ? 1 :
                                static_cast<int>(std::floor(Zv / rCutV))}},
-        lenDim{std::array<int, 3>{Xv, Yv, Zv}}, rCut{rCutV}, border{borderV}, g{g}, strategy{strategy} {
+        lenDim{std::array<double, 3>{Xv, Yv, Zv}}, rCut{rCutV}, border{borderV}, g{g}, strategy{strategy} {
     // Initialize the grid
     int i{0};
     std::array<int, 3> currentIndexes{};
@@ -120,7 +120,10 @@ void LinkedCellContainer::setup() {
             auto cellIndex = (*this).index(novelCellIndex);
             p.setOldF(p.getF());
             // here gravitational force is applied
-            p.setF({0., p.getM() * g, 0.});
+            // p.setF({0., p.getM() * g, 0.});
+            // set Force to baseForce + g*m
+            p.applyBaseForceAndGrav(g);
+
             grid[cellIndex].emplace_back(&p);
         }
     }
@@ -204,11 +207,11 @@ void LinkedCellContainer::setDim(const std::array<int, 3> &dimV) {
     LinkedCellContainer::dim = dimV;
 }
 
-const std::array<int, 3> &LinkedCellContainer::getLenDim() const {
+const std::array<double, 3> &LinkedCellContainer::getLenDim() const {
     return lenDim;
 }
 
-void LinkedCellContainer::setLenDim(const std::array<int, 3> &lenDimV) {
+void LinkedCellContainer::setLenDim(const std::array<double, 3> &lenDimV) {
     LinkedCellContainer::lenDim = lenDimV;
 }
 

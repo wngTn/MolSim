@@ -9,9 +9,9 @@
 */
 
 TEST(LinkedCellContainerTest, ConstructorTest) {
-    int X = 7;
-    int Y = 7;
-    int Z = 1;
+    double X = 7;
+    double Y = 7;
+    double Z = 1;
     double rCut = 1;
 
 
@@ -47,9 +47,9 @@ TEST(LinkedCellContainerTest, ConstructorTest) {
  * Uses the Particle Vector and creates each cell new with setup
  */
 TEST(LinkedCellContainerTest, ParticleConstructorTest) {
-    int X = 7;
-    int Y = 7;
-    int Z = 1;
+    double X = 7;
+    double Y = 7;
+    double Z = 1;
     double rCut = 1;
 
 
@@ -110,7 +110,7 @@ TEST_P(ParameterizedLinkedCellTest, CorrectDimensionsTest) {
 
     setSize(X*Y*Z);
 
-    ASSERT_EQ(p_result.getGrid().size(), X*Y*Z);
+    ASSERT_DOUBLE_EQ(p_result.getGrid().size(), X*Y*Z);
 
     for (int i = 0; i < p_result.particles.size(); ++i) {
         ASSERT_EQ(p_result.particles[i].getType(), i);
@@ -121,12 +121,12 @@ INSTANTIATE_TEST_SUITE_P(
         CorrectDimensionsTest,
         ParameterizedLinkedCellTest,
         ::testing::Values(
-                std::make_tuple(1, 1, 1),
-                std::make_tuple(1, 2, 3),
-                std::make_tuple(2, 3, 4),
-                std::make_tuple(4, 3, 2),
-                std::make_tuple(5, 6, 7),
-                std::make_tuple(5, 7, 8)
+                std::make_tuple(1., 1., 1.),
+                std::make_tuple(1., 2., 3.),
+                std::make_tuple(2., 3., 4.),
+                std::make_tuple(4., 3., 2.),
+                std::make_tuple(5., 6., 7.),
+                std::make_tuple(5., 7., 8.)
         )
 );
 
@@ -139,7 +139,7 @@ TEST(LinkedCellContainer, GetPerNeighborFunctionTest) {
     std::array<LinkedCellContainer::Border, 6> bor{};
     bor.fill(LinkedCellContainer::periodic);
     // Corner in 2D 2/2
-    LinkedCellContainer linkedCellContainer = LinkedCellContainer{10, 10, 1, 1., bor};
+    LinkedCellContainer linkedCellContainer = LinkedCellContainer{10., 10., 1., 1., bor};
     std::array<int, 3> ci = {0, 0, 0};
     auto result = linkedCellContainer.getPerNeighbors(ci);
     std::cout<<result<<std::endl;
@@ -152,7 +152,7 @@ TEST(LinkedCellContainer, GetPerNeighborFunctionTest) {
     ASSERT_EQ(result.size(), 3);
 
     // Corner in 3D 3/3
-    LinkedCellContainer linkedCellContainer3D = LinkedCellContainer{10, 10, 10, 1., bor};
+    LinkedCellContainer linkedCellContainer3D = LinkedCellContainer{10., 10., 10., 1., bor};
     std::array<int, 3> ci_3D = {0, 0, 0};
     auto result3D = linkedCellContainer3D.getPerNeighbors(ci_3D);
     std::cout<<result3D<<std::endl;
@@ -163,14 +163,14 @@ TEST(LinkedCellContainer, GetPerNeighborFunctionTest) {
     bor[3] = LinkedCellContainer::outflow;
 
     // Corner in 2D 1/2
-    linkedCellContainer = LinkedCellContainer{10, 10, 1, 1., bor};
+    linkedCellContainer = LinkedCellContainer{10., 10., 1., 1., bor};
     ci = {0, 9, 0};
     result = linkedCellContainer.getPerNeighbors(ci);
     std::cout<<result<<std::endl;
     ASSERT_EQ(result.size(), 2);
 
 
-    LinkedCellContainer linkedCellContainer3D2 = LinkedCellContainer{10, 9, 8, 1., bor};
+    LinkedCellContainer linkedCellContainer3D2 = LinkedCellContainer{10., 9., 8., 1., bor};
     ci_3D = {9, 8, 7};
     result3D = linkedCellContainer3D2.getPerNeighbors(ci_3D);
     std::cout<<result3D<<std::endl;
@@ -184,7 +184,7 @@ TEST(LinkedCellContainer, GetPerNeighborFunctionTest) {
 
     // Corner in 3D 1/3
     bor[1] = LinkedCellContainer::outflow;
-    LinkedCellContainer linkedCellContainer3D1 = LinkedCellContainer{5, 6, 7, 1., bor};
+    LinkedCellContainer linkedCellContainer3D1 = LinkedCellContainer{5., 6., 7., 1., bor};
     ci_3D = {4, 5, 6};
     result3D = linkedCellContainer3D1.getPerNeighbors(ci_3D);
     std::cout<<result3D<<std::endl;

@@ -10,7 +10,7 @@
  */
 TEST(LinkedCellTest, indexTest) {
 
-    std::array<int, 3> dim = {3, 4, 1};
+    std::array<double, 3> dim = {3, 4, 1};
     LinkedCellContainer linkedCellContainer = LinkedCellContainer{dim[0], dim[1], dim[2], 1.};
     std::array<int, 3> arr1 = {0, 0, 0};
     std::array<int, 3> arr2 = {0, 0, 1};
@@ -30,7 +30,7 @@ TEST(LinkedCellTest, indexTest) {
     ASSERT_EQ(res4, 16);
     ASSERT_EQ(res5, 23);
 
-    std::array<int, 3> dim1 = {7, 7, 1};
+    std::array<double, 3> dim1 = {7, 7, 1};
     std::array<int, 3> arr_1 = {3, 3, 0};
 
     linkedCellContainer = LinkedCellContainer{dim1[0], dim1[1], dim1[2], 1.};

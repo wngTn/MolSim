@@ -1,9 +1,10 @@
 #pragma once
 
-#include <outputWriter/IOWriter.h>
-#include <physicsCalculator/PhysicsCalc.h>
-#include <physicsCalculator/Thermostat.h>
-#include <particleContainers/LinkedCellContainer.h>
+#include "outputWriter/IOWriter.h"
+#include "physicsCalculator/PhysicsCalc.h"
+#include "physicsCalculator/Thermostat.h"
+#include "particleContainers/LinkedCellContainer.h"
+#include "statistics/StatisticsLogger.h"
 #include "ParticleGenerator.h"
 
 struct Config {
@@ -18,6 +19,11 @@ public:
 
 /// Default delta t
     double delta_t = 0.014;
+
+/// iteration, when baseForce is reset to 0
+    int resetBaseForceIteration;
+    ///
+    bool resetBaseForce;
 
 /// File name of the XML file specifying input parameters
     std::string xml_file;
@@ -70,6 +76,9 @@ public:
 /// temperature we want to reach
     double targetTemperature;
 
+/// whether the Y coordinate should be excluded for temperature calculations
+    bool thermostatExcludeY;
+
 /// max temperature difference in one temperature calculation
     double maxDeltaTemperature;
 
@@ -82,9 +91,19 @@ public:
     double sigma = 1.;
     double grav;
 
+    // whether a membrane is used
+    bool membrane = false;
+    double rZero;
+    double stiffnessConstant;
+
     bool linkedCell;
-    std::array<int, 3> linkedCellSize;
+    std::array<double, 3> linkedCellSize;
     double rCut;
     std::array<LinkedCellContainer::Border, 6> boundaryConditions;
 
+    bool useStatistics;
+    int statsFrequency;
+    std::string statsFile;
+    StatisticsLogger::statisticstype statsType;
+    int noBins;
 };
