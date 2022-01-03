@@ -14,6 +14,11 @@ class LinkedCellContainer : public ParticleContainer{
 public:
 
     enum Border {outflow, periodic, reflective, none};
+    /**
+     * primitive: we split along the greatest dimension
+     * primitiveFit: we split along the y axis (2D) or z axis(3D) for better memory access
+     */
+    enum Strategy{primitive, primitiveFit, naught};
 
     /***********************************************************************/
 
@@ -24,9 +29,10 @@ public:
      * @param Zv length of Z-Axis of the array == the length of the domain
      * @param rCutV the r_cut value
      * @param borderV the border types of the 6 (3D) or 4 (2D) borders
+     * @param strategy the multi threading strategy that should be used
      */
-    LinkedCellContainer(int Xv, int Yv, int Zv, double rCutV, std::array<Border, 6> borderV = std::array<Border, 6>{
-            outflow, outflow, outflow, outflow, outflow, outflow}, double g = 0);
+    LinkedCellContainer(double Xv, double Yv, double Zv, double rCutV, std::array<Border, 6> borderV = std::array<Border, 6>{
+            outflow, outflow, outflow, outflow, outflow, outflow}, double g = 0, Strategy strategy = primitiveFit);
 
     /**
      * Default constructor
@@ -154,7 +160,7 @@ public:
 
     [[nodiscard]] const std::array<int, 3> &getDim() const;
 
-    [[nodiscard]] const std::array<int, 3> &getLenDim() const;
+    [[nodiscard]] const std::array<double, 3> &getLenDim() const;
 
     bool is2D();
 
@@ -168,7 +174,7 @@ public:
 
     void setRCut(double rCutV);
 
-    void setLenDim(const std::array<int, 3> &lenDim);
+    void setLenDim(const std::array<double, 3> &lenDim);
 
     [[nodiscard]] const std::vector<Particle> &getParticles() const;
 
@@ -177,6 +183,26 @@ public:
     [[nodiscard]] const std::array<Border, 6> &getBorder() const;
 
     void setBorder(const std::array<Border, 6> &border);
+
+    [[nodiscard]] double getG() const;
+
+    void setG(double g);
+
+    [[nodiscard]] const std::vector<std::vector<int>> &getIndicesThreadVector() const;
+
+    void setIndicesThreadVector(const std::vector<std::vector<int>> &indicesThreadVector);
+
+    [[nodiscard]] int getThreadOffset() const;
+
+    void setThreadOffset(int threadOffset);
+
+    [[nodiscard]] const std::vector<int> &getResidualThreadVector() const;
+
+    void setResidualThreadVector(const std::vector<int> &residualThreadVector);
+
+    [[nodiscard]] Strategy getStrategy() const;
+
+    void setStrategy(Strategy strategy);
 
     /**
      * Has X * Y * Z many elements
@@ -199,7 +225,7 @@ private:
      * The array describes how long the domain of the respective dimensions should've been
      * lenDim[0] = X, lenDim[1] = Y, lenDim[2] = Z
      */
-    std::array<int, 3>lenDim{};
+    std::array<double, 3>lenDim{};
     double rCut{};
 
     /**
@@ -211,6 +237,28 @@ private:
      * The gravitational force that applies to the domain
      */
     double g{};
+
+    /**
+     * Signals what multi threading strategy to use
+     */
+    Strategy strategy{};
+
+    /**
+     * This vector depicts which indices each thread has to work with in the first iteration
+     * The length is the number of threads
+     */
+     std::vector<std::vector<int>> indicesThreadVector;
+
+     /**
+      * Depicts how much offset the indices of the threads have in the second iteration
+      */
+     int threadOffset{};
+
+     /**
+      * If dimension is an uneven number, we have a residual thread vector
+      */
+      std::vector<int> residualThreadVector{};
+
 };
 
 double LinkedCellContainer::getDistance(const std::array<double, 3> & X, int bord) const {
@@ -237,14 +285,14 @@ bool inline LinkedCellContainer::isNeighborInRange(const Particle *p, const std:
     double midPointEdgeRange{};
     for (int d = 0; (dim[2] == 1) ? d < 2 : d < 3; ++d) {
         midPointEdgeRange += static_cast<double>(lenDim[d]) / static_cast<double>(dim[d]) *
-                static_cast<double>(lenDim[d]) / static_cast<double>(dim[d]);
+                lenDim[d] / dim[d];
     }
     midPointEdgeRange = sqrt(midPointEdgeRange);
 
     // position of the neighborCell middle point
     std::array<double, 3> neighborPos{};
     for (int d = 0; (dim[2] == 1) ? d < 2 : d < 3; ++d) {
-        neighborPos[d] = neighbor[d] * (static_cast<double>(lenDim[d]) / static_cast<double>(dim[d]));
+        neighborPos[d] = neighbor[d] * (lenDim[d] / dim[d]);
     }
 
     // Distance between these points

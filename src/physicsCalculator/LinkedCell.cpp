@@ -11,7 +11,19 @@ namespace calculator {
                     for (int i = 0; i < DIM; i++) {
                         sqrd_dist += LinkedCell::sqr((*it2)->getX()[i] - (*it)->getX()[i]);
                     }
-                    LinkedCell::ljforce((*it), (*it2), sqrd_dist);
+                    //LinkedCell::ljforce((*it), (*it2), sqrd_dist);
+                    if(!membrane || !(*it)->membrane || !(*it2)->membrane){
+                        if (sqrd_dist <= LinkedCell::sqr(rCut) && !((*it)->immovable && (*it2)->immovable)) {
+                            LinkedCell::ljforce(*it, *it2, sqrd_dist);
+                        }
+                    }else{
+                        if(sqrd_dist <= sqr(SIXTH_ROOT_OF_TWO * sigmaTable[(*it)->getSEIndex()][(*it2)->getSEIndex()])){
+                            LinkedCell::ljforce(*it, *it2, sqrd_dist);
+                        }
+                        if(gridNeighbors((*it)->getGridIndex(), (*it2)->getGridIndex())){
+                            LinkedCell::harmonic_potential(*it, *it2, sqrd_dist);
+                        }
+                    }
                 }
             }
         }
@@ -20,69 +32,123 @@ namespace calculator {
 
     void LinkedCell::calcX(ParticleContainer &container) const {
         auto &gridLC = static_cast<LinkedCellContainer &>(container);
-        for (auto &p: gridLC) {
-            auto newX = p.getX() + delta_t * (p.getV() + delta_t * 0.5 / p.getM() * p.getF());
-            p.setX(newX);
+//#ifdef _OPENMP
+//#pragma omp parallel for schedule(guided) shared(gridLC) default(none)
+//#endif //_OPENMP
+//        for (auto &p : gridLC) {
+//            auto newX = p.getX() + delta_t * (p.getV() + delta_t * 0.5 / p.getM() * p.getF());
+//            p.setX(newX);
+//
+//        }
+//        moveParticles(gridLC);
+#ifdef _OPENMP
+#pragma omp parallel for default(none) schedule(guided) shared(gridLC)
+#endif //_OPENMP
+        for (auto & curCell : gridLC.getGrid()) {
+            if (curCell.getParticles().empty()) continue;
+            auto currentIndexes = curCell.getIndex();
+            // checks if it is a border cell
+            if (curCell.isBorderCell1()) {
+                for (auto & p : curCell) {
+                    auto newX = p->getX() + delta_t * (p->getV() + delta_t * 0.5 / p->getM() * p->getF());
+                    p->setX(newX);
+                    // Checks whether any particle has crossed the boundaries
+                    for (int d = 0; d < (gridLC.is2D() ? 2 : 3); ++d) {
+                        if (p->getX()[d] < 0) {
+                            // outflow, removing the particle
+                            if (std::get<0>(gridLC.getBorders(currentIndexes, d)) ==
+                                LinkedCellContainer::outflow) {
+                                spdlog::info("Removing Particle");
+                                p->valid = false;
+                                break;
+                            }
+                                // periodic
+                            else if (std::get<0>(gridLC.getBorders(currentIndexes, d)) ==
+                                     LinkedCellContainer::periodic) {
+                                // set X to the opposite site
+                                spdlog::info("Particle was at d: {} and position {} {} {} now at {}", d,
+                                             p->getX()[0], p->getX()[1], p->getX()[2],
+                                             gridLC.getLenDim()[d] + p->getX()[d]);
+                                p->setX(d, gridLC.getLenDim()[d] + p->getX()[d]);
+                            }
+                        } else if (p->getX()[d] >= gridLC.getLenDim()[d]) {
+                            // outflow, removing the particle
+                            if (std::get<0>(gridLC.getBorders(currentIndexes, d)) ==
+                                LinkedCellContainer::outflow) {
+                                spdlog::info("Removing Particle");
+                                p->valid = false;
+                                break;
+                            }
+                            // periodic
+                            else if (std::get<0>(gridLC.getBorders(currentIndexes, d)) ==
+                                     LinkedCellContainer::periodic) {
+                                // set X to the opposite site
+                                spdlog::info("Particle was at d: {} and position {} {} {} now at {}", d,
+                                             p->getX()[0], p->getX()[1], p->getX()[2],
+                                             p->getX()[d] - gridLC.getLenDim()[d]);
+                                p->setX(d, p->getX()[d] - gridLC.getLenDim()[d]);
+                            }
+                        }
+                    }
+                }
+            }
+            // Not a border cell
+            else {
+                for (auto & p : curCell) {
+                    auto newX = p->getX() + delta_t * (p->getV() + delta_t * 0.5 / p->getM() * p->getF());
+                    p->setX(newX);
+                }
+            }
         }
-        moveParticles(gridLC);
     }
 
     void LinkedCell::moveParticles(LinkedCellContainer &grid) {
         std::array<int, 3> currentIndexes{};
-        for (currentIndexes[0] = 0; currentIndexes[0] < grid.getDim()[0]; ++currentIndexes[0]) {
-            // iterate through the Y axis
-            for (currentIndexes[1] = 0; currentIndexes[1] < grid.getDim()[1]; ++currentIndexes[1]) {
-                // iterate through the Z axis
-                for (currentIndexes[2] = 0; currentIndexes[2] < grid.getDim()[2]; ++currentIndexes[2]) {
+        for (auto &curCell: grid.grid) {
+            currentIndexes = curCell.getIndex();
 
-                    // checks if it is a border cell
-                    if (currentIndexes[0] == 0 || currentIndexes[0] == grid.getDim()[0] - 1 ||
-                        currentIndexes[1] == 0 || currentIndexes[1] == grid.getDim()[1] - 1 ||
-                        currentIndexes[2] == 0 || currentIndexes[2] == grid.getDim()[2] - 1) {
+            // checks if it is a border cell
+            if (currentIndexes[0] == 0 || currentIndexes[0] == grid.getDim()[0] - 1 ||
+                currentIndexes[1] == 0 || currentIndexes[1] == grid.getDim()[1] - 1 ||
+                currentIndexes[2] == 0 || currentIndexes[2] == grid.getDim()[2] - 1) {
 
-                        auto &curCell = grid.grid[grid.index(currentIndexes)];
+                for (auto &it: curCell) {
 
-                        for (auto &it: curCell) {
-                            /*if(!it->valid){
-                                continue;
-                            }*/
-                            // Checks whether any particle has crossed the boundaries
-                            for (int d = 0; d < 3; ++d) {
-                                if (it->getX()[d] < 0) {
-                                    // outflow, removing the particle
-                                    if (std::get<0>(grid.getBorders(currentIndexes, d)) ==
-                                        LinkedCellContainer::outflow) {
-                                        spdlog::info("Removing Particle");
-                                        it->valid = false;
-                                        break;
-                                    }
-                                        // periodic
-                                    else if (std::get<0>(grid.getBorders(currentIndexes, d)) ==
-                                             LinkedCellContainer::periodic) {
-                                        // set X to the opposite site
-                                        spdlog::info("Particle was at d: {} and position {} {} {} now at {}", d,
-                                                     it->getX()[0], it->getX()[1], it->getX()[2],
-                                                     grid.getLenDim()[d] + it->getX()[d]);
-                                        it->setX(d, grid.getLenDim()[d] + it->getX()[d]);
-                                    }
-                                } else if (it->getX()[d] >= grid.getLenDim()[d]) {
-                                    // outflow, removing the particle
-                                    if (std::get<0>(grid.getBorders(currentIndexes, d)) ==
-                                        LinkedCellContainer::outflow) {
-                                        spdlog::info("Removing Particle");
-                                        it->valid = false;
-                                        break;
-                                    }
-                                        // periodic
-                                    else if (std::get<0>(grid.getBorders(currentIndexes, d)) ==
-                                             LinkedCellContainer::periodic) {
-                                        // set X to the opposite site
-                                        spdlog::info("Particle was at d: {} and position {} {} {} now at {}", d,
-                                                     it->getX()[0], it->getX()[1], it->getX()[2],
-                                                     it->getX()[d] - grid.getLenDim()[d]);
-                                        it->setX(d, it->getX()[d] - grid.getLenDim()[d]);
-                                    }
-                                }
+                    // Checks whether any particle has crossed the boundaries
+                    for (int d = 0; d < 3; ++d) {
+                        if (it->getX()[d] < 0) {
+                            // outflow, removing the particle
+                            if (std::get<0>(grid.getBorders(currentIndexes, d)) ==
+                                LinkedCellContainer::outflow) {
+                                spdlog::info("Removing Particle");
+                                it->valid = false;
+                                break;
+                            }
+                                // periodic
+                            else if (std::get<0>(grid.getBorders(currentIndexes, d)) ==
+                                     LinkedCellContainer::periodic) {
+                                // set X to the opposite site
+                                spdlog::info("Particle was at d: {} and position {} {} {} now at {}", d,
+                                             it->getX()[0], it->getX()[1], it->getX()[2],
+                                             grid.getLenDim()[d] + it->getX()[d]);
+                                it->setX(d, grid.getLenDim()[d] + it->getX()[d]);
+                            }
+                        } else if (it->getX()[d] >= grid.getLenDim()[d]) {
+                            // outflow, removing the particle
+                            if (std::get<0>(grid.getBorders(currentIndexes, d)) ==
+                                LinkedCellContainer::outflow) {
+                                spdlog::info("Removing Particle");
+                                it->valid = false;
+                                break;
+                            }
+                                // periodic
+                            else if (std::get<0>(grid.getBorders(currentIndexes, d)) ==
+                                     LinkedCellContainer::periodic) {
+                                // set X to the opposite site
+                                spdlog::info("Particle was at d: {} and position {} {} {} now at {}", d,
+                                             it->getX()[0], it->getX()[1], it->getX()[2],
+                                             it->getX()[d] - grid.getLenDim()[d]);
+                                it->setX(d, it->getX()[d] - grid.getLenDim()[d]);
                             }
                         }
                     }
@@ -95,12 +161,22 @@ namespace calculator {
                                    Particle *p) {
         // Loops through every particle of the neighbor
         for (auto &p_other: grid.grid[grid.index(neighbors)]) {
+            if(p->immovable && p_other->immovable) continue;
             double sqrd_dist = 0;
             for (int i = 0; i < DIM; i++) {
                 sqrd_dist += LinkedCell::sqr(p_other->getX()[i] - p->getX()[i]);
             }
-            if (sqrd_dist <= LinkedCell::sqr(rCut)) {
-                LinkedCell::ljforce(p, p_other, sqrd_dist);
+            if(!membrane || !p->membrane || !p_other->membrane){
+                if (sqrd_dist <= LinkedCell::sqr(rCut)) {
+                    LinkedCell::ljforce(p, p_other, sqrd_dist);
+                }
+            }else{
+                if(sqrd_dist <= sqr(SIXTH_ROOT_OF_TWO * sigmaTable[p_other->getSEIndex()][p->getSEIndex()])){
+                    LinkedCell::ljforce(p, p_other, sqrd_dist);
+                }
+                if(gridNeighbors(p->getGridIndex(), p_other->getGridIndex())){
+                    LinkedCell::harmonic_potential(p, p_other, sqrd_dist);
+                }
             }
         }
     }
@@ -108,7 +184,7 @@ namespace calculator {
     void LinkedCell::reflectiveBoundary(LinkedCellContainer &grid, const std::array<int, 3> &currentIndexes) const {
         // We only reflect at this distance
         //double reflectDistance = std::pow(2, 1.0 / 6.0) * sigma;
-        double reflectDistanceFactor = std::pow(2, 1.0 / 6.0);
+        //double reflectDistanceFactor = std::pow(2, 1.0 / 6.0);
         // saves the reflective borders of the current cell
         std::vector<int> reflBorder{};
         // go through all three or two axis and acquire the borders of currentIndex that are reflective
@@ -118,14 +194,6 @@ namespace calculator {
                 reflBorder.push_back(bord);
             }
         }
-
-        /* idk if this is needed?
-         * for (int d = 0; d < (grid.is2D() ? 2 : 3); ++d) {
-            auto[bordType, bord] = grid.getBorders(currentIndexes, d);
-            if (bordType == LinkedCellContainer::periodic) {
-                perBorders.push_back(bord);
-            }
-        }*/
 
         /**
          * Border type overview:
@@ -138,14 +206,12 @@ namespace calculator {
          */
         if (!reflBorder.empty()) {
             for (auto &p: grid.grid[grid.index(currentIndexes)]) {
-//                if (!p->valid) {
-//                    continue;
-//                }
+
                 for (int bord: reflBorder) {
                     double r = grid.getDistance(p->getX(), bord);
                     // reflect distance depending on different sigma for each particle
                     double sig = sigmaTable[p->getSEIndex()][p->getSEIndex()];
-                    double reflectDistance = reflectDistanceFactor * sig;
+                    double reflectDistance = SIXTH_ROOT_OF_TWO * sig;
                     if (r <= reflectDistance) {
                         //double s = (sigma * sigma) / (r * r);
 
@@ -185,6 +251,7 @@ namespace calculator {
 
     void LinkedCell::calcPerNeighbors(LinkedCellContainer &grid, const std::array<int, 3> &neighbors, Particle *p,
                                       const std::array<double, 3> & mirror) const {
+        if(p->immovable) return;
         // Loop through the neighbors
         for (auto &p_other: grid.grid[grid.index(neighbors)]) {
             // This if is important if the domain only has one cell
@@ -210,66 +277,107 @@ namespace calculator {
         }
     }
 
-    void LinkedCell::calcF(ParticleContainer &container) {
-        auto &grid = static_cast<LinkedCellContainer &>(container);
-        // current index we are currently in all 3 axis
-        std::array<int, 3> currentIndexes{};
-        // iterate through X axis
-        for (currentIndexes[0] = 0; currentIndexes[0] < grid.getDim()[0]; ++currentIndexes[0]) {
-            // iterate through the Y axis
-            for (currentIndexes[1] = 0; currentIndexes[1] < grid.getDim()[1]; ++currentIndexes[1]) {
-                // iterate through the Z axis
-                for (currentIndexes[2] = 0; currentIndexes[2] < grid.getDim()[2]; ++currentIndexes[2]) {
+    void LinkedCell::calcFCell(Cell &curCell, LinkedCellContainer &grid) {
+        for (auto &p: curCell) {
+            // get all the neighbors
+            for (const std::array<int, 3> &neighbors:
+                    (grid.is2D() ? curCell.getNeighbors2D() : curCell.getNeighbors3D())) {
 
-                    // get the Cell in the current index
-                    for (auto &p: grid.grid[grid.index(currentIndexes)]) {
-                        // get all the neighbors
-                        for (const std::array<int, 3> &neighbors :
-                            (grid.is2D() ?
-                                grid.grid[grid.index(currentIndexes)].getNeighbors2D()
-                                : grid.grid[grid.index(currentIndexes)].getNeighbors3D())) {
+                // Neighbor should be existing
+                if (neighbors[0] < grid.getDim()[0] && neighbors[1] < grid.getDim()[1] &&
+                    neighbors[2] < grid.getDim()[2] && neighbors[0] >= 0 && neighbors[1] >= 0 &&
+                    neighbors[2] >= 0) {
+                    // Does not bring too much performance benefits
+                    //if (grid.isNeighborInRange(p, neighbors)) {
+                    calcNeighbors(grid, neighbors, p);
+                    //}
+                }
+                    // Else it is a neighbor out of boundary
+                else if (grid.isPeriodic(neighbors)) {
+                    // neighbor on the other side
+                    std::array<int, 3> neigh{};
 
-                            // Neighbor should be existing
-                            if (neighbors[0] < grid.getDim()[0] && neighbors[1] < grid.getDim()[1] &&
-                                neighbors[2] < grid.getDim()[2] && neighbors[0] >= 0 && neighbors[1] >= 0 &&
-                                neighbors[2] >= 0) {
-                                // Does not bring too much performance benefits
-                                //if (grid.isNeighborInRange(p, neighbors)) {
-                                calcNeighbors(grid, neighbors, p);
-                                //}
-                            }
-                            // Else it is a neighbor out of boundary
-                            else if (grid.isPeriodic(neighbors)){
-                                // neighbor on the other side
-                                std::array<int, 3> neigh{};
-                                for (int d = 0; d < 3; ++d) {
-                                    neigh[d] = (neighbors[d] + grid.getDim()[d]) % grid.getDim()[d];
-                                }
-                                // the mirror we are adding so that the particle gets mirrored
-                                std::array<double, 3> mirror{};
-                                mirror = {
-                                        neighbors[0] == -1 ? static_cast<double>(-grid.getLenDim()[0]) : // From left to right
-                                        neighbors[0] == grid.getDim()[0] && grid.getDim()[0] != 1 ? static_cast<double>(grid.getLenDim()[0]) : 0.0, // From right to left
-                                        neighbors[1] == -1 ? static_cast<double>(-grid.getLenDim()[1]) :
-                                        neighbors[1] == grid.getDim()[1] && grid.getDim()[1] != 1 ? static_cast<double>(grid.getLenDim()[1]) : 0.0,
-                                        neighbors[2] == -1 ? static_cast<double>(-grid.getLenDim()[2]) :
-                                        neighbors[2] == grid.getDim()[2] && grid.getDim()[2] != 1 ? static_cast<double>(grid.getLenDim()[2]) : 0.0};
-                                LinkedCell::calcPerNeighbors(grid, neigh, p, mirror);
-                            }
-                        }
-                    }
+                    neigh = (neighbors + grid.getDim()) % grid.getDim();
 
-                    // Calculates the forces within a cell
-                    calcFWithinCell(grid.grid[grid.index(currentIndexes)]);
-                    // checks if it is a border cell, if yes also calculate border forces
-                    if (currentIndexes[0] == 0 || currentIndexes[0] == grid.getDim()[0] - 1 ||
-                        currentIndexes[1] == 0 || currentIndexes[1] == grid.getDim()[1] - 1 ||
-                        currentIndexes[2] == 0 || currentIndexes[2] == grid.getDim()[2] - 1) {
-                        reflectiveBoundary(grid, currentIndexes);
-                    }
+                    // the mirror we are adding so that the particle gets mirrored
+                    std::array<double, 3> mirror{};
+                    mirror = {
+                            neighbors[0] == -1 ? static_cast<double>(-grid.getLenDim()[0]) : // From left to right
+                            neighbors[0] == grid.getDim()[0] && grid.getDim()[0] != 1
+                            ? static_cast<double>(grid.getLenDim()[0]) : 0.0, // From right to left
+                            neighbors[1] == -1 ? static_cast<double>(-grid.getLenDim()[1]) :
+                            neighbors[1] == grid.getDim()[1] && grid.getDim()[1] != 1
+                            ? static_cast<double>(grid.getLenDim()[1]) : 0.0,
+                            neighbors[2] == -1 ? static_cast<double>(-grid.getLenDim()[2]) :
+                            neighbors[2] == grid.getDim()[2] && grid.getDim()[2] != 1
+                            ? static_cast<double>(grid.getLenDim()[2]) : 0.0};
+                    LinkedCell::calcPerNeighbors(grid, neigh, p, mirror);
                 }
             }
         }
+
+        // Calculates the forces within a cell
+        calcFWithinCell(curCell);
+        auto currentIndexes = curCell.getIndex();
+        // checks if it is a border cell, if yes also calculate border forces
+        if (curCell.isBorderCell1()) {
+            reflectiveBoundary(grid, currentIndexes);
+        }
+    }
+
+
+    void LinkedCell::calcF(ParticleContainer &container) {
+        auto &grid = static_cast<LinkedCellContainer &>(container);
+        switch (grid.getStrategy()) {
+        case LinkedCellContainer::primitive: case LinkedCellContainer::primitiveFit :
+#pragma omp parallel shared(grid) default(none)
+            {
+#pragma omp for schedule(dynamic)
+                for (size_t i = 0; i < grid.getIndicesThreadVector().size(); ++i) {
+                    for (int pos: grid.getIndicesThreadVector()[i]) {
+                        if (!grid.grid[pos].getParticles().empty()) {
+                            calcFCell(grid.grid[pos], grid);
+                        }
+                    }
+                }
+
+#pragma omp for schedule(dynamic)
+                for (size_t i = 0; i < grid.getIndicesThreadVector().size(); ++i) {
+                    for (int pos: grid.getIndicesThreadVector()[i]) {
+                        if (!grid.grid[pos + grid.getThreadOffset()].getParticles().empty()) {
+                            calcFCell(grid.grid[pos + grid.getThreadOffset()], grid);
+                        }
+                    }
+                }
+            }
+                for (int pos: grid.getResidualThreadVector()) {
+                    calcFCell(grid.grid[pos], grid);
+                }
+                break;
+
+            case LinkedCellContainer::naught:
+                for (auto &curCell: grid.grid) {
+                    calcFCell(curCell, grid);
+                }
+                break;
+        }
+    }
+
+    void LinkedCell::harmonic_potential(Particle *p1, Particle *p2, double sqrd_dist) const {
+        double factor = SQR_ROOT_OF_TWO;
+        double distance = sqrt(sqrd_dist);
+        // if orthogonal neighbors
+        if(abs(p1->getGridIndex()[0]-p2->getGridIndex()[0]) + abs(p1->getGridIndex()[1]-p2->getGridIndex()[1]) + abs(p1->getGridIndex()[2]-p2->getGridIndex()[2]) == 1){
+            factor = 1;
+        }
+        auto f = stiffnessConstant * (distance - factor * rZero) * (1./distance) * (p2->getX() - p1->getX());
+        p1->setF(p1->getF() + f);
+        p2->setF(p2->getF() - f);
+
+    }
+
+    bool LinkedCell::gridNeighbors(std::array<int, 3> index1, std::array<int, 3> index2) {
+        return abs(index1[0]-index2[0]) <= 1 && abs(index1[1]-index2[1]) <= 1 && abs(index1[2]-index2[2]) <= 1;
     }
 
     void LinkedCell::setSigmaTable(const std::vector<std::vector<double>> &sT) {
@@ -280,19 +388,32 @@ namespace calculator {
         LinkedCell::epsilonTable = eT;
     }
 
-    void LinkedCell::setMapping(std::vector<std::pair<int, std::pair<double, double>>> & map) {
+    void LinkedCell::setMapping(std::vector<std::pair<int, std::pair<double, double>>> &map) {
         LinkedCell::mapping = map;
+    }
+
+
+    void LinkedCell::setRZero(double rZ) {
+        LinkedCell::rZero = rZ;
+    }
+
+    void LinkedCell::setStiffnessConstant(double sC) {
+        LinkedCell::stiffnessConstant = sC;
+    }
+
+    void LinkedCell::setMembrane(bool mem) {
+        LinkedCell::membrane = mem;
     }
 
     std::string LinkedCell::toString() {
         return "LinkedCell";
     }
 
-    void to_json(json& j, const LinkedCell& p){
+    void to_json(json &j, const LinkedCell &p) {
         j = nlohmann::json{{"mapping", p.mapping}};
     }
 
-    void from_json(const nlohmann::json&j, LinkedCell& p){
+    void from_json(const nlohmann::json &j, LinkedCell &p) {
         j.at("mapping").get_to(p.mapping);
         //j.at("epsilonTable").get_to(p.epsilonTable);
     }

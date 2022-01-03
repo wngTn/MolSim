@@ -43,11 +43,34 @@ private:
      */
     double m{1};
 
+    /**
+     * the base force applied in each iteration
+     */
+    std::array<double,3> baseForce{};
+
+    /**
+     * original index of the particle in the grid generated. used for membranes
+     */
+     std::array<int,3> gridIndex{};
+
+
 public:
+
+
     /**
      * Whether this particle is still valid and should be printed/used for calculations
      */
     bool valid;
+
+    /**
+    * Whether this particle is fixed in position or can move
+    */
+    bool immovable = false;
+
+    /**
+     * whether the Particle is part of a membrane -> different calculation
+     */
+    bool membrane;
 
     /**
      * @brief Default constructor
@@ -118,6 +141,27 @@ public:
     [[nodiscard]] int getType() const;
 
     [[nodiscard]] int getSEIndex() const;
+
+    [[nodiscard]] const std::array<int,3> &getGridIndex() const;
+
+    void setMembrane(bool membrane);
+
+    void setGridIndex(std::array<int,3>& index);
+
+    void setImmovable(bool immovable);
+
+    /**
+     * sets the base force for a particle
+     * @param force the base force
+     */
+    void setBaseForce(std::array<double,3>& force);
+
+    /**
+     * applies the base force and a given gravity.
+     * sets force of particle to baseForce attribute and add grav*mass in y direction
+     * @param grav the gravity factor
+     */
+    void applyBaseForceAndGrav(double grav);
 
     /**
      * @param d: dimension

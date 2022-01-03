@@ -21,7 +21,7 @@ if(BUILD_TEST)
     # use c++ 17
     target_compile_features(${This}
             PRIVATE
-            cxx_std_17
+            cxx_std_20
             )
 
     # links the necessary libraries (we have our source files as libraries)

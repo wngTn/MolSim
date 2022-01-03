@@ -9,9 +9,9 @@
 */
 
 TEST(LinkedCellContainerTest, ConstructorTest) {
-    int X = 7;
-    int Y = 7;
-    int Z = 1;
+    double X = 7;
+    double Y = 7;
+    double Z = 1;
     double rCut = 1;
 
 
@@ -47,9 +47,9 @@ TEST(LinkedCellContainerTest, ConstructorTest) {
  * Uses the Particle Vector and creates each cell new with setup
  */
 TEST(LinkedCellContainerTest, ParticleConstructorTest) {
-    int X = 7;
-    int Y = 7;
-    int Z = 1;
+    double X = 7;
+    double Y = 7;
+    double Z = 1;
     double rCut = 1;
 
 
@@ -110,7 +110,7 @@ TEST_P(ParameterizedLinkedCellTest, CorrectDimensionsTest) {
 
     setSize(X*Y*Z);
 
-    ASSERT_EQ(p_result.getGrid().size(), X*Y*Z);
+    ASSERT_DOUBLE_EQ(p_result.getGrid().size(), X*Y*Z);
 
     for (int i = 0; i < p_result.particles.size(); ++i) {
         ASSERT_EQ(p_result.particles[i].getType(), i);
@@ -121,12 +121,12 @@ INSTANTIATE_TEST_SUITE_P(
         CorrectDimensionsTest,
         ParameterizedLinkedCellTest,
         ::testing::Values(
-                std::make_tuple(1, 1, 1),
-                std::make_tuple(1, 2, 3),
-                std::make_tuple(2, 3, 4),
-                std::make_tuple(4, 3, 2),
-                std::make_tuple(5, 6, 7),
-                std::make_tuple(5, 7, 8)
+                std::make_tuple(1., 1., 1.),
+                std::make_tuple(1., 2., 3.),
+                std::make_tuple(2., 3., 4.),
+                std::make_tuple(4., 3., 2.),
+                std::make_tuple(5., 6., 7.),
+                std::make_tuple(5., 7., 8.)
         )
 );
 
@@ -139,7 +139,7 @@ TEST(LinkedCellContainer, GetPerNeighborFunctionTest) {
     std::array<LinkedCellContainer::Border, 6> bor{};
     bor.fill(LinkedCellContainer::periodic);
     // Corner in 2D 2/2
-    LinkedCellContainer linkedCellContainer = LinkedCellContainer{10, 10, 1, 1., bor};
+    LinkedCellContainer linkedCellContainer = LinkedCellContainer{10., 10., 1., 1., bor};
     std::array<int, 3> ci = {0, 0, 0};
     auto result = linkedCellContainer.getPerNeighbors(ci);
     std::cout<<result<<std::endl;
@@ -152,7 +152,7 @@ TEST(LinkedCellContainer, GetPerNeighborFunctionTest) {
     ASSERT_EQ(result.size(), 3);
 
     // Corner in 3D 3/3
-    LinkedCellContainer linkedCellContainer3D = LinkedCellContainer{10, 10, 10, 1., bor};
+    LinkedCellContainer linkedCellContainer3D = LinkedCellContainer{10., 10., 10., 1., bor};
     std::array<int, 3> ci_3D = {0, 0, 0};
     auto result3D = linkedCellContainer3D.getPerNeighbors(ci_3D);
     std::cout<<result3D<<std::endl;
@@ -163,14 +163,14 @@ TEST(LinkedCellContainer, GetPerNeighborFunctionTest) {
     bor[3] = LinkedCellContainer::outflow;
 
     // Corner in 2D 1/2
-    linkedCellContainer = LinkedCellContainer{10, 10, 1, 1., bor};
+    linkedCellContainer = LinkedCellContainer{10., 10., 1., 1., bor};
     ci = {0, 9, 0};
     result = linkedCellContainer.getPerNeighbors(ci);
     std::cout<<result<<std::endl;
     ASSERT_EQ(result.size(), 2);
 
 
-    LinkedCellContainer linkedCellContainer3D2 = LinkedCellContainer{10, 9, 8, 1., bor};
+    LinkedCellContainer linkedCellContainer3D2 = LinkedCellContainer{10., 9., 8., 1., bor};
     ci_3D = {9, 8, 7};
     result3D = linkedCellContainer3D2.getPerNeighbors(ci_3D);
     std::cout<<result3D<<std::endl;
@@ -184,7 +184,7 @@ TEST(LinkedCellContainer, GetPerNeighborFunctionTest) {
 
     // Corner in 3D 1/3
     bor[1] = LinkedCellContainer::outflow;
-    LinkedCellContainer linkedCellContainer3D1 = LinkedCellContainer{5, 6, 7, 1., bor};
+    LinkedCellContainer linkedCellContainer3D1 = LinkedCellContainer{5., 6., 7., 1., bor};
     ci_3D = {4, 5, 6};
     result3D = linkedCellContainer3D1.getPerNeighbors(ci_3D);
     std::cout<<result3D<<std::endl;
@@ -201,4 +201,100 @@ TEST(LinkedCellContainer, GetPerNeighborFunctionTest) {
     auto result3D_2 = linkedCellContainer3D.getPerNeighbors(ci_3D_2);
     ASSERT_EQ(result3D_2.size(), 9);
     std::cout<<result3D_2<<std::endl;
+}
+
+/**
+ * Tests whether the indices for the threads are calculated correctly
+ */
+TEST(LinkedCellContainer, IndicesThreadVectorTest) {
+    std::array<LinkedCellContainer::Border, 6> bor{};
+    bor.fill(LinkedCellContainer::periodic);
+    // max dimension is x
+    LinkedCellContainer linkedCellContainer1 = LinkedCellContainer{4, 2, 2, 1., bor, 0, LinkedCellContainer::Strategy::primitive};
+    auto result = linkedCellContainer1.getIndicesThreadVector();
+    auto ref1 = std::vector<int>{0, 4, 8, 12};
+    auto ref2 = std::vector<int>{2, 6, 10, 14};
+    ASSERT_TRUE(result[0] == ref1);
+    ASSERT_TRUE(result[1] == ref2);
+    for (const auto & v : result) {
+        std::cout<<v<<std::endl;
+    }
+
+    // max dimension ix y
+    LinkedCellContainer linkedCellContainer2 = LinkedCellContainer{2, 4, 2, 1., bor, 0, LinkedCellContainer::Strategy::primitive};
+    result = linkedCellContainer2.getIndicesThreadVector();
+    ref1 = std::vector<int>{0, 1, 8, 9};
+    ref2 = std::vector<int>{4, 5, 12, 13};
+    ASSERT_TRUE(result[0] == ref1);
+    ASSERT_TRUE(result[1] == ref2);
+    for (const auto & v : result) {
+        std::cout<<v<<std::endl;
+    }
+
+    // max dimension is z
+    LinkedCellContainer linkedCellContainer3 = LinkedCellContainer{2, 2, 4, 1., bor, 0, LinkedCellContainer::Strategy::primitive};
+    result = linkedCellContainer3.getIndicesThreadVector();
+    ref1 = std::vector<int>{0, 1, 2, 3};
+    ref2 = std::vector<int>{8, 9, 10, 11};
+    ASSERT_TRUE(result[0] == ref1);
+    ASSERT_TRUE(result[1] == ref2);
+    for (const auto & v : result) {
+        std::cout<<v<<std::endl;
+    }
+
+    // Now in 2D
+    // max dimension is x
+    LinkedCellContainer linkedCellContainer4 = LinkedCellContainer{4, 2, 1, 1., bor, 0, LinkedCellContainer::Strategy::primitive};
+    result = linkedCellContainer4.getIndicesThreadVector();
+    ref1 = std::vector<int>{0, 4};
+    ref2 = std::vector<int>{2, 6};
+    ASSERT_TRUE(result[0] == ref1);
+    ASSERT_TRUE(result[1] == ref2);
+    for (const auto & v : result) {
+        std::cout<<v<<std::endl;
+    }
+
+    // Now in 2D
+    // max dimension is y
+    LinkedCellContainer linkedCellContainer5 = LinkedCellContainer{2, 4, 1, 1., bor, 0, LinkedCellContainer::Strategy::primitive};
+    result = linkedCellContainer5.getIndicesThreadVector();
+    ref1 = std::vector<int>{0, 1};
+    ref2 = std::vector<int>{4, 5};
+    ASSERT_TRUE(result[0] == ref1);
+    ASSERT_TRUE(result[1] == ref2);
+    for (const auto & v : result) {
+        std::cout<<v<<std::endl;
+    }
+    std::cout<<linkedCellContainer5.getResidualThreadVector()<<std::endl;
+
+    // Uneven dimension
+    LinkedCellContainer linkedCellContainer6 = LinkedCellContainer{5, 2, 2, 1., bor, 0, LinkedCellContainer::Strategy::primitive};
+    result = linkedCellContainer6.getIndicesThreadVector();
+    ref1 = std::vector<int>{0, 5, 10, 15};
+    ref2 = std::vector<int>{2, 7, 12, 17};
+    ASSERT_TRUE(result[0] == ref1);
+    ASSERT_TRUE(result[1] == ref2);
+    for (const auto & v : result) {
+        std::cout<<v<<std::endl;
+    }
+    ref1 = std::vector<int>{4, 9, 14, 19};
+    ASSERT_TRUE(linkedCellContainer6.getResidualThreadVector() == ref1);
+    std::cout<<linkedCellContainer6.getResidualThreadVector()<<std::endl;
+
+    // We use primitiveFit
+    LinkedCellContainer linkedCellContainer7 = LinkedCellContainer{5, 3, 4, 1., bor, 0, LinkedCellContainer::Strategy::primitiveFit};
+    result = linkedCellContainer7.getIndicesThreadVector();
+    ref1 = std::vector<int>{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
+    ref2 = std::vector<int>{30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44};
+    ASSERT_TRUE(result[0] == ref1);
+    ASSERT_TRUE(result[1] == ref2);
+    for (const auto & v : result) {
+        std::cout<<v<<std::endl;
+    }
+
+    LinkedCellContainer linkedCellContainer8 = LinkedCellContainer{120, 120, 13, 4., bor, 0, LinkedCellContainer::Strategy::primitiveFit};
+    result = linkedCellContainer8.getIndicesThreadVector();
+    for (const auto & v : result) {
+        std::cout<<v<<std::endl;
+    }
 }
