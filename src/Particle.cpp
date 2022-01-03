@@ -219,3 +219,23 @@ void Particle::setMembrane(bool mem) {
 void Particle::setImmovable(bool imov) {
     immovable = imov;
 }
+bool Particle::operator<(const Particle &other) noexcept {
+  if (this->x[2] < other.x[2]){
+    return true;
+  }
+  else if (this->x[2] > other.x[2]) {
+    return false;
+  }
+  if (this->x[1] < other.x[1]) {
+    return true;
+  }
+  else if (this->x[1] > other.x[1]) {
+    return false;
+  }
+  if (this->x[0] < other.x[0]) {
+    return true;
+  }
+  else {
+    return false;
+  }
+}

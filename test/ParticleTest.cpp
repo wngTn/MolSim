@@ -81,3 +81,16 @@ INSTANTIATE_TEST_SUITE_P(
 )
 );
 
+/**
+ * Test the < operator
+ */
+
+TEST(ParticleTest, LessThanOperatorTest) {
+  Particle p = Particle{};
+  p.setX({1, 0, 0});
+  Particle p2 = Particle{};
+  p2.setX({0, 0, 0});
+  ASSERT_TRUE(p2 < p);
+
+}
+
