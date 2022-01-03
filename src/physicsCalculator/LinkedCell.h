@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <omp.h>
 #include "physicsCalculator/PhysicsCalc.h"
 #include "physicsCalculator/LennardJones.h"
 #include "particleContainers/LinkedCellContainer.h"
@@ -72,6 +73,8 @@ namespace calculator {
         void calcNeighbors(LinkedCellContainer &grid, const std::array<int, 3> & neighbors,
                            Particle* p);
 
+        void calcFCell(Cell & curCell, LinkedCellContainer & grid);
+
         /**
          * Calculates the forces between p and its neighbor for the periodic boundary
          * The bord tells this method how to calculate the distance
@@ -123,13 +126,7 @@ namespace calculator {
 
         auto force = f * (p2->getX() - p1->getX());
 
-        // set old force
-        // p1->setOldF(p1->getF());
-        // p2->setOldF(p2->getF());
-        //if(force[0] > 500 || force[1] > 500 || force[2] > 500){
-            //std::cout << "calculated force with combined σ " << sigmaTable[p1->getSEIndex()][p2->getSEIndex()] << " and combined ε "
-            //<< epsilonTable[p1->getSEIndex()][p2->getSEIndex()] << std::endl;
-        //}
+
         p1->setF(p1->getF() + force);
         p2->setF(p2->getF() - force);
     }
