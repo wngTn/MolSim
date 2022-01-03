@@ -48,9 +48,7 @@ namespace calculator {
             if (curCell.getParticles().empty()) continue;
             auto currentIndexes = curCell.getIndex();
             // checks if it is a border cell
-            if (currentIndexes[0] == 0 || currentIndexes[0] == gridLC.getDim()[0] - 1 ||
-                currentIndexes[1] == 0 || currentIndexes[1] == gridLC.getDim()[1] - 1 ||
-                currentIndexes[2] == 0 || currentIndexes[2] == gridLC.getDim()[2] - 1) {
+            if (curCell.isBorderCell1()) {
                 for (auto & p : curCell) {
                     auto newX = p->getX() + delta_t * (p->getV() + delta_t * 0.5 / p->getM() * p->getF());
                     p->setX(newX);
@@ -298,9 +296,9 @@ namespace calculator {
                 else if (grid.isPeriodic(neighbors)) {
                     // neighbor on the other side
                     std::array<int, 3> neigh{};
-                    for (int d = 0; d < 3; ++d) {
-                        neigh[d] = (neighbors[d] + grid.getDim()[d]) % grid.getDim()[d];
-                    }
+
+                    neigh = (neighbors + grid.getDim()) % grid.getDim();
+
                     // the mirror we are adding so that the particle gets mirrored
                     std::array<double, 3> mirror{};
                     mirror = {
@@ -322,9 +320,7 @@ namespace calculator {
         calcFWithinCell(curCell);
         auto currentIndexes = curCell.getIndex();
         // checks if it is a border cell, if yes also calculate border forces
-        if (currentIndexes[0] == 0 || currentIndexes[0] == grid.getDim()[0] - 1 ||
-            currentIndexes[1] == 0 || currentIndexes[1] == grid.getDim()[1] - 1 ||
-            currentIndexes[2] == 0 || currentIndexes[2] == grid.getDim()[2] - 1) {
+        if (curCell.isBorderCell1()) {
             reflectiveBoundary(grid, currentIndexes);
         }
     }

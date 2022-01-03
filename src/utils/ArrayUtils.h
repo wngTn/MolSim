@@ -256,6 +256,19 @@ operator-(const Container &lhs, const Container &rhs) {
 }
 
 /**
+ * Element wise modulo of two containers.
+ * @tparam Container
+ * @param lhs
+ * @param rhs
+ * @return For all i lhs[i] % rhs[i].
+ */
+template <class Container>
+std::enable_if_t<ArrayUtils::is_container<Container>::value, Container>
+operator%(const Container &lhs, const Container &rhs) {
+    return ArrayUtils::elementWisePairOp(lhs, rhs, std::modulus<>());
+}
+
+/**
  * Element wise multiplication of two containers.
  * @tparam Container
  * @param lhs

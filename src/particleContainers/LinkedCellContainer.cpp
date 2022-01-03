@@ -27,8 +27,13 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
                 grid[i].setIndex(currentIndexes);
                 if (is2D()) {
                     grid[i].setNeighbors2D();
+                    grid[i].setIsBorderCell(currentIndexes[0] == 0 || currentIndexes[0] == dim[0] - 1 ||
+                                            currentIndexes[1] == 0 || currentIndexes[1] == dim[1] - 1);
                 } else {
                     grid[i].setNeighbors3D();
+                    grid[i].setIsBorderCell(currentIndexes[0] == 0 || currentIndexes[0] == dim[0] - 1 ||
+                                            currentIndexes[1] == 0 || currentIndexes[1] == dim[1] - 1 ||
+                                            currentIndexes[2] == 0 || currentIndexes[2] == dim[2] - 1);
                 }
                 i++;
             }
@@ -165,7 +170,6 @@ void LinkedCellContainer::setup() {
             // p.setF({0., p.getM() * g, 0.});
             // set Force to baseForce + g*m
             p.applyBaseForceAndGrav(g);
-
             grid[cellIndex].emplace_back(&p);
         }
     }
