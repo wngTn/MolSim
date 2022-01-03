@@ -32,11 +32,75 @@ namespace calculator {
 
     void LinkedCell::calcX(ParticleContainer &container) const {
         auto &gridLC = static_cast<LinkedCellContainer &>(container);
-        for (auto &p: gridLC) {
-            auto newX = p.getX() + delta_t * (p.getV() + delta_t * 0.5 / p.getM() * p.getF());
-            p.setX(newX);
+//#ifdef _OPENMP
+//#pragma omp parallel for schedule(guided) shared(gridLC) default(none)
+//#endif //_OPENMP
+//        for (auto &p : gridLC) {
+//            auto newX = p.getX() + delta_t * (p.getV() + delta_t * 0.5 / p.getM() * p.getF());
+//            p.setX(newX);
+//
+//        }
+//        moveParticles(gridLC);
+#ifdef _OPENMP
+#pragma omp parallel for default(none) schedule(guided) shared(gridLC)
+#endif //_OPENMP
+        for (auto & curCell : gridLC.getGrid()) {
+            if (curCell.getParticles().empty()) continue;
+            auto currentIndexes = curCell.getIndex();
+            // checks if it is a border cell
+            if (currentIndexes[0] == 0 || currentIndexes[0] == gridLC.getDim()[0] - 1 ||
+                currentIndexes[1] == 0 || currentIndexes[1] == gridLC.getDim()[1] - 1 ||
+                currentIndexes[2] == 0 || currentIndexes[2] == gridLC.getDim()[2] - 1) {
+                for (auto & p : curCell) {
+                    // Checks whether any particle has crossed the boundaries
+                    for (int d = 0; d < (gridLC.is2D() ? 2 : 3); ++d) {
+                        auto newX = p->getX()[d] + delta_t * (p->getV()[d] + delta_t * 0.5 / p->getM() * p->getF()[d]);
+                        if (newX < 0) {
+                            // outflow, removing the particle
+                            if (std::get<0>(gridLC.getBorders(currentIndexes, d)) ==
+                                LinkedCellContainer::outflow) {
+                                spdlog::info("Removing Particle");
+                                p->valid = false;
+                                break;
+                            }
+                                // periodic
+                            else if (std::get<0>(gridLC.getBorders(currentIndexes, d)) ==
+                                     LinkedCellContainer::periodic) {
+                                // set X to the opposite site
+                                spdlog::info("Particle was at d: {} and position {} {} {} now at {}", d,
+                                             p->getX()[0], p->getX()[1], p->getX()[2],
+                                             gridLC.getLenDim()[d] + p->getX()[d]);
+                                p->setX(d, gridLC.getLenDim()[d] + newX);
+                            }
+                        } else if (newX >= gridLC.getLenDim()[d]) {
+                            // outflow, removing the particle
+                            if (std::get<0>(gridLC.getBorders(currentIndexes, d)) ==
+                                LinkedCellContainer::outflow) {
+                                spdlog::info("Removing Particle");
+                                p->valid = false;
+                                break;
+                            }
+                                // periodic
+                            else if (std::get<0>(gridLC.getBorders(currentIndexes, d)) ==
+                                     LinkedCellContainer::periodic) {
+                                // set X to the opposite site
+                                spdlog::info("Particle was at d: {} and position {} {} {} now at {}", d,
+                                             p->getX()[0], p->getX()[1], p->getX()[2],
+                                             p->getX()[d] - gridLC.getLenDim()[d]);
+                                p->setX(d, newX - gridLC.getLenDim()[d]);
+                            }
+                        }
+                    }
+                }
+            }
+            // Not a border cell
+            else {
+                for (auto & p : curCell) {
+                    auto newX = p->getX() + delta_t * (p->getV() + delta_t * 0.5 / p->getM() * p->getF());
+                    p->setX(newX);
+                }
+            }
         }
-        moveParticles(gridLC);
     }
 
     void LinkedCell::moveParticles(LinkedCellContainer &grid) {
@@ -274,14 +338,18 @@ namespace calculator {
 #pragma omp for schedule(dynamic)
                 for (size_t i = 0; i < grid.getIndicesThreadVector().size(); ++i) {
                     for (int pos: grid.getIndicesThreadVector()[i]) {
-                        calcFCell(grid.grid[pos], grid);
+                        if (!grid.grid[pos].getParticles().empty()) {
+                            calcFCell(grid.grid[pos], grid);
+                        }
                     }
                 }
 
 #pragma omp for schedule(dynamic)
                 for (size_t i = 0; i < grid.getIndicesThreadVector().size(); ++i) {
                     for (int pos: grid.getIndicesThreadVector()[i]) {
-                        calcFCell(grid.grid[pos + grid.getThreadOffset()], grid);
+                        if (!grid.grid[pos + grid.getThreadOffset()].getParticles().empty()) {
+                            calcFCell(grid.grid[pos + grid.getThreadOffset()], grid);
+                        }
                     }
                 }
             }
