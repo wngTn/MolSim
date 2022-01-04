@@ -2,19 +2,18 @@
 #include <iostream>
 #include "LinkedCellContainer.h"
 
-
 LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double rCutV, std::array<Border, 6> borderV,
                                          double g,
                                          Strategy strategy) :
-        grid{std::vector<Cell>(static_cast<int>(std::floor(Xv / rCutV)) *
-                               static_cast<int>(std::floor(Yv / rCutV)) *
-                               (static_cast<int>(std::floor(Zv / rCutV)) == 0 ? 1 :
-                                static_cast<int>(std::floor(Zv / rCutV))))},
-        dim{std::array<int, 3>{static_cast<int>(std::floor(Xv / rCutV)),
-                               static_cast<int>(std::floor(Yv / rCutV)),
-                               (static_cast<int>(std::floor(Zv / rCutV))) == 0 ? 1 :
-                               static_cast<int>(std::floor(Zv / rCutV))}},
-        lenDim{std::array<double, 3>{Xv, Yv, Zv}}, rCut{rCutV}, border{borderV}, g{g}, strategy{strategy} {
+    grid{std::vector<Cell>(static_cast<int>(std::floor(Xv / rCutV)) *
+        static_cast<int>(std::floor(Yv / rCutV)) *
+        (static_cast<int>(std::floor(Zv / rCutV)) == 0 ? 1 :
+         static_cast<int>(std::floor(Zv / rCutV))))},
+    dim{std::array<int, 3>{static_cast<int>(std::floor(Xv / rCutV)),
+                           static_cast<int>(std::floor(Yv / rCutV)),
+                           (static_cast<int>(std::floor(Zv / rCutV))) == 0 ? 1 :
+                           static_cast<int>(std::floor(Zv / rCutV))}},
+    lenDim{std::array<double, 3>{Xv, Yv, Zv}}, rCut{rCutV}, border{borderV}, g{g}, strategy{strategy} {
     // Initialize the grid
     int i{0};
     std::array<int, 3> currentIndexes{};
@@ -28,12 +27,12 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
                 if (is2D()) {
                     grid[i].setNeighbors2D();
                     grid[i].setIsBorderCell(currentIndexes[0] == 0 || currentIndexes[0] == dim[0] - 1 ||
-                                            currentIndexes[1] == 0 || currentIndexes[1] == dim[1] - 1);
+                        currentIndexes[1] == 0 || currentIndexes[1] == dim[1] - 1);
                 } else {
                     grid[i].setNeighbors3D();
                     grid[i].setIsBorderCell(currentIndexes[0] == 0 || currentIndexes[0] == dim[0] - 1 ||
-                                            currentIndexes[1] == 0 || currentIndexes[1] == dim[1] - 1 ||
-                                            currentIndexes[2] == 0 || currentIndexes[2] == dim[2] - 1);
+                        currentIndexes[1] == 0 || currentIndexes[1] == dim[1] - 1 ||
+                        currentIndexes[2] == 0 || currentIndexes[2] == dim[2] - 1);
                 }
                 i++;
             }
@@ -50,7 +49,7 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
                 for (currentIndexes[2] = 0; currentIndexes[2] < dim[2]; ++currentIndexes[2]) {
                     for (currentIndexes[1] = 0; currentIndexes[1] < dim[1]; ++currentIndexes[1]) {
                         indicesThreadVector[currentIndexes[0]]
-                                .push_back(index({currentIndexes[0] * 2, currentIndexes[1], currentIndexes[2]}));
+                            .push_back(index({currentIndexes[0] * 2, currentIndexes[1], currentIndexes[2]}));
                     }
                 }
             }
@@ -59,7 +58,7 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
                 for (currentIndexes[2] = 0; currentIndexes[2] < dim[2]; ++currentIndexes[2]) {
                     for (currentIndexes[1] = 0; currentIndexes[1] < dim[1]; ++currentIndexes[1]) {
                         residualThreadVector
-                                .push_back(index({dim[0] - 1, currentIndexes[1], currentIndexes[2]}));
+                            .push_back(index({dim[0] - 1, currentIndexes[1], currentIndexes[2]}));
                     }
                 }
             }
@@ -72,7 +71,7 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
                 for (currentIndexes[2] = 0; currentIndexes[2] < dim[2]; ++currentIndexes[2]) {
                     for (currentIndexes[0] = 0; currentIndexes[0] < dim[0]; ++currentIndexes[0]) {
                         indicesThreadVector[currentIndexes[1]]
-                                .push_back(index({currentIndexes[0], currentIndexes[1] * 2, currentIndexes[2]}));
+                            .push_back(index({currentIndexes[0], currentIndexes[1] * 2, currentIndexes[2]}));
                     }
                 }
             }
@@ -81,7 +80,7 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
                 for (currentIndexes[2] = 0; currentIndexes[2] < dim[2]; ++currentIndexes[2]) {
                     for (currentIndexes[0] = 0; currentIndexes[0] < dim[0]; ++currentIndexes[0]) {
                         residualThreadVector
-                                .push_back(index({currentIndexes[0], dim[1] - 1, currentIndexes[2]}));
+                            .push_back(index({currentIndexes[0], dim[1] - 1, currentIndexes[2]}));
                     }
                 }
             }
@@ -94,7 +93,7 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
                 for (currentIndexes[1] = 0; currentIndexes[1] < dim[1]; ++currentIndexes[1]) {
                     for (currentIndexes[0] = 0; currentIndexes[0] < dim[0]; ++currentIndexes[0]) {
                         indicesThreadVector[currentIndexes[2]]
-                                .push_back(index({currentIndexes[0], currentIndexes[1], currentIndexes[2] * 2}));
+                            .push_back(index({currentIndexes[0], currentIndexes[1], currentIndexes[2] * 2}));
                     }
                 }
             }
@@ -102,7 +101,7 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
                 for (currentIndexes[1] = 0; currentIndexes[1] < dim[1]; ++currentIndexes[1]) {
                     for (currentIndexes[0] = 0; currentIndexes[0] < dim[0]; ++currentIndexes[0]) {
                         residualThreadVector
-                                .push_back(index({currentIndexes[0], currentIndexes[1], dim[2] - 1}));
+                            .push_back(index({currentIndexes[0], currentIndexes[1], dim[2] - 1}));
                     }
                 }
             }
@@ -115,7 +114,7 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
             for (currentIndexes[1] = 0; currentIndexes[1] < dim[1] / 2; ++currentIndexes[1]) {
                 for (currentIndexes[0] = 0; currentIndexes[0] < dim[0]; ++currentIndexes[0]) {
                     indicesThreadVector[currentIndexes[1]]
-                            .push_back(index({currentIndexes[0], currentIndexes[1] * 2, 0}));
+                        .push_back(index({currentIndexes[0], currentIndexes[1] * 2, 0}));
                 }
 
             }
@@ -123,7 +122,7 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
             if (dim[1] % 2 == 1) {
                 for (currentIndexes[0] = 0; currentIndexes[0] < dim[0]; ++currentIndexes[0]) {
                     residualThreadVector
-                            .push_back(index({currentIndexes[0], dim[1] - 1, 0}));
+                        .push_back(index({currentIndexes[0], dim[1] - 1, 0}));
                 }
 
             }
@@ -136,7 +135,7 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
                 for (currentIndexes[1] = 0; currentIndexes[1] < dim[1]; ++currentIndexes[1]) {
                     for (currentIndexes[0] = 0; currentIndexes[0] < dim[0]; ++currentIndexes[0]) {
                         indicesThreadVector[currentIndexes[2]]
-                                .push_back(index({currentIndexes[0], currentIndexes[1], currentIndexes[2] * 2}));
+                            .push_back(index({currentIndexes[0], currentIndexes[1], currentIndexes[2] * 2}));
                     }
                 }
             }
@@ -144,7 +143,7 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
                 for (currentIndexes[1] = 0; currentIndexes[1] < dim[1]; ++currentIndexes[1]) {
                     for (currentIndexes[0] = 0; currentIndexes[0] < dim[0]; ++currentIndexes[0]) {
                         residualThreadVector
-                                .push_back(index({currentIndexes[0], currentIndexes[1], dim[2] - 1}));
+                            .push_back(index({currentIndexes[0], currentIndexes[1], dim[2] - 1}));
                     }
                 }
             }
@@ -152,17 +151,16 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
     }
 }
 
-
 void LinkedCellContainer::setup() {
-    for (auto &it: grid) {
+    for (auto &it : grid) {
         it.clear();
     }
-    for (auto &p: particles) {
+    for (auto &p : particles) {
         if (p.valid) {
             std::array<int, 3> novelCellIndex{};
             for (int d = 0; d < 3; ++d) {
                 novelCellIndex[d] = static_cast<int>(std::floor(
-                        p.getX()[d] * getDim()[d] / getLenDim()[d]));
+                    p.getX()[d] * getDim()[d] / getLenDim()[d]));
             }
             auto cellIndex = (*this).index(novelCellIndex);
             p.setOldF(p.getF());
@@ -261,7 +259,6 @@ void LinkedCellContainer::setLenDim(const std::array<double, 3> &lenDimV) {
     LinkedCellContainer::lenDim = lenDimV;
 }
 
-
 [[nodiscard]] size_t LinkedCellContainer::size() const noexcept {
     return particles.size();
 }
@@ -290,7 +287,6 @@ void LinkedCellContainer::push_back(const Particle &&p) {
 void LinkedCellContainer::push_back(const Particle &p) {
     particles.push_back(p);
 }
-
 
 std::vector<Particle>::iterator LinkedCellContainer::begin() {
     return particles.begin();
