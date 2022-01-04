@@ -273,6 +273,7 @@ void LinkedCell::calcPerNeighbors(LinkedCellContainer &grid, const std::array<in
 void LinkedCell::calcFCell(Cell &curCell, LinkedCellContainer &grid) {
     for (auto &p : curCell) {
         // get all the neighbors
+
         for (const std::array<int, 3> &neighbors :
             (grid.is2D() ? curCell.getNeighbors2D() : curCell.getNeighbors3D())) {
 
