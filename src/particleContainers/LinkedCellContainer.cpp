@@ -152,31 +152,16 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
 }
 
 void LinkedCellContainer::setup() {
-    for (auto &it : grid) {
-        it.clear();
-    }
-    for (auto &p : particles) {
-        if (p.valid) {
-            std::array<int, 3> novelCellIndex{};
-            for (int d = 0; d < 3; ++d) {
-                novelCellIndex[d] = static_cast<int>(std::floor(
-                    p.getX()[d] * getDim()[d] / getLenDim()[d]));
-            }
-            auto cellIndex = (*this).index(novelCellIndex);
+    for(auto & cell : grid) {
+        for (auto & p : cell.particles) {
             p.setOldF(p.getF());
-            // here gravitational force is applied
-            // p.setF({0., p.getM() * g, 0.});
-            // set Force to baseForce + g*m
-            p.applyBaseForceAndGrav(g);
-            grid[cellIndex].emplace_back(&p);
+            p.setF({0., p.getM() * g, 0.});
         }
     }
 }
 
 void LinkedCellContainer::cleanup() {
-    // use erase-remove idiom
-    particles.erase(std::remove_if(particles.begin(),
-                                   particles.end(), [](Particle &p) { return !p.valid; }), particles.end());
+
 }
 
 bool LinkedCellContainer::isPeriodic(const std::array<int, 3> &neighbor) const {
@@ -260,48 +245,48 @@ void LinkedCellContainer::setLenDim(const std::array<double, 3> &lenDimV) {
 }
 
 [[nodiscard]] size_t LinkedCellContainer::size() const noexcept {
-    return particles.size();
+    return grid.size();
 }
 
 void LinkedCellContainer::reserve(size_t size) {
-    particles.reserve(size);
+    grid.reserve(size);
 }
 
 void LinkedCellContainer::emplace_back(Particle &&part) {
-    particles.emplace_back(part);
+    grid[0].particles.emplace_back(part);
 }
 
 void LinkedCellContainer::emplace_back(Particle &part) {
-    particles.emplace_back(part);
+    grid[0].particles.emplace_back(part);
 }
 
 void
 LinkedCellContainer::emplace_back(const std::array<double, 3> &x, const std::array<double, 3> &v, double m, int t) {
-    particles.emplace_back(x, v, m, t);
+    grid[0].particles.emplace_back(x, v, m, t);
 }
 
 void LinkedCellContainer::push_back(const Particle &&p) {
-    particles.push_back(p);
+    grid[0].particles.push_back(p);
 }
 
 void LinkedCellContainer::push_back(const Particle &p) {
-    particles.push_back(p);
+    grid[0].particles.push_back(p);
 }
 
 std::vector<Particle>::iterator LinkedCellContainer::begin() {
-    return particles.begin();
+    return grid[0].particles.begin();
 }
 
 std::vector<Particle>::iterator LinkedCellContainer::end() {
-    return particles.end();
+    return grid[0].particles.end();
 }
 
 std::vector<Particle>::const_iterator LinkedCellContainer::begin() const {
-    return particles.begin();
+    return grid[0].particles.begin();
 }
 
 std::vector<Particle>::const_iterator LinkedCellContainer::end() const {
-    return particles.end();
+    return grid[0].particles.end();
 }
 
 std::vector<Cell>::iterator LinkedCellContainer::begin_cell() {
@@ -322,19 +307,19 @@ std::vector<Cell>::const_iterator LinkedCellContainer::end_cell() const {
 
 PairIterator LinkedCellContainer::pair_begin() {
     // ++ to skip pair (0,0)
-    return {particles, 0, 1};
+    return {grid[0].particles, 0, 1};
 }
 
 PairIterator LinkedCellContainer::pair_end() {
-    return {particles, particles.size(), particles.size()};
+    return {grid[0].particles, grid.size(), grid.size()};
 }
 
 const std::vector<Particle> &LinkedCellContainer::getParticles() const {
-    return particles;
+    return grid[0].particles;
 }
 
 void LinkedCellContainer::setParticles(const std::vector<Particle> &particlesV) {
-    LinkedCellContainer::particles = particlesV;
+    LinkedCellContainer::grid[0].particles = particlesV;
 }
 
 const std::array<LinkedCellContainer::Border, 6> &LinkedCellContainer::getBorder() const {

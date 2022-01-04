@@ -210,10 +210,6 @@ class LinkedCellContainer : public ParticleContainer {
    * Vector where we save all our cells, which have the pointers to our particles
    */
   std::vector<Cell> grid;
-  /**
-   * Vector that saves all the instantiations of our particles
-   */
-  std::vector<Particle> particles;
 
  private:
   /**

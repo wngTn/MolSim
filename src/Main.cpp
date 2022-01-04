@@ -53,6 +53,7 @@ int main(int argc, char *argv[]) {
     //two times setup is needed, so that oldF (which is used when writing) is set to the initial baseForce
     particles->setup();
     particles->setup();
+    calc->calcX(*particles);
     calc->calcF(*particles);
     if (!config.benchmarking){
         io->write(*particles, config.output_file, iteration);

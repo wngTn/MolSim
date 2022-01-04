@@ -19,6 +19,6 @@ public:
      * @param filename custom filename
      * @param iteration current iteration, used for unique filenames
      */
-    virtual void write(const ParticleContainer &container, const std::string &filename, int iteration) const = 0;
+    virtual void write(ParticleContainer &container, const std::string &filename, int iteration) const = 0;
     virtual std::string toString() = 0;
 };

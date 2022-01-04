@@ -9,15 +9,15 @@ struct Cell {
      */
     Cell();
 
-    void setParticles(const std::vector<Particle*> &particlesV) {
+    void setParticles(const std::vector<Particle> &particlesV) {
         Cell::particles = particlesV;
     }
 
-    std::vector<Particle*> &getParticles() {
+    std::vector<Particle> &getParticles() {
         return particles;
     }
 
-    [[nodiscard]] const std::vector<Particle*> &getParticles() const {
+    [[nodiscard]] const std::vector<Particle> &getParticles() const {
         return particles;
     }
 
@@ -25,27 +25,27 @@ struct Cell {
      * @brief Provides the iterator for single particles at the start of the collection
      * @return iterator
      */
-    std::vector<Particle*>::iterator begin();
+    std::vector<Particle>::iterator begin();
 
     /**
      * @brief Provides the iterator for single particles at the end of the collection
      * @return iterator
      */
-    std::vector<Particle*>::iterator end();
+    std::vector<Particle>::iterator end();
 
     /**
      * @brief Provides the _const_ iterator for single particles at the start of the collection
      * @return const iterator
      */
-    [[nodiscard]] std::vector<Particle*>::const_iterator begin() const;
+    [[nodiscard]] std::vector<Particle>::const_iterator begin() const;
 
     /**
      * @brief Provides the _const_ iterator for single particles at the end of the collection
      * @return const iterator
      */
-    [[nodiscard]] std::vector<Particle*>::const_iterator end() const;
+    [[nodiscard]] std::vector<Particle>::const_iterator end() const;
 
-    void add_particle(Particle&);
+    void add_particle(Particle);
 
     /**
      * Deletes all the pointers in the particle list
@@ -64,7 +64,7 @@ struct Cell {
     /*
      * Removes particle at the position
      */
-    std::vector<Particle*>::iterator erase (std::vector<Particle*>::const_iterator position);
+    std::vector<Particle>::iterator erase (std::vector<Particle>::const_iterator position);
 
     /**
      * Prints a string for debugging purposes
@@ -92,12 +92,11 @@ struct Cell {
     void setIsBorderCell(bool isBorderCell);
 
 
-private:
 
     /**
      * The Particles in each cell
      */
-    std::vector<Particle*> particles;
+    std::vector<Particle> particles;
 
     /**
      * The index of the cell

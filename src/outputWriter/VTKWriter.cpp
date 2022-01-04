@@ -13,6 +13,7 @@
 #include <iostream>
 #include <string>
 #include <spdlog/spdlog.h>
+#include <particleContainers/LinkedCellContainer.h>
 
 namespace outputWriter {
 
@@ -98,13 +99,18 @@ namespace outputWriter {
         pointsIterator->push_back(p.getX()[2]);
     }
 
-    void VTKWriter::write(const ParticleContainer &container, const std::string &filename, int iteration) const {
+    void VTKWriter::write(ParticleContainer &container, const std::string &filename, int iteration) const {
+        auto &grid = static_cast<LinkedCellContainer &>(container);
         // currently just using the already implemented methods, could be combined
         this->initializeOutput(
                 static_cast<int>(container.size())); //assuming there are not more than int.MAX_VAL particles
-        for (const Particle &p: container) {
-            this->plotParticle(p);
+
+        for (const auto & cell : grid.grid) {
+            for (const Particle &p: cell) {
+                this->plotParticle(p);
+            }
         }
+
         this->writeFile(filename, iteration);
     }
 
