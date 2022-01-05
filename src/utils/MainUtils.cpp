@@ -135,6 +135,8 @@ std::unique_ptr<StatisticsLogger> MainUtils::get_statistics_logger(Config& confi
             return std::make_unique<statistics::DensityVelocityProfile>(config.statsFile, config.noBins);
         case StatisticsLogger::thermodynamic:
             return std::make_unique<statistics::Thermodynamical>(config.statsFile, config.delta_r);
+        default:
+            return nullptr; //should never happen, only to silence -Wreturn-type
     }
 }
 
