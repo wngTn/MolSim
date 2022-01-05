@@ -86,7 +86,7 @@ namespace calculator {
         void calcPerNeighbors(LinkedCellContainer &grid, const std::array<int, 3> & neighbors,
                               Particle* p, const std::array<double, 3> & mirror) const;
 
-        static bool gridNeighbors(std::array<int,3> index1, std::array<int,3> index2);
+        static bool gridNeighbors(const std::array<int,3> & index1, const std::array<int,3> & index2);
 
         double sigma = 1;
 

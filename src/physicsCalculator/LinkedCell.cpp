@@ -296,15 +296,15 @@ void LinkedCell::calcFCell(Cell &curCell, LinkedCellContainer &grid) {
                 // the mirror we are adding so that the particle gets mirrored
                 std::array<double, 3> mirror{};
                 mirror = {
-                    neighbors[0] == -1 ? static_cast<double>(-grid.getLenDim()[0]) : // From left to right
-                    neighbors[0] == grid.getDim()[0] && grid.getDim()[0] != 1
-                    ? static_cast<double>(grid.getLenDim()[0]) : 0.0, // From right to left
-                    neighbors[1] == -1 ? static_cast<double>(-grid.getLenDim()[1]) :
+                    neighbors[0] == -1 ? -grid.getLenDim()[0] : // From left to right
+                    neighbors[0] == grid.getDim()[0]  && grid.getDim()[0] != 1
+                    ? grid.getLenDim()[0] : 0.0, // From right to left
+                    neighbors[1] == -1 ? -grid.getLenDim()[1]  :
                     neighbors[1] == grid.getDim()[1] && grid.getDim()[1] != 1
-                    ? static_cast<double>(grid.getLenDim()[1]) : 0.0,
-                    neighbors[2] == -1 ? static_cast<double>(-grid.getLenDim()[2]) :
+                    ? grid.getLenDim()[1] : 0.0,
+                    neighbors[2] == -1 ? -grid.getLenDim()[2]  :
                     neighbors[2] == grid.getDim()[2] && grid.getDim()[2] != 1
-                    ? static_cast<double>(grid.getLenDim()[2]) : 0.0};
+                    ? grid.getLenDim()[2] : 0.0};
                 LinkedCell::calcPerNeighbors(grid, neigh, p, mirror);
             }
         }
@@ -346,7 +346,9 @@ void LinkedCell::calcF(ParticleContainer &container) {
 #pragma omp single
             {
                 for (int pos : grid.getResidualThreadVector()) {
-                    calcFCell(grid.grid[pos], grid);
+                    if (!grid.grid[pos].getParticles().empty()) {
+                        calcFCell(grid.grid[pos], grid);
+                    }
                 }
             };
             };
@@ -375,7 +377,7 @@ void LinkedCell::harmonic_potential(Particle *p1, Particle *p2, double sqrd_dist
 
 }
 
-bool LinkedCell::gridNeighbors(std::array<int, 3> index1, std::array<int, 3> index2) {
+bool LinkedCell::gridNeighbors(const std::array<int, 3> & index1, const std::array<int, 3> & index2) {
     return abs(index1[0] - index2[0]) <= 1 && abs(index1[1] - index2[1]) <= 1 && abs(index1[2] - index2[2]) <= 1;
 }
 
