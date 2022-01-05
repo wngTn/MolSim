@@ -210,7 +210,7 @@ TEST(LinkedCellContainer, IndicesThreadVectorTest) {
     std::array<LinkedCellContainer::Border, 6> bor{};
     bor.fill(LinkedCellContainer::periodic);
     // max dimension is x
-    LinkedCellContainer linkedCellContainer1 = LinkedCellContainer{4, 2, 2, 1., bor, 0, LinkedCellContainer::Strategy::primitive};
+    LinkedCellContainer linkedCellContainer1 = LinkedCellContainer{4, 2, 2, 1., bor, {0,0,0}, LinkedCellContainer::Strategy::primitive};
     auto result = linkedCellContainer1.getIndicesThreadVector();
     auto ref1 = std::vector<int>{0, 4, 8, 12};
     auto ref2 = std::vector<int>{2, 6, 10, 14};
@@ -221,7 +221,7 @@ TEST(LinkedCellContainer, IndicesThreadVectorTest) {
     }
 
     // max dimension ix y
-    LinkedCellContainer linkedCellContainer2 = LinkedCellContainer{2, 4, 2, 1., bor, 0, LinkedCellContainer::Strategy::primitive};
+    LinkedCellContainer linkedCellContainer2 = LinkedCellContainer{2, 4, 2, 1., bor, {0,0,0}, LinkedCellContainer::Strategy::primitive};
     result = linkedCellContainer2.getIndicesThreadVector();
     ref1 = std::vector<int>{0, 1, 8, 9};
     ref2 = std::vector<int>{4, 5, 12, 13};
@@ -232,7 +232,7 @@ TEST(LinkedCellContainer, IndicesThreadVectorTest) {
     }
 
     // max dimension is z
-    LinkedCellContainer linkedCellContainer3 = LinkedCellContainer{2, 2, 4, 1., bor, 0, LinkedCellContainer::Strategy::primitive};
+    LinkedCellContainer linkedCellContainer3 = LinkedCellContainer{2, 2, 4, 1., bor, {0,0,0}, LinkedCellContainer::Strategy::primitive};
     result = linkedCellContainer3.getIndicesThreadVector();
     ref1 = std::vector<int>{0, 1, 2, 3};
     ref2 = std::vector<int>{8, 9, 10, 11};
@@ -244,7 +244,7 @@ TEST(LinkedCellContainer, IndicesThreadVectorTest) {
 
     // Now in 2D
     // max dimension is x
-    LinkedCellContainer linkedCellContainer4 = LinkedCellContainer{4, 2, 1, 1., bor, 0, LinkedCellContainer::Strategy::primitive};
+    LinkedCellContainer linkedCellContainer4 = LinkedCellContainer{4, 2, 1, 1., bor, {0,0,0}, LinkedCellContainer::Strategy::primitive};
     result = linkedCellContainer4.getIndicesThreadVector();
     ref1 = std::vector<int>{0, 4};
     ref2 = std::vector<int>{2, 6};
@@ -256,7 +256,7 @@ TEST(LinkedCellContainer, IndicesThreadVectorTest) {
 
     // Now in 2D
     // max dimension is y
-    LinkedCellContainer linkedCellContainer5 = LinkedCellContainer{2, 4, 1, 1., bor, 0, LinkedCellContainer::Strategy::primitive};
+    LinkedCellContainer linkedCellContainer5 = LinkedCellContainer{2, 4, 1, 1., bor, {0,0,0}, LinkedCellContainer::Strategy::primitive};
     result = linkedCellContainer5.getIndicesThreadVector();
     ref1 = std::vector<int>{0, 1};
     ref2 = std::vector<int>{4, 5};
@@ -268,7 +268,7 @@ TEST(LinkedCellContainer, IndicesThreadVectorTest) {
     std::cout<<linkedCellContainer5.getResidualThreadVector()<<std::endl;
 
     // Uneven dimension
-    LinkedCellContainer linkedCellContainer6 = LinkedCellContainer{5, 2, 2, 1., bor, 0, LinkedCellContainer::Strategy::primitive};
+    LinkedCellContainer linkedCellContainer6 = LinkedCellContainer{5, 2, 2, 1., bor, {0,0,0}, LinkedCellContainer::Strategy::primitive};
     result = linkedCellContainer6.getIndicesThreadVector();
     ref1 = std::vector<int>{0, 5, 10, 15};
     ref2 = std::vector<int>{2, 7, 12, 17};
@@ -282,7 +282,7 @@ TEST(LinkedCellContainer, IndicesThreadVectorTest) {
     std::cout<<linkedCellContainer6.getResidualThreadVector()<<std::endl;
 
     // We use primitiveFit
-    LinkedCellContainer linkedCellContainer7 = LinkedCellContainer{5, 3, 4, 1., bor, 0, LinkedCellContainer::Strategy::primitiveFit};
+    LinkedCellContainer linkedCellContainer7 = LinkedCellContainer{5, 3, 4, 1., bor, {0,0,0}, LinkedCellContainer::Strategy::primitiveFit};
     result = linkedCellContainer7.getIndicesThreadVector();
     ref1 = std::vector<int>{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
     ref2 = std::vector<int>{30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44};
@@ -292,7 +292,7 @@ TEST(LinkedCellContainer, IndicesThreadVectorTest) {
         std::cout<<v<<std::endl;
     }
 
-    LinkedCellContainer linkedCellContainer8 = LinkedCellContainer{120, 120, 13, 4., bor, 0, LinkedCellContainer::Strategy::primitiveFit};
+    LinkedCellContainer linkedCellContainer8 = LinkedCellContainer{120, 120, 13, 4., bor, {0,0,0}, LinkedCellContainer::Strategy::primitiveFit};
     result = linkedCellContainer8.getIndicesThreadVector();
     for (const auto & v : result) {
         std::cout<<v<<std::endl;

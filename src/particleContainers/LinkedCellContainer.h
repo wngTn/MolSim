@@ -184,9 +184,9 @@ public:
 
     void setBorder(const std::array<Border, 6> &border);
 
-    [[nodiscard]] double getG() const;
+    [[nodiscard]] std::array<double,3> getG() const;
 
-    void setG(double g);
+    void setG(std::array<double,3> g);
 
     [[nodiscard]] const std::vector<std::vector<int>> &getIndicesThreadVector() const;
 

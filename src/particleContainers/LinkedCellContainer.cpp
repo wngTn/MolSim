@@ -400,12 +400,12 @@ LinkedCellContainer::getPerNeighbors(const std::array<int, 3> &currentIndex) {
     return neighbors;
 }
 
-double LinkedCellContainer::getG() const {
+std::array<double,3> LinkedCellContainer::getG() const {
     return g;
 }
 
-void LinkedCellContainer::setG(double g) {
-    LinkedCellContainer::g = g;
+void LinkedCellContainer::setG(std::array<double,3> grav) {
+    LinkedCellContainer::g = grav;
 }
 
 const std::vector<std::vector<int>> &LinkedCellContainer::getIndicesThreadVector() const {
