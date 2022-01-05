@@ -13,6 +13,12 @@ namespace statistics {
         void writeStatistics(ParticleContainer &container, int iteration) override;
 
     private:
+        std::string filename;
         double delta_r;
+        double max_distance;
+
+        static double calculateDiffusion(ParticleContainer &particles);
     };
+
+    constexpr double FOUR_THIRDS_PI = std::numbers::pi * (4./3.);
 }
