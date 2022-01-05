@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
             io->write(*particles, config.output_file, iteration);
         }
 
-        if(iteration % config.statsFrequency == 0){
+        if(config.useStatistics && iteration % config.statsFrequency == 0){
             stats->writeStatistics(*particles, iteration);
         }
 

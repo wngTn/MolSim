@@ -141,7 +141,6 @@ namespace calculator {
     }
 
     void LinkedCell::ljforce_smoothed(Particle *p1, Particle *p2, double sqrd_dist) const {
-        std::cout << "smoothed cald\n";
         double dist = sqrt(sqrd_dist);
         if(dist <= rl){
             ljforce(p1,p2,sqrd_dist);

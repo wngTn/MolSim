@@ -1422,6 +1422,30 @@ noBins (const noBins_optional& x)
   this->noBins_ = x;
 }
 
+const statistics_t::deltaR_optional& statistics_t::
+deltaR () const
+{
+  return this->deltaR_;
+}
+
+statistics_t::deltaR_optional& statistics_t::
+deltaR ()
+{
+  return this->deltaR_;
+}
+
+void statistics_t::
+deltaR (const deltaR_type& x)
+{
+  this->deltaR_.set (x);
+}
+
+void statistics_t::
+deltaR (const deltaR_optional& x)
+{
+  this->deltaR_ = x;
+}
+
 const statistics_t::file_type& statistics_t::
 file () const
 {
@@ -3776,6 +3800,7 @@ statistics_t (const file_type& file,
               const type_type& type)
 : ::xml_schema::type (),
   noBins_ (this),
+  deltaR_ (this),
   file_ (file, this),
   frequency_ (frequency, this),
   type_ (type, this)
@@ -3788,6 +3813,7 @@ statistics_t (const statistics_t& x,
               ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
   noBins_ (x.noBins_, f, this),
+  deltaR_ (x.deltaR_, f, this),
   file_ (x.file_, f, this),
   frequency_ (x.frequency_, f, this),
   type_ (x.type_, f, this)
@@ -3800,6 +3826,7 @@ statistics_t (const ::xercesc::DOMElement& e,
               ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
   noBins_ (this),
+  deltaR_ (this),
   file_ (this),
   frequency_ (this),
   type_ (this)
@@ -3828,6 +3855,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!this->noBins_)
       {
         this->noBins_.set (noBins_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // deltaR
+    //
+    if (n.name () == "deltaR" && n.namespace_ ().empty ())
+    {
+      if (!this->deltaR_)
+      {
+        this->deltaR_.set (deltaR_traits::create (i, f, this));
         continue;
       }
     }
@@ -3909,6 +3947,7 @@ operator= (const statistics_t& x)
   {
     static_cast< ::xml_schema::type& > (*this) = x;
     this->noBins_ = x.noBins_;
+    this->deltaR_ = x.deltaR_;
     this->file_ = x.file_;
     this->frequency_ = x.frequency_;
     this->type_ = x.type_;
@@ -5661,6 +5700,18 @@ operator<< (::xercesc::DOMElement& e, const statistics_t& i)
         e));
 
     s << *i.noBins ();
+  }
+
+  // deltaR
+  //
+  if (i.deltaR ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "deltaR",
+        e));
+
+    s << ::xml_schema::as_decimal(*i.deltaR ());
   }
 
   // file

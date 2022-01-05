@@ -18,6 +18,7 @@
 #include "inputReader/CheckpointReader.h"
 #include "statistics/StatisticsLogger.h"
 #include "statistics/DensityVelocityProfile.h"
+#include "statistics/Thermodynamical.h"
 
 #include <unistd.h>
 #include <memory>

@@ -105,9 +105,13 @@ public:
     double rl;
     std::array<LinkedCellContainer::Border, 6> boundaryConditions;
 
+    // stuff for statistics
     bool useStatistics;
     int statsFrequency;
     std::string statsFile;
     StatisticsLogger::statisticstype statsType;
+    // for density velocity profile
     int noBins;
+    // for thermodynamical
+    double delta_r;
 };

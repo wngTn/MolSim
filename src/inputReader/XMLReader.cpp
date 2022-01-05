@@ -106,13 +106,14 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
             case statistics_type_t::thermodynamical:
                 info.statsType = StatisticsLogger::thermodynamic;
                 info.noBins = 0;
+                info.delta_r = sim->statistics()->deltaR().get();
                 break;
             case statistics_type_t::densityVelocity:
                 info.statsType = StatisticsLogger::densityVelocityProfile;
                 info.noBins = sim->statistics()->noBins().get();
+                info.delta_r = 0;
                 break;
         }
-
     }
 
     info.inputFiles = std::vector<std::string>{};

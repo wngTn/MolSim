@@ -131,13 +131,10 @@ std::unique_ptr<StatisticsLogger> MainUtils::get_statistics_logger(Config& confi
         return nullptr;
     }
     switch (config.statsType){
-
-        case StatisticsLogger::densityVelocityProfile: {
-            return std::make_unique<statistics::DensityVelocityProfile>(config.statsFile, config.noBins);}
-        default:
+        case StatisticsLogger::densityVelocityProfile:
+            return std::make_unique<statistics::DensityVelocityProfile>(config.statsFile, config.noBins);
         case StatisticsLogger::thermodynamic:
-            // TODO add something
-            return nullptr;
+            return std::make_unique<statistics::Thermodynamical>(config.statsFile, config.delta_r);
     }
 }
 
@@ -283,8 +280,9 @@ void MainUtils::parseXML(Config& config) {
         config.useStatistics = true;
         config.statsFrequency = info.statsFrequency;
         config.statsFile = info.statsFile;
-        config.noBins = info.noBins;
         config.statsType = info.statsType;
+        config.noBins = info.noBins;
+        config.delta_r = info.delta_r;
     }
 
     spdlog::info("Finished XML parsing!");

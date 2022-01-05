@@ -70,6 +70,7 @@ public:
         std::string statsFile;
         StatisticsLogger::statisticstype statsType;
         int noBins;
+        double delta_r;
     };
 
     static XMLInfo readFile(const std::string& s);
