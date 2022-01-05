@@ -98,7 +98,7 @@ std::unique_ptr<PhysicsCalc> MainUtils::get_calculator(Config& config) {
         case PhysicsCalc::unknown:
         default:
             if(config.linkedCell){
-                auto c = std::make_unique<calculator::LinkedCell>(config.sigma, config.eps, config.rCut);
+                auto c = std::make_unique<calculator::LinkedCell>(config.sigma, config.eps, config.rCut, config.smoothed, config.rl);
                 c->setSigmaTable(sigmaTable);
                 c->setEpsilonTable(epsilonTable);
                 c->setMapping(se_mapping);
@@ -255,6 +255,8 @@ void MainUtils::parseXML(Config& config) {
             config.boundaryConditions = info.boundaryConditions;
         }
         config.grav = info.gravityFactor;
+        config.smoothed = info.smoothed;
+        config.rl = info.rl;
     }
     config.useThermostat = info.useThermostat;
     if(info.useThermostat){

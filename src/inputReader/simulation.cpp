@@ -1144,6 +1144,30 @@ stiffnessConstant (const stiffnessConstant_optional& x)
   this->stiffnessConstant_ = x;
 }
 
+const calculationInfo_t::rl_optional& calculationInfo_t::
+rl () const
+{
+  return this->rl_;
+}
+
+calculationInfo_t::rl_optional& calculationInfo_t::
+rl ()
+{
+  return this->rl_;
+}
+
+void calculationInfo_t::
+rl (const rl_type& x)
+{
+  this->rl_.set (x);
+}
+
+void calculationInfo_t::
+rl (const rl_optional& x)
+{
+  this->rl_ = x;
+}
+
 const calculationInfo_t::type_type& calculationInfo_t::
 type () const
 {
@@ -3033,11 +3057,11 @@ _xsd_calculatortype_t_convert () const
   ::xsd::cxx::tree::enum_comparator< char > c (_xsd_calculatortype_t_literals_);
   const value* i (::std::lower_bound (
                     _xsd_calculatortype_t_indexes_,
-                    _xsd_calculatortype_t_indexes_ + 2,
+                    _xsd_calculatortype_t_indexes_ + 3,
                     *this,
                     c));
 
-  if (i == _xsd_calculatortype_t_indexes_ + 2 || _xsd_calculatortype_t_literals_[*i] != *this)
+  if (i == _xsd_calculatortype_t_indexes_ + 3 || _xsd_calculatortype_t_literals_[*i] != *this)
   {
     throw ::xsd::cxx::tree::unexpected_enumerator < char > (*this);
   }
@@ -3046,17 +3070,19 @@ _xsd_calculatortype_t_convert () const
 }
 
 const char* const calculatortype_t::
-_xsd_calculatortype_t_literals_[2] =
+_xsd_calculatortype_t_literals_[3] =
 {
   "lennardjones",
+  "smoothed-lennardjones",
   "gravitation"
 };
 
 const calculatortype_t::value calculatortype_t::
-_xsd_calculatortype_t_indexes_[2] =
+_xsd_calculatortype_t_indexes_[3] =
 {
   ::calculatortype_t::gravitation,
-  ::calculatortype_t::lennardjones
+  ::calculatortype_t::lennardjones,
+  ::calculatortype_t::smoothed_lennardjones
 };
 
 // containerinfo_t
@@ -3241,6 +3267,7 @@ calculationInfo_t (const type_type& type)
   baseForceTime_ (this),
   rZero_ (this),
   stiffnessConstant_ (this),
+  rl_ (this),
   type_ (type, this)
 {
 }
@@ -3257,6 +3284,7 @@ calculationInfo_t (const calculationInfo_t& x,
   baseForceTime_ (x.baseForceTime_, f, this),
   rZero_ (x.rZero_, f, this),
   stiffnessConstant_ (x.stiffnessConstant_, f, this),
+  rl_ (x.rl_, f, this),
   type_ (x.type_, f, this)
 {
 }
@@ -3273,6 +3301,7 @@ calculationInfo_t (const ::xercesc::DOMElement& e,
   baseForceTime_ (this),
   rZero_ (this),
   stiffnessConstant_ (this),
+  rl_ (this),
   type_ (this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
@@ -3372,6 +3401,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // rl
+    //
+    if (n.name () == "rl" && n.namespace_ ().empty ())
+    {
+      if (!this->rl_)
+      {
+        this->rl_.set (rl_traits::create (i, f, this));
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -3416,6 +3456,7 @@ operator= (const calculationInfo_t& x)
     this->baseForceTime_ = x.baseForceTime_;
     this->rZero_ = x.rZero_;
     this->stiffnessConstant_ = x.stiffnessConstant_;
+    this->rl_ = x.rl_;
     this->type_ = x.type_;
   }
 
@@ -5477,6 +5518,18 @@ operator<< (::xercesc::DOMElement& e, const calculationInfo_t& i)
         e));
 
     s << ::xml_schema::as_decimal(*i.stiffnessConstant ());
+  }
+
+  // rl
+  //
+  if (i.rl ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "rl",
+        e));
+
+    s << ::xml_schema::as_decimal(*i.rl ());
   }
 
   // type

@@ -2876,6 +2876,7 @@ class calculatortype_t: public ::xml_schema::string
   enum value
   {
     lennardjones,
+    smoothed_lennardjones,
     gravitation
   };
 
@@ -3001,8 +3002,8 @@ class calculatortype_t: public ::xml_schema::string
   _xsd_calculatortype_t_convert () const;
 
   public:
-  static const char* const _xsd_calculatortype_t_literals_[2];
-  static const value _xsd_calculatortype_t_indexes_[2];
+  static const char* const _xsd_calculatortype_t_literals_[3];
+  static const value _xsd_calculatortype_t_indexes_[3];
 
   //@endcond
 };
@@ -3975,6 +3976,71 @@ class calculationInfo_t: public ::xml_schema::type
   //@}
 
   /**
+   * @name rl
+   *
+   * @brief Accessor and modifier functions for the %rl
+   * optional element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::decimal rl_type;
+
+  /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< rl_type > rl_optional;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< rl_type, char, ::xsd::cxx::tree::schema_type::decimal > rl_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const rl_optional&
+  rl () const;
+
+  /**
+   * @brief Return a read-write reference to the element container.
+   *
+   * @return A reference to the optional container.
+   */
+  rl_optional&
+  rl ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  rl (const rl_type& x);
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  rl (const rl_optional& x);
+
+  //@}
+
+  /**
    * @name type
    *
    * @brief Accessor and modifier functions for the %type
@@ -4120,6 +4186,7 @@ class calculationInfo_t: public ::xml_schema::type
   baseForceTime_optional baseForceTime_;
   rZero_optional rZero_;
   stiffnessConstant_optional stiffnessConstant_;
+  rl_optional rl_;
   ::xsd::cxx::tree::one< type_type > type_;
 
   //@endcond

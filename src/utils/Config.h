@@ -58,6 +58,9 @@ public:
 /// Which Physics calculation method to use
     PhysicsCalc::calctype calc_type{PhysicsCalc::unknown};
 
+/// Whether a smoothed lennard jones potential is used
+    bool smoothed = false;
+
 /// Whether to disable logging and IO operations
     bool benchmarking = false;
 
@@ -99,6 +102,7 @@ public:
     bool linkedCell;
     std::array<double, 3> linkedCellSize;
     double rCut;
+    double rl;
     std::array<LinkedCellContainer::Border, 6> boundaryConditions;
 
     bool useStatistics;

@@ -37,6 +37,8 @@ public:
         // output and calculation types
         IOWriter::iotype outputWriterType;
         PhysicsCalc::calctype calculatorType;
+        // whether smoothed LJ is used
+        bool smoothed = false;
         // all inputFiles (format of week 1)
         std::vector<std::string> inputFiles;
         // the base name of the output files
@@ -60,6 +62,7 @@ public:
         bool linkedcell;
         std::array<double,3> linkedCellSize;
         double rCut;
+        double rl;
         std::array<LinkedCellContainer::Border, 6> boundaryConditions;
 
         bool useStatistics;

@@ -75,6 +75,7 @@
     <xs:simpleType name="calculatortype_t">
         <xs:restriction base="xs:string">
             <xs:enumeration value ="lennardjones"/>
+            <xs:enumeration value ="smoothed-lennardjones"/>
             <xs:enumeration value ="gravitation"/>
         </xs:restriction>
     </xs:simpleType>
@@ -101,6 +102,7 @@
             <xs:element name="baseForceTime" type="xs:decimal" minOccurs="0" />
             <xs:element name="rZero" type="xs:decimal" minOccurs="0" />
             <xs:element name="stiffnessConstant" type="xs:decimal" minOccurs="0" />
+            <xs:element name="rl" type="xs:decimal" minOccurs="0" />
         </xs:sequence>
         <xs:attribute name="type" type = "calculatortype_t" use = "required" />
     </xs:complexType>

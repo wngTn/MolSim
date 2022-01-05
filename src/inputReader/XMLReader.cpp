@@ -33,32 +33,40 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
         info.linkedcell = false;
     }
 
-    if(sim->calculator().type() == calculatortype_t::lennardjones){
-        info.epsilon = sim->calculator().epsilon().get();
-        info.sigma = sim->calculator().sigma().get();
-        info.brownianMotionMean = sim->calculator().brownianMotion().get();
-        if(sim->calculator().gravityFactor().present()){
-            info.gravityFactor = {sim->calculator().gravityFactor()->x(), sim->calculator().gravityFactor()->y(), sim->calculator().gravityFactor()->z()};
-        }else{
-            info.gravityFactor = {0.,0.,0.};
-        }
-        info.calculatorType = PhysicsCalc::lennardJones;
-        if(sim->calculator().baseForceTime().present()){
-            info.resetBaseForce = true;
-            info.baseForceReset = floor(sim->calculator().baseForceTime().get() / sim->delta_t());
-        }
-        if(sim->calculator().rZero().present() && sim->calculator().stiffnessConstant().present()){
-            info.membrane = true;
-            info.rZero = sim->calculator().rZero().get();
-            info.stiffnessConstant = sim->calculator().rZero().get();
-        }else{
-            info.membrane = false;
-            info.rZero = 0;
-            info.stiffnessConstant = 0;
-        }
-    }else{
-        info.calculatorType = PhysicsCalc::gravitation;
+    switch(sim->calculator().type()){
+        case calculatortype_t::smoothed_lennardjones:
+            info.smoothed = true;
+            info.rl = sim->calculator().rl().get();
+            [[fallthrough]];
+        case calculatortype_t::lennardjones:
+            info.epsilon = sim->calculator().epsilon().get();
+            info.sigma = sim->calculator().sigma().get();
+            info.brownianMotionMean = sim->calculator().brownianMotion().get();
+            if(sim->calculator().gravityFactor().present()){
+                info.gravityFactor = {sim->calculator().gravityFactor()->x(), sim->calculator().gravityFactor()->y(), sim->calculator().gravityFactor()->z()};
+            }else{
+                info.gravityFactor = {0.,0.,0.};
+            }
+            info.calculatorType = PhysicsCalc::lennardJones;
+            if(sim->calculator().baseForceTime().present()){
+                info.resetBaseForce = true;
+                info.baseForceReset = floor(sim->calculator().baseForceTime().get() / sim->delta_t());
+            }
+            if(sim->calculator().rZero().present() && sim->calculator().stiffnessConstant().present()){
+                info.membrane = true;
+                info.rZero = sim->calculator().rZero().get();
+                info.stiffnessConstant = sim->calculator().rZero().get();
+            }else{
+                info.membrane = false;
+                info.rZero = 0;
+                info.stiffnessConstant = 0;
+            }
+            break;
+        case calculatortype_t::gravitation:
+            info.calculatorType = PhysicsCalc::gravitation;
+            break;
     }
+
 
     if(sim->thermostat().present()){
         info.useThermostat = true;
