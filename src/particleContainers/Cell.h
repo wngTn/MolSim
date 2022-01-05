@@ -87,6 +87,9 @@ struct Cell {
 
     void setNeighbors3D();
 
+    [[nodiscard]] bool isBorderCell1() const;
+
+    void setIsBorderCell(bool isBorderCell);
 
 
 private:
@@ -110,6 +113,8 @@ private:
      * The 3D neighbors of this cell
      */
     std::vector<std::array<int, 3>> neighbors3D{};
+
+    bool isBorderCell{};
 
 };
 

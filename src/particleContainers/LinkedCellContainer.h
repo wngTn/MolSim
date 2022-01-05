@@ -14,6 +14,11 @@ class LinkedCellContainer : public ParticleContainer{
 public:
 
     enum Border {outflow, periodic, reflective, none};
+    /**
+     * primitive: we split along the greatest dimension
+     * primitiveFit: we split along the y axis (2D) or z axis(3D) for better memory access
+     */
+    enum Strategy{primitive, primitiveFit, naught};
 
     /***********************************************************************/
 
@@ -24,9 +29,10 @@ public:
      * @param Zv length of Z-Axis of the array == the length of the domain
      * @param rCutV the r_cut value
      * @param borderV the border types of the 6 (3D) or 4 (2D) borders
+     * @param strategy the multi threading strategy that should be used
      */
     LinkedCellContainer(double Xv, double Yv, double Zv, double rCutV, std::array<Border, 6> borderV = std::array<Border, 6>{
-            outflow, outflow, outflow, outflow, outflow, outflow}, std::array<double,3> g = {0,0,0});
+            outflow, outflow, outflow, outflow, outflow, outflow}, std::array<double,3> g = {0,0,0}, Strategy strategy = primitiveFit);
 
     /**
      * Default constructor
@@ -178,6 +184,26 @@ public:
 
     void setBorder(const std::array<Border, 6> &border);
 
+    [[nodiscard]] double getG() const;
+
+    void setG(double g);
+
+    [[nodiscard]] const std::vector<std::vector<int>> &getIndicesThreadVector() const;
+
+    void setIndicesThreadVector(const std::vector<std::vector<int>> &indicesThreadVector);
+
+    [[nodiscard]] int getThreadOffset() const;
+
+    void setThreadOffset(int threadOffset);
+
+    [[nodiscard]] const std::vector<int> &getResidualThreadVector() const;
+
+    void setResidualThreadVector(const std::vector<int> &residualThreadVector);
+
+    [[nodiscard]] Strategy getStrategy() const;
+
+    void setStrategy(Strategy strategy);
+
     /**
      * Has X * Y * Z many elements
      * Vector where we save all our cells, which have the pointers to our particles
@@ -211,6 +237,28 @@ private:
      * The gravitational force that applies to the domain
      */
     std::array<double,3> g{};
+
+    /**
+     * Signals what multi threading strategy to use
+     */
+    Strategy strategy{};
+
+    /**
+     * This vector depicts which indices each thread has to work with in the first iteration
+     * The length is the number of threads
+     */
+     std::vector<std::vector<int>> indicesThreadVector;
+
+     /**
+      * Depicts how much offset the indices of the threads have in the second iteration
+      */
+     int threadOffset{};
+
+     /**
+      * If dimension is an uneven number, we have a residual thread vector
+      */
+      std::vector<int> residualThreadVector{};
+
 };
 
 double LinkedCellContainer::getDistance(const std::array<double, 3> & X, int bord) const {

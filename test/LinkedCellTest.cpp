@@ -529,7 +529,7 @@ TEST(LinkedCellTest, PeriodicBoundary3DTest) {
  * Tests whether the particles go through the borders
  * One particle from top right to bottom left, and one from top right to bottom left
  */
-TEST(LinkedCellContainer, PeriodicBoundaryTransitionTest) {
+TEST(LinkedCellTest, PeriodicBoundaryTransitionTest) {
     double EPSILON_VALUE = 0.000000001 ;
 
     std::array<LinkedCellContainer::Border, 6> bor{};

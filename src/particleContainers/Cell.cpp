@@ -92,5 +92,13 @@ void Cell::setNeighbors3D() {
     };
 }
 
+bool Cell::isBorderCell1() const {
+    return isBorderCell;
+}
+
+void Cell::setIsBorderCell(bool isBorderCell) {
+    Cell::isBorderCell = isBorderCell;
+}
+
 
 
