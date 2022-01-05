@@ -158,7 +158,8 @@ namespace calculator {
     }
 
     constexpr double SIXTH_ROOT_OF_TWO = 1.12246204830937298;
-    constexpr double SQR_ROOT_OF_TWO = std::numbers::sqrt2;
+    // copied from std::numbers which doesn't work on older compiler versions
+    constexpr double SQR_ROOT_OF_TWO = 1.414213562373095048801688724209698079L;
 }
 
 

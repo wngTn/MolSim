@@ -19,6 +19,7 @@ namespace statistics {
 
         static double calculateDiffusion(ParticleContainer &particles);
     };
-
-    constexpr double FOUR_THIRDS_PI = std::numbers::pi * (4./3.);
+    // copied from std::numbers which doesn't work on older compiler versions
+    constexpr double pi = 3.141592653589793238462643383279502884L;
+    constexpr double FOUR_THIRDS_PI = pi * (4./3.);
 }

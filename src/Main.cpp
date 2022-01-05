@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
         calc->calcF(*particles);
         calc->calcV(*particles);
 
-        if(config.useThermostat && iteration % config.nThermostat == 0) [[unlikely]] {
+        if(config.useThermostat && iteration % config.nThermostat == 0) { [[unlikely]]
             thermostat.applyTemperature(*particles);
         }
 
@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
 
         iteration++;
 
-        if (!config.benchmarking && iteration % config.writeFrequency == 0) [[unlikely]] {
+        if (!config.benchmarking && iteration % config.writeFrequency == 0) { [[unlikely]]
             particles->cleanup();
             // setup after cleanup needed to validate pointers for calcX
             particles->setup();
@@ -86,11 +86,11 @@ int main(int argc, char *argv[]) {
             io->write(*particles, config.output_file, iteration);
         }
 
-        if(config.useStatistics && iteration % config.statsFrequency == 0){
+        if(config.useStatistics && iteration % config.statsFrequency == 0) { [[unlikely]]
             stats->writeStatistics(*particles, iteration);
         }
 
-        if(config.resetBaseForce && iteration == config.resetBaseForceIteration){
+        if(config.resetBaseForce && iteration == config.resetBaseForceIteration) { [[unlikely]]
             particles->reset_base_force();
         }
 
