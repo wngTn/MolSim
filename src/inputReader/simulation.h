@@ -3649,7 +3649,7 @@ class calculationInfo_t: public ::xml_schema::type
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::decimal gravityFactor_type;
+  typedef ::array_float_3 gravityFactor_type;
 
   /**
    * @brief Element optional container type.
@@ -3659,7 +3659,7 @@ class calculationInfo_t: public ::xml_schema::type
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< gravityFactor_type, char, ::xsd::cxx::tree::schema_type::decimal > gravityFactor_traits;
+  typedef ::xsd::cxx::tree::traits< gravityFactor_type, char > gravityFactor_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element
@@ -3700,6 +3700,17 @@ class calculationInfo_t: public ::xml_schema::type
    */
   void
   gravityFactor (const gravityFactor_optional& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  gravityFactor (::std::unique_ptr< gravityFactor_type > p);
 
   //@}
 

@@ -161,7 +161,7 @@ public:
      * sets force of particle to baseForce attribute and add grav*mass in y direction
      * @param grav the gravity factor
      */
-    void applyBaseForceAndGrav(double grav);
+    void applyBaseForceAndGrav(std::array<double,3> grav);
 
     /**
      * @param d: dimension

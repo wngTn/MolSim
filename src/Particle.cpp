@@ -199,8 +199,8 @@ void Particle::setBaseForce(std::array<double, 3>& force) {
     baseForce = force;
 }
 
-void Particle::applyBaseForceAndGrav(double grav) {
-    this->setF(this->baseForce + std::array<double,3>{0,grav*m,0});
+void Particle::applyBaseForceAndGrav(std::array<double,3> grav) {
+    this->setF(this->baseForce + (m * grav));
     //f[1] = f[1] + grav * m;
 }
 

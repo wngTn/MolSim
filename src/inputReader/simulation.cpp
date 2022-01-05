@@ -1042,6 +1042,12 @@ gravityFactor (const gravityFactor_optional& x)
   this->gravityFactor_ = x;
 }
 
+void calculationInfo_t::
+gravityFactor (::std::unique_ptr< gravityFactor_type > x)
+{
+  this->gravityFactor_.set (std::move (x));
+}
+
 const calculationInfo_t::brownianMotion_optional& calculationInfo_t::
 brownianMotion () const
 {
@@ -3312,9 +3318,12 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "gravityFactor" && n.namespace_ ().empty ())
     {
+      ::std::unique_ptr< gravityFactor_type > r (
+        gravityFactor_traits::create (i, f, this));
+
       if (!this->gravityFactor_)
       {
-        this->gravityFactor_.set (gravityFactor_traits::create (i, f, this));
+        this->gravityFactor_.set (::std::move (r));
         continue;
       }
     }
@@ -5419,7 +5428,7 @@ operator<< (::xercesc::DOMElement& e, const calculationInfo_t& i)
         "gravityFactor",
         e));
 
-    s << ::xml_schema::as_decimal(*i.gravityFactor ());
+    s << *i.gravityFactor ();
   }
 
   // brownianMotion

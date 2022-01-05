@@ -3,7 +3,7 @@
 #include "LinkedCellContainer.h"
 
 
-LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double rCutV, std::array<Border, 6> borderV, double g) :
+LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double rCutV, std::array<Border, 6> borderV, std::array<double,3> g) :
         grid{std::vector<Cell>(static_cast<int>(std::floor(Xv / rCutV)) *
                                static_cast<int>(std::floor(Yv / rCutV)) *
                                (static_cast<int>(std::floor(Zv / rCutV)) == 0 ? 1 :

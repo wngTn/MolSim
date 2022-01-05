@@ -22,7 +22,7 @@ public:
         double sigma;
         double t_end;
         double delta_t;
-        double gravityFactor;
+        std::array<double,3> gravityFactor;
         int writeFrequency;
         double brownianMotionMean;
         bool useThermostat;

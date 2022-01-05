@@ -18,7 +18,7 @@
         <epsilon>1</epsilon>
         <sigma>1</sigma>
         <brownianMotion>0.0</brownianMotion>
-        <gravityFactor>-0.2</gravityFactor>
+        <gravityFactor x="0" y="-0.2" z="0" />
         <rZero>2.2</rZero>
         <stiffnessConstant>300</stiffnessConstant>
     </calculator>

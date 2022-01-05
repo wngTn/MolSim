@@ -38,9 +38,9 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
         info.sigma = sim->calculator().sigma().get();
         info.brownianMotionMean = sim->calculator().brownianMotion().get();
         if(sim->calculator().gravityFactor().present()){
-            info.gravityFactor = sim->calculator().gravityFactor().get();
+            info.gravityFactor = {sim->calculator().gravityFactor()->x(), sim->calculator().gravityFactor()->y(), sim->calculator().gravityFactor()->z()};
         }else{
-            info.gravityFactor = 0.0;
+            info.gravityFactor = {0.,0.,0.};
         }
         info.calculatorType = PhysicsCalc::lennardJones;
         if(sim->calculator().baseForceTime().present()){

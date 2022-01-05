@@ -89,7 +89,7 @@ public:
 
     double eps = 5.;
     double sigma = 1.;
-    double grav;
+    std::array<double,3> grav;
 
     // whether a membrane is used
     bool membrane = false;

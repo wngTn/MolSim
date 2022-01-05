@@ -96,7 +96,7 @@
         <xs:sequence minOccurs = "0">
             <xs:element name="epsilon" type="xs:decimal" />
             <xs:element name="sigma" type="xs:decimal" />
-            <xs:element name="gravityFactor" type="xs:decimal" minOccurs="0"/>
+            <xs:element name="gravityFactor" type="array_float_3" minOccurs="0"/>
             <xs:element name="brownianMotion" type="xs:decimal" />
             <xs:element name="baseForceTime" type="xs:decimal" minOccurs="0" />
             <xs:element name="rZero" type="xs:decimal" minOccurs="0" />
