@@ -50,7 +50,7 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
             info.calculatorType = PhysicsCalc::lennardJones;
             if(sim->calculator().baseForceTime().present()){
                 info.resetBaseForce = true;
-                info.baseForceReset = floor(sim->calculator().baseForceTime().get() / sim->delta_t());
+                info.baseForceReset = std::ceil(sim->calculator().baseForceTime().get() / sim->delta_t());
             }
             if(sim->calculator().rZero().present() && sim->calculator().stiffnessConstant().present()){
                 info.membrane = true;
@@ -146,6 +146,20 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
         insertGeneratorInfo(genInfos, gi);
     }
     info.generatorInfos = genInfos;
+
+    if(sim->parallelization().present()){
+        switch(sim->parallelization().get()){
+            case parallel_t::primitive_fit:
+                info.parallelization_strat = LinkedCellContainer::primitiveFit;
+                break;
+            case parallel_t::primitive:
+                info.parallelization_strat = LinkedCellContainer::primitive;
+                break;
+            case parallel_t::none:
+                info.parallelization_strat = LinkedCellContainer::naught;
+                break;
+        }
+    }
 
     return info;
 }

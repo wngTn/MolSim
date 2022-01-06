@@ -114,4 +114,6 @@ public:
     int noBins;
     // for thermodynamical
     double delta_r;
+
+    LinkedCellContainer::Strategy parallelization_strategy;
 };

@@ -1,5 +1,15 @@
 <?xml version="1.0"?>
-<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:xS="http://www.w3.org/2001/XMLSchema">
+    <!-- enum type for choosing parallelization strategy allowed -->
+    <xs:simpleType name="parallel_t">
+        <xs:restriction base = "xs:string">
+            <xs:enumeration value="primitive_fit" />
+            <xs:enumeration value="primitive" />
+            <xs:enumeration value="none" />
+        </xs:restriction>
+    </xs:simpleType>
+
     <!-- enum type for choosing geometric type for generator, values cuboid and sphere allowed -->
     <xs:simpleType name ="geometric_t">
         <xs:restriction base="xs:string">
@@ -186,6 +196,7 @@
         <xs:attribute name="writeFrequency" type="xs:int" use="required"/>
 
         <xs:attribute name="outputWriter" type = "outputwriter_t" use = "required" />
+        <xs:attribute name="parallelization" type="parallel_t" use ="optional" />
         <xs:attribute name="random" type="xs:boolean" use="optional" />
     </xs:complexType>
 

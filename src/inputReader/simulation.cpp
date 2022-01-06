@@ -40,6 +40,51 @@
 
 #include "simulation.h"
 
+// parallel_t
+// 
+
+parallel_t::
+parallel_t (value v)
+: ::xml_schema::string (_xsd_parallel_t_literals_[v])
+{
+}
+
+parallel_t::
+parallel_t (const char* v)
+: ::xml_schema::string (v)
+{
+}
+
+parallel_t::
+parallel_t (const ::std::string& v)
+: ::xml_schema::string (v)
+{
+}
+
+parallel_t::
+parallel_t (const ::xml_schema::string& v)
+: ::xml_schema::string (v)
+{
+}
+
+parallel_t::
+parallel_t (const parallel_t& v,
+            ::xml_schema::flags f,
+            ::xml_schema::container* c)
+: ::xml_schema::string (v, f, c)
+{
+}
+
+parallel_t& parallel_t::
+operator= (value v)
+{
+  static_cast< ::xml_schema::string& > (*this) = 
+  ::xml_schema::string (_xsd_parallel_t_literals_[v]);
+
+  return *this;
+}
+
+
 // geometric_t
 // 
 
@@ -2068,6 +2113,36 @@ outputWriter (::std::unique_ptr< outputWriter_type > x)
   this->outputWriter_.set (std::move (x));
 }
 
+const simulation_t::parallelization_optional& simulation_t::
+parallelization () const
+{
+  return this->parallelization_;
+}
+
+simulation_t::parallelization_optional& simulation_t::
+parallelization ()
+{
+  return this->parallelization_;
+}
+
+void simulation_t::
+parallelization (const parallelization_type& x)
+{
+  this->parallelization_.set (x);
+}
+
+void simulation_t::
+parallelization (const parallelization_optional& x)
+{
+  this->parallelization_ = x;
+}
+
+void simulation_t::
+parallelization (::std::unique_ptr< parallelization_type > x)
+{
+  this->parallelization_.set (std::move (x));
+}
+
 const simulation_t::random_optional& simulation_t::
 random () const
 {
@@ -2094,6 +2169,78 @@ random (const random_optional& x)
 
 
 #include <xsd/cxx/xml/dom/parsing-source.hxx>
+
+// parallel_t
+//
+
+parallel_t::
+parallel_t (const ::xercesc::DOMElement& e,
+            ::xml_schema::flags f,
+            ::xml_schema::container* c)
+: ::xml_schema::string (e, f, c)
+{
+  _xsd_parallel_t_convert ();
+}
+
+parallel_t::
+parallel_t (const ::xercesc::DOMAttr& a,
+            ::xml_schema::flags f,
+            ::xml_schema::container* c)
+: ::xml_schema::string (a, f, c)
+{
+  _xsd_parallel_t_convert ();
+}
+
+parallel_t::
+parallel_t (const ::std::string& s,
+            const ::xercesc::DOMElement* e,
+            ::xml_schema::flags f,
+            ::xml_schema::container* c)
+: ::xml_schema::string (s, e, f, c)
+{
+  _xsd_parallel_t_convert ();
+}
+
+parallel_t* parallel_t::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class parallel_t (*this, f, c);
+}
+
+parallel_t::value parallel_t::
+_xsd_parallel_t_convert () const
+{
+  ::xsd::cxx::tree::enum_comparator< char > c (_xsd_parallel_t_literals_);
+  const value* i (::std::lower_bound (
+                    _xsd_parallel_t_indexes_,
+                    _xsd_parallel_t_indexes_ + 3,
+                    *this,
+                    c));
+
+  if (i == _xsd_parallel_t_indexes_ + 3 || _xsd_parallel_t_literals_[*i] != *this)
+  {
+    throw ::xsd::cxx::tree::unexpected_enumerator < char > (*this);
+  }
+
+  return *i;
+}
+
+const char* const parallel_t::
+_xsd_parallel_t_literals_[3] =
+{
+  "primitive_fit",
+  "primitive",
+  "none"
+};
+
+const parallel_t::value parallel_t::
+_xsd_parallel_t_indexes_[3] =
+{
+  ::parallel_t::none,
+  ::parallel_t::primitive,
+  ::parallel_t::primitive_fit
+};
 
 // geometric_t
 //
@@ -4376,6 +4523,7 @@ simulation_t (const container_type& container,
   delta_t_ (delta_t, this),
   writeFrequency_ (writeFrequency, this),
   outputWriter_ (outputWriter, this),
+  parallelization_ (this),
   random_ (this)
 {
 }
@@ -4403,6 +4551,7 @@ simulation_t (::std::unique_ptr< container_type > container,
   delta_t_ (delta_t, this),
   writeFrequency_ (writeFrequency, this),
   outputWriter_ (outputWriter, this),
+  parallelization_ (this),
   random_ (this)
 {
 }
@@ -4426,6 +4575,7 @@ simulation_t (const simulation_t& x,
   delta_t_ (x.delta_t_, f, this),
   writeFrequency_ (x.writeFrequency_, f, this),
   outputWriter_ (x.outputWriter_, f, this),
+  parallelization_ (x.parallelization_, f, this),
   random_ (x.random_, f, this)
 {
 }
@@ -4449,6 +4599,7 @@ simulation_t (const ::xercesc::DOMElement& e,
   delta_t_ (this),
   writeFrequency_ (this),
   outputWriter_ (this),
+  parallelization_ (this),
   random_ (this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
@@ -4653,6 +4804,12 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       continue;
     }
 
+    if (n.name () == "parallelization" && n.namespace_ ().empty ())
+    {
+      this->parallelization_.set (parallelization_traits::create (i, f, this));
+      continue;
+    }
+
     if (n.name () == "random" && n.namespace_ ().empty ())
     {
       this->random_.set (random_traits::create (i, f, this));
@@ -4716,6 +4873,7 @@ operator= (const simulation_t& x)
     this->delta_t_ = x.delta_t_;
     this->writeFrequency_ = x.writeFrequency_;
     this->outputWriter_ = x.outputWriter_;
+    this->parallelization_ = x.parallelization_;
     this->random_ = x.random_;
   }
 
@@ -5000,6 +5158,25 @@ simulation (::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > d,
 #include <ostream>
 #include <xsd/cxx/tree/error-handler.hxx>
 #include <xsd/cxx/xml/dom/serialization-source.hxx>
+
+void
+operator<< (::xercesc::DOMElement& e, const parallel_t& i)
+{
+  e << static_cast< const ::xml_schema::string& > (i);
+}
+
+void
+operator<< (::xercesc::DOMAttr& a, const parallel_t& i)
+{
+  a << static_cast< const ::xml_schema::string& > (i);
+}
+
+void
+operator<< (::xml_schema::list_stream& l,
+            const parallel_t& i)
+{
+  l << static_cast< const ::xml_schema::string& > (i);
+}
 
 void
 operator<< (::xercesc::DOMElement& e, const geometric_t& i)
@@ -6049,6 +6226,18 @@ operator<< (::xercesc::DOMElement& e, const simulation_t& i)
         e));
 
     a << i.outputWriter ();
+  }
+
+  // parallelization
+  //
+  if (i.parallelization ())
+  {
+    ::xercesc::DOMAttr& a (
+      ::xsd::cxx::xml::dom::create_attribute (
+        "parallelization",
+        e));
+
+    a << *i.parallelization ();
   }
 
   // random

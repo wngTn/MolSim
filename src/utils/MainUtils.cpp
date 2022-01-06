@@ -113,7 +113,7 @@ std::unique_ptr<PhysicsCalc> MainUtils::get_calculator(Config& config) {
 
 std::unique_ptr<ParticleContainer> MainUtils::get_container(Config& config) {
     if(config.linkedCell){
-        return std::make_unique<LinkedCellContainer>(config.linkedCellSize[0], config.linkedCellSize[1], config.linkedCellSize[2], config.rCut, config.boundaryConditions, config.grav);
+        return std::make_unique<LinkedCellContainer>(config.linkedCellSize[0], config.linkedCellSize[1], config.linkedCellSize[2], config.rCut, config.boundaryConditions, config.grav, config.parallelization_strategy);
     }
     return std::make_unique<DirectSumParticleContainer>();
 }
@@ -126,10 +126,6 @@ Thermostat MainUtils::get_thermostat(Config& config) {
 }
 
 std::unique_ptr<StatisticsLogger> MainUtils::get_statistics_logger(Config& config) {
-    if(!config.useStatistics){
-        // idk what to do here? TODO figure out what to return here
-        return nullptr;
-    }
     switch (config.statsType){
         case StatisticsLogger::densityVelocityProfile:
             return std::make_unique<statistics::DensityVelocityProfile>(config.statsFile, config.noBins);
@@ -286,15 +282,27 @@ void MainUtils::parseXML(Config& config) {
         config.noBins = info.noBins;
         config.delta_r = info.delta_r;
     }
-
+    config.parallelization_strategy = info.parallelization_strat;
     spdlog::info("Finished XML parsing!");
 }
 
 void MainUtils::printConfig(Config& config) {
     std::stringstream s;
     s << "Your configurations are:" << std::endl;
+    s << "\u001b[36m\tParallelization:\u001b[0m\t ";
+    switch(config.parallelization_strategy){
+        case LinkedCellContainer::naught:
+            s << "none" << std::endl;
+            break;
+        case LinkedCellContainer::primitive:
+            s << "primitive" << std::endl;
+            break;
+        case LinkedCellContainer::primitiveFit:
+            s << "primitive fit" << std::endl;
+            break;
+    }
     if(!config.xml_file.empty()){
-        s << "\u001b[36m\tXML File:\u001b[0m " << config.xml_file << std::endl;
+        s << "\u001b[36m\tXML File:\u001b[0m\t " << config.xml_file << std::endl;
     }
     if(!config.filename.empty()){
        s << "\u001b[36m\tFilenames:\u001b[0m ";

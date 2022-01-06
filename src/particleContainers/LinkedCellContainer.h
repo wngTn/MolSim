@@ -18,7 +18,7 @@ public:
      * primitive: we split along the greatest dimension
      * primitiveFit: we split along the y axis (2D) or z axis(3D) for better memory access
      */
-    enum Strategy{primitive, primitiveFit, naught};
+    enum Strategy{naught, primitive, primitiveFit};
 
     /***********************************************************************/
 

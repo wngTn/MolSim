@@ -71,6 +71,8 @@ public:
         StatisticsLogger::statisticstype statsType;
         int noBins;
         double delta_r;
+
+        LinkedCellContainer::Strategy parallelization_strat = LinkedCellContainer::naught;
     };
 
     static XMLInfo readFile(const std::string& s);
