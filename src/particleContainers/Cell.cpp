@@ -47,22 +47,6 @@ void Cell::setIndex(const std::array<int, 3> &indexV) {
     Cell::index = indexV;
 }
 
-const std::vector<std::array<int, 3>> &Cell::getNeighbors2D() const {
-    return neighbors2D;
-}
-
-void Cell::setNeighbors2D(const std::vector<std::array<int, 3>> &neighbors2DV) {
-    Cell::neighbors2D = neighbors2DV;
-}
-
-const std::vector<std::array<int, 3>> &Cell::getNeighbors3D() const {
-    return neighbors3D;
-}
-
-void Cell::setNeighbors3D(const std::vector<std::array<int, 3>> &neighbors3DV) {
-    Cell::neighbors3D = neighbors3DV;
-}
-
 Cell::Cell() : particles{std::vector<Particle*>{}}{}
 
 void Cell::setNeighbors2D() {
@@ -92,13 +76,85 @@ void Cell::setNeighbors3D() {
     };
 }
 
+const std::vector<std::array<int, 3>> &Cell::getNeighbors2D() const {
+	return neighbors2D;
+}
+
+void Cell::setNeighbors2D1(const std::vector<std::array<int, 3>> &neighbors_2_d) {
+	neighbors2D = neighbors_2_d;
+}
+
+const std::vector<std::array<int, 3>> &Cell::getNeighbors3D() const {
+	return neighbors3D;
+}
+
+void Cell::setNeighbors3D1(const std::vector<std::array<int, 3>> &neighbors_3_d) {
+	neighbors3D = neighbors_3_d;
+}
+
 bool Cell::isBorderCell1() const {
-    return isBorderCell;
+	return isBorderCell;
 }
 
-void Cell::setIsBorderCell(bool isBorderCell) {
-    Cell::isBorderCell = isBorderCell;
+void Cell::setIsBorderCell(bool is_border_cell) {
+	isBorderCell = is_border_cell;
 }
 
+void Cell::setAllNeighbors2D() {
+	Cell::allNeighbors2D = {
+//		std::array<int, 3>{index[0], index[1] + 1, index[2]},
+//		std::array<int, 3>{index[0] + 1, index[1], index[2]},
+//		std::array<int, 3>{index[0] + 1, index[1] + 1, index[2]},
+//		std::array<int, 3>{index[0] - 1, index[1] + 1, index[2]},
+
+		std::array<int, 3>{index[0], index[1] - 1, index[2]},
+		std::array<int, 3>{index[0] - 1, index[1], index[2]},
+		std::array<int, 3>{index[0] - 1, index[1] - 1, index[2]},
+		std::array<int, 3>{index[0] + 1, index[1] - 1, index[2]},
+	};
+}
+
+void Cell::setAllNeighbors3D() {
+	Cell::allNeighbors3D = {
+//		std::array<int, 3>{index[0], index[1] + 1, index[2]},
+//		std::array<int, 3>{index[0] + 1, index[1], index[2]},
+//		std::array<int, 3>{index[0] + 1, index[1] + 1, index[2]},
+//		std::array<int, 3>{index[0] - 1, index[1] + 1, index[2]},
+//		std::array<int, 3>{index[0], index[1], index[2] + 1},
+//		std::array<int, 3>{index[0], index[1] + 1, index[2] + 1},
+//		std::array<int, 3>{index[0] + 1, index[1], index[2] + 1},
+//		std::array<int, 3>{index[0] + 1, index[1] + 1, index[2] + 1},
+//		std::array<int, 3>{index[0] - 1, index[1], index[2] + 1},
+//		std::array<int, 3>{index[0], index[1] - 1, index[2] + 1},
+//		std::array<int, 3>{index[0] - 1, index[1] - 1, index[2] + 1},
+//		std::array<int, 3>{index[0] - 1, index[1] + 1, index[2] + 1},
+//		std::array<int, 3>{index[0] + 1, index[1] - 1, index[2] + 1},
+
+
+		std::array<int, 3>{index[0], index[1] - 1, index[2]},
+		std::array<int, 3>{index[0] - 1, index[1], index[2]},
+		std::array<int, 3>{index[0] - 1, index[1] - 1, index[2]},
+		std::array<int, 3>{index[0] + 1, index[1] - 1, index[2]},
+		std::array<int, 3>{index[0], index[1], index[2] - 1},
+		std::array<int, 3>{index[0], index[1] - 1, index[2] - 1},
+		std::array<int, 3>{index[0] - 1, index[1], index[2] + 1},
+		std::array<int, 3>{index[0] - 1, index[1] - 1, index[2] - 1},
+		std::array<int, 3>{index[0] + 1, index[1], index[2] - 1},
+		std::array<int, 3>{index[0], index[1] + 1, index[2] - 1},
+		std::array<int, 3>{index[0] + 1, index[1] + 1, index[2] - 1},
+		std::array<int, 3>{index[0] + 1, index[1] - 1, index[2] - 1},
+		std::array<int, 3>{index[0] - 1, index[1] + 1, index[2] - 1}
+	};
+
+
+}
+
+const std::vector<std::array<int, 3>> &Cell::getAllNeighbors2D() const {
+	return allNeighbors2D;
+}
+
+const std::vector<std::array<int, 3>> &Cell::getAllNeighbors3D() const {
+	return allNeighbors3D;
+}
 
 

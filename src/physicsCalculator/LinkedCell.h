@@ -49,6 +49,9 @@ namespace calculator {
          */
         void calcFWithinCell(Cell & cell);
 
+		void calcFCellSubdomain(Cell &curCell, LinkedCellContainer &grid, const LinkedCellContainer::SubDomain & subDomain
+		, bool isFirst);
+
 
         void setSigmaTable(const std::vector<std::vector<double>> &sigmaTable);
 
@@ -64,14 +67,14 @@ namespace calculator {
 
     private:
 
-        inline void ljforce(Particle* p1, Particle* p2, double sqrd_dist) const;
+        inline void ljforce(Particle* p1, Particle* p2, double sqrd_dist, bool newton = true) const;
 
-        void harmonic_potential(Particle* p1, Particle* p2, double sqrd_dist) const;
+        void harmonic_potential(Particle* p1, Particle* p2, double sqrd_dist, bool newton = true) const;
 
         void reflectiveBoundary(LinkedCellContainer & grid, const std::array<int, 3> & currentIndexes) const;
 
         void calcNeighbors(LinkedCellContainer &grid, const std::array<int, 3> & neighbors,
-                           Particle* p);
+                           Particle* p, bool newton = true);
 
         void calcFCell(Cell & curCell, LinkedCellContainer & grid);
 
@@ -84,7 +87,7 @@ namespace calculator {
          * @param mirror the array we should add so we get the mirrored position
          */
         void calcPerNeighbors(LinkedCellContainer &grid, const std::array<int, 3> & neighbors,
-                              Particle* p, const std::array<double, 3> & mirror) const;
+                              Particle* p, const std::array<double, 3> & mirror, bool newton = true) const;
 
         static bool gridNeighbors(const std::array<int,3> & index1, const std::array<int,3> & index2);
 
@@ -117,7 +120,7 @@ namespace calculator {
         return x * x;
     }
 
-    void LinkedCell::ljforce(Particle* p1, Particle* p2, double sqrd_dist) const {
+    void LinkedCell::ljforce(Particle* p1, Particle* p2, double sqrd_dist, bool newton) const {
         //double s = sqr(sigma) / sqrd_dist;
         double s = sqr(sigmaTable[p1->getSEIndex()][p2->getSEIndex()]) / sqrd_dist;
         s = s * s * s; // s = sqr(s) * s
@@ -128,10 +131,13 @@ namespace calculator {
 
 
         p1->setF(p1->getF() + force);
-        p2->setF(p2->getF() - force);
+		if (newton){
+			p2->setF(p2->getF() - force);
+		}
     }
 
-    constexpr double SIXTH_ROOT_OF_TWO = 1.12246204830937298;
+
+constexpr double SIXTH_ROOT_OF_TWO = 1.12246204830937298;
     constexpr double SQR_ROOT_OF_TWO = 1.4142135623730950488;
 }
 

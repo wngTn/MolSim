@@ -4,307 +4,378 @@
 #include <cmath>
 #include <functional>
 #include <spdlog/spdlog.h>
+#include <omp.h>
 
 #include "Particle.h"
 #include "ParticleContainer.h"
 #include "Cell.h"
 
 class LinkedCellContainer : public ParticleContainer {
- public:
+public:
 
-  enum Border { outflow, periodic, reflective, none };
-  /**
-   * primitive: we split along the greatest dimension
-   * primitiveFit: we split along the y axis (2D) or z axis(3D) for better memory access
-   */
-  enum Strategy { primitive, primitiveFit, naught };
+	struct SubDomain {
 
-  /***********************************************************************/
+		SubDomain();
 
-  /**
-   * Normal Constructor, which creates a grid with X*Y*Z elements
-   * @param Xv length of X-Axis of the array == the length of the domain
-   * @param Yv length of Y-Axis of the array == the length of the domain
-   * @param Zv length of Z-Axis of the array == the length of the domain
-   * @param rCutV the r_cut value
-   * @param borderV the border types of the 6 (3D) or 4 (2D) borders
-   * @param strategy the multi threading strategy that should be used
-   */
-  LinkedCellContainer(double Xv,
-                      double Yv,
-                      double Zv,
-                      double rCutV,
-                      std::array<Border, 6> borderV = std::array<Border, 6>{
-                          outflow, outflow, outflow, outflow, outflow, outflow},
-                      double g = 0,
-                      Strategy strategy = primitive);
+		explicit SubDomain(bool is2D, int axis);
 
-  /**
-   * Default constructor
-   */
-  LinkedCellContainer() = default;
+		SubDomain(std::vector<int> CellIndices,
+		          const std::array<int, 3> &MinCoord,
+		          const std::array<int, 3> &MaxCoord);
 
-  /**
-   * @brief creates the cell grid
-   */
-  void setup() override;
+		[[nodiscard]] const std::vector<int> &getCellIndices() const;
 
-  /**
-   * @brief performs cleanup, deletes invalid Particles
-   */
-  void cleanup() override;
+		void setCellIndices(const std::vector<int> &CellIndices);
 
-  [[nodiscard]] size_t size() const noexcept override;
+		[[nodiscard]] const std::array<int, 3> &getMinCoord() const;
 
-  void reserve(size_t) override;
+		void setMinCoord(const std::array<int, 3> &MinCoord);
 
-  void emplace_back(Particle &&part) override;
-  void emplace_back(Particle &part) override;
-  void emplace_back(const std::array<double, 3> &x, const std::array<double, 3> &v, double m, int t) override;
+		[[nodiscard]] const std::array<int, 3> &getMaxCoord() const;
 
-  void push_back(const Particle &&p) override;
-  void push_back(const Particle &p) override;
+		void setMaxCoord(const std::array<int, 3> &MaxCoord);
 
-  std::vector<Particle>::iterator begin() override;
+		[[nodiscard]] bool isIs2D() const;
 
-  std::vector<Particle>::iterator end() override;
+		void setIs2D(bool is_2_d);
 
-  [[nodiscard]] std::vector<Particle>::const_iterator begin() const override;
+		void addIndex(const std::array<int, 3> & indexArray, int index, Cell & cell);
 
-  [[nodiscard]] std::vector<Particle>::const_iterator end() const override;
+		[[nodiscard]] bool isInSubdomain(const std::array<int, 3> & currentIndex) const;
 
-  PairIterator pair_begin() override;
+		const std::vector<int> &getBorderCellIndices() const;
 
-  PairIterator pair_end() override;
+	private:
+		/**
+		 * The cell indices this subdomain has to work through that are not border cells
+		 */
+		std::vector<int> cellIndices{};
 
-  /**
-   * @brief Provides the iterator for single particles at the start of the collection
-   * @return iterator
-   */
-  std::vector<Cell>::iterator begin_cell();
+		/**
+		 * The border cell indices this subdomain has to work through
+		 */
+		std::vector<int> borderCellIndices{};
 
-  /**
-   * @brief Provides the iterator for single particles at the end of the collection
-   * @return iterator
-   */
-  std::vector<Cell>::iterator end_cell();
+		/**
+		 * Coordinate where the subdomain begins
+		 */
+		std::array<int, 3> minCoord{};
 
-  /**
-   * @brief Provides the _const_ iterator for single Cells at the start of the collection
-   * @return const iterator
-   */
-  [[nodiscard]] std::vector<Cell>::const_iterator begin_cell() const;
+		/**
+		 * Coordinate where the subdomain ends
+		 */
+		std::array<int, 3> maxCoord{};
 
-  /**
-   * @brief Provides the _const_ iterator for single Cells at the end of the collection
-   * @return const iterator
-   */
-  [[nodiscard]] std::vector<Cell>::const_iterator end_cell() const;
+		bool is2D{};
 
-  /**
-   * Calculates whether the neighbor is in the range by calculating the longest distance of the middle point
-   * of the neighbor cell to its edges and then calculating the distance between the middle point and the particle
-   * and decide whether it should be considered.
-   * If the distance is higher than the middle point distance + rCut, then it will not be considered
-   * @param p the current particle
-   * @param neighbor the neighbor cell index
-   * @return true if it is in range, false if not
-   * \note{Not used, since it did not affect our calculations much}
-   */
-  bool inline isNeighborInRange(const Particle *p, const std::array<int, 3> &neighbor);
+		int axis;
+	};
 
-  /**
-   * Gets the border and the index of the border
-   * 0: LEFT, 1: RIGHT, 2: UP, 3: DOWN, 4: FRONT, 5: BACK
-   * @param currentIndexes the index of the current cell
-   * @param d the axis we are currently in
-   * @return
-   */
-  [[nodiscard]] std::tuple<Border, int> getBorders(const std::array<int, 3> &currentIndexes, int d) const;
+	enum Border { outflow, periodic, reflective, none };
+	/**
+	 * primitive: we split along the greatest dimension
+	 * primitiveFit: we split along the y axis (2D) or z axis(3D) for better memory access
+	 */
+	enum Strategy { primitiveX, primitiveY, primitiveZ, subDomain, naught };
 
-  /**
-   * Returns a vector of neighbor indices depending on the border it should be mirrored at
-   * @param currentIndex the index of the current cell
-   * @param borders the borders the current index is at
-   * @return a vector of indices of the neighbor
-   * \note{This method will not be used anymore, since it is faster to use the neighbors generated by the
-   * getNeighbors method}
-   */
-  std::vector<std::array<int, 3>> getPerNeighbors(const std::array<int, 3> &currentIndex);
+	/***********************************************************************/
 
-  /**
-   * Calculates the distance between a position X a border
-   * @param X the position
-   * @param bord the specific border ([0;5])
-   * @return the distance
-   */
-  [[nodiscard]] inline double getDistance(const std::array<double, 3> &X, int bord) const;
+	/**
+	 * Normal Constructor, which creates a grid with X*Y*Z elements
+	 * @param Xv length of X-Axis of the array == the length of the domain
+	 * @param Yv length of Y-Axis of the array == the length of the domain
+	 * @param Zv length of Z-Axis of the array == the length of the domain
+	 * @param rCutV the r_cut value
+	 * @param borderV the border types of the 6 (3D) or 4 (2D) borders
+	 * @param strategy the multi threading strategy that should be used
+	 */
+	LinkedCellContainer(double Xv,
+	                    double Yv,
+	                    double Zv,
+	                    double rCutV,
+	                    std::array<Border, 6> borderV = std::array<Border, 6>{
+		                    outflow, outflow, outflow, outflow, outflow, outflow},
+	                    double g = 0,
+	                    Strategy strategy = primitiveY);
 
-  /**
-   * Returns the index in the 1D Grid container
-   * @param currentIndexes the current indexes in the three dimensions
-   * @return The index
-   */
-  [[nodiscard]] inline int index(const std::array<int, 3> &currentIndexes) const;
+	/**
+	 * Default constructor
+	 */
+	LinkedCellContainer() = default;
 
-  /**
-   * Calculates whether the neighbor cell is included as periodic neighbor
-   * @param neighbor the index of the neighbor
-   * @return true if it counts as periodic neighbor, false if not
-   */
-  [[nodiscard]] bool isPeriodic(const std::array<int, 3> &neighbor) const;
+	/**
+	 * @brief creates the cell grid
+	 */
+	void setup() override;
 
-  /***** Getters *****/
+	/**
+	 * @brief performs cleanup, deletes invalid Particles
+	 */
+	void cleanup() override;
 
-  [[nodiscard]] const std::vector<Cell> &getGrid() const;
+	[[nodiscard]] size_t size() const noexcept override;
 
-  [[nodiscard]] double getRCut() const;
+	void reserve(size_t) override;
 
-  [[nodiscard]] const std::array<int, 3> &getDim() const;
+	void emplace_back(Particle &&part) override;
 
-  [[nodiscard]] const std::array<double, 3> &getLenDim() const;
+	void emplace_back(Particle &part) override;
 
-  bool is2D();
+	void emplace_back(const std::array<double, 3> &x, const std::array<double, 3> &v, double m, int t) override;
 
-  int dimensions() override;
+	void push_back(const Particle &&p) override;
 
-  /***** Setters *****/
-  void setGrid(const std::vector<Cell> &grid);
+	void push_back(const Particle &p) override;
 
-  void setDim(const std::array<int, 3> &dim);
+	std::vector<Particle>::iterator begin() override;
 
-  void setRCut(double rCutV);
+	std::vector<Particle>::iterator end() override;
 
-  void setLenDim(const std::array<double, 3> &lenDim);
+	[[nodiscard]] std::vector<Particle>::const_iterator begin() const override;
 
-  [[nodiscard]] const std::vector<Particle> &getParticles() const;
+	[[nodiscard]] std::vector<Particle>::const_iterator end() const override;
 
-  void setParticles(const std::vector<Particle> &particles);
+	PairIterator pair_begin() override;
 
-  [[nodiscard]] const std::array<Border, 6> &getBorder() const;
+	PairIterator pair_end() override;
 
-  void setBorder(const std::array<Border, 6> &border);
+	/**
+	 * @brief Provides the iterator for single particles at the start of the collection
+	 * @return iterator
+	 */
+	std::vector<Cell>::iterator begin_cell();
 
-  [[nodiscard]] double getG() const;
+	/**
+	 * @brief Provides the iterator for single particles at the end of the collection
+	 * @return iterator
+	 */
+	std::vector<Cell>::iterator end_cell();
 
-  void setG(double g);
+	/**
+	 * @brief Provides the _const_ iterator for single Cells at the start of the collection
+	 * @return const iterator
+	 */
+	[[nodiscard]] std::vector<Cell>::const_iterator begin_cell() const;
 
-  [[nodiscard]] const std::vector<std::vector<int>> &getIndicesThreadVector() const;
+	/**
+	 * @brief Provides the _const_ iterator for single Cells at the end of the collection
+	 * @return const iterator
+	 */
+	[[nodiscard]] std::vector<Cell>::const_iterator end_cell() const;
 
-  void setIndicesThreadVector(const std::vector<std::vector<int>> &indicesThreadVector);
+	/**
+	 * Calculates whether the neighbor is in the range by calculating the longest distance of the middle point
+	 * of the neighbor cell to its edges and then calculating the distance between the middle point and the particle
+	 * and decide whether it should be considered.
+	 * If the distance is higher than the middle point distance + rCut, then it will not be considered
+	 * @param p the current particle
+	 * @param neighbor the neighbor cell index
+	 * @return true if it is in range, false if not
+	 * \note{Not used, since it did not affect our calculations much}
+	 */
+	bool inline isNeighborInRange(const Particle *p, const std::array<int, 3> &neighbor);
 
-  [[nodiscard]] int getThreadOffset() const;
+	/**
+	 * Gets the border and the index of the border
+	 * 0: LEFT, 1: RIGHT, 2: UP, 3: DOWN, 4: FRONT, 5: BACK
+	 * @param currentIndexes the index of the current cell
+	 * @param d the axis we are currently in
+	 * @return
+	 */
+	[[nodiscard]] std::tuple<Border, int> getBorders(const std::array<int, 3> &currentIndexes, int d) const;
 
-  void setThreadOffset(int threadOffset);
+	/**
+	 * Returns a vector of neighbor indices depending on the border it should be mirrored at
+	 * @param currentIndex the index of the current cell
+	 * @param borders the borders the current index is at
+	 * @return a vector of indices of the neighbor
+	 * \note{This method will not be used anymore, since it is faster to use the neighbors generated by the
+	 * getNeighbors method}
+	 */
+	std::vector<std::array<int, 3>> getPerNeighbors(const std::array<int, 3> &currentIndex);
 
-  [[nodiscard]] const std::vector<int> &getResidualThreadVector() const;
+	/**
+	 * Calculates the distance between a position X a border
+	 * @param X the position
+	 * @param bord the specific border ([0;5])
+	 * @return the distance
+	 */
+	[[nodiscard]] inline double getDistance(const std::array<double, 3> &X, int bord) const;
 
-  void setResidualThreadVector(const std::vector<int> &residualThreadVector);
+	/**
+	 * Returns the index in the 1D Grid container
+	 * @param currentIndexes the current indexes in the three dimensions
+	 * @return The index
+	 */
+	[[nodiscard]] inline int index(const std::array<int, 3> &currentIndexes) const;
 
-  [[nodiscard]] Strategy getStrategy() const;
+	/**
+	 * Calculates whether the neighbor cell is included as periodic neighbor
+	 * @param neighbor the index of the neighbor
+	 * @return true if it counts as periodic neighbor, false if not
+	 */
+	[[nodiscard]] bool isPeriodic(const std::array<int, 3> &neighbor) const;
 
-  void setStrategy(Strategy strategy);
+	/***** Getters *****/
 
-  /**
-   * Has X * Y * Z many elements
-   * Vector where we save all our cells, which have the pointers to our particles
-   */
-  std::vector<Cell> grid;
-  /**
-   * Vector that saves all the instantiations of our particles
-   */
-  std::vector<Particle> particles;
+	[[nodiscard]] const std::vector<Cell> &getGrid() const;
 
- private:
-  /**
-   * The array describes the length of the respective dimensions
-   * dim[0] = X, dim[1] = Y, dim[2] = Z
-   */
-  std::array<int, 3> dim{};
-  /**
-   * The array describes how long the domain of the respective dimensions should've been
-   * lenDim[0] = X, lenDim[1] = Y, lenDim[2] = Z
-   */
-  std::array<double, 3> lenDim{};
-  double rCut{};
+	[[nodiscard]] double getRCut() const;
 
-  /**
-   * This array describes the borders of our domain
-   */
-  std::array<Border, 6> border{outflow};
+	[[nodiscard]] const std::array<int, 3> &getDim() const;
 
-  /*
-   * The gravitational force that applies to the domain
-   */
-  double g{};
+	[[nodiscard]] const std::array<double, 3> &getLenDim() const;
 
-  /**
-   * Signals what multi threading strategy to use
-   */
-  Strategy strategy{};
+	bool is2D();
 
-  /**
-   * This vector depicts which indices each thread has to work with in the first iteration
-   * The length is the number of threads
-   */
-  std::vector<std::vector<int>> indicesThreadVector;
+	int dimensions() override;
 
-  /**
-   * Depicts how much offset the indices of the threads have in the second iteration
-   */
-  int threadOffset{};
+	/***** Setters *****/
+	void setGrid(const std::vector<Cell> &grid);
 
-  /**
-   * If dimension is an uneven number, we have a residual thread vector
-   */
-  std::vector<int> residualThreadVector{};
+	void setDim(const std::array<int, 3> &dim);
+
+	void setRCut(double rCutV);
+
+	void setLenDim(const std::array<double, 3> &lenDim);
+
+	[[nodiscard]] const std::vector<Particle> &getParticles() const;
+
+	void setParticles(const std::vector<Particle> &particles);
+
+	[[nodiscard]] const std::array<Border, 6> &getBorder() const;
+
+	void setBorder(const std::array<Border, 6> &border);
+
+	[[nodiscard]] double getG() const;
+
+	void setG(double g);
+
+	[[nodiscard]] const std::vector<std::vector<int>> &getIndicesThreadVector() const;
+
+	void setIndicesThreadVector(const std::vector<std::vector<int>> &indicesThreadVector);
+
+	[[nodiscard]] int getThreadOffset() const;
+
+	void setThreadOffset(int threadOffset);
+
+	[[nodiscard]] const std::vector<int> &getResidualThreadVector() const;
+
+	void setResidualThreadVector(const std::vector<int> &residualThreadVector);
+
+	[[nodiscard]] Strategy getStrategy() const;
+
+	void setStrategy(Strategy strategy);
+
+	[[nodiscard]] const std::vector<SubDomain> &getSubDomainVector() const;
+
+	void setSubDomainVector(const std::vector<SubDomain> &SubDomainVector);
+
+	/**
+	 * Has X * Y * Z many elements
+	 * Vector where we save all our cells, which have the pointers to our particles
+	 */
+	std::vector<Cell> grid;
+	/**
+	 * Vector that saves all the instantiations of our particles
+	 */
+	std::vector<Particle> particles;
+
+private:
+	/**
+	 * The array describes the length of the respective dimensions
+	 * dim[0] = X, dim[1] = Y, dim[2] = Z
+	 */
+	std::array<int, 3> dim{};
+	/**
+	 * The array describes how long the domain of the respective dimensions should've been
+	 * lenDim[0] = X, lenDim[1] = Y, lenDim[2] = Z
+	 */
+	std::array<double, 3> lenDim{};
+	double rCut{};
+
+	/**
+	 * This array describes the borders of our domain
+	 */
+	std::array<Border, 6> border{outflow};
+
+	/*
+	 * The gravitational force that applies to the domain
+	 */
+	double g{};
+
+	/**
+	 * Signals what multi threading strategy to use
+	 */
+	Strategy strategy{};
+
+	/**
+	 * This vector depicts which indices each thread has to work with in the first iteration
+	 * The length is the number of threads
+	 */
+	std::vector<std::vector<int>> indicesThreadVector;
+
+	/**
+	 * Depicts how much offset the indices of the threads have in the second iteration
+	 */
+	int threadOffset{};
+
+	/**
+	 * If dimension is an uneven number, we have a residual thread vector
+	 */
+	std::vector<int> residualThreadVector{};
+
+	/**
+	 * If the strategy is 'subDomain' then we need a vector to keep up with the subDomains
+	 */
+	std::vector<SubDomain> subDomainVector{};
 
 };
 
 double LinkedCellContainer::getDistance(const std::array<double, 3> &X, int bord) const {
-    switch (bord) {
-        // LEFT
-        case 0: return X[0];
-            // RIGHT
-        case 1: return lenDim[0] - X[0];
-            // UPPER
-        case 2: return X[1];
-            // LOWER
-        case 3: return lenDim[1] - X[1];
-            // FRONT
-        case 4: return X[2];
-            // BACK
-        case 5: return lenDim[2] - X[2];
-            // INVALID CASE
-        default: return -1;
-    }
+	switch (bord) {
+		// LEFT
+		case 0: return X[0];
+			// RIGHT
+		case 1: return lenDim[0] - X[0];
+			// UPPER
+		case 2: return X[1];
+			// LOWER
+		case 3: return lenDim[1] - X[1];
+			// FRONT
+		case 4: return X[2];
+			// BACK
+		case 5: return lenDim[2] - X[2];
+			// INVALID CASE
+		default: return -1;
+	}
 }
 
 bool inline LinkedCellContainer::isNeighborInRange(const Particle *p, const std::array<int, 3> &neighbor) {
-    // the max range from middle point of neighbor to its edges
-    double midPointEdgeRange{};
-    for (int d = 0; (dim[2] == 1) ? d < 2 : d < 3; ++d) {
-        midPointEdgeRange += static_cast<double>(lenDim[d]) / static_cast<double>(dim[d]) *
-            lenDim[d] / dim[d];
-    }
-    midPointEdgeRange = sqrt(midPointEdgeRange);
+	// the max range from middle point of neighbor to its edges
+	double midPointEdgeRange{};
+	for (int d = 0; (dim[2] == 1) ? d < 2 : d < 3; ++d) {
+		midPointEdgeRange += static_cast<double>(lenDim[d]) / static_cast<double>(dim[d]) *
+			lenDim[d] / dim[d];
+	}
+	midPointEdgeRange = sqrt(midPointEdgeRange);
 
-    // position of the neighborCell middle point
-    std::array<double, 3> neighborPos{};
-    for (int d = 0; (dim[2] == 1) ? d < 2 : d < 3; ++d) {
-        neighborPos[d] = neighbor[d] * (lenDim[d] / dim[d]);
-    }
+	// position of the neighborCell middle point
+	std::array<double, 3> neighborPos{};
+	for (int d = 0; (dim[2] == 1) ? d < 2 : d < 3; ++d) {
+		neighborPos[d] = neighbor[d] * (lenDim[d] / dim[d]);
+	}
 
-    // Distance between these points
-    double distance{};
-    for (int d = 0; (dim[2] == 1) ? d < 2 : d < 3; ++d) {
-        distance += (neighborPos[d] - p->getX()[d]) * (neighborPos[d] - p->getX()[d]);
-    }
-    distance = sqrt(distance);
+	// Distance between these points
+	double distance{};
+	for (int d = 0; (dim[2] == 1) ? d < 2 : d < 3; ++d) {
+		distance += (neighborPos[d] - p->getX()[d]) * (neighborPos[d] - p->getX()[d]);
+	}
+	distance = sqrt(distance);
 
-    return distance <= midPointEdgeRange + rCut;
+	return distance <= midPointEdgeRange + rCut;
 }
 
 int LinkedCellContainer::index(const std::array<int, 3> &currentIndexes) const {
-    return currentIndexes[0] + dim[0] * (currentIndexes[1] + dim[1] * currentIndexes[2]);
+	return currentIndexes[0] + dim[0] * (currentIndexes[1] + dim[1] * currentIndexes[2]);
 }

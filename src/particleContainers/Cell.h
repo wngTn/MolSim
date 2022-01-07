@@ -75,22 +75,29 @@ struct Cell {
 
     void setIndex(const std::array<int, 3> &indexV);
 
-    [[nodiscard]] const std::vector<std::array<int, 3>> &getNeighbors2D() const;
-
-    void setNeighbors2D(const std::vector<std::array<int, 3>> &neighbors2DV);
-
-    [[nodiscard]] const std::vector<std::array<int, 3>> &getNeighbors3D() const;
-
-    void setNeighbors3D(const std::vector<std::array<int, 3>> &neighbors3DV);
-
     void setNeighbors2D();
 
     void setNeighbors3D();
 
-    [[nodiscard]] bool isBorderCell1() const;
+	void setAllNeighbors2D();
 
-    void setIsBorderCell(bool isBorderCell);
+	void setAllNeighbors3D();
 
+	[[nodiscard]] const std::vector<std::array<int, 3>> &getNeighbors2D() const;
+
+	void setNeighbors2D1(const std::vector<std::array<int, 3>> &neighbors_2_d);
+
+	[[nodiscard]] const std::vector<std::array<int, 3>> &getNeighbors3D() const;
+
+	void setNeighbors3D1(const std::vector<std::array<int, 3>> &neighbors_3_d);
+
+	[[nodiscard]] bool isBorderCell1() const;
+
+	void setIsBorderCell(bool is_border_cell);
+
+	const std::vector<std::array<int, 3>> &getAllNeighbors2D() const;
+
+	const std::vector<std::array<int, 3>> &getAllNeighbors3D() const;
 
 private:
 
@@ -107,12 +114,20 @@ private:
     /**
      * The 2D neighbors of this cell
      */
-    std::vector<std::array<int, 3>> neighbors2D{};
+    std::vector<std::array<int, 3>> neighbors2D;
 
     /**
      * The 3D neighbors of this cell
      */
-    std::vector<std::array<int, 3>> neighbors3D{};
+    std::vector<std::array<int, 3>> neighbors3D;
+
+	std::vector<std::array<int, 3>> allNeighbors2D;
+
+	/**
+ * The 3D neighbors of this cell
+ */
+	std::vector<std::array<int, 3>> allNeighbors3D;
+
 
     bool isBorderCell{};
 

@@ -158,7 +158,7 @@ void LinkedCell::moveParticles(LinkedCellContainer &grid) {
 }
 
 void LinkedCell::calcNeighbors(LinkedCellContainer &grid, const std::array<int, 3> &neighbors,
-                               Particle *p) {
+                               Particle *p, bool newton) {
     // Loops through every particle of the neighbor
     for (auto &p_other : grid.grid[grid.index(neighbors)]) {
         if (p->immovable && p_other->immovable) continue;
@@ -168,14 +168,14 @@ void LinkedCell::calcNeighbors(LinkedCellContainer &grid, const std::array<int, 
         }
         if (!membrane || !p->membrane || !p_other->membrane) {
             if (sqrd_dist <= LinkedCell::sqr(rCut)) {
-                LinkedCell::ljforce(p, p_other, sqrd_dist);
+                LinkedCell::ljforce(p, p_other, sqrd_dist, newton);
             }
         } else {
             if (sqrd_dist <= sqr(SIXTH_ROOT_OF_TWO * sigmaTable[p_other->getSEIndex()][p->getSEIndex()])) {
-                LinkedCell::ljforce(p, p_other, sqrd_dist);
+                LinkedCell::ljforce(p, p_other, sqrd_dist, newton);
             }
             if (gridNeighbors(p->getGridIndex(), p_other->getGridIndex())) {
-                LinkedCell::harmonic_potential(p, p_other, sqrd_dist);
+                LinkedCell::harmonic_potential(p, p_other, sqrd_dist, newton);
             }
         }
     }
@@ -243,7 +243,7 @@ void LinkedCell::reflectiveBoundary(LinkedCellContainer &grid, const std::array<
 }
 
 void LinkedCell::calcPerNeighbors(LinkedCellContainer &grid, const std::array<int, 3> &neighbors, Particle *p,
-                                  const std::array<double, 3> &mirror) const {
+                                  const std::array<double, 3> &mirror, bool newton) const {
     if (p->immovable) return;
     // Loop through the neighbors
     for (auto &p_other : grid.grid[grid.index(neighbors)]) {
@@ -264,10 +264,102 @@ void LinkedCell::calcPerNeighbors(LinkedCellContainer &grid, const std::array<in
                 auto force = f * (mirroredX - p->getX());
 
                 p->setF(p->getF() + force);
-                p_other->setF(p_other->getF() - force);
+                if (newton) {
+	                p_other->setF(p_other->getF() - force);
+				}
             }
         }
     }
+}
+
+void LinkedCell::calcFCellSubdomain(Cell &curCell,
+                                    LinkedCellContainer &grid,
+                                    const LinkedCellContainer::SubDomain &subDomain, bool isFirst) {
+	for (auto &p : curCell) {
+		// get all the neighbors
+
+		for (const std::array<int, 3> &neighbors :
+			(isFirst ? (grid.is2D() ? curCell.getNeighbors2D() : curCell.getNeighbors3D()) :
+			 (grid.is2D() ? curCell.getAllNeighbors2D() : curCell.getAllNeighbors3D()))) {
+
+			// The neighbor is still not in the subdomain
+			if ((subDomain.isInSubdomain(neighbors) && isFirst)) {
+				// Neighbor should be existing
+				if (neighbors[0] < grid.getDim()[0] && neighbors[1] < grid.getDim()[1] &&
+					neighbors[2] < grid.getDim()[2] && neighbors[0] >= 0 && neighbors[1] >= 0 &&
+					neighbors[2] >= 0) {
+					// Does not bring too much performance benefits
+					//if (grid.isNeighborInRange(p, neighbors)) {
+					calcNeighbors(grid, neighbors, p);
+					//}
+				}
+					// Else it is a neighbor out of boundary
+				else if (grid.isPeriodic(neighbors)) {
+					// neighbor on the other side
+					std::array<int, 3> neigh{};
+
+					neigh = (neighbors + grid.getDim()) % grid.getDim();
+
+					// the mirror we are adding so that the particle gets mirrored
+					std::array<double, 3> mirror{};
+					mirror = {
+						neighbors[0] == -1 ? -grid.getLenDim()[0] : // From left to right
+						neighbors[0] == grid.getDim()[0]  && grid.getDim()[0] != 1
+						? grid.getLenDim()[0] : 0.0, // From right to left
+						neighbors[1] == -1 ? -grid.getLenDim()[1]  :
+						neighbors[1] == grid.getDim()[1] && grid.getDim()[1] != 1
+						? grid.getLenDim()[1] : 0.0,
+						neighbors[2] == -1 ? -grid.getLenDim()[2]  :
+						neighbors[2] == grid.getDim()[2] && grid.getDim()[2] != 1
+						? grid.getLenDim()[2] : 0.0};
+					LinkedCell::calcPerNeighbors(grid, neigh, p, mirror);
+				}
+			}
+
+			else if (!subDomain.isInSubdomain(neighbors)) {
+				// Neighbor should be existing
+				if (neighbors[0] < grid.getDim()[0] && neighbors[1] < grid.getDim()[1] &&
+					neighbors[2] < grid.getDim()[2] && neighbors[0] >= 0 && neighbors[1] >= 0 &&
+					neighbors[2] >= 0) {
+					// Does not bring too much performance benefits
+					//if (grid.isNeighborInRange(p, neighbors)) {
+					calcNeighbors(grid, neighbors, p, false);
+					//}
+				}
+					// Else it is a neighbor out of boundary
+				else if (grid.isPeriodic(neighbors)) {
+					// neighbor on the other side
+					std::array<int, 3> neigh{};
+
+					neigh = (neighbors + grid.getDim()) % grid.getDim();
+
+					// the mirror we are adding so that the particle gets mirrored
+					std::array<double, 3> mirror{};
+					mirror = {
+						neighbors[0] == -1 ? -grid.getLenDim()[0] : // From left to right
+						neighbors[0] == grid.getDim()[0]  && grid.getDim()[0] != 1
+						? grid.getLenDim()[0] : 0.0, // From right to left
+						neighbors[1] == -1 ? -grid.getLenDim()[1]  :
+						neighbors[1] == grid.getDim()[1] && grid.getDim()[1] != 1
+						? grid.getLenDim()[1] : 0.0,
+						neighbors[2] == -1 ? -grid.getLenDim()[2]  :
+						neighbors[2] == grid.getDim()[2] && grid.getDim()[2] != 1
+						? grid.getLenDim()[2] : 0.0};
+					LinkedCell::calcPerNeighbors(grid, neigh, p, mirror, false);
+				}
+			}
+		}
+	}
+
+	if (isFirst) {
+		// Calculates the forces within a cell
+		calcFWithinCell(curCell);
+		auto currentIndexes = curCell.getIndex();
+		// checks if it is a border cell, if yes also calculate border forces
+		if (curCell.isBorderCell1()) {
+			reflectiveBoundary(grid, currentIndexes);
+		}
+	}
 }
 
 void LinkedCell::calcFCell(Cell &curCell, LinkedCellContainer &grid) {
@@ -322,8 +414,9 @@ void LinkedCell::calcFCell(Cell &curCell, LinkedCellContainer &grid) {
 void LinkedCell::calcF(ParticleContainer &container) {
     auto &grid = static_cast<LinkedCellContainer &>(container);
     switch (grid.getStrategy()) {
-        case LinkedCellContainer::primitive:
-        case LinkedCellContainer::primitiveFit :
+        case LinkedCellContainer::primitiveX:
+        case LinkedCellContainer::primitiveY:
+		case LinkedCellContainer::primitiveZ:
 #pragma omp parallel shared(grid) default(none)
         {
 #pragma omp for schedule(dynamic)
@@ -352,8 +445,29 @@ void LinkedCell::calcF(ParticleContainer &container) {
                 }
             };
             };
+		break;
 
-            break;
+		case LinkedCellContainer::subDomain:
+#pragma omp parallel shared(grid) default(none)
+	    {
+#pragma omp for schedule(dynamic)
+			for (auto & subDomain : grid.getSubDomainVector()) {
+#pragma omp task shared(grid, subDomain) default(none)
+			    for (int pos : subDomain.getCellIndices()) {
+				    if (!grid.grid[pos].getParticles().empty()) {
+					    calcFCell(grid.grid[pos], grid);
+				    }
+				}
+#pragma omp task shared(grid, subDomain) default(none)
+				for (int pos : subDomain.getBorderCellIndices()) {
+					if (!grid.grid[pos].getParticles().empty()) {
+						calcFCellSubdomain(grid.grid[pos], grid, subDomain, true);
+						calcFCellSubdomain(grid.grid[pos], grid, subDomain, false);
+					}
+				}
+		    }
+		};
+		break;
 
         case LinkedCellContainer::naught:
             for (auto &curCell : grid.grid) {
@@ -363,7 +477,7 @@ void LinkedCell::calcF(ParticleContainer &container) {
     }
 }
 
-void LinkedCell::harmonic_potential(Particle *p1, Particle *p2, double sqrd_dist) const {
+void LinkedCell::harmonic_potential(Particle *p1, Particle *p2, double sqrd_dist, bool newton) const {
     double factor = SQR_ROOT_OF_TWO;
     double distance = sqrt(sqrd_dist);
     // if orthogonal neighbors
@@ -373,8 +487,9 @@ void LinkedCell::harmonic_potential(Particle *p1, Particle *p2, double sqrd_dist
     }
     auto f = stiffnessConstant * (distance - factor * rZero) * (1. / distance) * (p2->getX() - p1->getX());
     p1->setF(p1->getF() + f);
-    p2->setF(p2->getF() - f);
-
+	if (newton) {
+		p2->setF(p2->getF() - f);
+	}
 }
 
 bool LinkedCell::gridNeighbors(const std::array<int, 3> & index1, const std::array<int, 3> & index2) {
