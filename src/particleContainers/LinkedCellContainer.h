@@ -96,7 +96,7 @@ public:
 	                    std::array<Border, 6> borderV = std::array<Border, 6>{
 		                    outflow, outflow, outflow, outflow, outflow, outflow},
 	                    double g = 0,
-	                    Strategy strategy = subDomain);
+	                    Strategy strategy = primitiveY);
 
 	/**
 	 * Default constructor

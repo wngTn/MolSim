@@ -49,8 +49,7 @@ namespace calculator {
          */
         void calcFWithinCell(Cell & cell);
 
-		void calcFCellSubdomain(Cell &curCell, LinkedCellContainer &grid, const LinkedCellContainer::SubDomain & subDomain
-		, bool isFirst);
+		void calcFCellSubdomain(Cell &curCell, LinkedCellContainer &grid, const LinkedCellContainer::SubDomain & subDomain);
 
 
         void setSigmaTable(const std::vector<std::vector<double>> &sigmaTable);
