@@ -65,6 +65,8 @@ namespace calculator {
 
         void setMembrane(bool mem);
 
+	    void calcFInCell(LinkedCellContainer & grid, Particle * p, const std::array<int, 3> & neighbor, bool newton);
+
     private:
 
         inline void ljforce(Particle* p1, Particle* p2, double sqrd_dist, bool newton = true) const;
@@ -135,7 +137,6 @@ namespace calculator {
 			p2->setF(p2->getF() - force);
 		}
     }
-
 
 constexpr double SIXTH_ROOT_OF_TWO = 1.12246204830937298;
     constexpr double SQR_ROOT_OF_TWO = 1.4142135623730950488;

@@ -272,6 +272,40 @@ void LinkedCell::calcPerNeighbors(LinkedCellContainer &grid, const std::array<in
     }
 }
 
+void LinkedCell::calcFInCell(LinkedCellContainer &grid, Particle * p, const std::array<int, 3> & neighbor, bool newton) {
+
+	// Neighbor should be existing
+	if (neighbor[0] < grid.getDim()[0] && neighbor[1] < grid.getDim()[1] &&
+		neighbor[2] < grid.getDim()[2] && neighbor[0] >= 0 && neighbor[1] >= 0 &&
+		neighbor[2] >= 0) {
+		// Does not bring too much performance benefits
+		//if (grid.isNeighborInRange(p, neighbor)) {
+		calcNeighbors(grid, neighbor, p, newton);
+		//}
+	}
+		// Else it is a neighbor out of boundary
+	else if (grid.isPeriodic(neighbor)) {
+		// neighbor on the other side
+		std::array<int, 3> neigh{};
+
+		neigh = (neighbor + grid.getDim()) % grid.getDim();
+
+		// the mirror we are adding so that the particle gets mirrored
+		std::array<double, 3> mirror{};
+		mirror = {
+			neighbor[0] == -1 ? -grid.getLenDim()[0] : // From left to right
+			neighbor[0] == grid.getDim()[0] && grid.getDim()[0] != 1
+			? grid.getLenDim()[0] : 0.0, // From right to left
+			neighbor[1] == -1 ? -grid.getLenDim()[1] :
+			neighbor[1] == grid.getDim()[1] && grid.getDim()[1] != 1
+			? grid.getLenDim()[1] : 0.0,
+			neighbor[2] == -1 ? -grid.getLenDim()[2] :
+			neighbor[2] == grid.getDim()[2] && grid.getDim()[2] != 1
+			? grid.getLenDim()[2] : 0.0};
+		LinkedCell::calcPerNeighbors(grid, neigh, p, mirror, newton);
+	}
+}
+
 void LinkedCell::calcFCellSubdomain(Cell &curCell,
                                     LinkedCellContainer &grid,
                                     const LinkedCellContainer::SubDomain &subDomain, bool isFirst) {
@@ -284,69 +318,11 @@ void LinkedCell::calcFCellSubdomain(Cell &curCell,
 
 			// The neighbor is still not in the subdomain
 			if ((subDomain.isInSubdomain(neighbors) && isFirst)) {
-				// Neighbor should be existing
-				if (neighbors[0] < grid.getDim()[0] && neighbors[1] < grid.getDim()[1] &&
-					neighbors[2] < grid.getDim()[2] && neighbors[0] >= 0 && neighbors[1] >= 0 &&
-					neighbors[2] >= 0) {
-					// Does not bring too much performance benefits
-					//if (grid.isNeighborInRange(p, neighbors)) {
-					calcNeighbors(grid, neighbors, p);
-					//}
-				}
-					// Else it is a neighbor out of boundary
-				else if (grid.isPeriodic(neighbors)) {
-					// neighbor on the other side
-					std::array<int, 3> neigh{};
-
-					neigh = (neighbors + grid.getDim()) % grid.getDim();
-
-					// the mirror we are adding so that the particle gets mirrored
-					std::array<double, 3> mirror{};
-					mirror = {
-						neighbors[0] == -1 ? -grid.getLenDim()[0] : // From left to right
-						neighbors[0] == grid.getDim()[0]  && grid.getDim()[0] != 1
-						? grid.getLenDim()[0] : 0.0, // From right to left
-						neighbors[1] == -1 ? -grid.getLenDim()[1]  :
-						neighbors[1] == grid.getDim()[1] && grid.getDim()[1] != 1
-						? grid.getLenDim()[1] : 0.0,
-						neighbors[2] == -1 ? -grid.getLenDim()[2]  :
-						neighbors[2] == grid.getDim()[2] && grid.getDim()[2] != 1
-						? grid.getLenDim()[2] : 0.0};
-					LinkedCell::calcPerNeighbors(grid, neigh, p, mirror);
-				}
+				calcFInCell(grid, p, neighbors, true);
 			}
 
 			else if (!subDomain.isInSubdomain(neighbors)) {
-				// Neighbor should be existing
-				if (neighbors[0] < grid.getDim()[0] && neighbors[1] < grid.getDim()[1] &&
-					neighbors[2] < grid.getDim()[2] && neighbors[0] >= 0 && neighbors[1] >= 0 &&
-					neighbors[2] >= 0) {
-					// Does not bring too much performance benefits
-					//if (grid.isNeighborInRange(p, neighbors)) {
-					calcNeighbors(grid, neighbors, p, false);
-					//}
-				}
-					// Else it is a neighbor out of boundary
-				else if (grid.isPeriodic(neighbors)) {
-					// neighbor on the other side
-					std::array<int, 3> neigh{};
-
-					neigh = (neighbors + grid.getDim()) % grid.getDim();
-
-					// the mirror we are adding so that the particle gets mirrored
-					std::array<double, 3> mirror{};
-					mirror = {
-						neighbors[0] == -1 ? -grid.getLenDim()[0] : // From left to right
-						neighbors[0] == grid.getDim()[0]  && grid.getDim()[0] != 1
-						? grid.getLenDim()[0] : 0.0, // From right to left
-						neighbors[1] == -1 ? -grid.getLenDim()[1]  :
-						neighbors[1] == grid.getDim()[1] && grid.getDim()[1] != 1
-						? grid.getLenDim()[1] : 0.0,
-						neighbors[2] == -1 ? -grid.getLenDim()[2]  :
-						neighbors[2] == grid.getDim()[2] && grid.getDim()[2] != 1
-						? grid.getLenDim()[2] : 0.0};
-					LinkedCell::calcPerNeighbors(grid, neigh, p, mirror, false);
-				}
+				calcFInCell(grid, p, neighbors, false);
 			}
 		}
 	}
@@ -368,37 +344,7 @@ void LinkedCell::calcFCell(Cell &curCell, LinkedCellContainer &grid) {
 
         for (const std::array<int, 3> &neighbors :
             (grid.is2D() ? curCell.getNeighbors2D() : curCell.getNeighbors3D())) {
-
-            // Neighbor should be existing
-            if (neighbors[0] < grid.getDim()[0] && neighbors[1] < grid.getDim()[1] &&
-                neighbors[2] < grid.getDim()[2] && neighbors[0] >= 0 && neighbors[1] >= 0 &&
-                neighbors[2] >= 0) {
-                // Does not bring too much performance benefits
-                //if (grid.isNeighborInRange(p, neighbors)) {
-                calcNeighbors(grid, neighbors, p);
-                //}
-            }
-                // Else it is a neighbor out of boundary
-            else if (grid.isPeriodic(neighbors)) {
-                // neighbor on the other side
-                std::array<int, 3> neigh{};
-
-                neigh = (neighbors + grid.getDim()) % grid.getDim();
-
-                // the mirror we are adding so that the particle gets mirrored
-                std::array<double, 3> mirror{};
-                mirror = {
-                    neighbors[0] == -1 ? -grid.getLenDim()[0] : // From left to right
-                    neighbors[0] == grid.getDim()[0]  && grid.getDim()[0] != 1
-                    ? grid.getLenDim()[0] : 0.0, // From right to left
-                    neighbors[1] == -1 ? -grid.getLenDim()[1]  :
-                    neighbors[1] == grid.getDim()[1] && grid.getDim()[1] != 1
-                    ? grid.getLenDim()[1] : 0.0,
-                    neighbors[2] == -1 ? -grid.getLenDim()[2]  :
-                    neighbors[2] == grid.getDim()[2] && grid.getDim()[2] != 1
-                    ? grid.getLenDim()[2] : 0.0};
-                LinkedCell::calcPerNeighbors(grid, neigh, p, mirror);
-            }
+	        calcFInCell(grid, p, neighbors, true);
         }
     }
 
