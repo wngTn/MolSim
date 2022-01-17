@@ -75,9 +75,15 @@ struct Cell {
 
     void setIndex(const std::array<int, 3> &indexV);
 
-    void setNeighbors2D();
+	void setNeighbors2DInX();
 
-    void setNeighbors3D();
+	void setNeighbors3DInX();
+
+    void setNeighbors2DInY();
+
+    void setNeighbors3DInY();
+
+	void setNeighbors3DInZ();
 
 	void setAllNeighbors2D();
 
@@ -95,9 +101,9 @@ struct Cell {
 
 	void setIsBorderCell(bool is_border_cell);
 
-	const std::vector<std::array<int, 3>> &getAllNeighbors2D() const;
+	[[nodiscard]] const std::vector<std::array<int, 3>> &getAllNeighbors2D() const;
 
-	const std::vector<std::array<int, 3>> &getAllNeighbors3D() const;
+	[[nodiscard]] const std::vector<std::array<int, 3>> &getAllNeighbors3D() const;
 
 private:
 

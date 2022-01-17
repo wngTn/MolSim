@@ -26,11 +26,31 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
 			for (currentIndexes[0] = 0; currentIndexes[0] < dim[0]; ++currentIndexes[0]) {
 				grid[i].setIndex(currentIndexes);
 				if (is2D()) {
-					grid[i].setNeighbors2D();
+					switch (strategy) {
+						case primitiveX:
+							grid[i].setNeighbors2DInX();
+							break;
+						default:
+							grid[i].setNeighbors2DInY();
+							break;
+					}
 					grid[i].setIsBorderCell(currentIndexes[0] == 0 || currentIndexes[0] == dim[0] - 1 ||
 						currentIndexes[1] == 0 || currentIndexes[1] == dim[1] - 1);
 				} else {
-					grid[i].setNeighbors3D();
+					switch (strategy) {
+						case primitiveX:
+							grid[i].setNeighbors3DInX();
+							break;
+						case primitiveY:
+							grid[i].setNeighbors3DInY();
+							break;
+						case primitiveZ:
+							grid[i].setNeighbors3DInZ();
+							break;
+						default:
+							grid[i].setNeighbors3DInY();
+							break;
+					}
 					grid[i].setIsBorderCell(currentIndexes[0] == 0 || currentIndexes[0] == dim[0] - 1 ||
 						currentIndexes[1] == 0 || currentIndexes[1] == dim[1] - 1 ||
 						currentIndexes[2] == 0 || currentIndexes[2] == dim[2] - 1);

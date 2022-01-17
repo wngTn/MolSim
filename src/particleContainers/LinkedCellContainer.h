@@ -43,7 +43,7 @@ public:
 
 		[[nodiscard]] bool isInSubdomain(const std::array<int, 3> & currentIndex) const;
 
-		const std::vector<int> &getBorderCellIndices() const;
+		[[nodiscard]] const std::vector<int> &getBorderCellIndices() const;
 
 	private:
 		/**
@@ -96,7 +96,7 @@ public:
 	                    std::array<Border, 6> borderV = std::array<Border, 6>{
 		                    outflow, outflow, outflow, outflow, outflow, outflow},
 	                    double g = 0,
-	                    Strategy strategy = primitiveY);
+	                    Strategy strategy = primitiveX);
 
 	/**
 	 * Default constructor
