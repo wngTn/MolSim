@@ -289,7 +289,7 @@ void MainUtils::parseXML(Config& config) {
 void MainUtils::printConfig(Config& config) {
     std::stringstream s;
     s << "Your configurations are:" << std::endl;
-    s << "\u001b[36m\tParallelization:\u001b[0m\t ";
+    s << "\u001b[36m\tParallelization:\u001b[0m ";
     switch(config.parallelization_strategy){
         case LinkedCellContainer::naught:
             s << "none" << std::endl;
@@ -302,7 +302,7 @@ void MainUtils::printConfig(Config& config) {
             break;
     }
     if(!config.xml_file.empty()){
-        s << "\u001b[36m\tXML File:\u001b[0m\t " << config.xml_file << std::endl;
+        s << "\u001b[36m\tXML File:\u001b[0m " << config.xml_file << std::endl;
     }
     if(!config.filename.empty()){
        s << "\u001b[36m\tFilenames:\u001b[0m ";
@@ -355,6 +355,20 @@ void MainUtils::printConfig(Config& config) {
         }
         s << std::endl;
     }
+    if(config.useStatistics){
+        s << "\u001b[36m\tStatistics ";
+        switch(config.statsType){
+            case StatisticsLogger::densityVelocityProfile:
+                s << "(DensityVelocityProfile):\u001b[0m ";
+                break;
+            case StatisticsLogger::thermodynamic:
+                s << "(Thermodynamic):\u001b[0m ";
+                break;
+            default:
+                s<<"\u001b[0m ";
+        }
+        s << " nStatistics: " << config.statsFrequency << ", file: " << config.statsFile << std::endl;
+    }
     s << "\u001b[36m\tWriter:\u001b[0m ";
     switch (config.io_type) {
         case IOWriter::vtk:
@@ -381,6 +395,47 @@ void MainUtils::initializeLogger() {
     auto logger = spdlog::basic_logger_mt("molsim_logger", "./logs/molsim.log");
     spdlog::set_default_logger(logger);
     spdlog::set_level(spdlog::level::off);
+}
+
+// needs to be called after initializeParticles()
+void MainUtils::validateInput(Config &config, ParticleContainer &particles) {
+    bool abort = false;
+    if(config.start_time >= config.end_time){
+        std::cerr << "\u001b[31mInvalid start_time or end_time\u001b[0m" << std::endl;
+        abort = true;
+    }
+    if(config.xml_file.empty() && config.filename.empty() && config.generator_files.empty() && !config.randomGen){
+        std::cerr << "\u001b[31mPlease specify some input. Use -x to choose a XML file\u001b[0m" << std::endl;
+        abort = true;
+    }
+    if(config.linkedCell){
+        for(auto &p : particles){
+            if(p.getX()[0] < 0 || p.getX()[0] > config.linkedCellSize[0] ||
+               p.getX()[1] < 0 || p.getX()[1] > config.linkedCellSize[1] ||
+               p.getX()[2] < 0 || p.getX()[2] > config.linkedCellSize[2]){
+                std::cout << "\u001b[31mParticle at " << p.getX() << " out of linked cell domain bounds (" << config.linkedCellSize << ")\u001b[0m" << std::endl;
+                abort = true;
+                break;
+            }
+        }
+    }
+
+    if(abort){
+        std::cout << "\u001b[31mABORTING\u001b[0m" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    for (auto it = particles.pair_begin(); it != particles.pair_end(); ++it) {
+        auto[p1, p2] = *it;
+        double dist = ArrayUtils::L2Norm(p2.get().getX() - p1.get().getX());
+        // this is not accurate and i would need better understanding of physics to have a better value
+        if(dist < 0.5 * sigmaTable[p1.get().getSEIndex()][p2.get().getSEIndex()]){
+            std::cerr << "\u001b[31mDistance between two particles with types " << p1.get().getType() << " and "
+                        << p2.get().getType() << " is probably too low: " << dist << "\u001b[0m" << std::endl;
+            break;
+        }
+    }
+
 }
 
 

@@ -412,32 +412,32 @@ const std::vector<std::vector<int>> &LinkedCellContainer::getIndicesThreadVector
     return indicesThreadVector;
 }
 
-void LinkedCellContainer::setIndicesThreadVector(const std::vector<std::vector<int>> &indicesThreadVector) {
-    LinkedCellContainer::indicesThreadVector = indicesThreadVector;
+void LinkedCellContainer::setIndicesThreadVector(const std::vector<std::vector<int>> &vec) {
+    LinkedCellContainer::indicesThreadVector = vec;
 }
 
 int LinkedCellContainer::getThreadOffset() const {
     return threadOffset;
 }
 
-void LinkedCellContainer::setThreadOffset(int threadOffset) {
-    LinkedCellContainer::threadOffset = threadOffset;
+void LinkedCellContainer::setThreadOffset(int offset) {
+    LinkedCellContainer::threadOffset = offset;
 }
 
 const std::vector<int> &LinkedCellContainer::getResidualThreadVector() const {
     return residualThreadVector;
 }
 
-void LinkedCellContainer::setResidualThreadVector(const std::vector<int> &residualThreadVector) {
-    LinkedCellContainer::residualThreadVector = residualThreadVector;
+void LinkedCellContainer::setResidualThreadVector(const std::vector<int> &vec) {
+    LinkedCellContainer::residualThreadVector = vec;
 }
 
 LinkedCellContainer::Strategy LinkedCellContainer::getStrategy() const {
     return strategy;
 }
 
-void LinkedCellContainer::setStrategy(LinkedCellContainer::Strategy strategy) {
-    LinkedCellContainer::strategy = strategy;
+void LinkedCellContainer::setStrategy(LinkedCellContainer::Strategy s) {
+    LinkedCellContainer::strategy = s;
 }
 
 

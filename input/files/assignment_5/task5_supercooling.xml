@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<simulation t_end="100" delta_t="0.001" writeFrequency="100" outputWriter="vtk">
+<simulation t_end="100" delta_t="0.001" writeFrequency="100" outputWriter="vtk" parallelization="none">
     <container type="linkedcell">
         <rCut>2.3</rCut>
         <domainSizeX>9.2</domainSizeX>
@@ -25,10 +25,10 @@
         <nThermostat>25</nThermostat>
         <Tinit>3.0</Tinit>
         <Ttarget>0.02</Ttarget>
-        <deltaT>0.0025</deltaT>
+        <deltaTemp>0.0025</deltaTemp>
     </thermostat>
     <statistics type="thermodynamical">
-        <file>statistics.csv</file>
+        <file>task5_supercooling_statistics.csv</file>
         <frequency>1000</frequency>
         <deltaR>1</deltaR>
     </statistics>

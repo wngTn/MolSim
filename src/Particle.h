@@ -51,11 +51,20 @@ private:
     /**
      * original index of the particle in the grid generated. used for membranes
      */
-     std::array<int,3> gridIndex{};
+    std::array<int, 3> gridIndex{};
 
+    std::array<double, 3> oldX{};
+
+    bool passedPeriodicX = false;
+    bool passedPeriodicY = false;
+    bool passedPeriodicZ = false;
 
 public:
+    [[nodiscard]] bool isPassedPeriodicY() const;
 
+    [[nodiscard]] bool isPassedPeriodicX() const;
+
+    [[nodiscard]] bool isPassedPeriodicZ() const;
 
     /**
      * Whether this particle is still valid and should be printed/used for calculations
@@ -144,6 +153,10 @@ public:
 
     [[nodiscard]] const std::array<int,3> &getGridIndex() const;
 
+    [[nodiscard]] const std::array<double, 3> &getOldX() const;
+
+    void setPassedPeriodic(int d);
+
     void setMembrane(bool membrane);
 
     void setGridIndex(std::array<int,3>& index);
@@ -174,6 +187,8 @@ public:
      * @param x the new position vector
      */
     void setX(std::array<double, 3> x);
+
+    void setOldX(std::array<double, 3> x);
 
     /**
      * @param d: dimension

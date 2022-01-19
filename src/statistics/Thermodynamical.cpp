@@ -17,16 +17,37 @@ namespace statistics {
         f << "\n";
     }
 
-    double Thermodynamical::calculateDiffusion(ParticleContainer& particles){
-        if(particles.size() == 0){
+    double Thermodynamical::calculateDiffusion(ParticleContainer& container){
+        auto& particles = static_cast<LinkedCellContainer &>(container);
+        auto size = particles.size();
+        if(size == 0){
             return 0.;
         }
-
-        return -1;
+        double sum{};
+        for(auto& p : particles){
+            // used to correct for higher distances due to passing periodic boundaries
+            std::array<double,3> correction = {0.,0.,0.};
+            if(p.isPassedPeriodicX()){
+                p.setPassedPeriodic(0);
+                correction[0] = particles.getLenDim()[0];
+            }
+            if(p.isPassedPeriodicY()){
+                p.setPassedPeriodic(1);
+                correction[1] = particles.getLenDim()[1];
+            }
+            if(p.isPassedPeriodicZ()){
+                p.setPassedPeriodic(2);
+                correction[2] = particles.getLenDim()[2];
+            }
+            double dist = ArrayUtils::L2Norm((p.getX() - correction)  - p.getOldX());
+            sum += dist * dist;
+            p.setOldX(p.getX());
+        }
+        return sum/static_cast<double>(size);
     }
 
     void Thermodynamical::writeStatistics(ParticleContainer &container, int iteration) {
-        auto particles = static_cast<LinkedCellContainer &>(container);
+        auto& particles = static_cast<LinkedCellContainer &>(container);
 
         std::ofstream file{filename, std::ios::app};
         file << iteration << "," << calculateDiffusion(particles);

@@ -13,7 +13,7 @@ namespace calculator {
                     }
                     //LinkedCell::ljforce((*it), (*it2), sqrd_dist);
                     if(!membrane || !(*it)->membrane || !(*it2)->membrane){
-                        if (sqrd_dist <= LinkedCell::sqr(rCut) && !((*it)->immovable && (*it2)->immovable)) {
+                        if (sqrd_dist <= rCut*rCut && !((*it)->immovable && (*it2)->immovable)) {
                             if(smoothed){
                                 LinkedCell::ljforce_smoothed(*it, *it2, sqrd_dist);
                             }else{
@@ -78,6 +78,7 @@ namespace calculator {
                                              p->getX()[0], p->getX()[1], p->getX()[2],
                                              gridLC.getLenDim()[d] + p->getX()[d]);
                                 p->setX(d, gridLC.getLenDim()[d] + p->getX()[d]);
+                                p->setPassedPeriodic(d);
                             }
                         } else if (p->getX()[d] >= gridLC.getLenDim()[d]) {
                             // outflow, removing the particle
@@ -95,6 +96,7 @@ namespace calculator {
                                              p->getX()[0], p->getX()[1], p->getX()[2],
                                              p->getX()[d] - gridLC.getLenDim()[d]);
                                 p->setX(d, p->getX()[d] - gridLC.getLenDim()[d]);
+                                p->setPassedPeriodic(d);
                             }
                         }
                     }
@@ -357,7 +359,8 @@ namespace calculator {
     void LinkedCell::calcF(ParticleContainer &container) {
         auto &grid = static_cast<LinkedCellContainer &>(container);
         switch (grid.getStrategy()) {
-        case LinkedCellContainer::primitive: case LinkedCellContainer::primitiveFit :
+            case LinkedCellContainer::primitive:
+            case LinkedCellContainer::primitiveFit :
 #pragma omp parallel shared(grid) default(none)
             {
 #pragma omp for schedule(dynamic)

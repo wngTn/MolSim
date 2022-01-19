@@ -96,8 +96,8 @@ bool Cell::isBorderCell1() const {
     return isBorderCell;
 }
 
-void Cell::setIsBorderCell(bool isBorderCell) {
-    Cell::isBorderCell = isBorderCell;
+void Cell::setIsBorderCell(bool ibc) {
+    Cell::isBorderCell = ibc;
 }
 
 

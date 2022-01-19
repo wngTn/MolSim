@@ -72,6 +72,8 @@ struct MainUtils {
 
     static void printConfig(Config& config);
 
+    static void validateInput(Config& config, ParticleContainer &particles);
+
     static void initializeLogger();
 
 

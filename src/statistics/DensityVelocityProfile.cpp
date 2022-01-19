@@ -9,7 +9,7 @@
 
 namespace statistics {
 
-    DensityVelocityProfile::DensityVelocityProfile(std::string filename, int noBins) : filename(std::move(filename)),
+    DensityVelocityProfile::DensityVelocityProfile(std::string f, int noBins) : filename(std::move(f)),
                                                                                               noBins(noBins) {
         std::ofstream file{filename};
         file << "Iteration,Bin,Density,Velocity X,Velocity Y,Velocity Z\n";
@@ -18,7 +18,7 @@ namespace statistics {
 
     void DensityVelocityProfile::writeStatistics(ParticleContainer &container, int iteration) {
         // idk how this would work for DirectSum? dimensionLength with fixed values? idk
-        auto particles = static_cast<LinkedCellContainer &>(container);
+        auto& particles = static_cast<LinkedCellContainer &>(container);
 
         double totalSize = particles.getLenDim()[0];
         double binSize = totalSize / noBins;
@@ -40,11 +40,12 @@ namespace statistics {
                 binNumber++;
                 continue;
             }
+            // TODO do volume in particles/cubic unit?
             auto noParts = static_cast<double>(bin.size());
 
             auto totalVel = std::accumulate(bin.begin(), bin.end(), std::array<double, 3>{0., 0., 0.},
                                             [](auto acc, auto *p) { return p->getV() + acc; });
-            auto avgVel = std::array<double, 3>{1. / noParts, 1. / noParts, 1. / noParts} * totalVel;
+            auto avgVel = totalVel * std::array<double, 3>{1. / noParts, 1. / noParts, 1. / noParts};
 
             // TODO check if computing the correct thing?
             // currently density = number of particles in bin & velocity = totalVel/noParts for each dimension

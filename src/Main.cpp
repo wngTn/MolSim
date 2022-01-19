@@ -24,6 +24,8 @@ int main(int argc, char *argv[]) {
     Thermostat thermostat = MainUtils::get_thermostat(config);
     auto stats = MainUtils::get_statistics_logger(config);
 
+    MainUtils::validateInput(config, *particles);
+
     calc->setDim(config.DIM);
     calc->setDeltaT(config.delta_t);
 
@@ -73,8 +75,6 @@ int main(int argc, char *argv[]) {
         if(config.useThermostat && iteration % config.nThermostat == 0) { [[unlikely]]
             thermostat.applyTemperature(*particles);
         }
-
-        MainUtils::logParticle(*particles);
 
         iteration++;
 

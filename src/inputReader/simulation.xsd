@@ -68,6 +68,7 @@
             <xs:element minOccurs="0" name="n3" type="xs:int" />
             <xs:element minOccurs="0" name="radius" type="xs:int" />
             <xs:element minOccurs="0" maxOccurs="unbounded" name="special_particle" type="special_particle_t" />
+            <xs:element minOccurs="0" name="baseForce" type="array_float_3" />
         </xs:sequence>
         <xs:attribute name="type" type="geometric_t" use="required"/>
         <xs:attribute name="behaviour" type="behaviour_t" use="optional"/>
@@ -173,6 +174,8 @@
             <xs:element minOccurs="0" name="vel" type="array_float_3" />
             <xs:element minOccurs="0" name="mass" type="xs:decimal" />
         </xs:sequence>
+        <xs:attribute name="immovable" type="xs:boolean" use="optional"/>
+        <xs:attribute name="membrane" type="xs:boolean" use="optional"/>
     </xs:complexType>
 
     <!-- everything the simulation needs -->

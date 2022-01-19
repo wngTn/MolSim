@@ -2615,6 +2615,82 @@ class generator_info_t: public ::xml_schema::type
   //@}
 
   /**
+   * @name baseForce
+   *
+   * @brief Accessor and modifier functions for the %baseForce
+   * optional element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::array_float_3 baseForce_type;
+
+  /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< baseForce_type > baseForce_optional;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< baseForce_type, char > baseForce_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const baseForce_optional&
+  baseForce () const;
+
+  /**
+   * @brief Return a read-write reference to the element container.
+   *
+   * @return A reference to the optional container.
+   */
+  baseForce_optional&
+  baseForce ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  baseForce (const baseForce_type& x);
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  baseForce (const baseForce_optional& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  baseForce (::std::unique_ptr< baseForce_type > p);
+
+  //@}
+
+  /**
    * @name type
    *
    * @brief Accessor and modifier functions for the %type
@@ -2858,6 +2934,7 @@ class generator_info_t: public ::xml_schema::type
   n3_optional n3_;
   radius_optional radius_;
   special_particle_sequence special_particle_;
+  baseForce_optional baseForce_;
   ::xsd::cxx::tree::one< type_type > type_;
   behaviour_optional behaviour_;
 
@@ -6172,6 +6249,136 @@ class special_particle_t: public ::xml_schema::type
   //@}
 
   /**
+   * @name immovable
+   *
+   * @brief Accessor and modifier functions for the %immovable
+   * optional attribute.
+   */
+  //@{
+
+  /**
+   * @brief Attribute type.
+   */
+  typedef ::xml_schema::boolean immovable_type;
+
+  /**
+   * @brief Attribute optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< immovable_type > immovable_optional;
+
+  /**
+   * @brief Attribute traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< immovable_type, char > immovable_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the attribute
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const immovable_optional&
+  immovable () const;
+
+  /**
+   * @brief Return a read-write reference to the attribute container.
+   *
+   * @return A reference to the optional container.
+   */
+  immovable_optional&
+  immovable ();
+
+  /**
+   * @brief Set the attribute value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the attribute.
+   */
+  void
+  immovable (const immovable_type& x);
+
+  /**
+   * @brief Set the attribute value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the attribute.
+   * Otherwise the attribute container is set the 'not present' state.
+   */
+  void
+  immovable (const immovable_optional& x);
+
+  //@}
+
+  /**
+   * @name membrane
+   *
+   * @brief Accessor and modifier functions for the %membrane
+   * optional attribute.
+   */
+  //@{
+
+  /**
+   * @brief Attribute type.
+   */
+  typedef ::xml_schema::boolean membrane_type;
+
+  /**
+   * @brief Attribute optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< membrane_type > membrane_optional;
+
+  /**
+   * @brief Attribute traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< membrane_type, char > membrane_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the attribute
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const membrane_optional&
+  membrane () const;
+
+  /**
+   * @brief Return a read-write reference to the attribute container.
+   *
+   * @return A reference to the optional container.
+   */
+  membrane_optional&
+  membrane ();
+
+  /**
+   * @brief Set the attribute value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the attribute.
+   */
+  void
+  membrane (const membrane_type& x);
+
+  /**
+   * @brief Set the attribute value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the attribute.
+   * Otherwise the attribute container is set the 'not present' state.
+   */
+  void
+  membrane (const membrane_optional& x);
+
+  //@}
+
+  /**
    * @name Constructors
    */
   //@{
@@ -6266,6 +6473,8 @@ class special_particle_t: public ::xml_schema::type
   force_optional force_;
   vel_optional vel_;
   mass_optional mass_;
+  immovable_optional immovable_;
+  membrane_optional membrane_;
 
   //@endcond
 };

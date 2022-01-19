@@ -217,12 +217,18 @@ void XMLReader::insertGeneratorInfo(std::vector<ParticleGenerator::ShapeInfo>& g
         }
     }
 
+    if(info.baseForce().present()){
+        shapeInfo.baseForce = std::array<double,3>{info.baseForce()->x(),info.baseForce()->y(), info.baseForce()->z()};
+    }
+
     shapeInfo.specialParticles = {};
     for(auto& sp : info.special_particle()){
         auto pos = std::array<int,3>{sp.position().x(), sp.position().y(), sp.position().z()};
         auto vel = shapeInfo.vel;
         auto force = std::array<double,3>{0.,0.,0.};
         auto mass = shapeInfo.mass;
+        bool immovable = shapeInfo.behaviour == ParticleGenerator::immovable;
+        bool membrane = shapeInfo.behaviour == ParticleGenerator::membrane;
         if(sp.vel().present()){
             vel = {sp.vel()->x(),sp.vel()->y(),sp.vel()->z()};
         }
@@ -232,7 +238,13 @@ void XMLReader::insertGeneratorInfo(std::vector<ParticleGenerator::ShapeInfo>& g
         if(sp.mass().present()){
             mass = sp.mass().get();
         }
-        shapeInfo.specialParticles.emplace_back(pos,force,vel,mass);
+        if(sp.immovable().present()){
+            immovable = sp.immovable().get();
+        }
+        if(sp.membrane().present()){
+            membrane = sp.immovable().get();
+        }
+        shapeInfo.specialParticles.emplace_back(pos,force,vel,mass, immovable, membrane);
     }
 
     genInfos.push_back(shapeInfo);

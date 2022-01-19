@@ -713,6 +713,36 @@ special_particle (const special_particle_sequence& s)
   this->special_particle_ = s;
 }
 
+const generator_info_t::baseForce_optional& generator_info_t::
+baseForce () const
+{
+  return this->baseForce_;
+}
+
+generator_info_t::baseForce_optional& generator_info_t::
+baseForce ()
+{
+  return this->baseForce_;
+}
+
+void generator_info_t::
+baseForce (const baseForce_type& x)
+{
+  this->baseForce_.set (x);
+}
+
+void generator_info_t::
+baseForce (const baseForce_optional& x)
+{
+  this->baseForce_ = x;
+}
+
+void generator_info_t::
+baseForce (::std::unique_ptr< baseForce_type > x)
+{
+  this->baseForce_.set (std::move (x));
+}
+
 const generator_info_t::type_type& generator_info_t::
 type () const
 {
@@ -1785,6 +1815,54 @@ mass (const mass_optional& x)
   this->mass_ = x;
 }
 
+const special_particle_t::immovable_optional& special_particle_t::
+immovable () const
+{
+  return this->immovable_;
+}
+
+special_particle_t::immovable_optional& special_particle_t::
+immovable ()
+{
+  return this->immovable_;
+}
+
+void special_particle_t::
+immovable (const immovable_type& x)
+{
+  this->immovable_.set (x);
+}
+
+void special_particle_t::
+immovable (const immovable_optional& x)
+{
+  this->immovable_ = x;
+}
+
+const special_particle_t::membrane_optional& special_particle_t::
+membrane () const
+{
+  return this->membrane_;
+}
+
+special_particle_t::membrane_optional& special_particle_t::
+membrane ()
+{
+  return this->membrane_;
+}
+
+void special_particle_t::
+membrane (const membrane_type& x)
+{
+  this->membrane_.set (x);
+}
+
+void special_particle_t::
+membrane (const membrane_optional& x)
+{
+  this->membrane_ = x;
+}
+
 
 // simulation_t
 // 
@@ -2697,6 +2775,7 @@ generator_info_t (const x_type& x,
   n3_ (this),
   radius_ (this),
   special_particle_ (this),
+  baseForce_ (this),
   type_ (type, this),
   behaviour_ (this)
 {
@@ -2724,6 +2803,7 @@ generator_info_t (const generator_info_t& x,
   n3_ (x.n3_, f, this),
   radius_ (x.radius_, f, this),
   special_particle_ (x.special_particle_, f, this),
+  baseForce_ (x.baseForce_, f, this),
   type_ (x.type_, f, this),
   behaviour_ (x.behaviour_, f, this)
 {
@@ -2751,6 +2831,7 @@ generator_info_t (const ::xercesc::DOMElement& e,
   n3_ (this),
   radius_ (this),
   special_particle_ (this),
+  baseForce_ (this),
   type_ (this),
   behaviour_ (this)
 {
@@ -2958,6 +3039,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       continue;
     }
 
+    // baseForce
+    //
+    if (n.name () == "baseForce" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< baseForce_type > r (
+        baseForce_traits::create (i, f, this));
+
+      if (!this->baseForce_)
+      {
+        this->baseForce_.set (::std::move (r));
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -3102,6 +3197,7 @@ operator= (const generator_info_t& x)
     this->n3_ = x.n3_;
     this->radius_ = x.radius_;
     this->special_particle_ = x.special_particle_;
+    this->baseForce_ = x.baseForce_;
     this->type_ = x.type_;
     this->behaviour_ = x.behaviour_;
   }
@@ -4353,7 +4449,9 @@ special_particle_t (const position_type& position)
   position_ (position, this),
   force_ (this),
   vel_ (this),
-  mass_ (this)
+  mass_ (this),
+  immovable_ (this),
+  membrane_ (this)
 {
 }
 
@@ -4363,7 +4461,9 @@ special_particle_t (::std::unique_ptr< position_type > position)
   position_ (std::move (position), this),
   force_ (this),
   vel_ (this),
-  mass_ (this)
+  mass_ (this),
+  immovable_ (this),
+  membrane_ (this)
 {
 }
 
@@ -4375,7 +4475,9 @@ special_particle_t (const special_particle_t& x,
   position_ (x.position_, f, this),
   force_ (x.force_, f, this),
   vel_ (x.vel_, f, this),
-  mass_ (x.mass_, f, this)
+  mass_ (x.mass_, f, this),
+  immovable_ (x.immovable_, f, this),
+  membrane_ (x.membrane_, f, this)
 {
 }
 
@@ -4387,11 +4489,13 @@ special_particle_t (const ::xercesc::DOMElement& e,
   position_ (this),
   force_ (this),
   vel_ (this),
-  mass_ (this)
+  mass_ (this),
+  immovable_ (this),
+  membrane_ (this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
-    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, true);
     this->parse (p, f);
   }
 }
@@ -4468,6 +4572,25 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "position",
       "");
   }
+
+  while (p.more_attributes ())
+  {
+    const ::xercesc::DOMAttr& i (p.next_attribute ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    if (n.name () == "immovable" && n.namespace_ ().empty ())
+    {
+      this->immovable_.set (immovable_traits::create (i, f, this));
+      continue;
+    }
+
+    if (n.name () == "membrane" && n.namespace_ ().empty ())
+    {
+      this->membrane_.set (membrane_traits::create (i, f, this));
+      continue;
+    }
+  }
 }
 
 special_particle_t* special_particle_t::
@@ -4487,6 +4610,8 @@ operator= (const special_particle_t& x)
     this->force_ = x.force_;
     this->vel_ = x.vel_;
     this->mass_ = x.mass_;
+    this->immovable_ = x.immovable_;
+    this->membrane_ = x.membrane_;
   }
 
   return *this;
@@ -5508,6 +5633,18 @@ operator<< (::xercesc::DOMElement& e, const generator_info_t& i)
     s << *b;
   }
 
+  // baseForce
+  //
+  if (i.baseForce ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "baseForce",
+        e));
+
+    s << *i.baseForce ();
+  }
+
   // type
   //
   {
@@ -6053,6 +6190,30 @@ operator<< (::xercesc::DOMElement& e, const special_particle_t& i)
         e));
 
     s << ::xml_schema::as_decimal(*i.mass ());
+  }
+
+  // immovable
+  //
+  if (i.immovable ())
+  {
+    ::xercesc::DOMAttr& a (
+      ::xsd::cxx::xml::dom::create_attribute (
+        "immovable",
+        e));
+
+    a << *i.immovable ();
+  }
+
+  // membrane
+  //
+  if (i.membrane ())
+  {
+    ::xercesc::DOMAttr& a (
+      ::xsd::cxx::xml::dom::create_attribute (
+        "membrane",
+        e));
+
+    a << *i.membrane ();
   }
 }
 
