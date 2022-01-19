@@ -2292,11 +2292,11 @@ _xsd_parallel_t_convert () const
   ::xsd::cxx::tree::enum_comparator< char > c (_xsd_parallel_t_literals_);
   const value* i (::std::lower_bound (
                     _xsd_parallel_t_indexes_,
-                    _xsd_parallel_t_indexes_ + 3,
+                    _xsd_parallel_t_indexes_ + 5,
                     *this,
                     c));
 
-  if (i == _xsd_parallel_t_indexes_ + 3 || _xsd_parallel_t_literals_[*i] != *this)
+  if (i == _xsd_parallel_t_indexes_ + 5 || _xsd_parallel_t_literals_[*i] != *this)
   {
     throw ::xsd::cxx::tree::unexpected_enumerator < char > (*this);
   }
@@ -2305,19 +2305,23 @@ _xsd_parallel_t_convert () const
 }
 
 const char* const parallel_t::
-_xsd_parallel_t_literals_[3] =
+_xsd_parallel_t_literals_[5] =
 {
-  "primitive_fit",
-  "primitive",
+  "primitiveX",
+  "primitiveY",
+  "primitiveZ",
+  "subdomain",
   "none"
 };
 
 const parallel_t::value parallel_t::
-_xsd_parallel_t_indexes_[3] =
+_xsd_parallel_t_indexes_[5] =
 {
   ::parallel_t::none,
-  ::parallel_t::primitive,
-  ::parallel_t::primitive_fit
+  ::parallel_t::primitiveX,
+  ::parallel_t::primitiveY,
+  ::parallel_t::primitiveZ,
+  ::parallel_t::subdomain
 };
 
 // geometric_t

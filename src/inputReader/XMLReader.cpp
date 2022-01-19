@@ -149,11 +149,17 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
 
     if(sim->parallelization().present()){
         switch(sim->parallelization().get()){
-            case parallel_t::primitive_fit:
-                info.parallelization_strat = LinkedCellContainer::primitiveFit;
+            case parallel_t::subdomain:
+                info.parallelization_strat = LinkedCellContainer::subDomain;
                 break;
-            case parallel_t::primitive:
-                info.parallelization_strat = LinkedCellContainer::primitive;
+            case parallel_t::primitiveX:
+                info.parallelization_strat = LinkedCellContainer::primitiveX;
+                break;
+            case parallel_t::primitiveY:
+                info.parallelization_strat = LinkedCellContainer::primitiveY;
+                break;
+            case parallel_t::primitiveZ:
+                info.parallelization_strat = LinkedCellContainer::primitiveZ;
                 break;
             case parallel_t::none:
                 info.parallelization_strat = LinkedCellContainer::naught;

@@ -662,8 +662,10 @@ class parallel_t: public ::xml_schema::string
    */
   enum value
   {
-    primitive_fit,
-    primitive,
+    primitiveX,
+    primitiveY,
+    primitiveZ,
+    subdomain,
     none
   };
 
@@ -789,8 +791,8 @@ class parallel_t: public ::xml_schema::string
   _xsd_parallel_t_convert () const;
 
   public:
-  static const char* const _xsd_parallel_t_literals_[3];
-  static const value _xsd_parallel_t_indexes_[3];
+  static const char* const _xsd_parallel_t_literals_[5];
+  static const value _xsd_parallel_t_indexes_[5];
 
   //@endcond
 };

@@ -95,8 +95,8 @@ public:
 	                    double rCutV,
 	                    std::array<Border, 6> borderV = std::array<Border, 6>{
 		                    outflow, outflow, outflow, outflow, outflow, outflow},
-                        std::array<double,3> g = 0,
-	                    Strategy strategy = primitiveX);
+                        std::array<double,3> g = std::array<double,3>{0.,0.,0.},
+	                    Strategy strategy = naught);
 
 	/**
 	 * Default constructor

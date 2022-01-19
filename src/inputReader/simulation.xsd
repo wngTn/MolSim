@@ -4,8 +4,10 @@
     <!-- enum type for choosing parallelization strategy allowed -->
     <xs:simpleType name="parallel_t">
         <xs:restriction base = "xs:string">
-            <xs:enumeration value="primitive_fit" />
-            <xs:enumeration value="primitive" />
+            <xs:enumeration value="primitiveX" />
+            <xs:enumeration value="primitiveY" />
+            <xs:enumeration value="primitiveZ" />
+            <xs:enumeration value="subdomain" />
             <xs:enumeration value="none" />
         </xs:restriction>
     </xs:simpleType>

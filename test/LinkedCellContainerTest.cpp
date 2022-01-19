@@ -312,7 +312,7 @@ TEST(LinkedCellContainer, SubDomainIndicesTest) {
 
 	omp_set_num_threads(3);
 	// max dimension is x
-	LinkedCellContainer linkedCellContainer1 = LinkedCellContainer{11, 5, 0, 1., bor, 0, LinkedCellContainer::Strategy::subDomain};
+	LinkedCellContainer linkedCellContainer1 = LinkedCellContainer{11, 5, 0, 1., bor, {0.,0.,0.}, LinkedCellContainer::Strategy::subDomain};
 	auto ref = std::vector<std::vector<int>>{
 		std::vector<int>{12, 23, 34},
 		std::vector<int>{15, 26, 37},

@@ -294,11 +294,17 @@ void MainUtils::printConfig(Config& config) {
         case LinkedCellContainer::naught:
             s << "none" << std::endl;
             break;
-        case LinkedCellContainer::primitive:
-            s << "primitive" << std::endl;
+        case LinkedCellContainer::primitiveX:
+            s << "primitiveX" << std::endl;
             break;
-        case LinkedCellContainer::primitiveFit:
-            s << "primitive fit" << std::endl;
+        case LinkedCellContainer::primitiveY:
+            s << "primitiveY" << std::endl;
+            break;
+        case LinkedCellContainer::primitiveZ:
+            s << "primitiveZ" << std::endl;
+            break;
+        case LinkedCellContainer::subDomain:
+            s << "subdomain" << std::endl;
             break;
     }
     if(!config.xml_file.empty()){
