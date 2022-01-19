@@ -78,6 +78,11 @@ int main(int argc, char *argv[]) {
 
         iteration++;
 
+        // Sorting makes things kinda worse
+//        if (iteration % config.writeFrequency == 0) {
+//          std::sort(particles->begin(), particles->end());
+//        }
+
         if (!config.benchmarking && iteration % config.writeFrequency == 0) [[unlikely]] {
             particles->cleanup();
             // setup after cleanup needed to validate pointers for calcX
