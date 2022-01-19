@@ -2,7 +2,10 @@
 
 #include <Particle.h>
 #include <particleContainers/LinkedCellContainer.h>
+#include <omp.h>
+
 #include "utils/ArrayUtils.h"
+
 
 /**
 * Simple test to check whether a particle will be added to the container
@@ -204,13 +207,13 @@ TEST(LinkedCellContainer, GetPerNeighborFunctionTest) {
 }
 
 /**
- * Tests whether the indices for the threads are calculated correctly
+ * Tests whether the indices for the threads are calculated correctly with the primitive strategy
  */
-TEST(LinkedCellContainer, IndicesThreadVectorTest) {
+TEST(LinkedCellContainer, IndicesThreadVectorPrimitiveStrategyTest) {
     std::array<LinkedCellContainer::Border, 6> bor{};
     bor.fill(LinkedCellContainer::periodic);
     // max dimension is x
-    LinkedCellContainer linkedCellContainer1 = LinkedCellContainer{4, 2, 2, 1., bor, {0,0,0}, LinkedCellContainer::Strategy::primitive};
+    LinkedCellContainer linkedCellContainer1 = LinkedCellContainer{4, 2, 2, 1., bor, {0,0,0}, LinkedCellContainer::Strategy::primitiveX};
     auto result = linkedCellContainer1.getIndicesThreadVector();
     auto ref1 = std::vector<int>{0, 4, 8, 12};
     auto ref2 = std::vector<int>{2, 6, 10, 14};
@@ -221,7 +224,7 @@ TEST(LinkedCellContainer, IndicesThreadVectorTest) {
     }
 
     // max dimension ix y
-    LinkedCellContainer linkedCellContainer2 = LinkedCellContainer{2, 4, 2, 1., bor, {0,0,0}, LinkedCellContainer::Strategy::primitive};
+    LinkedCellContainer linkedCellContainer2 = LinkedCellContainer{2, 4, 2, 1., bor, {0,0,0}, LinkedCellContainer::Strategy::primitiveY};
     result = linkedCellContainer2.getIndicesThreadVector();
     ref1 = std::vector<int>{0, 1, 8, 9};
     ref2 = std::vector<int>{4, 5, 12, 13};
@@ -232,7 +235,7 @@ TEST(LinkedCellContainer, IndicesThreadVectorTest) {
     }
 
     // max dimension is z
-    LinkedCellContainer linkedCellContainer3 = LinkedCellContainer{2, 2, 4, 1., bor, {0,0,0}, LinkedCellContainer::Strategy::primitive};
+    LinkedCellContainer linkedCellContainer3 = LinkedCellContainer{2, 2, 4, 1., bor, {0,0,0}, LinkedCellContainer::Strategy::primitiveZ};
     result = linkedCellContainer3.getIndicesThreadVector();
     ref1 = std::vector<int>{0, 1, 2, 3};
     ref2 = std::vector<int>{8, 9, 10, 11};
@@ -244,7 +247,7 @@ TEST(LinkedCellContainer, IndicesThreadVectorTest) {
 
     // Now in 2D
     // max dimension is x
-    LinkedCellContainer linkedCellContainer4 = LinkedCellContainer{4, 2, 1, 1., bor, {0,0,0}, LinkedCellContainer::Strategy::primitive};
+    LinkedCellContainer linkedCellContainer4 = LinkedCellContainer{4, 2, 1, 1., bor, {0,0,0}, LinkedCellContainer::Strategy::primitiveX};
     result = linkedCellContainer4.getIndicesThreadVector();
     ref1 = std::vector<int>{0, 4};
     ref2 = std::vector<int>{2, 6};
@@ -256,7 +259,7 @@ TEST(LinkedCellContainer, IndicesThreadVectorTest) {
 
     // Now in 2D
     // max dimension is y
-    LinkedCellContainer linkedCellContainer5 = LinkedCellContainer{2, 4, 1, 1., bor, {0,0,0}, LinkedCellContainer::Strategy::primitive};
+    LinkedCellContainer linkedCellContainer5 = LinkedCellContainer{2, 4, 1, 1., bor, {0,0,0}, LinkedCellContainer::Strategy::primitiveY};
     result = linkedCellContainer5.getIndicesThreadVector();
     ref1 = std::vector<int>{0, 1};
     ref2 = std::vector<int>{4, 5};
@@ -268,7 +271,7 @@ TEST(LinkedCellContainer, IndicesThreadVectorTest) {
     std::cout<<linkedCellContainer5.getResidualThreadVector()<<std::endl;
 
     // Uneven dimension
-    LinkedCellContainer linkedCellContainer6 = LinkedCellContainer{5, 2, 2, 1., bor, {0,0,0}, LinkedCellContainer::Strategy::primitive};
+    LinkedCellContainer linkedCellContainer6 = LinkedCellContainer{5, 2, 2, 1., bor, {0,0,0}, LinkedCellContainer::Strategy::primitiveX};
     result = linkedCellContainer6.getIndicesThreadVector();
     ref1 = std::vector<int>{0, 5, 10, 15};
     ref2 = std::vector<int>{2, 7, 12, 17};
@@ -281,20 +284,58 @@ TEST(LinkedCellContainer, IndicesThreadVectorTest) {
     ASSERT_TRUE(linkedCellContainer6.getResidualThreadVector() == ref1);
     std::cout<<linkedCellContainer6.getResidualThreadVector()<<std::endl;
 
-    // We use primitiveFit
-    LinkedCellContainer linkedCellContainer7 = LinkedCellContainer{5, 3, 4, 1., bor, {0,0,0}, LinkedCellContainer::Strategy::primitiveFit};
+
+    LinkedCellContainer linkedCellContainer7 = LinkedCellContainer{5, 3, 4, 1., bor, {0,0,0}, LinkedCellContainer::Strategy::primitiveZ};
     result = linkedCellContainer7.getIndicesThreadVector();
     ref1 = std::vector<int>{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
     ref2 = std::vector<int>{30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44};
+	for (const auto & v : result) {
+		std::cout<<v<<std::endl;
+	}
     ASSERT_TRUE(result[0] == ref1);
     ASSERT_TRUE(result[1] == ref2);
-    for (const auto & v : result) {
-        std::cout<<v<<std::endl;
-    }
 
-    LinkedCellContainer linkedCellContainer8 = LinkedCellContainer{120, 120, 13, 4., bor, {0,0,0}, LinkedCellContainer::Strategy::primitiveFit};
+
+    LinkedCellContainer linkedCellContainer8 = LinkedCellContainer{120, 120, 13, 4., bor, {0,0,0}, LinkedCellContainer::Strategy::primitiveZ};
     result = linkedCellContainer8.getIndicesThreadVector();
     for (const auto & v : result) {
         std::cout<<v<<std::endl;
     }
+}
+
+/**
+ * Tests whether the indices for the threads are calculated correctly with the subdomain strategy
+ */
+TEST(LinkedCellContainer, SubDomainIndicesTest) {
+	std::array<LinkedCellContainer::Border, 6> bor{};
+	bor.fill(LinkedCellContainer::periodic);
+
+	omp_set_num_threads(3);
+	// max dimension is x
+	LinkedCellContainer linkedCellContainer1 = LinkedCellContainer{11, 5, 0, 1., bor, 0, LinkedCellContainer::Strategy::subDomain};
+	auto ref = std::vector<std::vector<int>>{
+		std::vector<int>{12, 23, 34},
+		std::vector<int>{15, 26, 37},
+		std::vector<int>{18, 29, 40},
+		std::vector<int>{}
+	};
+
+	auto ref1 = std::vector<std::vector<int>> {
+		std::vector<int>{0, 1, 2, 11, 13, 22, 24, 33, 35, 44, 45, 46},
+		std::vector<int>{3, 4, 5, 14, 16, 25, 27, 36, 38, 47, 48, 49},
+		std::vector<int>{6, 7, 8, 17, 19, 28, 30, 39, 41, 50, 51, 52},
+		std::vector<int>{9, 10, 20, 21, 31, 32, 42, 43, 53, 54}
+	};
+
+//	for (int i = 0; i < linkedCellContainer1.getSubDomainVector().size(); ++i) {
+//		ASSERT_TRUE(ref[i] == linkedCellContainer1.getSubDomainVector()[i].getCellIndices());
+//		ASSERT_TRUE(ref1[i] == linkedCellContainer1.getSubDomainVector()[i].getBorderCellIndices());
+//	}
+
+	for(auto & e : linkedCellContainer1.getSubDomainVector()) {
+		std::cout<<e.getBorderCellIndices()<<std::endl;
+		std::cout<<e.getCellIndices()<<std::endl;
+	}
+
+
 }

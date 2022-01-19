@@ -1,29 +1,36 @@
 #include "Particle.h"
 
-#include <iostream>
-#include "utils/ArrayUtils.h"
 #include "spdlog/spdlog.h"
+#include "utils/ArrayUtils.h"
+#include <iostream>
 
-Particle::Particle() : se_index{0}, type{0}, f{std::array<double, 3>{}}, old_f(std::array<double, 3>{}), baseForce{0,0,0}, valid{true}, immovable{false}, membrane{false} {
+Particle::Particle()
+    : se_index{0}, type{0}, f{std::array<double, 3>{}},
+      old_f(std::array<double, 3>{}), baseForce{0, 0, 0}, valid{true},
+      immovable{false}, membrane{false} {
     spdlog::info("Particle generated with default constructor!");
 }
 
-
-Particle::Particle(int type_arg) : se_index{0}, type{type_arg}, f{std::array<double, 3>{}}, old_f(std::array<double, 3>{}), baseForce{0,0,0}, valid{true}, immovable{false}, membrane{false} {
+Particle::Particle(int type_arg)
+    : se_index{0}, type{type_arg}, f{std::array<double, 3>{}},
+      old_f(std::array<double, 3>{}), baseForce{0, 0, 0}, valid{true},
+      immovable{false}, membrane{false} {
     spdlog::info("Particle generated with type!");
 }
 
 Particle::Particle(std::array<double, 3> x_arg, std::array<double, 3> v_arg,
-                   double m_arg, int type_arg) : se_index{0}, type{type_arg}, f{std::array<double, 3>{}},
-                                                 old_f{std::array<double, 3>{}},
-                                                 x{x_arg}, v{v_arg}, m{m_arg},  baseForce{0,0,0}, valid{true}, immovable{false}, membrane{false} {
+                   double m_arg, int type_arg)
+    : se_index{0}, type{type_arg}, f{std::array<double, 3>{}},
+      old_f{std::array<double, 3>{}}, x{x_arg}, v{v_arg}, m{m_arg},
+      baseForce{0, 0, 0}, valid{true}, immovable{false}, membrane{false} {
     spdlog::info("Particle generated!");
 }
 
 Particle::Particle(std::array<double, 3> x_arg, std::array<double, 3> v_arg,
-                   double m_arg, int type_arg, int index) : se_index{index}, type{type_arg}, f{std::array<double, 3>{}},
-                                                 old_f{std::array<double, 3>{}},
-                                                 x{x_arg}, v{v_arg}, m{m_arg},  baseForce{0,0,0}, valid{true}, immovable{false}, membrane{false} {
+                   double m_arg, int type_arg, int index)
+    : se_index{index}, type{type_arg}, f{std::array<double, 3>{}},
+      old_f{std::array<double, 3>{}}, x{x_arg}, v{v_arg}, m{m_arg},
+      baseForce{0, 0, 0}, valid{true}, immovable{false}, membrane{false} {
     spdlog::info("Particle generated with se index!");
 }
 
@@ -99,20 +106,33 @@ Particle::~Particle() {
     spdlog::info("Particle destructed!");
 }
 
-const std::array<double, 3> &Particle::getX() const { return x; }
+const std::array<double, 3> &Particle::getX() const {
+    return x;
+}
 
-const std::array<double, 3> &Particle::getV() const { return v; }
+const std::array<double, 3> &Particle::getV() const {
+    return v;
+}
 
-const std::array<double, 3> &Particle::getF() const { return f; }
+const std::array<double, 3> &Particle::getF() const {
+    return f;
+}
 
-const std::array<double, 3> &Particle::getOldF() const { return old_f; }
+const std::array<double, 3> &Particle::getOldF() const {
+    return old_f;
+}
 
-double Particle::getM() const { return m; }
+double Particle::getM() const {
+    return m;
+}
 
-int Particle::getType() const { return type; }
+int Particle::getType() const {
+    return type;
+}
 
-
-int Particle::getSEIndex() const{ return se_index; }
+int Particle::getSEIndex() const {
+    return se_index;
+}
 
 const std::array<double, 3> &Particle::getOldX() const {
     return oldX;
@@ -143,14 +163,15 @@ void Particle::setF(int d, double val) {
 }
 
 void Particle::setF(std::array<double, 3> force) {
-    // branchless bc false=0,true=1 -> if immovable !true*f = 0*f and if not immovable !false*f=1*f
+    // branchless bc false=0,true=1 -> if immovable !true*f = 0*f and if not
+    // immovable !false*f=1*f
     // TODO check if faster than if/other methods
-    //f = force;
-    f = !immovable*force;
-     /*if(!immovable){
-        f = force;
-     }
-    */
+    // f = force;
+    f = !immovable * force;
+    /*if(!immovable){
+       f = force;
+    }
+   */
 }
 
 void Particle::setOldF(const std::array<double, 3> &val) {
@@ -174,28 +195,26 @@ std::string Particle::toString() const {
 
 bool Particle::operator==(Particle &other) {
     return (x == other.x) and (v == other.v) and (f == other.f) and
-           (type == other.type) and (m == other.m) and (old_f == other.old_f);
+        (type == other.type) and (m == other.m) and (old_f == other.old_f);
 }
 
 bool Particle::operator!=(Particle &other) {
     return !((*this) == other);
 }
 
-
 std::ostream &operator<<(std::ostream &stream, Particle &p) {
     stream << p.toString();
     return stream;
 }
 
-
-
-void to_json(nlohmann::json& j, const Particle& p){
+void to_json(nlohmann::json &j, const Particle &p) {
     j = nlohmann::json{{"type", p.getType()}, {"se_index", p.getSEIndex()},
-                       {"force", p.getF()}, {"oldForce", p.getOldF()}, {"pos",p.getX()},
-                       {"vel", p.getV()}, {"mass", p.getM()}};
+                       {"force", p.getF()}, {"oldForce", p.getOldF()},
+                       {"pos", p.getX()}, {"vel", p.getV()},
+                       {"mass", p.getM()}};
 }
 
-void from_json(const nlohmann::json&j, Particle& p){
+void from_json(const nlohmann::json &j, Particle &p) {
     j.at("type").get_to(p.type);
     j.at("se_index").get_to(p.se_index);
     j.at("force").get_to(p.f);
@@ -205,7 +224,7 @@ void from_json(const nlohmann::json&j, Particle& p){
     j.at("mass").get_to(p.m);
 }
 
-void Particle::setBaseForce(std::array<double, 3>& force) {
+void Particle::setBaseForce(std::array<double, 3> &force) {
     baseForce = force;
 }
 
@@ -250,4 +269,22 @@ bool Particle::isPassedPeriodicX() const {
 
 bool Particle::isPassedPeriodicZ() const {
     return passedPeriodicZ;
+}
+
+bool Particle::operator<(const Particle &other) noexcept {
+    if (this->x[2] < other.x[2]) {
+        return true;
+    } else if (this->x[2] > other.x[2]) {
+        return false;
+    }
+    if (this->x[1] < other.x[1]) {
+        return true;
+    } else if (this->x[1] > other.x[1]) {
+        return false;
+    }
+    if (this->x[0] < other.x[0]) {
+        return true;
+    } else {
+        return false;
+    }
 }

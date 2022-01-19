@@ -119,6 +119,8 @@ public:
      */
     Particle& operator=(Particle&& other) noexcept;
 
+    bool operator<(const Particle &other) noexcept;
+
     /**
      * @brief Overloaded constructor
      * @param x_arg position

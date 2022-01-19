@@ -50,6 +50,8 @@ namespace calculator {
          */
         void calcFWithinCell(Cell & cell);
 
+		void calcFCellSubdomain(Cell &curCell, LinkedCellContainer &grid, const LinkedCellContainer::SubDomain & subDomain);
+
 
         void setSigmaTable(const std::vector<std::vector<double>> &sigmaTable);
 
@@ -63,18 +65,20 @@ namespace calculator {
 
         void setMembrane(bool mem);
 
+	    void calcFInCell(LinkedCellContainer & grid, Particle * p, const std::array<int, 3> & neighbor, bool newton);
+
     private:
 
-        inline void ljforce(Particle* p1, Particle* p2, double sqrd_dist) const;
+        inline void ljforce(Particle* p1, Particle* p2, double sqrd_dist, bool newton = true) const;
 
         inline void ljforce_smoothed(Particle* p1, Particle* p2, double sqrd_dist) const;
 
-        void harmonic_potential(Particle* p1, Particle* p2, double sqrd_dist) const;
+        void harmonic_potential(Particle* p1, Particle* p2, double sqrd_dist, bool newton = true) const;
 
         void reflectiveBoundary(LinkedCellContainer & grid, const std::array<int, 3> & currentIndexes) const;
 
         void calcNeighbors(LinkedCellContainer &grid, const std::array<int, 3> & neighbors,
-                           Particle* p);
+                           Particle* p, bool newton = true);
 
         void calcFCell(Cell & curCell, LinkedCellContainer & grid);
 
@@ -87,9 +91,9 @@ namespace calculator {
          * @param mirror the array we should add so we get the mirrored position
          */
         void calcPerNeighbors(LinkedCellContainer &grid, const std::array<int, 3> & neighbors,
-                              Particle* p, const std::array<double, 3> & mirror) const;
+                              Particle* p, const std::array<double, 3> & mirror, bool newton = true) const;
 
-        static bool gridNeighbors(std::array<int,3> index1, std::array<int,3> index2);
+        static bool gridNeighbors(const std::array<int,3> & index1, const std::array<int,3> & index2);
 
         double sigma = 1;
 
@@ -126,7 +130,7 @@ namespace calculator {
         return x * x;
     }
 
-    void LinkedCell::ljforce(Particle* p1, Particle* p2, double sqrd_dist) const {
+    void LinkedCell::ljforce(Particle* p1, Particle* p2, double sqrd_dist, bool newton) const {
         //double s = sqr(sigma) / sqrd_dist;
         double s = sqr(sigmaTable[p1->getSEIndex()][p2->getSEIndex()]) / sqrd_dist;
         s = s * s * s; // s = sqr(s) * s
@@ -137,7 +141,9 @@ namespace calculator {
 
 
         p1->setF(p1->getF() + force);
-        p2->setF(p2->getF() - force);
+		if (newton){
+			p2->setF(p2->getF() - force);
+		}
     }
 
     void LinkedCell::ljforce_smoothed(Particle *p1, Particle *p2, double sqrd_dist) const {
