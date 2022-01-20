@@ -40,8 +40,8 @@ namespace statistics {
                 binNumber++;
                 continue;
             }
-            // TODO do volume in particles/cubic unit?
             auto noParts = static_cast<double>(bin.size());
+            auto density = noParts / (binSize * particles.getLenDim()[1] * particles.getLenDim()[2]);
 
             auto totalVel = std::accumulate(bin.begin(), bin.end(), std::array<double, 3>{0., 0., 0.},
                                             [](auto acc, auto *p) { return p->getV() + acc; });
@@ -49,7 +49,7 @@ namespace statistics {
 
             // TODO check if computing the correct thing?
             // currently density = number of particles in bin & velocity = totalVel/noParts for each dimension
-            file << iteration << "," << binNumber << "," << noParts << "," << avgVel[0] << "," << avgVel[1] << ","
+            file << iteration << "," << binNumber << "," << density << "," << avgVel[0] << "," << avgVel[1] << ","
                  << avgVel[2] << "\n";
             binNumber++;
         }
