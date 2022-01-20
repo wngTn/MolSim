@@ -19,7 +19,8 @@ if(BUILD_TEST)
             XMLReaderTest.cpp
             ParticleTest.cpp
             ThermostatTest.cpp
-            SpecialParticleTest.cpp)
+            SpecialParticleTest.cpp
+            ImmovableParticlesTest.cpp)
 
     # add the files to our executable
     add_executable(${This} ${Test_Sources})

@@ -2,8 +2,6 @@
 #include <particleContainers/LinkedCellContainer.h>
 #include <utils/ParticleGenerator.h>
 #include <inputReader/XMLReader.h>
-#include <utils/ParticleGenerator.h>
-#include <utils/MainUtils.h>
 
 class SpecialParticleTest : public testing::Test {
 protected:
