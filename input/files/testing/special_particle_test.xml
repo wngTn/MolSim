@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<simulation t_end="2" delta_t="1" writeFrequency="10" outputWriter="vtk">
+    <container type="linkedcell">
+        <rCut>4.0</rCut>
+        <domainSizeX>20</domainSizeX>
+        <domainSizeY>20</domainSizeY>
+        <domainSizeZ>20</domainSizeZ>
+        <borderType>
+            <left>outflow</left>
+            <right>outflow</right>
+            <upper>outflow</upper>
+            <lower>outflow</lower>
+            <front>outflow</front>
+            <back>outflow</back>
+        </borderType>
+    </container>
+    <calculator type="lennardjones">
+        <epsilon>1</epsilon>
+        <sigma>1</sigma>
+        <brownianMotion>0.0</brownianMotion>
+        <gravityFactor x="0" y="0" z="0" />
+        <baseForceTime>2</baseForceTime>
+    </calculator>
+    <outputFile>output</outputFile>
+    <generatorInfo type="cuboid">
+        <x>1.0</x>
+        <y>1.0</y>
+        <z>1.5</z>
+        <v1>0.0</v1>
+        <v2>0.0</v2>
+        <v3>0.0</v3>
+        <mass>1.0</mass>
+        <distance>2.2</distance>
+        <brownianFactor>0.0</brownianFactor>
+        <dim>3</dim>
+        <n1>9</n1>
+        <n2>9</n2>
+        <n3>1</n3>
+        <epsilon>1</epsilon>
+        <sigma>1</sigma>
+        <special_particle>
+            <position x="1" y="1" z="0" />
+            <force x="0" y="0" z="0.8" />
+            <mass>2.0</mass>
+        </special_particle>
+        <special_particle>
+            <position x="2" y="2" z="0" />
+            <vel x="0" y="0.5" z="0" />
+            <mass>3.0</mass>
+        </special_particle>
+        <special_particle>
+            <position x="3" y="3" z="0" />
+            <mass>4.0</mass>
+        </special_particle>
+        <special_particle immovable="true">
+            <position x="4" y="4" z="0" />
+            <force x="0" y="0" z="0.8" />
+            <mass>5.0</mass>
+        </special_particle>
+        <special_particle membrane="true">
+            <position x="5" y="5" z="0" />
+            <force x="0" y="0" z="0.8" />
+            <mass>6.0</mass>
+        </special_particle>
+    </generatorInfo>
+</simulation>

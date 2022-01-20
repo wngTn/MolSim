@@ -157,6 +157,8 @@ public:
 
     [[nodiscard]] const std::array<double, 3> &getOldX() const;
 
+    [[nodiscard]] const std::array<double, 3> &getBaseForce() const;
+
     void setPassedPeriodic(int d);
 
     void setMembrane(bool membrane);
