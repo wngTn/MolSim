@@ -180,7 +180,7 @@ void LinkedCell::calcNeighbors(LinkedCellContainer &grid, const std::array<int, 
 			if (sqrd_dist <= LinkedCell::sqr(rCut)) {
 				if(smoothed){
                         LinkedCell::ljforce_smoothed(p, p_other, sqrd_dist);
-                    }else{
+                    } else{
                         LinkedCell::ljforce(p, p_other, sqrd_dist, newton);
                     }
 			}
