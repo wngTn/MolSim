@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<simulation t_end="15" delta_t="0.0001" writeFrequency="100" outputWriter="vtk">
+<simulation t_end="500" delta_t="0.01" writeFrequency="100" outputWriter="vtk" parallelization="primitiveY">
     <container type="linkedcell">
-        <rCut>3.0</rCut>
+        <rCut>4.0</rCut>
         <domainSizeX>148</domainSizeX>
         <domainSizeY>148</domainSizeY>
         <domainSizeZ>148</domainSizeZ>
@@ -18,19 +18,16 @@
         <epsilon>1</epsilon>
         <sigma>1</sigma>
         <brownianMotion>0.0</brownianMotion>
-        <gravityFactor x="0" y="-0.2" z="0" />
+        <gravityFactor x="0" y="0" z="-0.001" />
+        <baseForceTime>150</baseForceTime>
         <rZero>2.2</rZero>
         <stiffnessConstant>300</stiffnessConstant>
     </calculator>
-    <thermostat>
-        <nThermostat>100</nThermostat>
-        <Tinit>2.5</Tinit>
-    </thermostat>
     <outputFile>output</outputFile>
     <generatorInfo type="cuboid" behaviour="membrane">
         <x>15.0</x>
-        <y>50.0</y>
-        <z>15.0</z>
+        <y>15.0</y>
+        <z>1.5</z>
         <v1>0.0</v1>
         <v2>0.0</v2>
         <v3>0.0</v3>
@@ -38,25 +35,26 @@
         <distance>2.2</distance>
         <brownianFactor>0.0</brownianFactor>
         <dim>3</dim>
-        <n1>30</n1>
-        <n2>1</n2>
-        <n3>30</n3>
+        <n1>50</n1>
+        <n2>50</n2>
+        <n3>1</n3>
         <epsilon>1</epsilon>
         <sigma>1</sigma>
-    </generatorInfo>
-    <generatorInfo type="sphere">
-        <x>48.0</x>
-        <y>60.0</y>
-        <z>48.0</z>
-        <v1>0.0</v1>
-        <v2>-2.5</v2>
-        <v3>0.0</v3>
-        <mass>1.0</mass>
-        <distance>1.2</distance>
-        <brownianFactor>0.0</brownianFactor>
-        <dim>3</dim>
-        <radius>4</radius>
-        <epsilon>1</epsilon>
-        <sigma>1</sigma>
+        <special_particle>
+            <position x="17" y="24" z="0" />
+            <force x="0" y="0" z="0.8" />
+        </special_particle>
+        <special_particle>
+            <position x="17" y="25" z="0" />
+            <force x="0" y="0" z="0.8" />
+        </special_particle>
+        <special_particle>
+            <position x="18" y="24" z="0" />
+            <force x="0" y="0" z="0.8" />
+        </special_particle>
+        <special_particle>
+            <position x="18" y="25" z="0" />
+            <force x="0" y="0" z="0.8" />
+        </special_particle>
     </generatorInfo>
 </simulation>

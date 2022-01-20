@@ -1,5 +1,17 @@
 <?xml version="1.0"?>
-<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:xS="http://www.w3.org/2001/XMLSchema">
+    <!-- enum type for choosing parallelization strategy allowed -->
+    <xs:simpleType name="parallel_t">
+        <xs:restriction base = "xs:string">
+            <xs:enumeration value="primitiveX" />
+            <xs:enumeration value="primitiveY" />
+            <xs:enumeration value="primitiveZ" />
+            <xs:enumeration value="subdomain" />
+            <xs:enumeration value="none" />
+        </xs:restriction>
+    </xs:simpleType>
+
     <!-- enum type for choosing geometric type for generator, values cuboid and sphere allowed -->
     <xs:simpleType name ="geometric_t">
         <xs:restriction base="xs:string">
@@ -58,6 +70,7 @@
             <xs:element minOccurs="0" name="n3" type="xs:int" />
             <xs:element minOccurs="0" name="radius" type="xs:int" />
             <xs:element minOccurs="0" maxOccurs="unbounded" name="special_particle" type="special_particle_t" />
+            <xs:element minOccurs="0" name="baseForce" type="array_float_3" />
         </xs:sequence>
         <xs:attribute name="type" type="geometric_t" use="required"/>
         <xs:attribute name="behaviour" type="behaviour_t" use="optional"/>
@@ -75,6 +88,7 @@
     <xs:simpleType name="calculatortype_t">
         <xs:restriction base="xs:string">
             <xs:enumeration value ="lennardjones"/>
+            <xs:enumeration value ="smoothed-lennardjones"/>
             <xs:enumeration value ="gravitation"/>
         </xs:restriction>
     </xs:simpleType>
@@ -96,11 +110,12 @@
         <xs:sequence minOccurs = "0">
             <xs:element name="epsilon" type="xs:decimal" />
             <xs:element name="sigma" type="xs:decimal" />
-            <xs:element name="gravityFactor" type="xs:decimal" minOccurs="0"/>
+            <xs:element name="gravityFactor" type="array_float_3" minOccurs="0"/>
             <xs:element name="brownianMotion" type="xs:decimal" />
             <xs:element name="baseForceTime" type="xs:decimal" minOccurs="0" />
             <xs:element name="rZero" type="xs:decimal" minOccurs="0" />
             <xs:element name="stiffnessConstant" type="xs:decimal" minOccurs="0" />
+            <xs:element name="rl" type="xs:decimal" minOccurs="0" />
         </xs:sequence>
         <xs:attribute name="type" type = "calculatortype_t" use = "required" />
     </xs:complexType>
@@ -134,6 +149,7 @@
     <xs:complexType name="statistics_t">
         <xs:sequence>
             <xs:element minOccurs="0" name="noBins" type="xs:int" />
+            <xs:element minOccurs="0" name="deltaR" type="xs:decimal" />
             <xs:element name="file" type="xs:string" />
             <xs:element name="frequency" type="xs:int" />
         </xs:sequence>
@@ -160,6 +176,8 @@
             <xs:element minOccurs="0" name="vel" type="array_float_3" />
             <xs:element minOccurs="0" name="mass" type="xs:decimal" />
         </xs:sequence>
+        <xs:attribute name="immovable" type="xs:boolean" use="optional"/>
+        <xs:attribute name="membrane" type="xs:boolean" use="optional"/>
     </xs:complexType>
 
     <!-- everything the simulation needs -->
@@ -183,6 +201,7 @@
         <xs:attribute name="writeFrequency" type="xs:int" use="required"/>
 
         <xs:attribute name="outputWriter" type = "outputwriter_t" use = "required" />
+        <xs:attribute name="parallelization" type="parallel_t" use ="optional" />
         <xs:attribute name="random" type="xs:boolean" use="optional" />
     </xs:complexType>
 

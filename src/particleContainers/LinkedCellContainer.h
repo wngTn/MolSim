@@ -95,8 +95,8 @@ public:
 	                    double rCutV,
 	                    std::array<Border, 6> borderV = std::array<Border, 6>{
 		                    outflow, outflow, outflow, outflow, outflow, outflow},
-	                    double g = 0,
-	                    Strategy strategy = primitiveX);
+                        std::array<double,3> g = std::array<double,3>{0.,0.,0.},
+	                    Strategy strategy = naught);
 
 	/**
 	 * Default constructor
@@ -247,9 +247,9 @@ public:
 
 	void setBorder(const std::array<Border, 6> &border);
 
-	[[nodiscard]] double getG() const;
+    [[nodiscard]] std::array<double,3> getG() const;
 
-	void setG(double g);
+    void setG(std::array<double,3> g);
 
 	[[nodiscard]] const std::vector<std::vector<int>> &getIndicesThreadVector() const;
 
@@ -299,10 +299,10 @@ private:
 	 */
 	std::array<Border, 6> border{outflow};
 
-	/*
-	 * The gravitational force that applies to the domain
-	 */
-	double g{};
+    /*
+     * The gravitational force that applies to the domain
+     */
+    std::array<double,3> g{};
 
 	/**
 	 * Signals what multi threading strategy to use

@@ -3,8 +3,8 @@
 #include <utility>
 #include "LinkedCellContainer.h"
 
-LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double rCutV, std::array<Border, 6> borderV,
-                                         double g,
+
+LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double rCutV, std::array<Border, 6> borderV, std::array<double,3> g,
                                          Strategy strategy) :
 	grid{std::vector<Cell>(static_cast<int>(std::floor(Xv / rCutV)) *
 		static_cast<int>(std::floor(Yv / rCutV)) *
@@ -518,44 +518,44 @@ LinkedCellContainer::getPerNeighbors(const std::array<int, 3> &currentIndex) {
 	return neighbors;
 }
 
-double LinkedCellContainer::getG() const {
-	return g;
+std::array<double,3> LinkedCellContainer::getG() const {
+    return g;
 }
 
-void LinkedCellContainer::setG(double g) {
-	LinkedCellContainer::g = g;
+void LinkedCellContainer::setG(std::array<double,3> grav) {
+    LinkedCellContainer::g = grav;
 }
 
 const std::vector<std::vector<int>> &LinkedCellContainer::getIndicesThreadVector() const {
 	return indicesThreadVector;
 }
 
-void LinkedCellContainer::setIndicesThreadVector(const std::vector<std::vector<int>> &indicesThreadVector) {
-	LinkedCellContainer::indicesThreadVector = indicesThreadVector;
+void LinkedCellContainer::setIndicesThreadVector(const std::vector<std::vector<int>> &vec) {
+    LinkedCellContainer::indicesThreadVector = vec;
 }
 
 int LinkedCellContainer::getThreadOffset() const {
 	return threadOffset;
 }
 
-void LinkedCellContainer::setThreadOffset(int threadOffset) {
-	LinkedCellContainer::threadOffset = threadOffset;
+void LinkedCellContainer::setThreadOffset(int offset) {
+    LinkedCellContainer::threadOffset = offset;
 }
 
 const std::vector<int> &LinkedCellContainer::getResidualThreadVector() const {
 	return residualThreadVector;
 }
 
-void LinkedCellContainer::setResidualThreadVector(const std::vector<int> &residualThreadVector) {
-	LinkedCellContainer::residualThreadVector = residualThreadVector;
+void LinkedCellContainer::setResidualThreadVector(const std::vector<int> &vec) {
+    LinkedCellContainer::residualThreadVector = vec;
 }
 
 LinkedCellContainer::Strategy LinkedCellContainer::getStrategy() const {
 	return strategy;
 }
 
-void LinkedCellContainer::setStrategy(LinkedCellContainer::Strategy strategy) {
-	LinkedCellContainer::strategy = strategy;
+void LinkedCellContainer::setStrategy(LinkedCellContainer::Strategy s) {
+    LinkedCellContainer::strategy = s;
 }
 
 const std::vector<LinkedCellContainer::SubDomain> &LinkedCellContainer::getSubDomainVector() const {

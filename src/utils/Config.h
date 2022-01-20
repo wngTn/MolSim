@@ -58,6 +58,9 @@ public:
 /// Which Physics calculation method to use
     PhysicsCalc::calctype calc_type{PhysicsCalc::unknown};
 
+/// Whether a smoothed lennard jones potential is used
+    bool smoothed = false;
+
 /// Whether to disable logging and IO operations
     bool benchmarking = false;
 
@@ -89,7 +92,7 @@ public:
 
     double eps = 5.;
     double sigma = 1.;
-    double grav;
+    std::array<double,3> grav;
 
     // whether a membrane is used
     bool membrane = false;
@@ -99,11 +102,18 @@ public:
     bool linkedCell;
     std::array<double, 3> linkedCellSize;
     double rCut;
+    double rl;
     std::array<LinkedCellContainer::Border, 6> boundaryConditions;
 
+    // stuff for statistics
     bool useStatistics;
     int statsFrequency;
     std::string statsFile;
     StatisticsLogger::statisticstype statsType;
+    // for density velocity profile
     int noBins;
+    // for thermodynamical
+    double delta_r;
+
+    LinkedCellContainer::Strategy parallelization_strategy;
 };

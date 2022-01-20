@@ -18,6 +18,7 @@
 #include "inputReader/CheckpointReader.h"
 #include "statistics/StatisticsLogger.h"
 #include "statistics/DensityVelocityProfile.h"
+#include "statistics/Thermodynamical.h"
 
 #include <unistd.h>
 #include <memory>
@@ -70,6 +71,8 @@ struct MainUtils {
     static void parseXML(Config& config);
 
     static void printConfig(Config& config);
+
+    static void validateInput(Config& config, ParticleContainer &particles);
 
     static void initializeLogger();
 

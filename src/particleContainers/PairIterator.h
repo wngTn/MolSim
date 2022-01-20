@@ -46,7 +46,7 @@ struct PairIterator {
         return tmp;
     }
 
-    bool operator==(const PairIterator &b) {
+    bool operator==(const PairIterator &b) const{
         const size_t max = vec.size();
         if ((this->i >= max || this->j >= max) && (b.i >= max || b.j >= max)) {
             return true;
@@ -54,7 +54,7 @@ struct PairIterator {
         return this->i == b.i && this->j == b.j;
     }
 
-    bool operator!=(const PairIterator &b) {
+    bool operator!=(const PairIterator &b) const {
         return !(*this == b);
     }
 

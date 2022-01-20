@@ -33,32 +33,40 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
         info.linkedcell = false;
     }
 
-    if(sim->calculator().type() == calculatortype_t::lennardjones){
-        info.epsilon = sim->calculator().epsilon().get();
-        info.sigma = sim->calculator().sigma().get();
-        info.brownianMotionMean = sim->calculator().brownianMotion().get();
-        if(sim->calculator().gravityFactor().present()){
-            info.gravityFactor = sim->calculator().gravityFactor().get();
-        }else{
-            info.gravityFactor = 0.0;
-        }
-        info.calculatorType = PhysicsCalc::lennardJones;
-        if(sim->calculator().baseForceTime().present()){
-            info.resetBaseForce = true;
-            info.baseForceReset = floor(sim->calculator().baseForceTime().get() / sim->delta_t());
-        }
-        if(sim->calculator().rZero().present() && sim->calculator().stiffnessConstant().present()){
-            info.membrane = true;
-            info.rZero = sim->calculator().rZero().get();
-            info.stiffnessConstant = sim->calculator().rZero().get();
-        }else{
-            info.membrane = false;
-            info.rZero = 0;
-            info.stiffnessConstant = 0;
-        }
-    }else{
-        info.calculatorType = PhysicsCalc::gravitation;
+    switch(sim->calculator().type()){
+        case calculatortype_t::smoothed_lennardjones:
+            info.smoothed = true;
+            info.rl = sim->calculator().rl().get();
+            [[fallthrough]];
+        case calculatortype_t::lennardjones:
+            info.epsilon = sim->calculator().epsilon().get();
+            info.sigma = sim->calculator().sigma().get();
+            info.brownianMotionMean = sim->calculator().brownianMotion().get();
+            if(sim->calculator().gravityFactor().present()){
+                info.gravityFactor = {sim->calculator().gravityFactor()->x(), sim->calculator().gravityFactor()->y(), sim->calculator().gravityFactor()->z()};
+            }else{
+                info.gravityFactor = {0.,0.,0.};
+            }
+            info.calculatorType = PhysicsCalc::lennardJones;
+            if(sim->calculator().baseForceTime().present()){
+                info.resetBaseForce = true;
+                info.baseForceReset = std::ceil(sim->calculator().baseForceTime().get() / sim->delta_t());
+            }
+            if(sim->calculator().rZero().present() && sim->calculator().stiffnessConstant().present()){
+                info.membrane = true;
+                info.rZero = sim->calculator().rZero().get();
+                info.stiffnessConstant = sim->calculator().rZero().get();
+            }else{
+                info.membrane = false;
+                info.rZero = 0;
+                info.stiffnessConstant = 0;
+            }
+            break;
+        case calculatortype_t::gravitation:
+            info.calculatorType = PhysicsCalc::gravitation;
+            break;
     }
+
 
     if(sim->thermostat().present()){
         info.useThermostat = true;
@@ -98,13 +106,14 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
             case statistics_type_t::thermodynamical:
                 info.statsType = StatisticsLogger::thermodynamic;
                 info.noBins = 0;
+                info.delta_r = sim->statistics()->deltaR().get();
                 break;
             case statistics_type_t::densityVelocity:
                 info.statsType = StatisticsLogger::densityVelocityProfile;
                 info.noBins = sim->statistics()->noBins().get();
+                info.delta_r = 0;
                 break;
         }
-
     }
 
     info.inputFiles = std::vector<std::string>{};
@@ -137,6 +146,26 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
         insertGeneratorInfo(genInfos, gi);
     }
     info.generatorInfos = genInfos;
+
+    if(sim->parallelization().present()){
+        switch(sim->parallelization().get()){
+            case parallel_t::subdomain:
+                info.parallelization_strat = LinkedCellContainer::subDomain;
+                break;
+            case parallel_t::primitiveX:
+                info.parallelization_strat = LinkedCellContainer::primitiveX;
+                break;
+            case parallel_t::primitiveY:
+                info.parallelization_strat = LinkedCellContainer::primitiveY;
+                break;
+            case parallel_t::primitiveZ:
+                info.parallelization_strat = LinkedCellContainer::primitiveZ;
+                break;
+            case parallel_t::none:
+                info.parallelization_strat = LinkedCellContainer::naught;
+                break;
+        }
+    }
 
     return info;
 }
@@ -194,12 +223,18 @@ void XMLReader::insertGeneratorInfo(std::vector<ParticleGenerator::ShapeInfo>& g
         }
     }
 
+    if(info.baseForce().present()){
+        shapeInfo.baseForce = std::array<double,3>{info.baseForce()->x(),info.baseForce()->y(), info.baseForce()->z()};
+    }
+
     shapeInfo.specialParticles = {};
     for(auto& sp : info.special_particle()){
         auto pos = std::array<int,3>{sp.position().x(), sp.position().y(), sp.position().z()};
         auto vel = shapeInfo.vel;
         auto force = std::array<double,3>{0.,0.,0.};
         auto mass = shapeInfo.mass;
+        bool immovable = shapeInfo.behaviour == ParticleGenerator::immovable;
+        bool membrane = shapeInfo.behaviour == ParticleGenerator::membrane;
         if(sp.vel().present()){
             vel = {sp.vel()->x(),sp.vel()->y(),sp.vel()->z()};
         }
@@ -209,7 +244,13 @@ void XMLReader::insertGeneratorInfo(std::vector<ParticleGenerator::ShapeInfo>& g
         if(sp.mass().present()){
             mass = sp.mass().get();
         }
-        shapeInfo.specialParticles.emplace_back(pos,force,vel,mass);
+        if(sp.immovable().present()){
+            immovable = sp.immovable().get();
+        }
+        if(sp.membrane().present()){
+            membrane = sp.immovable().get();
+        }
+        shapeInfo.specialParticles.emplace_back(pos,force,vel,mass, immovable, membrane);
     }
 
     genInfos.push_back(shapeInfo);

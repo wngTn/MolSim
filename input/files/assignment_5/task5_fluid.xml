@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<simulation t_end="150" delta_t="0.001" writeFrequency="100" outputWriter="vtk" parallelization="primitiveY">
+    <container type="linkedcell">
+        <rCut>2.3</rCut>
+        <domainSizeX>9.2</domainSizeX>
+        <domainSizeY>9.2</domainSizeY>
+        <domainSizeZ>9.2</domainSizeZ>
+        <borderType>
+            <left>periodic</left>
+            <right>periodic</right>
+            <upper>periodic</upper>
+            <lower>periodic</lower>
+            <front>periodic</front>
+            <back>periodic</back>
+        </borderType>
+    </container>
+    <calculator type="smoothed-lennardjones">
+        <epsilon>1</epsilon>
+        <sigma>1</sigma>
+        <brownianMotion>0.0</brownianMotion>
+        <rl>1.9</rl>
+    </calculator>
+    <thermostat>
+        <nThermostat>40</nThermostat>
+        <Tinit>0.01</Tinit>
+        <Ttarget>3.0</Ttarget>
+        <deltaTemp>0.001</deltaTemp>
+    </thermostat>
+    <!--<statistics type="thermodynamical">
+        <file>statistics.csv</file>
+        <frequency>1000</frequency>
+    </statistics>-->
+    <outputFile>output</outputFile>
+    <checkpointOutput>checkpointTask5.json</checkpointOutput>
+    <generatorInfo type="cuboid">
+        <x>0.575</x>
+        <y>0.575</y>
+        <z>0.575</z>
+        <v1>0.0</v1>
+        <v2>0.0</v2>
+        <v3>0.0</v3>
+        <mass>1.0</mass>
+        <distance>1.15</distance>
+        <brownianFactor>0.0</brownianFactor>
+        <dim>3</dim>
+        <n1>8</n1>
+        <n2>8</n2>
+        <n3>8</n3>
+        <epsilon>1.0</epsilon>
+        <sigma>1.0</sigma>
+    </generatorInfo>
+</simulation>

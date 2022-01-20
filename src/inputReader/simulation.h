@@ -616,6 +616,7 @@ namespace xml_schema
 
 // Forward declarations.
 //
+class parallel_t;
 class geometric_t;
 class border_single_t;
 class border_t;
@@ -647,6 +648,154 @@ class simulation_t;
 #include <xsd/cxx/tree/list.hxx>
 
 #include <xsd/cxx/xml/dom/parsing-header.hxx>
+
+/**
+ * @brief Enumeration class corresponding to the %parallel_t
+ * schema type.
+ */
+class parallel_t: public ::xml_schema::string
+{
+  public:
+
+  /**
+   * @brief Underlying enum type.
+   */
+  enum value
+  {
+    primitiveX,
+    primitiveY,
+    primitiveZ,
+    subdomain,
+    none
+  };
+
+  /**
+   * @brief Create an instance from the underlying enum value.
+   *
+   * @param v A enum value.
+   */
+  parallel_t (value v);
+
+  /**
+   * @brief Create an instance from a C string.
+   *
+   * @param v A string value.
+   */
+  parallel_t (const char* v);
+
+  /**
+   * @brief Create an instance from a string.
+   *
+   * @param v A string value.
+   */
+  parallel_t (const ::std::string& v);
+
+  /**
+   * @brief Create an instance from the base value.
+   *
+   * @param v A base value.
+   */
+  parallel_t (const ::xml_schema::string& v);
+
+  /**
+   * @brief Create an instance from a DOM element.
+   *
+   * @param e A DOM element to extract the data from.
+   * @param f Flags to create the new instance with.
+   * @param c A pointer to the object that will contain the new
+   * instance.
+   */
+  parallel_t (const ::xercesc::DOMElement& e,
+              ::xml_schema::flags f = 0,
+              ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Create an instance from a DOM attribute.
+   *
+   * @param a A DOM attribute to extract the data from.
+   * @param f Flags to create the new instance with.
+   * @param c A pointer to the object that will contain the new
+   * instance.
+   */
+  parallel_t (const ::xercesc::DOMAttr& a,
+              ::xml_schema::flags f = 0,
+              ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Create an instance from a string fragment.
+   *
+   * @param s A string fragment to extract the data from.
+   * @param e A pointer to DOM element containing the string fragment.
+   * @param f Flags to create the new instance with.
+   * @param c A pointer to the object that will contain the new
+   * instance.
+   */
+  parallel_t (const ::std::string& s,
+              const ::xercesc::DOMElement* e,
+              ::xml_schema::flags f = 0,
+              ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy constructor.
+   *
+   * @param x An instance to make a copy of.
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   *
+   * For polymorphic object models use the @c _clone function instead.
+   */
+  parallel_t (const parallel_t& x,
+              ::xml_schema::flags f = 0,
+              ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy the instance polymorphically.
+   *
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   * @return A pointer to the dynamically allocated copy.
+   *
+   * This function ensures that the dynamic type of the instance is
+   * used for copying and should be used for polymorphic object
+   * models instead of the copy constructor.
+   */
+  virtual parallel_t*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  /**
+   * @brief Assign the underlying enum value.
+   *
+   * @param v A enum value.
+   * @return A refernce to the instance.
+   */
+  parallel_t&
+  operator= (value v);
+
+  /**
+   * @brief Implicit conversion operator to the underlying
+   * enum value.
+   *
+   * @return A enum value.
+   */
+  virtual
+  operator value () const
+  {
+    return _xsd_parallel_t_convert ();
+  }
+
+  //@cond
+
+  protected:
+  value
+  _xsd_parallel_t_convert () const;
+
+  public:
+  static const char* const _xsd_parallel_t_literals_[5];
+  static const value _xsd_parallel_t_indexes_[5];
+
+  //@endcond
+};
 
 /**
  * @brief Enumeration class corresponding to the %geometric_t
@@ -2468,6 +2617,82 @@ class generator_info_t: public ::xml_schema::type
   //@}
 
   /**
+   * @name baseForce
+   *
+   * @brief Accessor and modifier functions for the %baseForce
+   * optional element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::array_float_3 baseForce_type;
+
+  /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< baseForce_type > baseForce_optional;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< baseForce_type, char > baseForce_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const baseForce_optional&
+  baseForce () const;
+
+  /**
+   * @brief Return a read-write reference to the element container.
+   *
+   * @return A reference to the optional container.
+   */
+  baseForce_optional&
+  baseForce ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  baseForce (const baseForce_type& x);
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  baseForce (const baseForce_optional& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  baseForce (::std::unique_ptr< baseForce_type > p);
+
+  //@}
+
+  /**
    * @name type
    *
    * @brief Accessor and modifier functions for the %type
@@ -2711,6 +2936,7 @@ class generator_info_t: public ::xml_schema::type
   n3_optional n3_;
   radius_optional radius_;
   special_particle_sequence special_particle_;
+  baseForce_optional baseForce_;
   ::xsd::cxx::tree::one< type_type > type_;
   behaviour_optional behaviour_;
 
@@ -2876,6 +3102,7 @@ class calculatortype_t: public ::xml_schema::string
   enum value
   {
     lennardjones,
+    smoothed_lennardjones,
     gravitation
   };
 
@@ -3001,8 +3228,8 @@ class calculatortype_t: public ::xml_schema::string
   _xsd_calculatortype_t_convert () const;
 
   public:
-  static const char* const _xsd_calculatortype_t_literals_[2];
-  static const value _xsd_calculatortype_t_indexes_[2];
+  static const char* const _xsd_calculatortype_t_literals_[3];
+  static const value _xsd_calculatortype_t_indexes_[3];
 
   //@endcond
 };
@@ -3649,7 +3876,7 @@ class calculationInfo_t: public ::xml_schema::type
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::decimal gravityFactor_type;
+  typedef ::array_float_3 gravityFactor_type;
 
   /**
    * @brief Element optional container type.
@@ -3659,7 +3886,7 @@ class calculationInfo_t: public ::xml_schema::type
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< gravityFactor_type, char, ::xsd::cxx::tree::schema_type::decimal > gravityFactor_traits;
+  typedef ::xsd::cxx::tree::traits< gravityFactor_type, char > gravityFactor_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element
@@ -3700,6 +3927,17 @@ class calculationInfo_t: public ::xml_schema::type
    */
   void
   gravityFactor (const gravityFactor_optional& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  gravityFactor (::std::unique_ptr< gravityFactor_type > p);
 
   //@}
 
@@ -3964,6 +4202,71 @@ class calculationInfo_t: public ::xml_schema::type
   //@}
 
   /**
+   * @name rl
+   *
+   * @brief Accessor and modifier functions for the %rl
+   * optional element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::decimal rl_type;
+
+  /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< rl_type > rl_optional;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< rl_type, char, ::xsd::cxx::tree::schema_type::decimal > rl_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const rl_optional&
+  rl () const;
+
+  /**
+   * @brief Return a read-write reference to the element container.
+   *
+   * @return A reference to the optional container.
+   */
+  rl_optional&
+  rl ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  rl (const rl_type& x);
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  rl (const rl_optional& x);
+
+  //@}
+
+  /**
    * @name type
    *
    * @brief Accessor and modifier functions for the %type
@@ -4109,6 +4412,7 @@ class calculationInfo_t: public ::xml_schema::type
   baseForceTime_optional baseForceTime_;
   rZero_optional rZero_;
   stiffnessConstant_optional stiffnessConstant_;
+  rl_optional rl_;
   ::xsd::cxx::tree::one< type_type > type_;
 
   //@endcond
@@ -4866,6 +5170,71 @@ class statistics_t: public ::xml_schema::type
   //@}
 
   /**
+   * @name deltaR
+   *
+   * @brief Accessor and modifier functions for the %deltaR
+   * optional element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::decimal deltaR_type;
+
+  /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< deltaR_type > deltaR_optional;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< deltaR_type, char, ::xsd::cxx::tree::schema_type::decimal > deltaR_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const deltaR_optional&
+  deltaR () const;
+
+  /**
+   * @brief Return a read-write reference to the element container.
+   *
+   * @return A reference to the optional container.
+   */
+  deltaR_optional&
+  deltaR ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  deltaR (const deltaR_type& x);
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  deltaR (const deltaR_optional& x);
+
+  //@}
+
+  /**
    * @name file
    *
    * @brief Accessor and modifier functions for the %file
@@ -5112,6 +5481,7 @@ class statistics_t: public ::xml_schema::type
 
   protected:
   noBins_optional noBins_;
+  deltaR_optional deltaR_;
   ::xsd::cxx::tree::one< file_type > file_;
   ::xsd::cxx::tree::one< frequency_type > frequency_;
   ::xsd::cxx::tree::one< type_type > type_;
@@ -5881,6 +6251,136 @@ class special_particle_t: public ::xml_schema::type
   //@}
 
   /**
+   * @name immovable
+   *
+   * @brief Accessor and modifier functions for the %immovable
+   * optional attribute.
+   */
+  //@{
+
+  /**
+   * @brief Attribute type.
+   */
+  typedef ::xml_schema::boolean immovable_type;
+
+  /**
+   * @brief Attribute optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< immovable_type > immovable_optional;
+
+  /**
+   * @brief Attribute traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< immovable_type, char > immovable_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the attribute
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const immovable_optional&
+  immovable () const;
+
+  /**
+   * @brief Return a read-write reference to the attribute container.
+   *
+   * @return A reference to the optional container.
+   */
+  immovable_optional&
+  immovable ();
+
+  /**
+   * @brief Set the attribute value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the attribute.
+   */
+  void
+  immovable (const immovable_type& x);
+
+  /**
+   * @brief Set the attribute value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the attribute.
+   * Otherwise the attribute container is set the 'not present' state.
+   */
+  void
+  immovable (const immovable_optional& x);
+
+  //@}
+
+  /**
+   * @name membrane
+   *
+   * @brief Accessor and modifier functions for the %membrane
+   * optional attribute.
+   */
+  //@{
+
+  /**
+   * @brief Attribute type.
+   */
+  typedef ::xml_schema::boolean membrane_type;
+
+  /**
+   * @brief Attribute optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< membrane_type > membrane_optional;
+
+  /**
+   * @brief Attribute traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< membrane_type, char > membrane_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the attribute
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const membrane_optional&
+  membrane () const;
+
+  /**
+   * @brief Return a read-write reference to the attribute container.
+   *
+   * @return A reference to the optional container.
+   */
+  membrane_optional&
+  membrane ();
+
+  /**
+   * @brief Set the attribute value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the attribute.
+   */
+  void
+  membrane (const membrane_type& x);
+
+  /**
+   * @brief Set the attribute value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the attribute.
+   * Otherwise the attribute container is set the 'not present' state.
+   */
+  void
+  membrane (const membrane_optional& x);
+
+  //@}
+
+  /**
    * @name Constructors
    */
   //@{
@@ -5975,6 +6475,8 @@ class special_particle_t: public ::xml_schema::type
   force_optional force_;
   vel_optional vel_;
   mass_optional mass_;
+  immovable_optional immovable_;
+  membrane_optional membrane_;
 
   //@endcond
 };
@@ -6857,6 +7359,82 @@ class simulation_t: public ::xml_schema::type
   //@}
 
   /**
+   * @name parallelization
+   *
+   * @brief Accessor and modifier functions for the %parallelization
+   * optional attribute.
+   */
+  //@{
+
+  /**
+   * @brief Attribute type.
+   */
+  typedef ::parallel_t parallelization_type;
+
+  /**
+   * @brief Attribute optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< parallelization_type > parallelization_optional;
+
+  /**
+   * @brief Attribute traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< parallelization_type, char > parallelization_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the attribute
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const parallelization_optional&
+  parallelization () const;
+
+  /**
+   * @brief Return a read-write reference to the attribute container.
+   *
+   * @return A reference to the optional container.
+   */
+  parallelization_optional&
+  parallelization ();
+
+  /**
+   * @brief Set the attribute value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the attribute.
+   */
+  void
+  parallelization (const parallelization_type& x);
+
+  /**
+   * @brief Set the attribute value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the attribute.
+   * Otherwise the attribute container is set the 'not present' state.
+   */
+  void
+  parallelization (const parallelization_optional& x);
+
+  /**
+   * @brief Set the attribute value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  parallelization (::std::unique_ptr< parallelization_type > p);
+
+  //@}
+
+  /**
    * @name random
    *
    * @brief Accessor and modifier functions for the %random
@@ -7038,6 +7616,7 @@ class simulation_t: public ::xml_schema::type
   ::xsd::cxx::tree::one< delta_t_type > delta_t_;
   ::xsd::cxx::tree::one< writeFrequency_type > writeFrequency_;
   ::xsd::cxx::tree::one< outputWriter_type > outputWriter_;
+  parallelization_optional parallelization_;
   random_optional random_;
 
   //@endcond
@@ -7309,6 +7888,16 @@ simulation (::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > d,
 #include <xercesc/framework/XMLFormatter.hpp>
 
 #include <xsd/cxx/xml/dom/auto-ptr.hxx>
+
+void
+operator<< (::xercesc::DOMElement&, const parallel_t&);
+
+void
+operator<< (::xercesc::DOMAttr&, const parallel_t&);
+
+void
+operator<< (::xml_schema::list_stream&,
+            const parallel_t&);
 
 void
 operator<< (::xercesc::DOMElement&, const geometric_t&);

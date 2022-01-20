@@ -17,7 +17,7 @@
     <calculator type="lennardjones">
         <epsilon>123.45</epsilon>
         <sigma>123.45</sigma>
-        <gravityFactor>5</gravityFactor>
+        <gravityFactor x="0" y="5" z="0" />
         <brownianMotion>123.45</brownianMotion>
     </calculator>
     <outputFile>str1234</outputFile>

@@ -40,6 +40,51 @@
 
 #include "simulation.h"
 
+// parallel_t
+// 
+
+parallel_t::
+parallel_t (value v)
+: ::xml_schema::string (_xsd_parallel_t_literals_[v])
+{
+}
+
+parallel_t::
+parallel_t (const char* v)
+: ::xml_schema::string (v)
+{
+}
+
+parallel_t::
+parallel_t (const ::std::string& v)
+: ::xml_schema::string (v)
+{
+}
+
+parallel_t::
+parallel_t (const ::xml_schema::string& v)
+: ::xml_schema::string (v)
+{
+}
+
+parallel_t::
+parallel_t (const parallel_t& v,
+            ::xml_schema::flags f,
+            ::xml_schema::container* c)
+: ::xml_schema::string (v, f, c)
+{
+}
+
+parallel_t& parallel_t::
+operator= (value v)
+{
+  static_cast< ::xml_schema::string& > (*this) = 
+  ::xml_schema::string (_xsd_parallel_t_literals_[v]);
+
+  return *this;
+}
+
+
 // geometric_t
 // 
 
@@ -668,6 +713,36 @@ special_particle (const special_particle_sequence& s)
   this->special_particle_ = s;
 }
 
+const generator_info_t::baseForce_optional& generator_info_t::
+baseForce () const
+{
+  return this->baseForce_;
+}
+
+generator_info_t::baseForce_optional& generator_info_t::
+baseForce ()
+{
+  return this->baseForce_;
+}
+
+void generator_info_t::
+baseForce (const baseForce_type& x)
+{
+  this->baseForce_.set (x);
+}
+
+void generator_info_t::
+baseForce (const baseForce_optional& x)
+{
+  this->baseForce_ = x;
+}
+
+void generator_info_t::
+baseForce (::std::unique_ptr< baseForce_type > x)
+{
+  this->baseForce_.set (std::move (x));
+}
+
 const generator_info_t::type_type& generator_info_t::
 type () const
 {
@@ -1042,6 +1117,12 @@ gravityFactor (const gravityFactor_optional& x)
   this->gravityFactor_ = x;
 }
 
+void calculationInfo_t::
+gravityFactor (::std::unique_ptr< gravityFactor_type > x)
+{
+  this->gravityFactor_.set (std::move (x));
+}
+
 const calculationInfo_t::brownianMotion_optional& calculationInfo_t::
 brownianMotion () const
 {
@@ -1136,6 +1217,30 @@ void calculationInfo_t::
 stiffnessConstant (const stiffnessConstant_optional& x)
 {
   this->stiffnessConstant_ = x;
+}
+
+const calculationInfo_t::rl_optional& calculationInfo_t::
+rl () const
+{
+  return this->rl_;
+}
+
+calculationInfo_t::rl_optional& calculationInfo_t::
+rl ()
+{
+  return this->rl_;
+}
+
+void calculationInfo_t::
+rl (const rl_type& x)
+{
+  this->rl_.set (x);
+}
+
+void calculationInfo_t::
+rl (const rl_optional& x)
+{
+  this->rl_ = x;
 }
 
 const calculationInfo_t::type_type& calculationInfo_t::
@@ -1390,6 +1495,30 @@ void statistics_t::
 noBins (const noBins_optional& x)
 {
   this->noBins_ = x;
+}
+
+const statistics_t::deltaR_optional& statistics_t::
+deltaR () const
+{
+  return this->deltaR_;
+}
+
+statistics_t::deltaR_optional& statistics_t::
+deltaR ()
+{
+  return this->deltaR_;
+}
+
+void statistics_t::
+deltaR (const deltaR_type& x)
+{
+  this->deltaR_.set (x);
+}
+
+void statistics_t::
+deltaR (const deltaR_optional& x)
+{
+  this->deltaR_ = x;
 }
 
 const statistics_t::file_type& statistics_t::
@@ -1684,6 +1813,54 @@ void special_particle_t::
 mass (const mass_optional& x)
 {
   this->mass_ = x;
+}
+
+const special_particle_t::immovable_optional& special_particle_t::
+immovable () const
+{
+  return this->immovable_;
+}
+
+special_particle_t::immovable_optional& special_particle_t::
+immovable ()
+{
+  return this->immovable_;
+}
+
+void special_particle_t::
+immovable (const immovable_type& x)
+{
+  this->immovable_.set (x);
+}
+
+void special_particle_t::
+immovable (const immovable_optional& x)
+{
+  this->immovable_ = x;
+}
+
+const special_particle_t::membrane_optional& special_particle_t::
+membrane () const
+{
+  return this->membrane_;
+}
+
+special_particle_t::membrane_optional& special_particle_t::
+membrane ()
+{
+  return this->membrane_;
+}
+
+void special_particle_t::
+membrane (const membrane_type& x)
+{
+  this->membrane_.set (x);
+}
+
+void special_particle_t::
+membrane (const membrane_optional& x)
+{
+  this->membrane_ = x;
 }
 
 
@@ -2014,6 +2191,36 @@ outputWriter (::std::unique_ptr< outputWriter_type > x)
   this->outputWriter_.set (std::move (x));
 }
 
+const simulation_t::parallelization_optional& simulation_t::
+parallelization () const
+{
+  return this->parallelization_;
+}
+
+simulation_t::parallelization_optional& simulation_t::
+parallelization ()
+{
+  return this->parallelization_;
+}
+
+void simulation_t::
+parallelization (const parallelization_type& x)
+{
+  this->parallelization_.set (x);
+}
+
+void simulation_t::
+parallelization (const parallelization_optional& x)
+{
+  this->parallelization_ = x;
+}
+
+void simulation_t::
+parallelization (::std::unique_ptr< parallelization_type > x)
+{
+  this->parallelization_.set (std::move (x));
+}
+
 const simulation_t::random_optional& simulation_t::
 random () const
 {
@@ -2040,6 +2247,82 @@ random (const random_optional& x)
 
 
 #include <xsd/cxx/xml/dom/parsing-source.hxx>
+
+// parallel_t
+//
+
+parallel_t::
+parallel_t (const ::xercesc::DOMElement& e,
+            ::xml_schema::flags f,
+            ::xml_schema::container* c)
+: ::xml_schema::string (e, f, c)
+{
+  _xsd_parallel_t_convert ();
+}
+
+parallel_t::
+parallel_t (const ::xercesc::DOMAttr& a,
+            ::xml_schema::flags f,
+            ::xml_schema::container* c)
+: ::xml_schema::string (a, f, c)
+{
+  _xsd_parallel_t_convert ();
+}
+
+parallel_t::
+parallel_t (const ::std::string& s,
+            const ::xercesc::DOMElement* e,
+            ::xml_schema::flags f,
+            ::xml_schema::container* c)
+: ::xml_schema::string (s, e, f, c)
+{
+  _xsd_parallel_t_convert ();
+}
+
+parallel_t* parallel_t::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class parallel_t (*this, f, c);
+}
+
+parallel_t::value parallel_t::
+_xsd_parallel_t_convert () const
+{
+  ::xsd::cxx::tree::enum_comparator< char > c (_xsd_parallel_t_literals_);
+  const value* i (::std::lower_bound (
+                    _xsd_parallel_t_indexes_,
+                    _xsd_parallel_t_indexes_ + 5,
+                    *this,
+                    c));
+
+  if (i == _xsd_parallel_t_indexes_ + 5 || _xsd_parallel_t_literals_[*i] != *this)
+  {
+    throw ::xsd::cxx::tree::unexpected_enumerator < char > (*this);
+  }
+
+  return *i;
+}
+
+const char* const parallel_t::
+_xsd_parallel_t_literals_[5] =
+{
+  "primitiveX",
+  "primitiveY",
+  "primitiveZ",
+  "subdomain",
+  "none"
+};
+
+const parallel_t::value parallel_t::
+_xsd_parallel_t_indexes_[5] =
+{
+  ::parallel_t::none,
+  ::parallel_t::primitiveX,
+  ::parallel_t::primitiveY,
+  ::parallel_t::primitiveZ,
+  ::parallel_t::subdomain
+};
 
 // geometric_t
 //
@@ -2496,6 +2779,7 @@ generator_info_t (const x_type& x,
   n3_ (this),
   radius_ (this),
   special_particle_ (this),
+  baseForce_ (this),
   type_ (type, this),
   behaviour_ (this)
 {
@@ -2523,6 +2807,7 @@ generator_info_t (const generator_info_t& x,
   n3_ (x.n3_, f, this),
   radius_ (x.radius_, f, this),
   special_particle_ (x.special_particle_, f, this),
+  baseForce_ (x.baseForce_, f, this),
   type_ (x.type_, f, this),
   behaviour_ (x.behaviour_, f, this)
 {
@@ -2550,6 +2835,7 @@ generator_info_t (const ::xercesc::DOMElement& e,
   n3_ (this),
   radius_ (this),
   special_particle_ (this),
+  baseForce_ (this),
   type_ (this),
   behaviour_ (this)
 {
@@ -2757,6 +3043,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       continue;
     }
 
+    // baseForce
+    //
+    if (n.name () == "baseForce" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< baseForce_type > r (
+        baseForce_traits::create (i, f, this));
+
+      if (!this->baseForce_)
+      {
+        this->baseForce_.set (::std::move (r));
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -2901,6 +3201,7 @@ operator= (const generator_info_t& x)
     this->n3_ = x.n3_;
     this->radius_ = x.radius_;
     this->special_particle_ = x.special_particle_;
+    this->baseForce_ = x.baseForce_;
     this->type_ = x.type_;
     this->behaviour_ = x.behaviour_;
   }
@@ -3027,11 +3328,11 @@ _xsd_calculatortype_t_convert () const
   ::xsd::cxx::tree::enum_comparator< char > c (_xsd_calculatortype_t_literals_);
   const value* i (::std::lower_bound (
                     _xsd_calculatortype_t_indexes_,
-                    _xsd_calculatortype_t_indexes_ + 2,
+                    _xsd_calculatortype_t_indexes_ + 3,
                     *this,
                     c));
 
-  if (i == _xsd_calculatortype_t_indexes_ + 2 || _xsd_calculatortype_t_literals_[*i] != *this)
+  if (i == _xsd_calculatortype_t_indexes_ + 3 || _xsd_calculatortype_t_literals_[*i] != *this)
   {
     throw ::xsd::cxx::tree::unexpected_enumerator < char > (*this);
   }
@@ -3040,17 +3341,19 @@ _xsd_calculatortype_t_convert () const
 }
 
 const char* const calculatortype_t::
-_xsd_calculatortype_t_literals_[2] =
+_xsd_calculatortype_t_literals_[3] =
 {
   "lennardjones",
+  "smoothed-lennardjones",
   "gravitation"
 };
 
 const calculatortype_t::value calculatortype_t::
-_xsd_calculatortype_t_indexes_[2] =
+_xsd_calculatortype_t_indexes_[3] =
 {
   ::calculatortype_t::gravitation,
-  ::calculatortype_t::lennardjones
+  ::calculatortype_t::lennardjones,
+  ::calculatortype_t::smoothed_lennardjones
 };
 
 // containerinfo_t
@@ -3235,6 +3538,7 @@ calculationInfo_t (const type_type& type)
   baseForceTime_ (this),
   rZero_ (this),
   stiffnessConstant_ (this),
+  rl_ (this),
   type_ (type, this)
 {
 }
@@ -3251,6 +3555,7 @@ calculationInfo_t (const calculationInfo_t& x,
   baseForceTime_ (x.baseForceTime_, f, this),
   rZero_ (x.rZero_, f, this),
   stiffnessConstant_ (x.stiffnessConstant_, f, this),
+  rl_ (x.rl_, f, this),
   type_ (x.type_, f, this)
 {
 }
@@ -3267,6 +3572,7 @@ calculationInfo_t (const ::xercesc::DOMElement& e,
   baseForceTime_ (this),
   rZero_ (this),
   stiffnessConstant_ (this),
+  rl_ (this),
   type_ (this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
@@ -3312,9 +3618,12 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "gravityFactor" && n.namespace_ ().empty ())
     {
+      ::std::unique_ptr< gravityFactor_type > r (
+        gravityFactor_traits::create (i, f, this));
+
       if (!this->gravityFactor_)
       {
-        this->gravityFactor_.set (gravityFactor_traits::create (i, f, this));
+        this->gravityFactor_.set (::std::move (r));
         continue;
       }
     }
@@ -3363,6 +3672,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // rl
+    //
+    if (n.name () == "rl" && n.namespace_ ().empty ())
+    {
+      if (!this->rl_)
+      {
+        this->rl_.set (rl_traits::create (i, f, this));
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -3407,6 +3727,7 @@ operator= (const calculationInfo_t& x)
     this->baseForceTime_ = x.baseForceTime_;
     this->rZero_ = x.rZero_;
     this->stiffnessConstant_ = x.stiffnessConstant_;
+    this->rl_ = x.rl_;
     this->type_ = x.type_;
   }
 
@@ -3726,6 +4047,7 @@ statistics_t (const file_type& file,
               const type_type& type)
 : ::xml_schema::type (),
   noBins_ (this),
+  deltaR_ (this),
   file_ (file, this),
   frequency_ (frequency, this),
   type_ (type, this)
@@ -3738,6 +4060,7 @@ statistics_t (const statistics_t& x,
               ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
   noBins_ (x.noBins_, f, this),
+  deltaR_ (x.deltaR_, f, this),
   file_ (x.file_, f, this),
   frequency_ (x.frequency_, f, this),
   type_ (x.type_, f, this)
@@ -3750,6 +4073,7 @@ statistics_t (const ::xercesc::DOMElement& e,
               ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
   noBins_ (this),
+  deltaR_ (this),
   file_ (this),
   frequency_ (this),
   type_ (this)
@@ -3778,6 +4102,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!this->noBins_)
       {
         this->noBins_.set (noBins_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // deltaR
+    //
+    if (n.name () == "deltaR" && n.namespace_ ().empty ())
+    {
+      if (!this->deltaR_)
+      {
+        this->deltaR_.set (deltaR_traits::create (i, f, this));
         continue;
       }
     }
@@ -3859,6 +4194,7 @@ operator= (const statistics_t& x)
   {
     static_cast< ::xml_schema::type& > (*this) = x;
     this->noBins_ = x.noBins_;
+    this->deltaR_ = x.deltaR_;
     this->file_ = x.file_;
     this->frequency_ = x.frequency_;
     this->type_ = x.type_;
@@ -4117,7 +4453,9 @@ special_particle_t (const position_type& position)
   position_ (position, this),
   force_ (this),
   vel_ (this),
-  mass_ (this)
+  mass_ (this),
+  immovable_ (this),
+  membrane_ (this)
 {
 }
 
@@ -4127,7 +4465,9 @@ special_particle_t (::std::unique_ptr< position_type > position)
   position_ (std::move (position), this),
   force_ (this),
   vel_ (this),
-  mass_ (this)
+  mass_ (this),
+  immovable_ (this),
+  membrane_ (this)
 {
 }
 
@@ -4139,7 +4479,9 @@ special_particle_t (const special_particle_t& x,
   position_ (x.position_, f, this),
   force_ (x.force_, f, this),
   vel_ (x.vel_, f, this),
-  mass_ (x.mass_, f, this)
+  mass_ (x.mass_, f, this),
+  immovable_ (x.immovable_, f, this),
+  membrane_ (x.membrane_, f, this)
 {
 }
 
@@ -4151,11 +4493,13 @@ special_particle_t (const ::xercesc::DOMElement& e,
   position_ (this),
   force_ (this),
   vel_ (this),
-  mass_ (this)
+  mass_ (this),
+  immovable_ (this),
+  membrane_ (this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
-    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, true);
     this->parse (p, f);
   }
 }
@@ -4232,6 +4576,25 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "position",
       "");
   }
+
+  while (p.more_attributes ())
+  {
+    const ::xercesc::DOMAttr& i (p.next_attribute ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    if (n.name () == "immovable" && n.namespace_ ().empty ())
+    {
+      this->immovable_.set (immovable_traits::create (i, f, this));
+      continue;
+    }
+
+    if (n.name () == "membrane" && n.namespace_ ().empty ())
+    {
+      this->membrane_.set (membrane_traits::create (i, f, this));
+      continue;
+    }
+  }
 }
 
 special_particle_t* special_particle_t::
@@ -4251,6 +4614,8 @@ operator= (const special_particle_t& x)
     this->force_ = x.force_;
     this->vel_ = x.vel_;
     this->mass_ = x.mass_;
+    this->immovable_ = x.immovable_;
+    this->membrane_ = x.membrane_;
   }
 
   return *this;
@@ -4287,6 +4652,7 @@ simulation_t (const container_type& container,
   delta_t_ (delta_t, this),
   writeFrequency_ (writeFrequency, this),
   outputWriter_ (outputWriter, this),
+  parallelization_ (this),
   random_ (this)
 {
 }
@@ -4314,6 +4680,7 @@ simulation_t (::std::unique_ptr< container_type > container,
   delta_t_ (delta_t, this),
   writeFrequency_ (writeFrequency, this),
   outputWriter_ (outputWriter, this),
+  parallelization_ (this),
   random_ (this)
 {
 }
@@ -4337,6 +4704,7 @@ simulation_t (const simulation_t& x,
   delta_t_ (x.delta_t_, f, this),
   writeFrequency_ (x.writeFrequency_, f, this),
   outputWriter_ (x.outputWriter_, f, this),
+  parallelization_ (x.parallelization_, f, this),
   random_ (x.random_, f, this)
 {
 }
@@ -4360,6 +4728,7 @@ simulation_t (const ::xercesc::DOMElement& e,
   delta_t_ (this),
   writeFrequency_ (this),
   outputWriter_ (this),
+  parallelization_ (this),
   random_ (this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
@@ -4564,6 +4933,12 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       continue;
     }
 
+    if (n.name () == "parallelization" && n.namespace_ ().empty ())
+    {
+      this->parallelization_.set (parallelization_traits::create (i, f, this));
+      continue;
+    }
+
     if (n.name () == "random" && n.namespace_ ().empty ())
     {
       this->random_.set (random_traits::create (i, f, this));
@@ -4627,6 +5002,7 @@ operator= (const simulation_t& x)
     this->delta_t_ = x.delta_t_;
     this->writeFrequency_ = x.writeFrequency_;
     this->outputWriter_ = x.outputWriter_;
+    this->parallelization_ = x.parallelization_;
     this->random_ = x.random_;
   }
 
@@ -4911,6 +5287,25 @@ simulation (::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > d,
 #include <ostream>
 #include <xsd/cxx/tree/error-handler.hxx>
 #include <xsd/cxx/xml/dom/serialization-source.hxx>
+
+void
+operator<< (::xercesc::DOMElement& e, const parallel_t& i)
+{
+  e << static_cast< const ::xml_schema::string& > (i);
+}
+
+void
+operator<< (::xercesc::DOMAttr& a, const parallel_t& i)
+{
+  a << static_cast< const ::xml_schema::string& > (i);
+}
+
+void
+operator<< (::xml_schema::list_stream& l,
+            const parallel_t& i)
+{
+  l << static_cast< const ::xml_schema::string& > (i);
+}
 
 void
 operator<< (::xercesc::DOMElement& e, const geometric_t& i)
@@ -5242,6 +5637,18 @@ operator<< (::xercesc::DOMElement& e, const generator_info_t& i)
     s << *b;
   }
 
+  // baseForce
+  //
+  if (i.baseForce ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "baseForce",
+        e));
+
+    s << *i.baseForce ();
+  }
+
   // type
   //
   {
@@ -5419,7 +5826,7 @@ operator<< (::xercesc::DOMElement& e, const calculationInfo_t& i)
         "gravityFactor",
         e));
 
-    s << ::xml_schema::as_decimal(*i.gravityFactor ());
+    s << *i.gravityFactor ();
   }
 
   // brownianMotion
@@ -5468,6 +5875,18 @@ operator<< (::xercesc::DOMElement& e, const calculationInfo_t& i)
         e));
 
     s << ::xml_schema::as_decimal(*i.stiffnessConstant ());
+  }
+
+  // rl
+  //
+  if (i.rl ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "rl",
+        e));
+
+    s << ::xml_schema::as_decimal(*i.rl ());
   }
 
   // type
@@ -5599,6 +6018,18 @@ operator<< (::xercesc::DOMElement& e, const statistics_t& i)
         e));
 
     s << *i.noBins ();
+  }
+
+  // deltaR
+  //
+  if (i.deltaR ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "deltaR",
+        e));
+
+    s << ::xml_schema::as_decimal(*i.deltaR ());
   }
 
   // file
@@ -5763,6 +6194,30 @@ operator<< (::xercesc::DOMElement& e, const special_particle_t& i)
         e));
 
     s << ::xml_schema::as_decimal(*i.mass ());
+  }
+
+  // immovable
+  //
+  if (i.immovable ())
+  {
+    ::xercesc::DOMAttr& a (
+      ::xsd::cxx::xml::dom::create_attribute (
+        "immovable",
+        e));
+
+    a << *i.immovable ();
+  }
+
+  // membrane
+  //
+  if (i.membrane ())
+  {
+    ::xercesc::DOMAttr& a (
+      ::xsd::cxx::xml::dom::create_attribute (
+        "membrane",
+        e));
+
+    a << *i.membrane ();
   }
 }
 
@@ -5936,6 +6391,18 @@ operator<< (::xercesc::DOMElement& e, const simulation_t& i)
         e));
 
     a << i.outputWriter ();
+  }
+
+  // parallelization
+  //
+  if (i.parallelization ())
+  {
+    ::xercesc::DOMAttr& a (
+      ::xsd::cxx::xml::dom::create_attribute (
+        "parallelization",
+        e));
+
+    a << *i.parallelization ();
   }
 
   // random

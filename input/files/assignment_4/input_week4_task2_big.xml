@@ -18,7 +18,7 @@
         <epsilon>1.0</epsilon>
         <sigma>1.2</sigma>
         <brownianMotion>0.0</brownianMotion>
-        <gravityFactor>-12.44</gravityFactor>
+        <gravityFactor x="0" y="-12.44" z="0" />
     </calculator>
     <thermostat>
         <nThermostat>1000</nThermostat>

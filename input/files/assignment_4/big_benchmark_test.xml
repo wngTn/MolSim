@@ -18,7 +18,7 @@
         <epsilon>1.0</epsilon>
         <sigma>1.2</sigma>
         <brownianMotion>0.0</brownianMotion>
-        <gravityFactor>0</gravityFactor>
+        <gravityFactor x="0" y="0" z="0" />
     </calculator>
     <outputFile>output</outputFile>
     <generatorInfo type="cuboid">

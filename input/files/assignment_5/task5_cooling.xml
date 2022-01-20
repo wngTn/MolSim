@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<simulation t_end="250" delta_t="0.001" writeFrequency="100" outputWriter="vtk" parallelization="primitiveY">
+    <container type="linkedcell">
+        <rCut>2.3</rCut>
+        <domainSizeX>9.2</domainSizeX>
+        <domainSizeY>9.2</domainSizeY>
+        <domainSizeZ>9.2</domainSizeZ>
+        <borderType>
+            <left>periodic</left>
+            <right>periodic</right>
+            <upper>periodic</upper>
+            <lower>periodic</lower>
+            <front>periodic</front>
+            <back>periodic</back>
+        </borderType>
+    </container>
+    <checkpointInput>checkpointTask5.json</checkpointInput>
+    <calculator type="smoothed-lennardjones">
+        <epsilon>1</epsilon>
+        <sigma>1</sigma>
+        <brownianMotion>0.0</brownianMotion>
+        <rl>1.9</rl>
+    </calculator>
+    <thermostat>
+        <nThermostat>50</nThermostat>
+        <Tinit>3.0</Tinit>
+        <Ttarget>0.5</Ttarget>
+        <deltaTemp>0.00078</deltaTemp>
+    </thermostat>
+    <statistics type="thermodynamical">
+        <file>task5_supercooling_statistics.csv</file>
+        <frequency>1000</frequency>
+        <deltaR>1</deltaR>
+    </statistics>
+    <outputFile>output</outputFile>
+</simulation>

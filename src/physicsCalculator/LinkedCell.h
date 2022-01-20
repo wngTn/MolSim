@@ -14,7 +14,8 @@ namespace calculator {
     class LinkedCell : public PhysicsCalc{
 
     public:
-        LinkedCell(double sigma, double epsilon, double rCut) : sigma(sigma), epsilon(epsilon), rCut{rCut}{
+        LinkedCell(double sigma, double epsilon, double rCut, bool smoothed=false, double rl = 0.0) : sigma(sigma), epsilon(epsilon),
+                                                                                                      rCut{rCut}, smoothed(smoothed), rl(rl){
             epsilonTable = {{epsilon}};
             sigmaTable = {{sigma}};
         };
@@ -70,6 +71,8 @@ namespace calculator {
 
         inline void ljforce(Particle* p1, Particle* p2, double sqrd_dist, bool newton = true) const;
 
+        inline void ljforce_smoothed(Particle* p1, Particle* p2, double sqrd_dist) const;
+
         void harmonic_potential(Particle* p1, Particle* p2, double sqrd_dist, bool newton = true) const;
 
         void reflectiveBoundary(LinkedCellContainer & grid, const std::array<int, 3> & currentIndexes) const;
@@ -104,6 +107,12 @@ namespace calculator {
         // whether any membranes exist, used only to shortcut some checks
         bool membrane = false;
 
+        // whether smoothed LJ is used
+        bool smoothed;
+
+        // r_l used for smoothed LJ
+        double rl;
+
         std::vector<std::vector<double>> sigmaTable = {{0.0}};
         std::vector<std::vector<double>> epsilonTable = {{0.0}};
         std::vector<std::pair<int, std::pair<double, double>>> mapping = {};
@@ -137,8 +146,26 @@ namespace calculator {
 		}
     }
 
-constexpr double SIXTH_ROOT_OF_TWO = 1.12246204830937298;
-    constexpr double SQR_ROOT_OF_TWO = 1.4142135623730950488;
+    void LinkedCell::ljforce_smoothed(Particle *p1, Particle *p2, double sqrd_dist) const {
+        double dist = sqrt(sqrd_dist);
+        if(dist <= rl){
+            ljforce(p1,p2,sqrd_dist);
+            return;
+        }else{ // dist < rCut checked b4 calling function
+            double sigma_pow_6 = std::pow(sigmaTable[p1->getSEIndex()][p2->getSEIndex()], 6);
+            double dist_pow_6 = sqrd_dist * sqrd_dist * sqrd_dist;
+            auto first_part = (rCut - dist) * (- (24*sigma_pow_6)*epsilonTable[p1->getSEIndex()][p2->getSEIndex()])/(dist_pow_6 * dist_pow_6 * sqrd_dist * std::pow(rCut-rl,3));
+            double second_part = rCut * rCut * (2*sigma_pow_6 - dist_pow_6) + rCut * (3*rl - dist)*(dist_pow_6 - 2 * sigma_pow_6) +
+                                 dist * (5*rl*sigma_pow_6 - 2 * rl * dist_pow_6 - 3 * sigma_pow_6*dist + dist_pow_6*dist);
+            auto force = (first_part * second_part) * (p2->getX() - p1->getX());
+            p1->setF(p1->getF() + force);
+            p2->setF(p2->getF() - force);
+        }
+    }
+
+    constexpr double SIXTH_ROOT_OF_TWO = 1.12246204830937298;
+    // copied from std::numbers which doesn't work on older compiler versions
+    constexpr double SQR_ROOT_OF_TWO = 1.414213562373095048801688724209698079L;
 }
 
 

@@ -11,8 +11,11 @@ Thermostat::Thermostat(double initialTemperature, double targetTemperature, doub
           maxDeltaTemperature(maxDeltaTemperature), excludeY(exludeY) {}
 
 double Thermostat::calculateMeanYVelocity(ParticleContainer &container) {
-    double totalYVel = std::accumulate(container.begin(), container.end(), 0, [](double acc, auto&p){return acc + p.getX()[1];});
-    return totalYVel/static_cast<int>(container.size());
+    auto [totalYVel,count] = std::accumulate(container.begin(), container.end(), std::pair<double,int>{0.,0}, [](std::pair<double,int> acc, auto&p){
+        if(p.immovable) return acc;
+        return std::pair<double,int>{acc.first + p.getX()[1], acc.second + 1};
+    });
+    return totalYVel/count;
 }
 
 
@@ -37,7 +40,7 @@ double Thermostat::calculateKineticEnergy(ParticleContainer &particles, bool exc
 }
 
 double Thermostat::calculateCurrentTemp(ParticleContainer &particles, bool exclY){
-    return 2 * calculateKineticEnergy(particles, exclY) / static_cast<int>(particles.size()) / particles.dimensions();
+    return 2 * calculateKineticEnergy(particles, exclY) / static_cast<int>(std::count_if(particles.begin(), particles.end(), [](auto& p){return !p.immovable;})) / particles.dimensions();
 }
 
 void Thermostat::scaleVelocities(ParticleContainer &particles, double beta, bool exclY) {
@@ -91,7 +94,8 @@ void Thermostat::setupTemperature(ParticleContainer &particles) const{
             }
         }
     }
-    scaleVelocities(particles, sqrt(initialTemperature / calculateCurrentTemp(particles, excludeY)), excludeY);
+    auto currentTemp =  calculateCurrentTemp(particles, excludeY);
+    scaleVelocities(particles, sqrt(initialTemperature / currentTemp), excludeY);
 }
 
 
