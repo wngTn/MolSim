@@ -179,7 +179,7 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
 				subDomainVector[j] = subDomain;
 			}
 		}
-			// Y is the greatest dimension
+		// Y is the greatest dimension
 		else if (dim[1] == std::max({dim[0], dim[1], dim[2]})) {
 			// If domain size is smaller than our available threads, we use domain size as number of threads
 			numThreads = std::min(omp_get_max_threads(), (dim[1] / 2 == 0 ? 1 : dim[1] / 2));

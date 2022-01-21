@@ -150,7 +150,7 @@ void Cell::setAllNeighbors2D() {
 //		std::array<int, 3>{index[0], index[1] + 1, index[2]},
 //		std::array<int, 3>{index[0] + 1, index[1], index[2]},
 //		std::array<int, 3>{index[0] + 1, index[1] + 1, index[2]},
-//		std::array<int, 3>{index[0] - 1, index[1] + 1, index[2]},
+//		std::array<int, 3>{index[0] - 1, index[1] + 1, index[2]}
 
 		std::array<int, 3>{index[0], index[1] - 1, index[2]},
 		std::array<int, 3>{index[0] - 1, index[1], index[2]},
@@ -161,34 +161,34 @@ void Cell::setAllNeighbors2D() {
 
 void Cell::setAllNeighbors3D() {
 	Cell::allNeighbors3D = {
-//		std::array<int, 3>{index[0], index[1] + 1, index[2]},
-//		std::array<int, 3>{index[0] + 1, index[1], index[2]},
-//		std::array<int, 3>{index[0] + 1, index[1] + 1, index[2]},
-//		std::array<int, 3>{index[0] - 1, index[1] + 1, index[2]},
-//		std::array<int, 3>{index[0], index[1], index[2] + 1},
-//		std::array<int, 3>{index[0], index[1] + 1, index[2] + 1},
-//		std::array<int, 3>{index[0] + 1, index[1], index[2] + 1},
-//		std::array<int, 3>{index[0] + 1, index[1] + 1, index[2] + 1},
-//		std::array<int, 3>{index[0] - 1, index[1], index[2] + 1},
-//		std::array<int, 3>{index[0], index[1] - 1, index[2] + 1},
-//		std::array<int, 3>{index[0] - 1, index[1] - 1, index[2] + 1},
-//		std::array<int, 3>{index[0] - 1, index[1] + 1, index[2] + 1},
-//		std::array<int, 3>{index[0] + 1, index[1] - 1, index[2] + 1},
+//		std::array<int, 3>{index[0] + 1, index[1], index[2]}, // right
+//		std::array<int, 3>{index[0] + 1, index[1] + 1, index[2]}, // right, down
+//		std::array<int, 3>{index[0], index[1] + 1, index[2]}, // down
+//		std::array<int, 3>{index[0] - 1, index[1] + 1, index[2]}, // left down
+//		std::array<int, 3>{index[0] + 1, index[1], index[2] - 1}, // front right
+//		std::array<int, 3>{index[0], index[1], index[2] - 1}, // front
+//		std::array<int, 3>{index[0] - 1, index[1], index[2] - 1}, // front left
+//		std::array<int, 3>{index[0] - 1, index[1] + 1, index[2] + 1}, // down back left
+//		std::array<int, 3>{index[0], index[1] + 1, index[2] + 1}, // down, back
+//		std::array<int, 3>{index[0] + 1, index[1] + 1, index[2] + 1}, // right, down, back
+//		std::array<int, 3>{index[0] - 1, index[1] + 1, index[2] - 1}, // left, down, front
+//		std::array<int, 3>{index[0], index[1] + 1, index[2] - 1}, // down, front
+//		std::array<int, 3>{index[0] + 1, index[1] + 1, index[2] - 1}, // right, down, front
 
 
-		std::array<int, 3>{index[0], index[1] - 1, index[2]},
-		std::array<int, 3>{index[0] - 1, index[1], index[2]},
-		std::array<int, 3>{index[0] - 1, index[1] - 1, index[2]},
-		std::array<int, 3>{index[0] + 1, index[1] - 1, index[2]},
-		std::array<int, 3>{index[0], index[1], index[2] - 1},
-		std::array<int, 3>{index[0], index[1] - 1, index[2] - 1},
-		std::array<int, 3>{index[0] - 1, index[1], index[2] + 1},
-		std::array<int, 3>{index[0] - 1, index[1] - 1, index[2] - 1},
-		std::array<int, 3>{index[0] + 1, index[1], index[2] - 1},
-		std::array<int, 3>{index[0], index[1] + 1, index[2] - 1},
-		std::array<int, 3>{index[0] + 1, index[1] + 1, index[2] - 1},
-		std::array<int, 3>{index[0] + 1, index[1] - 1, index[2] - 1},
-		std::array<int, 3>{index[0] - 1, index[1] + 1, index[2] - 1}
+		std::array<int, 3>{index[0] - 1, index[1], index[2]}, // right
+		std::array<int, 3>{index[0] - 1, index[1] - 1, index[2]}, // right, down
+		std::array<int, 3>{index[0], index[1] - 1, index[2]}, // down
+		std::array<int, 3>{index[0] + 1, index[1] - 1, index[2]}, // left down
+		std::array<int, 3>{index[0] - 1, index[1], index[2] + 1}, // front right
+		std::array<int, 3>{index[0], index[1], index[2] + 1}, // front
+		std::array<int, 3>{index[0] + 1, index[1], index[2] + 1}, // front left
+		std::array<int, 3>{index[0] + 1, index[1] - 1, index[2] - 1}, // down back left
+		std::array<int, 3>{index[0], index[1] - 1, index[2] - 1}, // down, back
+		std::array<int, 3>{index[0] - 1, index[1] - 1, index[2] - 1}, // right, down, back
+		std::array<int, 3>{index[0] + 1, index[1] - 1, index[2] + 1}, // left, down, front
+		std::array<int, 3>{index[0], index[1] - 1, index[2] + 1}, // down, front
+		std::array<int, 3>{index[0] - 1, index[1] - 1, index[2] + 1}, // right, down, front
 	};
 
 
