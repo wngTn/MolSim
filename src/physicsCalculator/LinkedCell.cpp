@@ -20,17 +20,17 @@ void LinkedCell::calcFWithinCell(Cell &cell) {
                                 LinkedCell::ljforce(*it, *it2, sqrd_dist);
                             }
                         }
-                    }else{
-                        if(sqrd_dist <= sqr(SIXTH_ROOT_OF_TWO * sigmaTable[(*it)->getSEIndex()][(*it2)->getSEIndex()])){
-                            if(smoothed){
-                                LinkedCell::ljforce_smoothed(*it, *it2, sqrd_dist);
-                            }else{
-                                LinkedCell::ljforce(*it, *it2, sqrd_dist);
-                            }
-					}
-					if (gridNeighbors((*it)->getGridIndex(), (*it2)->getGridIndex())) {
-						LinkedCell::harmonic_potential(*it, *it2, sqrd_dist);
-					}
+                }else{
+                    if(sqrd_dist <= sqr(SIXTH_ROOT_OF_TWO * sigmaTable[(*it)->getSEIndex()][(*it2)->getSEIndex()])){
+                        if(smoothed){
+                            LinkedCell::ljforce_smoothed(*it, *it2, sqrd_dist);
+                        }else{
+                            LinkedCell::ljforce(*it, *it2, sqrd_dist);
+                        }
+                    }
+                    if (gridNeighbors((*it)->getGridIndex(), (*it2)->getGridIndex())) {
+                        LinkedCell::harmonic_potential(*it, *it2, sqrd_dist);
+                    }
 				}
 			}
 		}
