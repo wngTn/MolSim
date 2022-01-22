@@ -425,13 +425,14 @@ void LinkedCell::calcF(ParticleContainer &container) {
 		{
 #pragma omp for schedule(dynamic)
 			for (auto &subDomain : grid.getSubDomainVector()) {
-#pragma omp task shared(grid, subDomain) default(none)
+
+
 				for (int pos : subDomain.getCellIndices()) {
 					if (!grid.grid[pos].getParticles().empty()) {
 						calcFCell(grid.grid[pos], grid);
 					}
 				}
-#pragma omp task shared(grid, subDomain) default(none)
+
 				for (int pos : subDomain.getBorderCellIndices()) {
 					if (!grid.grid[pos].getParticles().empty()) {
 						calcFCellSubdomain(grid.grid[pos], grid, subDomain);

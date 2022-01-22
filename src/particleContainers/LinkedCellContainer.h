@@ -87,6 +87,7 @@ public:
 	 * @param Zv length of Z-Axis of the array == the length of the domain
 	 * @param rCutV the r_cut value
 	 * @param borderV the border types of the 6 (3D) or 4 (2D) borders
+	 * @param g the gravity that applies to the particles
 	 * @param strategy the multi threading strategy that should be used
 	 */
 	LinkedCellContainer(double Xv,
