@@ -358,7 +358,7 @@ void LinkedCellContainer::setRCut(double rCutV) {
 }
 
 bool LinkedCellContainer::is2D() {
-	return dim[2] == 1;
+    return lenDim[2] < 1.000001;
 }
 
 const std::array<int, 3> &LinkedCellContainer::getDim() const {
@@ -366,7 +366,8 @@ const std::array<int, 3> &LinkedCellContainer::getDim() const {
 }
 
 int LinkedCellContainer::dimensions() {
-	return dim[2] == 1 ? 2 : 3;
+    //return dim[2] == 1 ? 2 : 3;
+	return lenDim[2] < 1.000001 ? 2 : 3;
 }
 
 void LinkedCellContainer::setDim(const std::array<int, 3> &dimV) {

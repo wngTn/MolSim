@@ -13,7 +13,7 @@ Thermostat::Thermostat(double initialTemperature, double targetTemperature, doub
 double Thermostat::calculateMeanYVelocity(ParticleContainer &container) {
     auto [totalYVel,count] = std::accumulate(container.begin(), container.end(), std::pair<double,int>{0.,0}, [](std::pair<double,int> acc, auto&p){
         if(p.immovable) return acc;
-        return std::pair<double,int>{acc.first + p.getX()[1], acc.second + 1};
+        return std::pair<double,int>{acc.first + p.getV()[1], acc.second + 1};
     });
     return totalYVel/count;
 }

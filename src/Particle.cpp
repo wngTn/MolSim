@@ -288,3 +288,7 @@ bool Particle::operator<(const Particle &other) noexcept {
         return false;
     }
 }
+
+const std::array<double, 3> &Particle::getBaseForce() const {
+    return baseForce;
+}
