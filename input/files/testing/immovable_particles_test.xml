@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<simulation t_end="2" delta_t="1" writeFrequency="10" outputWriter="vtk">
+    <container type="linkedcell">
+        <rCut>3.0</rCut>
+        <domainSizeX>15</domainSizeX>
+        <domainSizeY>15</domainSizeY>
+        <domainSizeZ>15</domainSizeZ>
+        <borderType>
+            <left>periodic</left>
+            <right>periodic</right>
+            <upper>periodic</upper>
+            <lower>periodic</lower>
+            <front>periodic</front>
+            <back>periodic</back>
+        </borderType>
+    </container>
+    <calculator type="lennardjones">
+        <epsilon>1</epsilon>
+        <sigma>1</sigma>
+        <brownianMotion>0.0</brownianMotion>
+        <gravityFactor x="0" y="-0.5" z="0" />
+        <baseForceTime>2</baseForceTime>
+    </calculator>
+    <outputFile>output</outputFile>
+    <generatorInfo type="cuboid" behaviour="immovable">
+        <x>1.0</x>
+        <y>1.0</y>
+        <z>1.0</z>
+        <v1>0.0</v1>
+        <v2>0.0</v2>
+        <v3>0.0</v3>
+        <mass>1.0</mass>
+        <distance>1</distance>
+        <brownianFactor>0.0</brownianFactor>
+        <dim>3</dim>
+        <n1>4</n1>
+        <n2>4</n2>
+        <n3>1</n3>
+        <epsilon>1</epsilon>
+        <sigma>1</sigma>
+    </generatorInfo>
+    <generatorInfo type="cuboid">
+        <x>1.0</x>
+        <y>1.0</y>
+        <z>6.0</z>
+        <v1>0.0</v1>
+        <v2>0.0</v2>
+        <v3>0.0</v3>
+        <mass>1.0</mass>
+        <distance>2.2</distance>
+        <brownianFactor>0.0</brownianFactor>
+        <dim>3</dim>
+        <n1>4</n1>
+        <n2>4</n2>
+        <n3>1</n3>
+        <epsilon>1</epsilon>
+        <sigma>1</sigma>
+    </generatorInfo>
+</simulation>

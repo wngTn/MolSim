@@ -111,28 +111,20 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles, const Shape
                     vel = info.vel;
                     baseF = info.baseForce;
                     m = info.mass;
+                    isImmovable = info.behaviour == ParticleGenerator::immovable;
+                    isMembrane = info.behaviour == ParticleGenerator::membrane;
                 }
 
                 // add browian motion
                 auto tempVel = vel + maxwellBoltzmannDistributedVelocity(info.brownianFactor, info.DIM);
                 Particle part = Particle{currentPos, tempVel, m, current_seindex, current_seindex};
                 part.setBaseForce(baseF);
-                switch(info.behaviour){
-                    case membrane: { // extra scope, so index is not visible in other cases -> no initialization bypassing
-                        part.setMembrane(isMembrane);
-                        part.setImmovable(isImmovable);
-                        auto index = std::array<int,3>{x,y,z};
-                        part.setGridIndex(index);
-                        break;}
-                    case immovable:
-                        part.setImmovable(isImmovable);
-                        part.setMembrane(isMembrane);
-                        break;
-                    case normal:
-                    default:
-                        part.setMembrane(isMembrane);
-                        part.setImmovable(isImmovable);
-                        break;
+
+                part.setMembrane(isMembrane);
+                part.setImmovable(isImmovable);
+                if(isMembrane){
+                    auto index = std::array<int,3>{x,y,z};
+                    part.setGridIndex(index);
                 }
 
                 particles.emplace_back(part);
