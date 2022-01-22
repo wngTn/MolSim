@@ -426,7 +426,6 @@ void LinkedCell::calcF(ParticleContainer &container) {
 #pragma omp for schedule(dynamic)
 			for (auto &subDomain : grid.getSubDomainVector()) {
 
-
 				for (int pos : subDomain.getCellIndices()) {
 					if (!grid.grid[pos].getParticles().empty()) {
 						calcFCell(grid.grid[pos], grid);
