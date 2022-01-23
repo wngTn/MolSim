@@ -449,6 +449,7 @@ void LinkedCell::calcF(ParticleContainer &container) {
 	}
 }
 
+
 void LinkedCell::harmonic_potential(Particle *p1, Particle *p2, double sqrd_dist, bool newton) const {
 	double factor = SQR_ROOT_OF_TWO;
 	double distance = sqrt(sqrd_dist);

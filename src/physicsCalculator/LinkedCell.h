@@ -11,7 +11,6 @@
 #include "nlohmann/json.hpp"
 
 namespace calculator {
-	template<LinkedCellContainer::Strategy strategy>
     class LinkedCell : public PhysicsCalc{
 
     public:
@@ -143,15 +142,12 @@ namespace calculator {
 		}
     }
 
-
-template<LinkedCellContainer::Strategy strategy>
 template<typename T>
-T LinkedCell<strategy>::sqr(T x) {
+T LinkedCell::sqr(T x) {
 	return x * x;
 }
 
-template<LinkedCellContainer::Strategy strategy>
-void LinkedCell<strategy>::ljforce_smoothed(Particle *p1, Particle *p2, double sqrd_dist) const {
+void LinkedCell::ljforce_smoothed(Particle *p1, Particle *p2, double sqrd_dist) const {
 	double dist = sqrt(sqrd_dist);
 	if(dist <= rl){
 		ljforce(p1,p2,sqrd_dist);
@@ -167,6 +163,7 @@ void LinkedCell<strategy>::ljforce_smoothed(Particle *p1, Particle *p2, double s
 		p2->setF(p2->getF() - force);
 	}
 }
+
 
 constexpr double SIXTH_ROOT_OF_TWO = 1.12246204830937298;
     // copied from std::numbers which doesn't work on older compiler versions

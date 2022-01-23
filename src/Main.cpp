@@ -1,6 +1,7 @@
 #include "utils/MainUtils.h"
 
 int main(int argc, char *argv[]) {
+
     Config config{};
 
     MainUtils::initializeLogger();

@@ -7,6 +7,20 @@ project(PSEMolDyn_GroupC)
 # to disable write cmake -D BUILD_DOC=OFF
 option(BUILD_DOC "Build documentation" ON)
 
+set(STRATEGY ${STRAT})
+if(STRATEGY STREQUAL "primitiveX")
+    add_definitions(-DPARSTRA="primitiveX")
+elseif(STRATEGY STREQUAL "primitiveY")
+    add_definitions(-DPARSTRA="primitiveY")
+elseif(STRATEGY STREQUAL "primitiveZ")
+    add_definitions(-DPARSTRA="primitiveZ")
+elseif(STRATEGY STREQUAL "subDomain")
+    add_definitions(-DPARSTRA="subDomain")
+endif ()
+
+
+message("The Strategy is: ${STRATEGY}")
+
 # indicate the test build as an option and set it to OFF by default
 # to enable write cmake -D BUILD_TEST=ON
 option(BUILD_TEST "Build tests" OFF)
