@@ -11,6 +11,7 @@
 #include "nlohmann/json.hpp"
 
 namespace calculator {
+	template<LinkedCellContainer::Strategy strategy>
     class LinkedCell : public PhysicsCalc{
 
     public:
@@ -125,10 +126,6 @@ namespace calculator {
 
     };
 
-    template<typename T>
-    T LinkedCell::sqr(T x) {
-        return x * x;
-    }
 
     void LinkedCell::ljforce(Particle* p1, Particle* p2, double sqrd_dist, bool newton) const {
         //double s = sqr(sigma) / sqrd_dist;
@@ -146,24 +143,32 @@ namespace calculator {
 		}
     }
 
-    void LinkedCell::ljforce_smoothed(Particle *p1, Particle *p2, double sqrd_dist) const {
-        double dist = sqrt(sqrd_dist);
-        if(dist <= rl){
-            ljforce(p1,p2,sqrd_dist);
-            return;
-        }else{ // dist < rCut checked b4 calling function
-            double sigma_pow_6 = std::pow(sigmaTable[p1->getSEIndex()][p2->getSEIndex()], 6);
-            double dist_pow_6 = sqrd_dist * sqrd_dist * sqrd_dist;
-            auto first_part = (rCut - dist) * (- (24*sigma_pow_6)*epsilonTable[p1->getSEIndex()][p2->getSEIndex()])/(dist_pow_6 * dist_pow_6 * sqrd_dist * std::pow(rCut-rl,3));
-            double second_part = rCut * rCut * (2*sigma_pow_6 - dist_pow_6) + rCut * (3*rl - dist)*(dist_pow_6 - 2 * sigma_pow_6) +
-                                 dist * (5*rl*sigma_pow_6 - 2 * rl * dist_pow_6 - 3 * sigma_pow_6*dist + dist_pow_6*dist);
-            auto force = (first_part * second_part) * (p2->getX() - p1->getX());
-            p1->setF(p1->getF() + force);
-            p2->setF(p2->getF() - force);
-        }
-    }
 
-    constexpr double SIXTH_ROOT_OF_TWO = 1.12246204830937298;
+template<LinkedCellContainer::Strategy strategy>
+template<typename T>
+T LinkedCell<strategy>::sqr(T x) {
+	return x * x;
+}
+
+template<LinkedCellContainer::Strategy strategy>
+void LinkedCell<strategy>::ljforce_smoothed(Particle *p1, Particle *p2, double sqrd_dist) const {
+	double dist = sqrt(sqrd_dist);
+	if(dist <= rl){
+		ljforce(p1,p2,sqrd_dist);
+		return;
+	}else{ // dist < rCut checked b4 calling function
+		double sigma_pow_6 = std::pow(sigmaTable[p1->getSEIndex()][p2->getSEIndex()], 6);
+		double dist_pow_6 = sqrd_dist * sqrd_dist * sqrd_dist;
+		auto first_part = (rCut - dist) * (- (24*sigma_pow_6)*epsilonTable[p1->getSEIndex()][p2->getSEIndex()])/(dist_pow_6 * dist_pow_6 * sqrd_dist * std::pow(rCut-rl,3));
+		double second_part = rCut * rCut * (2*sigma_pow_6 - dist_pow_6) + rCut * (3*rl - dist)*(dist_pow_6 - 2 * sigma_pow_6) +
+			dist * (5*rl*sigma_pow_6 - 2 * rl * dist_pow_6 - 3 * sigma_pow_6*dist + dist_pow_6*dist);
+		auto force = (first_part * second_part) * (p2->getX() - p1->getX());
+		p1->setF(p1->getF() + force);
+		p2->setF(p2->getF() - force);
+	}
+}
+
+constexpr double SIXTH_ROOT_OF_TWO = 1.12246204830937298;
     // copied from std::numbers which doesn't work on older compiler versions
     constexpr double SQR_ROOT_OF_TWO = 1.414213562373095048801688724209698079L;
 }
