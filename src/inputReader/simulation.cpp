@@ -1815,6 +1815,30 @@ mass (const mass_optional& x)
   this->mass_ = x;
 }
 
+const special_particle_t::type_optional& special_particle_t::
+type () const
+{
+  return this->type_;
+}
+
+special_particle_t::type_optional& special_particle_t::
+type ()
+{
+  return this->type_;
+}
+
+void special_particle_t::
+type (const type_type& x)
+{
+  this->type_.set (x);
+}
+
+void special_particle_t::
+type (const type_optional& x)
+{
+  this->type_ = x;
+}
+
 const special_particle_t::immovable_optional& special_particle_t::
 immovable () const
 {
@@ -4454,6 +4478,7 @@ special_particle_t (const position_type& position)
   force_ (this),
   vel_ (this),
   mass_ (this),
+  type_ (this),
   immovable_ (this),
   membrane_ (this)
 {
@@ -4466,6 +4491,7 @@ special_particle_t (::std::unique_ptr< position_type > position)
   force_ (this),
   vel_ (this),
   mass_ (this),
+  type_ (this),
   immovable_ (this),
   membrane_ (this)
 {
@@ -4480,6 +4506,7 @@ special_particle_t (const special_particle_t& x,
   force_ (x.force_, f, this),
   vel_ (x.vel_, f, this),
   mass_ (x.mass_, f, this),
+  type_ (x.type_, f, this),
   immovable_ (x.immovable_, f, this),
   membrane_ (x.membrane_, f, this)
 {
@@ -4494,6 +4521,7 @@ special_particle_t (const ::xercesc::DOMElement& e,
   force_ (this),
   vel_ (this),
   mass_ (this),
+  type_ (this),
   immovable_ (this),
   membrane_ (this)
 {
@@ -4567,6 +4595,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // type
+    //
+    if (n.name () == "type" && n.namespace_ ().empty ())
+    {
+      if (!this->type_)
+      {
+        this->type_.set (type_traits::create (i, f, this));
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -4614,6 +4653,7 @@ operator= (const special_particle_t& x)
     this->force_ = x.force_;
     this->vel_ = x.vel_;
     this->mass_ = x.mass_;
+    this->type_ = x.type_;
     this->immovable_ = x.immovable_;
     this->membrane_ = x.membrane_;
   }
@@ -6194,6 +6234,18 @@ operator<< (::xercesc::DOMElement& e, const special_particle_t& i)
         e));
 
     s << ::xml_schema::as_decimal(*i.mass ());
+  }
+
+  // type
+  //
+  if (i.type ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "type",
+        e));
+
+    s << *i.type ();
   }
 
   // immovable

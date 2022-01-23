@@ -9,7 +9,7 @@
 namespace statistics {
 
     Thermodynamical::Thermodynamical(std::string file, double delta_r) : filename{std::move(file)}, delta_r{delta_r}, max_distance{50.} {
-        std::ofstream f{filename};
+        std::ofstream f{folder_path + filename};
         f << "Iteration,Diffusion";
         for(int i = 0; i*delta_r < max_distance; i++){
             f << ",Interval [" << i * delta_r << ";" << (i+1) * delta_r << "]";
@@ -49,7 +49,7 @@ namespace statistics {
     void Thermodynamical::writeStatistics(ParticleContainer &container, int iteration) {
         auto& particles = static_cast<LinkedCellContainer &>(container);
 
-        std::ofstream file{filename, std::ios::app};
+        std::ofstream file{folder_path + filename, std::ios::app};
         file << iteration << "," << calculateDiffusion(particles);
 
         int intervals = std::floor(max_distance / delta_r);

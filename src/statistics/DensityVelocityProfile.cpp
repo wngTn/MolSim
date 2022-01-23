@@ -11,7 +11,7 @@ namespace statistics {
 
     DensityVelocityProfile::DensityVelocityProfile(std::string f, int noBins) : filename(std::move(f)),
                                                                                               noBins(noBins) {
-        std::ofstream file{filename};
+        std::ofstream file{folder_path + filename};
         file << "Iteration,Bin,Density,Velocity X,Velocity Y,Velocity Z\n";
     }
 
@@ -31,7 +31,7 @@ namespace statistics {
             bins[binIndex].push_back(&p);
         }
         // open for appending
-        std::ofstream file{filename, std::ios::app};
+        std::ofstream file{folder_path + filename, std::ios::app};
 
         int binNumber = 0;
         for (auto &bin: bins) {

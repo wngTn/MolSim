@@ -175,6 +175,7 @@
             <xs:element minOccurs="0" name="force" type="array_float_3" />
             <xs:element minOccurs="0" name="vel" type="array_float_3" />
             <xs:element minOccurs="0" name="mass" type="xs:decimal" />
+            <xs:element minOccurs="0" name="type" type="xs:int" />
         </xs:sequence>
         <xs:attribute name="immovable" type="xs:boolean" use="optional"/>
         <xs:attribute name="membrane" type="xs:boolean" use="optional"/>
