@@ -71,7 +71,7 @@ namespace calculator {
 
         inline void ljforce(Particle* p1, Particle* p2, double sqrd_dist, bool newton = true) const;
 
-        inline void ljforce_smoothed(Particle* p1, Particle* p2, double sqrd_dist) const;
+        inline void ljforce_smoothed(Particle* p1, Particle* p2, double sqrd_dist, bool newton = true) const;
 
         void harmonic_potential(Particle* p1, Particle* p2, double sqrd_dist, bool newton = true) const;
 
@@ -146,7 +146,7 @@ namespace calculator {
 		}
     }
 
-    void LinkedCell::ljforce_smoothed(Particle *p1, Particle *p2, double sqrd_dist) const {
+    void LinkedCell::ljforce_smoothed(Particle *p1, Particle *p2, double sqrd_dist, bool newton) const {
         double dist = sqrt(sqrd_dist);
         if(dist <= rl){
             ljforce(p1,p2,sqrd_dist);
@@ -159,7 +159,9 @@ namespace calculator {
                                  dist * (5*rl*sigma_pow_6 - 2 * rl * dist_pow_6 - 3 * sigma_pow_6*dist + dist_pow_6*dist);
             auto force = (first_part * second_part) * (p2->getX() - p1->getX());
             p1->setF(p1->getF() + force);
-            p2->setF(p2->getF() - force);
+	        if (newton){
+		        p2->setF(p2->getF() - force);
+	        }
         }
     }
 

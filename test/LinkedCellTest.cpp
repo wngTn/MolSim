@@ -3,6 +3,7 @@
 #include <Particle.h>
 #include <physicsCalculator/LinkedCell.h>
 #include "utils/ArrayUtils.h"
+#include <omp.h>
 
 
 /*
@@ -562,4 +563,174 @@ TEST(LinkedCellTest, PeriodicBoundaryTransitionTest) {
 
     ASSERT_EQ(linkedCellContainer.grid[24].getParticles().size(), 1);
     ASSERT_EQ(linkedCellContainer.grid[20].getParticles().size(), 1);
+}
+
+class LinkedCellParallelTest : public testing::Test {
+protected:
+	LinkedCellContainer lcSerial;
+	LinkedCellContainer lcPrimitiveX;
+	LinkedCellContainer lcPrimitiveY;
+	LinkedCellContainer lcPrimitiveZ;
+	LinkedCellContainer lcSubDomain;
+
+	double x = 70.;
+	double y = 70.;
+	double z = 70.;
+	std::array<double, 3> g = std::array<double, 3>{0., -2., 0.};
+	double rCut = 3.;
+
+	// The rounding error that we allow
+	double EPSILON_VALUE = 0.00000001 ;
+	double EPS = 5.;
+	double SIGMA = 1.;
+	double delta_t = 0.0005;
+	calculator::LinkedCell lc = calculator::LinkedCell{SIGMA, EPS, rCut};
+
+
+	void SetUp(int threadNum) {
+		omp_set_num_threads(threadNum);
+		spdlog::set_level(spdlog::level::off);
+		using lcb = LinkedCellContainer::Border;
+		auto borders = std::array<LinkedCellContainer::Border, 6>{lcb::periodic, lcb::periodic, lcb::reflective, lcb::reflective,
+																  lcb::periodic, lcb::periodic};
+
+		lcSerial = LinkedCellContainer{x, y, z, rCut, borders, g, LinkedCellContainer::Strategy::naught};
+		lcPrimitiveX = LinkedCellContainer{x, y, z, rCut, borders, g, LinkedCellContainer::Strategy::primitiveX};
+		lcPrimitiveY = LinkedCellContainer{x, y, z, rCut, borders, g, LinkedCellContainer::Strategy::primitiveY};
+		lcPrimitiveZ = LinkedCellContainer{x, y, z, rCut, borders, g, LinkedCellContainer::Strategy::primitiveZ};
+		lcSubDomain = LinkedCellContainer{x, y, z, rCut, borders, g, LinkedCellContainer::Strategy::subDomain};
+
+		lc.setEpsilonTable({{EPS}});
+		lc.setSigmaTable({{SIGMA}});
+		lc.setDim(3);
+		lc.setDeltaT(delta_t);
+
+		initializeSerial();
+		initializePrimitiveX();
+		initializePrimitiveY();
+		initializePrimitiveZ();
+		initializeSubDomain();
+	}
+
+	void initializeSerial() {
+		initializeContainer(lcSerial);
+		ASSERT_EQ(1000, lcSerial.size());
+	}
+
+	void initializePrimitiveX() {
+		initializeContainer(lcPrimitiveX);
+		ASSERT_EQ(1000, lcPrimitiveX.size());
+	}
+
+	void initializePrimitiveY() {
+		initializeContainer(lcPrimitiveY);
+		ASSERT_EQ(1000, lcPrimitiveY.size());
+	}
+
+	void initializePrimitiveZ() {
+		initializeContainer(lcPrimitiveZ);
+		ASSERT_EQ(1000, lcPrimitiveZ.size());
+	}
+
+	void initializeSubDomain() {
+		initializeContainer(lcSubDomain);
+		ASSERT_EQ(1000, lcSubDomain.size());
+	}
+
+	static void initializeContainer(ParticleContainer & particleContainer) {
+		int i = 0;
+		for (int x = 1; x <= 10; ++x) {
+			for (int y = 1; y <= 10; ++y) {
+				for (int z = 1; z <= 10; ++z) {
+					double x_ = x * 1.2;
+					double y_ = y * 1.2;
+					double z_ = z * 1.2;
+					particleContainer.emplace_back(std::array<double, 3>{x_, y_, z_},
+					                               std::array<double, 3>{0., 0., 0.},
+					                               .05,
+					                               i);
+					i++;
+				}
+			}
+		}
+		particleContainer.setup();
+	}
+
+	void firstIteration() {
+		lc.calcF(lcSerial);
+		lc.calcF(lcPrimitiveX);
+		lc.calcF(lcPrimitiveY);
+		lc.calcF(lcPrimitiveZ);
+		lc.calcF(lcSubDomain);
+	}
+
+	void oneIteration() {
+		lc.calcX(lcSerial);
+		lc.calcX(lcPrimitiveX);
+		lc.calcX(lcPrimitiveY);
+		lc.calcX(lcPrimitiveZ);
+		lc.calcX(lcSubDomain);
+
+		lcSerial.setup();
+		lcPrimitiveX.setup();
+		lcPrimitiveY.setup();
+		lcPrimitiveZ.setup();
+		lcSubDomain.setup();
+
+		lc.calcF(lcSerial);
+		lc.calcF(lcPrimitiveX);
+		lc.calcF(lcPrimitiveY);
+		lc.calcF(lcPrimitiveZ);
+		lc.calcF(lcSubDomain);
+
+		lc.calcV(lcSerial);
+		lc.calcV(lcPrimitiveX);
+		lc.calcV(lcPrimitiveY);
+		lc.calcV(lcPrimitiveZ);
+		lc.calcV(lcSubDomain);
+	}
+
+	void testEquality() {
+		for (int i = 0; i < 50; ++i) {
+			auto p_ref = findParticle(lcSerial, i);
+			auto p_x = findParticle(lcPrimitiveX, i);
+			auto p_y = findParticle(lcPrimitiveY, i);
+			auto p_z = findParticle(lcPrimitiveZ, i);
+			auto p_sd = findParticle(lcSubDomain, i);
+
+			EXPECT_LE(fabs(p_ref.getF()[0] - p_x.getF()[0]), EPSILON_VALUE);
+			EXPECT_LE(fabs(p_ref.getF()[1] - p_x.getF()[1]), EPSILON_VALUE);
+			EXPECT_LE(fabs(p_ref.getF()[2] - p_x.getF()[2]), EPSILON_VALUE);
+			EXPECT_LE(fabs(p_ref.getF()[0] - p_y.getF()[0]), EPSILON_VALUE);
+			EXPECT_LE(fabs(p_ref.getF()[1] - p_y.getF()[1]), EPSILON_VALUE);
+			EXPECT_LE(fabs(p_ref.getF()[2] - p_y.getF()[2]), EPSILON_VALUE);
+			EXPECT_LE(fabs(p_ref.getF()[0] - p_z.getF()[0]), EPSILON_VALUE);
+			EXPECT_LE(fabs(p_ref.getF()[1] - p_z.getF()[1]), EPSILON_VALUE);
+			EXPECT_LE(fabs(p_ref.getF()[2] - p_z.getF()[2]), EPSILON_VALUE);
+			EXPECT_LE(fabs(p_ref.getF()[0] - p_sd.getF()[0]), EPSILON_VALUE);
+			EXPECT_LE(fabs(p_ref.getF()[1] - p_sd.getF()[1]), EPSILON_VALUE);
+			EXPECT_LE(fabs(p_ref.getF()[2] - p_sd.getF()[2]), EPSILON_VALUE);
+//			std::cout<<"F1 of P1 is: "<<p_ref.getF()[0]<<" F1 of P2 is: "<<p_sd.getF()[0]<<std::endl;
+//			std::cout<<"F2 of P1 is: "<<p_ref.getF()[1]<<" F2 of P2 is: "<<p_sd.getF()[1]<<std::endl;
+//			std::cout<<"F3 of P1 is: "<<p_ref.getF()[2]<<" F3 of P2 is: "<<p_sd.getF()[2]<<std::endl;
+		}
+	}
+};
+
+/*
+ * Tests whether the parallelization techniques work
+ */
+TEST_F(LinkedCellParallelTest, parallelStrategyTest) {
+	for (int j = 1; j <= 8; ++j) {
+		LinkedCellParallelTest::SetUp(j);
+		firstIteration();
+		testEquality();
+
+		for(int i = 0; i < 50; ++i) {
+			oneIteration();
+			testEquality();
+		}
+	}
+
+
 }
