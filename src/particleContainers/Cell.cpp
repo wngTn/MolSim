@@ -194,11 +194,11 @@ void Cell::setAllNeighbors3D() {
 
 }
 
-const std::vector<std::array<int, 3>> &Cell::getAllNeighbors2D() const {
+const std::vector<std::array<int, 3>> &Cell::getRemainingNeighbors2D() const {
 	return allNeighbors2D;
 }
 
-const std::vector<std::array<int, 3>> &Cell::getAllNeighbors3D() const {
+const std::vector<std::array<int, 3>> &Cell::getRemainingNeighbors3D() const {
 	return allNeighbors3D;
 }
 

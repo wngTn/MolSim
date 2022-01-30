@@ -209,7 +209,7 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
 				subDomainVector[j] = subDomain;
 			}
 		}
-			// Z is the greatest dimension
+		// Z is the greatest dimension
 		else if (dim[2] == std::max({dim[0], dim[1], dim[2]})) {
 			// If domain size is smaller than our available threads, we use domain size as number of threads
 			numThreads = std::min(omp_get_max_threads(), (dim[2] / 2 == 0 ? 1 : dim[2] / 2));
@@ -268,27 +268,27 @@ void LinkedCellContainer::SubDomain::addIndex(const std::array<int, 3> &indexArr
 	const auto[x_min, y_min, z_min] = minCoord;
 	const auto[x_max, y_max, z_max] = maxCoord;
 	if (is2D) {
-		// we have a left border cell
+		// we have a border cell
 		if ((axis == 0 && indexArray[axis] == x_min) || (axis == 1 && indexArray[axis] == y_min) ||
 			(axis == 0 && indexArray[axis] == x_max) || (axis == 1 && indexArray[axis] == y_max)) {
 			borderCellIndices.push_back(index);
 			cell.setAllNeighbors2D();
 		}
-			// we have a not-border cell
+		// we have a not-border cell
 		else {
 			cellIndices.push_back(index);
 		}
 	}
-		// We are in 3D
+	// We are in 3D
 	else {
-		// we have a left border cell
+		// we have a border cell
 		if ((axis == 0 && indexArray[axis] == x_min) || (axis == 1 && indexArray[axis] == y_min)
 			|| (axis == 2 && indexArray[axis] == z_min) || (axis == 0 && indexArray[axis] == x_max) || (axis == 1 && indexArray[axis] == y_max)
 			|| (axis == 2 && indexArray[axis] == z_max)) {
 			borderCellIndices.push_back(index);
 			cell.setAllNeighbors3D();
 		}
-			// we have a not-border cell
+		// we have a not-border cell
 		else {
 			cellIndices.push_back(index);
 		}

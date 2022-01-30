@@ -101,9 +101,9 @@ struct Cell {
 
 	void setIsBorderCell(bool is_border_cell);
 
-	[[nodiscard]] const std::vector<std::array<int, 3>> &getAllNeighbors2D() const;
+	[[nodiscard]] const std::vector<std::array<int, 3>> &getRemainingNeighbors2D() const;
 
-	[[nodiscard]] const std::vector<std::array<int, 3>> &getAllNeighbors3D() const;
+	[[nodiscard]] const std::vector<std::array<int, 3>> &getRemainingNeighbors3D() const;
 
 private:
 
