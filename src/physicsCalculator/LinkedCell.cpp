@@ -101,9 +101,8 @@ void LinkedCell::calcX(ParticleContainer &container) const {
 					}
 				}
 			}
-		}
-			// Not a border cell
-		else {
+		} else {
+				// Not a border cell
 			for (auto &p : curCell) {
 				auto newX = p->getX() + delta_t * (p->getV() + delta_t * 0.5 / p->getM() * p->getF());
 				p->setX(newX);
@@ -179,7 +178,7 @@ void LinkedCell::calcNeighbors(LinkedCellContainer &grid, const std::array<int, 
 		if (!membrane || !p->membrane || !p_other->membrane) {
 			if (sqrd_dist <= LinkedCell::sqr(rCut)) {
 				if(smoothed){
-                        LinkedCell::ljforce_smoothed(p, p_other, sqrd_dist);
+                        LinkedCell::ljforce_smoothed(p, p_other, sqrd_dist, newton);
                     } else{
                         LinkedCell::ljforce(p, p_other, sqrd_dist, newton);
                     }
@@ -187,7 +186,7 @@ void LinkedCell::calcNeighbors(LinkedCellContainer &grid, const std::array<int, 
 		} else {
 			if (sqrd_dist <= sqr(SIXTH_ROOT_OF_TWO * sigmaTable[p_other->getSEIndex()][p->getSEIndex()])) {
 				if(smoothed){
-                        LinkedCell::ljforce_smoothed(p, p_other, sqrd_dist);
+                        LinkedCell::ljforce_smoothed(p, p_other, sqrd_dist, newton);
                     }else{
                         LinkedCell::ljforce(p, p_other, sqrd_dist, newton);
                     }
@@ -425,13 +424,13 @@ void LinkedCell::calcF(ParticleContainer &container) {
 		{
 #pragma omp for schedule(dynamic)
 			for (auto &subDomain : grid.getSubDomainVector()) {
-#pragma omp task shared(grid, subDomain) default(none)
+
 				for (int pos : subDomain.getCellIndices()) {
 					if (!grid.grid[pos].getParticles().empty()) {
 						calcFCell(grid.grid[pos], grid);
 					}
 				}
-#pragma omp task shared(grid, subDomain) default(none)
+
 				for (int pos : subDomain.getBorderCellIndices()) {
 					if (!grid.grid[pos].getParticles().empty()) {
 						calcFCellSubdomain(grid.grid[pos], grid, subDomain);

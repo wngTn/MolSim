@@ -314,28 +314,40 @@ TEST(LinkedCellContainer, SubDomainIndicesTest) {
 	// max dimension is x
 	LinkedCellContainer linkedCellContainer1 = LinkedCellContainer{11, 5, 0, 1., bor, {0.,0.,0.}, LinkedCellContainer::Strategy::subDomain};
 	auto ref = std::vector<std::vector<int>>{
-		std::vector<int>{12, 23, 34},
-		std::vector<int>{15, 26, 37},
-		std::vector<int>{18, 29, 40},
+		std::vector<int>{1, 12, 23, 34, 45},
+		std::vector<int>{4, 15, 26, 37, 48},
+		std::vector<int>{7, 18, 29, 40, 51},
 		std::vector<int>{}
 	};
 
 	auto ref1 = std::vector<std::vector<int>> {
-		std::vector<int>{0, 1, 2, 11, 13, 22, 24, 33, 35, 44, 45, 46},
-		std::vector<int>{3, 4, 5, 14, 16, 25, 27, 36, 38, 47, 48, 49},
-		std::vector<int>{6, 7, 8, 17, 19, 28, 30, 39, 41, 50, 51, 52},
+		std::vector<int>{0, 2, 11, 13, 22, 24, 33, 35, 44, 46},
+		std::vector<int>{3, 5, 14, 16, 25, 27, 36, 38, 47, 49},
+		std::vector<int>{6, 8, 17, 19, 28, 30, 39, 41, 50, 52},
 		std::vector<int>{9, 10, 20, 21, 31, 32, 42, 43, 53, 54}
 	};
-
-//	for (int i = 0; i < linkedCellContainer1.getSubDomainVector().size(); ++i) {
-//		ASSERT_TRUE(ref[i] == linkedCellContainer1.getSubDomainVector()[i].getCellIndices());
-//		ASSERT_TRUE(ref1[i] == linkedCellContainer1.getSubDomainVector()[i].getBorderCellIndices());
-//	}
 
 	for(auto & e : linkedCellContainer1.getSubDomainVector()) {
 		std::cout<<e.getBorderCellIndices()<<std::endl;
 		std::cout<<e.getCellIndices()<<std::endl;
 	}
+
+
+	for (int i = 0; i < linkedCellContainer1.getSubDomainVector().size(); ++i) {
+		ASSERT_TRUE(ref[i] == linkedCellContainer1.getSubDomainVector()[i].getCellIndices());
+		ASSERT_TRUE(ref1[i] == linkedCellContainer1.getSubDomainVector()[i].getBorderCellIndices());
+	}
+
+//	omp_set_num_threads(7);
+//	// max dimension is x
+//	LinkedCellContainer linkedCellContainer2 = LinkedCellContainer{70, 70, 70, 3., bor, {0.,0.,0.}, LinkedCellContainer::Strategy::subDomain};
+//
+//	for(auto & e : linkedCellContainer2.getSubDomainVector()) {
+//		std::cout<<e.getBorderCellIndices()<<std::endl;
+//		std::cout<<e.getCellIndices()<<std::endl;
+//		std::cout<<std::endl;
+//	}
+
 
 
 }
