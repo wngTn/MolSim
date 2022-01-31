@@ -565,7 +565,7 @@ TEST(LinkedCellTest, PeriodicBoundaryTransitionTest) {
     ASSERT_EQ(linkedCellContainer.grid[20].getParticles().size(), 1);
 }
 
-
+#ifdef _OPENMP
 class LinkedCellParallelTest : public testing::Test {
 protected:
 	LinkedCellContainer lcSerial;
@@ -595,7 +595,7 @@ protected:
 		auto borders = std::array<LinkedCellContainer::Border, 6>{lcb::periodic, lcb::periodic, lcb::reflective, lcb::reflective,
 																  lcb::periodic, lcb::periodic};
 
-		lcSerial = LinkedCellContainer{x, y, z, rCut, borders, g, LinkedCellContainer::Strategy::naught};
+		lcSerial = LinkedCellContainer{x, y, z, rCut, borders, g, LinkedCellContainer::Strategy::serial};
 		lcPrimitiveX = LinkedCellContainer{x, y, z, rCut, borders, g, LinkedCellContainer::Strategy::primitiveX};
 		lcPrimitiveY = LinkedCellContainer{x, y, z, rCut, borders, g, LinkedCellContainer::Strategy::primitiveY};
 		lcPrimitiveZ = LinkedCellContainer{x, y, z, rCut, borders, g, LinkedCellContainer::Strategy::primitiveZ};
@@ -743,3 +743,4 @@ TEST_F(LinkedCellParallelTest, parallelStrategyTest) {
 		}
 	}
 }
+#endif

@@ -41,7 +41,7 @@ void LinkedCell::calcX(ParticleContainer &container) const {
 							p->valid = false;
 							break;
 						}
-						// periodic
+							// periodic
 						else if (std::get<0>(gridLC.getBorders(currentIndexes, d)) == LinkedCellContainer::periodic) {
 							// set X to the opposite site
 							spdlog::info("Particle was at d: {} and position {} {} {} now at {}", d,
@@ -57,7 +57,7 @@ void LinkedCell::calcX(ParticleContainer &container) const {
 							p->valid = false;
 							break;
 						}
-						// periodic
+							// periodic
 						else if (std::get<0>(gridLC.getBorders(currentIndexes, d)) == LinkedCellContainer::periodic) {
 							// set X to the opposite site
 							spdlog::info("Particle was at d: {} and position {} {} {} now at {}", d,
@@ -143,9 +143,6 @@ void LinkedCell::calcFSingleNeighbor(LinkedCellContainer &grid, const std::array
 }
 
 void LinkedCell::reflectiveBoundary(LinkedCellContainer &grid, const std::array<int, 3> &currentIndexes) const {
-	// We only reflect at this distance
-	//double reflectDistance = std::pow(2, 1.0 / 6.0) * sigma;
-	//double reflectDistanceFactor = std::pow(2, 1.0 / 6.0);
 	// saves the reflective borders of the current cell
 	std::vector<int> reflBorder{};
 	// go through all three or two axis and acquire the borders of currentIndex that are reflective
@@ -179,7 +176,7 @@ void LinkedCell::reflectiveBoundary(LinkedCellContainer &grid, const std::array<
 					double s = (sig * sig) / (r * r);
 					s = s * s * s;
 					auto force = -24 * epsilonTable[p->getSEIndex()][p->getSEIndex()] / r * s * (1 - 2 * s);
-					// auto force = -24 * epsilon * (1/(r)) * pow((sigma/(r)), 6) * (1 - 2 * (pow((sigma/(r)), 6)));
+
 					auto newF{p->getF()};
 					switch (bord) {
 						case 0:newF[0] += force;
@@ -231,10 +228,8 @@ void LinkedCell::calcPerNeighbors(LinkedCellContainer &grid, const std::array<in
 							* (5 * rl * sigma_pow_6 - 2 * rl * dist_pow_6 - 3 * sigma_pow_6 * dist + dist_pow_6 * dist);
 					force = (first_part * second_part) * (mirroredX - p->getX());
 				} else {
-					//double s = sqr(sigma) / sqrd_dist;
 					double s = sqr(sigmaTable[p->getSEIndex()][p_other->getSEIndex()]) / sqrd_dist;
 					s = s * s * s; // s = sqr(s) * s
-					//double f = 24 * epsilon * s / sqrd_dist * (1 - 2 * s);
 					double f = 24 * epsilonTable[p->getSEIndex()][p_other->getSEIndex()] * s / sqrd_dist * (1 - 2 * s);
 
 					force = f * (mirroredX - p->getX());
@@ -249,7 +244,10 @@ void LinkedCell::calcPerNeighbors(LinkedCellContainer &grid, const std::array<in
 	}
 }
 
-void LinkedCell::calcFWithNeighbors(LinkedCellContainer &grid, Particle *p, const std::array<int, 3> &neighbor, bool newton) {
+void LinkedCell::calcFWithNeighbors(LinkedCellContainer &grid,
+                                    Particle *p,
+                                    const std::array<int, 3> &neighbor,
+                                    bool newton) {
 	// Neighbor should be existing
 	if (neighbor[0] < grid.getDim()[0] && neighbor[1] < grid.getDim()[1] &&
 		neighbor[2] < grid.getDim()[2] && neighbor[0] >= 0 && neighbor[1] >= 0 &&
@@ -266,13 +264,13 @@ void LinkedCell::calcFWithNeighbors(LinkedCellContainer &grid, Particle *p, cons
 		std::array<double, 3> mirror{};
 		mirror = {
 			neighbor[0] == -1 ? -grid.getLenDim()[0] : neighbor[0] == grid.getDim()[0] && grid.getDim()[0] != 1
-			? grid.getLenDim()[0] : 0.0,
+			                                           ? grid.getLenDim()[0] : 0.0,
 
 			neighbor[1] == -1 ? -grid.getLenDim()[1] : neighbor[1] == grid.getDim()[1] && grid.getDim()[1] != 1
-			? grid.getLenDim()[1] : 0.0,
+			                                           ? grid.getLenDim()[1] : 0.0,
 
 			neighbor[2] == -1 ? -grid.getLenDim()[2] : neighbor[2] == grid.getDim()[2] && grid.getDim()[2] != 1
-			? grid.getLenDim()[2] : 0.0};
+			                                           ? grid.getLenDim()[2] : 0.0};
 
 		LinkedCell::calcPerNeighbors(grid, neigh, p, mirror, newton);
 	}
@@ -388,7 +386,7 @@ void LinkedCell::calcF(ParticleContainer &container) {
 		}; // end parallelization area
 			break;
 
-		case LinkedCellContainer::naught:
+		case LinkedCellContainer::serial:
 			for (auto &curCell : grid.grid) {
 				calcFCell(curCell, grid);
 			}

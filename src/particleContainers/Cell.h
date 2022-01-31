@@ -75,19 +75,40 @@ struct Cell {
 
     void setIndex(const std::array<int, 3> &indexV);
 
+	/**
+	 * Sets the neighbors of the cell along the X axis in 2D
+	 */
 	void setNeighbors2DInX();
 
+	/**
+	 * Sets the neighbors of the cell along the X axis in 3D
+	 */
 	void setNeighbors3DInX();
 
+	/**
+	 * Sets the neighbors of the cell along the Y axis in 2D
+	 */
     void setNeighbors2DInY();
 
+	/**
+	 * Sets the neighbors of the cell along the Y axis in 3D
+	 */
     void setNeighbors3DInY();
 
+	/**
+	 * Sets the neighbors of the cell along the Z axis in 3D
+	 */
 	void setNeighbors3DInZ();
 
-	void setAllNeighbors2D();
+	/**
+	 * Sets the remaining neighbors (along the Y axis since it is the default) in 2D
+	 */
+	void setRemainingNeighbors2D();
 
-	void setAllNeighbors3D();
+	/**
+	 * Sets the remaining neighbors (along the Y axis since it is the default) in 3D
+	 */
+	void setRemainingNeighbors3D();
 
 	[[nodiscard]] const std::vector<std::array<int, 3>> &getNeighbors2D() const;
 
@@ -118,22 +139,24 @@ private:
     std::array<int, 3> index{};
 
     /**
-     * The 2D neighbors of this cell
+     * The 2D neighbors of this cell (default along the y-axis)
      */
     std::vector<std::array<int, 3>> neighbors2D;
 
     /**
-     * The 3D neighbors of this cell
+     * The 3D neighbors of this cell (default along the y-axis)
      */
     std::vector<std::array<int, 3>> neighbors3D;
 
-	std::vector<std::array<int, 3>> allNeighbors2D;
+	/**
+	 * The remaining neighbors (along the y-axis) of the cell in 2D
+	 */
+	std::vector<std::array<int, 3>> remainingNeighbors2D;
 
 	/**
- * The 3D neighbors of this cell
- */
-	std::vector<std::array<int, 3>> allNeighbors3D;
-
+	 * The remaining neighbors (along the y-axis) of the cell in 3D
+	 */
+	std::vector<std::array<int, 3>> remainingNeighbors3D;
 
     bool isBorderCell{};
 

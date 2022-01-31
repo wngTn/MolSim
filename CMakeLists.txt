@@ -11,6 +11,8 @@ option(BUILD_DOC "Build documentation" ON)
 # to enable write cmake -D BUILD_TEST=ON
 option(BUILD_TEST "Build tests" OFF)
 
+option(OPEN_MP "Compile with openmp" ON)
+
 set(This MolSim)
 
 set(ThisLib MolSim_Lib)
@@ -75,11 +77,16 @@ target_link_libraries(${ThisLib}
         )
 
 # link targets with openmp
-find_package(OpenMP)
-if(OpenMP_CXX_FOUND)
-    target_link_libraries(${ThisLib}
-            PUBLIC
-            OpenMP::OpenMP_CXX)
+if(OPEN_MP)
+    find_package(OpenMP)
+    if(OpenMP_CXX_FOUND)
+        target_link_libraries(${ThisLib}
+                PUBLIC
+                OpenMP::OpenMP_CXX)
+        message("-- You are compiling with OpenMP! :)")
+    endif()
+else()
+    message("-- You are compiling without OpenMP! :(")
 endif()
 
 # set c++ to 17

@@ -72,7 +72,7 @@ public:
         int noBins;
         double delta_r;
 
-        LinkedCellContainer::Strategy parallelization_strat = LinkedCellContainer::naught;
+        LinkedCellContainer::Strategy parallelization_strat = LinkedCellContainer::serial;
     };
 
     static XMLInfo readFile(const std::string& s);

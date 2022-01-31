@@ -39,11 +39,22 @@ public:
 
 		void setIs2D(bool is_2_d);
 
+		[[nodiscard]] const std::vector<int> &getBorderCellIndices() const;
+
+		/**
+		 * Adds a cell to the subDomain
+		 * @param indexArray the index of the cell (x, y, z)
+		 * @param index the number index of the cell
+		 * @param cell the actual cell
+		 */
 		void addIndex(const std::array<int, 3> & indexArray, int index, Cell & cell);
 
+		/**
+		 * For checking if an index is in a specific subDomain
+		 * @param currentIndex the current index (x, y, z)
+		 * @return true if it is in the subDomain, false if it is not
+		 */
 		[[nodiscard]] bool isInSubdomain(const std::array<int, 3> & currentIndex) const;
-
-		[[nodiscard]] const std::vector<int> &getBorderCellIndices() const;
 
 	private:
 		/**
@@ -68,15 +79,21 @@ public:
 
 		bool is2D{};
 
+		/**
+		 * The axis the subDomains are parted
+		 * 0 = X, 1 = Y, 2 = Z
+		 */
 		int axis;
 	};
 
+
 	enum Border { outflow, periodic, reflective, none };
 	/**
-	 * primitive: we split along the greatest dimension
-	 * primitiveFit: we split along the y axis (2D) or z axis(3D) for better memory access
+	 * primitive(X|Y|Z): we split domain in lines and do two run partitions:
+	 * subDomain: we split the domain in subDomains
+	 * serial: we have no parallelization technique
 	 */
-	enum Strategy { primitiveX, primitiveY, primitiveZ, subDomain, naught };
+	enum Strategy { primitiveX, primitiveY, primitiveZ, subDomain, serial };
 
 	/***********************************************************************/
 
@@ -97,7 +114,7 @@ public:
 	                    std::array<Border, 6> borderV = std::array<Border, 6>{
 		                    outflow, outflow, outflow, outflow, outflow, outflow},
                         std::array<double,3> g = std::array<double,3>{0.,0.,0.},
-	                    Strategy strategy = naught);
+	                    Strategy strategy = serial);
 
 	/**
 	 * Default constructor
