@@ -85,6 +85,8 @@ private:
 
 	void calcFCell(Cell &curCell, LinkedCellContainer &grid);
 
+	inline void moveAndCalcXInCell(const LinkedCellContainer & gridLC, const Cell &curCell) const;
+
 	/**
 	 * Calculates the forces between p and its neighbor for the periodic boundary
 	 * The bord tells this method how to calculate the distance
@@ -199,6 +201,59 @@ void LinkedCell::calcLJForce(Particle *p1, Particle *p2, bool newton) const {
 		}
 		if (gridNeighbors((p1)->getGridIndex(), p2->getGridIndex())) {
 			LinkedCell::harmonic_potential(p1, p2, sqrd_dist, newton);
+		}
+	}
+}
+
+void LinkedCell::moveAndCalcXInCell(const LinkedCellContainer &gridLC, const Cell &curCell) const {
+	auto currentIndexes = curCell.getIndex();
+	// checks if it is a border cell
+	if (curCell.isBorderCell1()) {
+		for (auto &p : curCell) {
+			auto newX = p->getX() + delta_t * (p->getV() + delta_t * 0.5 / p->getM() * p->getF());
+			p->setX(newX);
+			// Checks whether any particle has crossed the boundaries
+			for (int d = 0; d < (gridLC.is2D() ? 2 : 3); ++d) {
+				if (p->getX()[d] < 0) {
+					// outflow, removing the particle
+					if (std::get<0>(gridLC.getBorders(currentIndexes, d)) ==
+						LinkedCellContainer::outflow) {
+						spdlog::info("Removing Particle");
+						p->valid = false;
+						break;
+					}
+						// periodic
+					else if (std::get<0>(gridLC.getBorders(currentIndexes, d)) == LinkedCellContainer::periodic) {
+						// set X to the opposite site
+						spdlog::info("Particle was at d: {} and position {} {} {} now at {}", d,
+						             p->getX()[0], p->getX()[1], p->getX()[2],
+						             gridLC.getLenDim()[d] + p->getX()[d]);
+						p->setX(d, gridLC.getLenDim()[d] + p->getX()[d]);
+						p->setPassedPeriodic(d);
+					}
+				} else if (p->getX()[d] >= gridLC.getLenDim()[d]) {
+					// outflow, removing the particle
+					if (std::get<0>(gridLC.getBorders(currentIndexes, d)) == LinkedCellContainer::outflow) {
+						spdlog::info("Removing Particle");
+						p->valid = false;
+						break;
+					}
+						// periodic
+					else if (std::get<0>(gridLC.getBorders(currentIndexes, d)) == LinkedCellContainer::periodic) {
+						// set X to the opposite site
+						spdlog::info("Particle was at d: {} and position {} {} {} now at {}", d,
+						             p->getX()[0], p->getX()[1], p->getX()[2],
+						             p->getX()[d] - gridLC.getLenDim()[d]);
+						p->setX(d, p->getX()[d] - gridLC.getLenDim()[d]);
+						p->setPassedPeriodic(d);
+					}
+				}
+			}
+		}
+	} else { // Not a border cell
+		for (auto &p : curCell) {
+			auto newX = p->getX() + delta_t * (p->getV() + delta_t * 0.5 / p->getM() * p->getF());
+			p->setX(newX);
 		}
 	}
 }

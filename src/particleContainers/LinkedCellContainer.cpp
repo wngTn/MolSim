@@ -365,7 +365,7 @@ void LinkedCellContainer::setRCut(double rCutV) {
 	LinkedCellContainer::rCut = rCutV;
 }
 
-bool LinkedCellContainer::is2D() {
+bool LinkedCellContainer::is2D() const {
     return lenDim[2] < 1.000001;
 }
 

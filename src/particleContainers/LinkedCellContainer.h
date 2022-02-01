@@ -244,7 +244,7 @@ public:
 
 	[[nodiscard]] const std::array<double, 3> &getLenDim() const;
 
-	bool is2D();
+	bool is2D() const;
 
 	int dimensions() override;
 

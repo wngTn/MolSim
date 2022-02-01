@@ -309,7 +309,9 @@ void MainUtils::printConfig(Config& config) {
     }
 
 #ifdef _OPENMP
-	s << "\u001b[36m\tOMP max threads:\u001b[0m " << omp_get_max_threads() << std::endl;
+	if (config.parallelization_strategy != LinkedCellContainer::serial) {
+		s << "\u001b[36m\tOMP max threads:\u001b[0m " << omp_get_max_threads() << std::endl;
+	}
 #else
 	s << "\u001b[36m\tOMP max threads:\u001b[0m " << "You did not compile with OpenMP" << std::endl;
 #endif
