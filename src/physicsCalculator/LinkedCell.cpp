@@ -20,8 +20,7 @@ void LinkedCell::calcX(ParticleContainer &container) const {
 #ifdef _OPENMP
 #pragma omp parallel for default(none) schedule(guided) shared(gridLC)
 #endif //_OPENMP
-	// Loop through every cell
-	for (auto &curCell : gridLC.getGrid()) {
+	for (auto &curCell : gridLC.getGrid()) { // Loop through every cell
 		// If a cell is empty, skip it
 		if (curCell.getParticles().empty()) continue;
 
@@ -333,9 +332,13 @@ void LinkedCell::calcF(ParticleContainer &container) {
 		case LinkedCellContainer::primitiveX:
 		case LinkedCellContainer::primitiveY:
 		case LinkedCellContainer::primitiveZ:
+#ifdef _OPENMP
 #pragma omp parallel shared(grid) default(none)
+#endif
 		{
+#ifdef _OPENMP
 #pragma omp for schedule(dynamic)
+#endif
 			// First part
 			for (size_t i = 0; i < grid.getIndicesThreadVector().size(); ++i) {
 				for (int pos : grid.getIndicesThreadVector()[i]) {
@@ -344,8 +347,9 @@ void LinkedCell::calcF(ParticleContainer &container) {
 					}
 				}
 			}
-
+#ifdef _OPENMP
 #pragma omp for schedule(dynamic) nowait // no wait since next line doesn't have to wait
+#endif
 			// Second part
 			for (size_t i = 0; i < grid.getIndicesThreadVector().size(); ++i) {
 				for (int pos : grid.getIndicesThreadVector()[i]) {
@@ -354,7 +358,9 @@ void LinkedCell::calcF(ParticleContainer &container) {
 					}
 				}
 			}
+#ifdef _OPENMP
 #pragma omp single // single last remaining line
+#endif
 			{
 				for (int pos : grid.getResidualThreadVector()) {
 					if (!grid.grid[pos].getParticles().empty()) {
@@ -366,9 +372,13 @@ void LinkedCell::calcF(ParticleContainer &container) {
 			break;
 
 		case LinkedCellContainer::subDomain:
+#ifdef _OPENMP
 #pragma omp parallel shared(grid) default(none)
+#endif
 		{
+#ifdef _OPENMP
 #pragma omp for schedule(dynamic)
+#endif
 			for (auto &subDomain : grid.getSubDomainVector()) {
 				// Normal cells
 				for (int pos : subDomain.getCellIndices()) {
