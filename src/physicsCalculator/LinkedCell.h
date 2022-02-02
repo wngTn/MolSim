@@ -14,6 +14,15 @@ namespace calculator {
 class LinkedCell : public PhysicsCalc {
 
 public:
+
+	/**
+	 * Constructor
+	 * @param sigma sigma value
+	 * @param epsilon epsilon value
+	 * @param rCut rCut value
+	 * @param smoothed whether smoothed lj should be used
+	 * @param rl rl for smoothed lj force
+	 */
 	LinkedCell(double sigma, double epsilon, double rCut, bool smoothed = false, double rl = 0.0)
 		: sigma(sigma), epsilon(epsilon),
 		  rCut{rCut}, smoothed(smoothed), rl(rl) {
@@ -35,6 +44,7 @@ public:
 	 * This method simply sets all Particles to invalid, if they cross any borders,
 	 * or puts them on the other side, if there are cyclic borders
 	 * @param grid the grid
+	 * \note{deprecated}
 	 */
 	static void moveParticles(LinkedCellContainer &grid);
 
@@ -45,14 +55,6 @@ public:
 	void calcX(ParticleContainer &grid) const override;
 
 	void calcF(ParticleContainer &grid) override;
-
-	/**
-	 * Method explicitly for calculating the forces within a cell
-	 * @param cell
-	 */
-	void calcFWithinCell(Cell &cell);
-
-	void calcFCellSubdomain(Cell &curCell, LinkedCellContainer &grid, const LinkedCellContainer::SubDomain &subDomain);
 
 	void setSigmaTable(const std::vector<std::vector<double>> &sigmaTable);
 
@@ -66,19 +68,37 @@ public:
 
 	void setMembrane(bool mem);
 
-	void calcFWithNeighbors(LinkedCellContainer &grid, Particle *p, const std::array<int, 3> &neighbor, bool newton);
-
 private:
 
+	/**
+	 * Method explicitly for calculating the forces within a cell
+	 * @param cell the current cell
+	 */
+	void calcFWithinCell(Cell &cell);
+
+	/**
+	 * Calculates the actual lennard jones forces between two particles
+	 * @param p1 the first particle
+	 * @param p2 the second particle
+	 * @param sqrd_dist the squared distance between the two particles
+	 * @param newton whether newton's third law should be applied
+	 */
 	inline void ljforce(Particle *p1, Particle *p2, double sqrd_dist, bool newton = true) const;
 
+	/**
+	 * Calculates the smoothed lennard jones forces between two particles
+	 * @param p1 the first particle
+	 * @param p2 the second particle
+	 * @param sqrd_dist the squared distance between the two particles
+	 * @param newton whether newton's third law should be applied
+	 */
 	inline void ljforce_smoothed(Particle *p1, Particle *p2, double sqrd_dist, bool newton = true) const;
 
 	/**
-	 *
-	 * @param p1
-	 * @param p2
-	 * @param newton
+	 * Calculates how the lennard jones forces between two particles should be calculated
+	 * @param p1 the first particle
+	 * @param p2 the second particle
+	 * @param newton whether newton's third law should be applied
 	 */
 	inline void calcLJForce(Particle *p1, Particle *p2, bool newton = true) const;
 
@@ -99,7 +119,16 @@ private:
 	void reflectiveBoundary(LinkedCellContainer &grid, const std::array<int, 3> &currentIndex) const;
 
 	/**
-	 * Calculates the the forces between a particle within a cell and its neighbor
+	 * Calculates how the forces between a particle and a neighbor should be calculated
+	 * @param grid the domain
+	 * @param p the particle
+	 * @param neighbor the neighbor
+	 * @param newton whether newton's third law should be applied
+	 */
+	void calcFWithNeighbors(LinkedCellContainer &grid, Particle *p, const std::array<int, 3> &neighbor, bool newton);
+
+	/**
+	 * Calculates only the forces between a particle within a cell and its neighbor
 	 * @param grid the domain
 	 * @param neighbor the index of the neighbor
 	 * @param p the particle
@@ -107,6 +136,15 @@ private:
 	 */
 	void calcFSingleNeighbor(LinkedCellContainer &grid, const std::array<int, 3> &neighbor,
 	                         Particle *p, bool newton = true);
+
+
+	/**
+	 * Calculates the forces of a cell within a subDomain
+	 * @param curCell the current cell
+	 * @param grid the domain
+	 * @param subDomain the subDomain the cell is in
+	 */
+	void calcFCellSubdomain(Cell &curCell, LinkedCellContainer &grid, const LinkedCellContainer::SubDomain &subDomain);
 
 	/**
 	 * Calculates the forces within a cell
