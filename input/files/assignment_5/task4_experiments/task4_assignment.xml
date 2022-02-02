@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<simulation t_end="500" delta_t="0.0005" writeFrequency="100" outputWriter="vtk" parallelization="primitiveX">
+<simulation t_end="100" delta_t="0.0005" writeFrequency="100" outputWriter="vtk" parallelization="primitiveX">
     <container type="linkedcell">
         <rCut>2.75</rCut>
         <domainSizeX>30</domainSizeX>
@@ -26,10 +26,10 @@
     </thermostat>
     <statistics type="densityVelocity">
         <noBins>50</noBins>
-        <file>statistics_task4.csv</file>
+        <file>statistics_t4_assignment.csv</file>
         <frequency>10000</frequency>
     </statistics>
-    <outputFile>output</outputFile>
+    <outputFile>output_assignment</outputFile>
     <!-- left wall -->
     <generatorInfo type="cuboid" behaviour="immovable">
         <x>1.0</x>

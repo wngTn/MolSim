@@ -9,6 +9,8 @@ public:
         thermodynamic
     };
 
+    const std::string folder_path{"../statistics/"};
+
     StatisticsLogger() = default;
     StatisticsLogger(const StatisticsLogger &) = default;
 

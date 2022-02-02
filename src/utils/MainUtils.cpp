@@ -130,7 +130,7 @@ std::unique_ptr<StatisticsLogger> MainUtils::get_statistics_logger(Config& confi
         case StatisticsLogger::densityVelocityProfile:
             return std::make_unique<statistics::DensityVelocityProfile>(config.statsFile, config.noBins);
         case StatisticsLogger::thermodynamic:
-            return std::make_unique<statistics::Thermodynamical>(config.statsFile, config.delta_r);
+            return std::make_unique<statistics::Thermodynamical>(config.statsFile, config.delta_r, config.maxDistance);
         default:
             return nullptr; //should never happen, only to silence -Wreturn-type
     }
@@ -281,6 +281,7 @@ void MainUtils::parseXML(Config& config) {
         config.statsType = info.statsType;
         config.noBins = info.noBins;
         config.delta_r = info.delta_r;
+        config.maxDistance = info.maxDistance;
     }
     config.parallelization_strategy = info.parallelization_strat;
     spdlog::info("Finished XML parsing!");

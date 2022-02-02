@@ -71,6 +71,7 @@ public:
         StatisticsLogger::statisticstype statsType;
         int noBins;
         double delta_r;
+        double maxDistance;
 
         LinkedCellContainer::Strategy parallelization_strat = LinkedCellContainer::serial;
     };

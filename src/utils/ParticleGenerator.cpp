@@ -91,8 +91,9 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles, const Shape
     std::array<double,3> vel{};
     std::array<double,3> baseF{};
     double m;
-    bool isImmovable = info.behaviour == ParticleGenerator::immovable;
-    bool isMembrane = info.behaviour == ParticleGenerator::membrane;
+    bool isImmovable;
+    bool isMembrane;
+    int type;
     int current_seindex = startSEIndex;
     for(int z = 0; z < (info.DIM == 3 ? info.N[2] : 1); z++){
         for(int y = 0; y < info.N[1]; y++){
@@ -107,17 +108,24 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles, const Shape
                     m = std::get<3>(*it);
                     isImmovable = std::get<4>(*it);
                     isMembrane = std::get<5>(*it);
+                    int temp_type = std::get<6>(*it);
+                    if(temp_type < 0){
+                        type = current_seindex;
+                    }else{
+                        type = temp_type;
+                    }
                 }else{
                     vel = info.vel;
                     baseF = info.baseForce;
                     m = info.mass;
                     isImmovable = info.behaviour == ParticleGenerator::immovable;
                     isMembrane = info.behaviour == ParticleGenerator::membrane;
+                    type = current_seindex;
                 }
 
                 // add browian motion
                 auto tempVel = vel + maxwellBoltzmannDistributedVelocity(info.brownianFactor, info.DIM);
-                Particle part = Particle{currentPos, tempVel, m, current_seindex, current_seindex};
+                Particle part = Particle{currentPos, tempVel, m, type, current_seindex};
                 part.setBaseForce(baseF);
 
                 part.setMembrane(isMembrane);

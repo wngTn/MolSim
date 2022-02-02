@@ -107,6 +107,7 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
                 info.statsType = StatisticsLogger::thermodynamic;
                 info.noBins = 0;
                 info.delta_r = sim->statistics()->deltaR().get();
+                info.maxDistance = sim->statistics()->maxDistance().get();
                 break;
             case statistics_type_t::densityVelocity:
                 info.statsType = StatisticsLogger::densityVelocityProfile;
@@ -235,7 +236,7 @@ void XMLReader::insertGeneratorInfo(std::vector<ParticleGenerator::ShapeInfo>& g
         auto mass = shapeInfo.mass;
         bool immovable = shapeInfo.behaviour == ParticleGenerator::immovable;
         bool membrane = shapeInfo.behaviour == ParticleGenerator::membrane;
-
+        int type = -1;
         if(sp.vel().present()){
             vel = {sp.vel()->x(),sp.vel()->y(),sp.vel()->z()};
         }
@@ -251,7 +252,10 @@ void XMLReader::insertGeneratorInfo(std::vector<ParticleGenerator::ShapeInfo>& g
         if(sp.membrane().present()){
             membrane = sp.membrane().get();
         }
-        shapeInfo.specialParticles.emplace_back(pos,force,vel,mass, immovable, membrane);
+        if(sp.type().present()){
+            type = sp.type().get();
+        }
+        shapeInfo.specialParticles.emplace_back(pos,force,vel,mass, immovable, membrane, type);
     }
 
     genInfos.push_back(shapeInfo);

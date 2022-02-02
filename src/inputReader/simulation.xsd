@@ -148,6 +148,7 @@
 
     <xs:complexType name="statistics_t">
         <xs:sequence>
+            <xs:element minOccurs="0" name="maxDistance" type="xs:decimal" />
             <xs:element minOccurs="0" name="noBins" type="xs:int" />
             <xs:element minOccurs="0" name="deltaR" type="xs:decimal" />
             <xs:element name="file" type="xs:string" />
@@ -175,6 +176,7 @@
             <xs:element minOccurs="0" name="force" type="array_float_3" />
             <xs:element minOccurs="0" name="vel" type="array_float_3" />
             <xs:element minOccurs="0" name="mass" type="xs:decimal" />
+            <xs:element minOccurs="0" name="type" type="xs:int" />
         </xs:sequence>
         <xs:attribute name="immovable" type="xs:boolean" use="optional"/>
         <xs:attribute name="membrane" type="xs:boolean" use="optional"/>

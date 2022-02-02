@@ -1473,6 +1473,30 @@ operator= (value v)
 // statistics_t
 // 
 
+const statistics_t::maxDistance_optional& statistics_t::
+maxDistance () const
+{
+  return this->maxDistance_;
+}
+
+statistics_t::maxDistance_optional& statistics_t::
+maxDistance ()
+{
+  return this->maxDistance_;
+}
+
+void statistics_t::
+maxDistance (const maxDistance_type& x)
+{
+  this->maxDistance_.set (x);
+}
+
+void statistics_t::
+maxDistance (const maxDistance_optional& x)
+{
+  this->maxDistance_ = x;
+}
+
 const statistics_t::noBins_optional& statistics_t::
 noBins () const
 {
@@ -1813,6 +1837,30 @@ void special_particle_t::
 mass (const mass_optional& x)
 {
   this->mass_ = x;
+}
+
+const special_particle_t::type_optional& special_particle_t::
+type () const
+{
+  return this->type_;
+}
+
+special_particle_t::type_optional& special_particle_t::
+type ()
+{
+  return this->type_;
+}
+
+void special_particle_t::
+type (const type_type& x)
+{
+  this->type_.set (x);
+}
+
+void special_particle_t::
+type (const type_optional& x)
+{
+  this->type_ = x;
 }
 
 const special_particle_t::immovable_optional& special_particle_t::
@@ -4046,6 +4094,7 @@ statistics_t (const file_type& file,
               const frequency_type& frequency,
               const type_type& type)
 : ::xml_schema::type (),
+  maxDistance_ (this),
   noBins_ (this),
   deltaR_ (this),
   file_ (file, this),
@@ -4059,6 +4108,7 @@ statistics_t (const statistics_t& x,
               ::xml_schema::flags f,
               ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
+  maxDistance_ (x.maxDistance_, f, this),
   noBins_ (x.noBins_, f, this),
   deltaR_ (x.deltaR_, f, this),
   file_ (x.file_, f, this),
@@ -4072,6 +4122,7 @@ statistics_t (const ::xercesc::DOMElement& e,
               ::xml_schema::flags f,
               ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  maxDistance_ (this),
   noBins_ (this),
   deltaR_ (this),
   file_ (this),
@@ -4094,6 +4145,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xercesc::DOMElement& i (p.cur_element ());
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
+
+    // maxDistance
+    //
+    if (n.name () == "maxDistance" && n.namespace_ ().empty ())
+    {
+      if (!this->maxDistance_)
+      {
+        this->maxDistance_.set (maxDistance_traits::create (i, f, this));
+        continue;
+      }
+    }
 
     // noBins
     //
@@ -4193,6 +4255,7 @@ operator= (const statistics_t& x)
   if (this != &x)
   {
     static_cast< ::xml_schema::type& > (*this) = x;
+    this->maxDistance_ = x.maxDistance_;
     this->noBins_ = x.noBins_;
     this->deltaR_ = x.deltaR_;
     this->file_ = x.file_;
@@ -4454,6 +4517,7 @@ special_particle_t (const position_type& position)
   force_ (this),
   vel_ (this),
   mass_ (this),
+  type_ (this),
   immovable_ (this),
   membrane_ (this)
 {
@@ -4466,6 +4530,7 @@ special_particle_t (::std::unique_ptr< position_type > position)
   force_ (this),
   vel_ (this),
   mass_ (this),
+  type_ (this),
   immovable_ (this),
   membrane_ (this)
 {
@@ -4480,6 +4545,7 @@ special_particle_t (const special_particle_t& x,
   force_ (x.force_, f, this),
   vel_ (x.vel_, f, this),
   mass_ (x.mass_, f, this),
+  type_ (x.type_, f, this),
   immovable_ (x.immovable_, f, this),
   membrane_ (x.membrane_, f, this)
 {
@@ -4494,6 +4560,7 @@ special_particle_t (const ::xercesc::DOMElement& e,
   force_ (this),
   vel_ (this),
   mass_ (this),
+  type_ (this),
   immovable_ (this),
   membrane_ (this)
 {
@@ -4567,6 +4634,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // type
+    //
+    if (n.name () == "type" && n.namespace_ ().empty ())
+    {
+      if (!this->type_)
+      {
+        this->type_.set (type_traits::create (i, f, this));
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -4614,6 +4692,7 @@ operator= (const special_particle_t& x)
     this->force_ = x.force_;
     this->vel_ = x.vel_;
     this->mass_ = x.mass_;
+    this->type_ = x.type_;
     this->immovable_ = x.immovable_;
     this->membrane_ = x.membrane_;
   }
@@ -6008,6 +6087,18 @@ operator<< (::xercesc::DOMElement& e, const statistics_t& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
 
+  // maxDistance
+  //
+  if (i.maxDistance ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "maxDistance",
+        e));
+
+    s << ::xml_schema::as_decimal(*i.maxDistance ());
+  }
+
   // noBins
   //
   if (i.noBins ())
@@ -6194,6 +6285,18 @@ operator<< (::xercesc::DOMElement& e, const special_particle_t& i)
         e));
 
     s << ::xml_schema::as_decimal(*i.mass ());
+  }
+
+  // type
+  //
+  if (i.type ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "type",
+        e));
+
+    s << *i.type ();
   }
 
   // immovable
