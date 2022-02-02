@@ -1,5 +1,5 @@
 #include <iostream>
-#include <cfloat>
+#include <float.h>
 
 #include "XMLReader.h"
 
@@ -73,7 +73,7 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
         info.n_thermostat = sim->thermostat()->nThermostat();
         info.t_init = sim->thermostat()->Tinit();
         info.t_target = sim->thermostat()->Ttarget().present() ? sim->thermostat()->Ttarget().get() : info.t_init;
-        info.delta_temp = sim->thermostat()->deltaTemp().present() ? sim->thermostat()->deltaTemp().get() : DBL_MAX;
+        info.delta_temp = sim->thermostat()->deltaTemp().present() ? sim->thermostat()->deltaTemp().get() : 999999999.;
 
         info.excludeY = sim->thermostat()->excludeY().present() && sim->thermostat()->excludeY().get();
     }else{

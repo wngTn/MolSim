@@ -354,7 +354,7 @@ void MainUtils::printConfig(Config& config) {
     if(config.useThermostat){
         s << "\u001b[36m\tThermostat:\u001b[0m " << "nThermostat: " << config.nThermostat << ", Tinit: " << config.initialTemperature;
         s << ", Ttarget: " << config.targetTemperature;
-        if(abs(config.maxDeltaTemperature - DBL_MAX) < 10){
+        if(abs(config.maxDeltaTemperature - 999999999.) < 10){
             s << ", maxDeltaT: infinity";
         }else{
            s << ", maxDeltaT: " << config.maxDeltaTemperature;
