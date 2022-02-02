@@ -83,7 +83,6 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
 			}
 		}
 	} else if (strategy == primitiveY) {
-		// Y is the greatest dimension
 		indicesThreadVector = std::vector<std::vector<int>>(dim[1] / 2);
 		threadOffset = dim[0];
 		for (currentIndexes[1] = 0; currentIndexes[1] < dim[1] / 2; ++currentIndexes[1]) {
@@ -103,9 +102,7 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
 				}
 			}
 		}
-	}
-		// Z is the greatest dimension
-	else if (strategy == primitiveZ) {
+	} else if (strategy == primitiveZ) {
 		// We are in 2D, and we split along the Y axis since there is no Z axis
 		if (dim[2] == 1) {
 			indicesThreadVector = std::vector<std::vector<int>>(dim[1] / 2);
@@ -126,7 +123,7 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
 
 			}
 		}
-			// We are in 3D, and we split along the Z axis
+		// We are in 3D, and we split along the Z axis
 		else {
 			indicesThreadVector = std::vector<std::vector<int>>(dim[2] / 2);
 			threadOffset = dim[0] * dim[1];
@@ -147,20 +144,26 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
 				}
 			}
 		}
-	} else if (strategy == subDomain) {
+	}
+	// We have the subDomain strategy
+	else if (strategy == subDomain) {
 		int numThreads{};
 		// get the greatest dimension
 		// X is the greatest dimension
 		if (dim[0] == std::max({dim[0], dim[1], dim[2]})) {
 			// If domain size is smaller than our available threads, we use domain size as number of threads
+#ifdef _OPENMP
 			numThreads = std::min(omp_get_max_threads(), (dim[0] / 2 == 0 ? 1 : dim[0] / 2));
+#else
+			numThreads = 1;
+#endif
 			// Length of every subdomain
 			int len = dim[0] / numThreads;
 			// Number of subdomains
 			int num = static_cast<int>(std::ceil(static_cast<double>(dim[0]) / len));
 			// Creating the vector
 			subDomainVector = std::vector<SubDomain>(num);
-			// Initializing the vector
+			// Initializing the subdomain
 			for (int j = 0; j < num; ++j) {
 				auto subDomain = SubDomain{is2D(), 0};
 				subDomain.setMinCoord({j * len, 0, 0});
@@ -182,14 +185,18 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
 		// Y is the greatest dimension
 		else if (dim[1] == std::max({dim[0], dim[1], dim[2]})) {
 			// If domain size is smaller than our available threads, we use domain size as number of threads
+#ifdef _OPENMP
 			numThreads = std::min(omp_get_max_threads(), (dim[1] / 2 == 0 ? 1 : dim[1] / 2));
+#else
+			numThreads = 1;
+#endif
 			// Length of every subdomain
 			int len = dim[1] / numThreads;
 			// Number of subdomains
 			int num = static_cast<int>(std::ceil(static_cast<double>(dim[1]) / len));
 			// Creating the vector
 			subDomainVector = std::vector<SubDomain>(num);
-			// Initializing the vector
+			// Initializing the subdomain
 			for (int j = 0; j < num; ++j) {
 				auto subDomain = SubDomain{is2D(), 1};
 				subDomain.setMinCoord({0, j * len, 0});
@@ -209,17 +216,21 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
 				subDomainVector[j] = subDomain;
 			}
 		}
-			// Z is the greatest dimension
+		// Z is the greatest dimension
 		else if (dim[2] == std::max({dim[0], dim[1], dim[2]})) {
 			// If domain size is smaller than our available threads, we use domain size as number of threads
+#ifdef _OPENMP
 			numThreads = std::min(omp_get_max_threads(), (dim[2] / 2 == 0 ? 1 : dim[2] / 2));
+#else
+			numThreads = 1;
+#endif
 			// Length of every subdomain
 			int len = dim[2] / numThreads;
 			// Number of subdomains
 			int num = static_cast<int>(std::ceil(static_cast<double>(dim[2]) / len));
 			// Creating the vector
 			subDomainVector = std::vector<SubDomain>(num);
-			// Initializing the vector
+			// Initializing the subdomain
 			for (int j = 0; j < num; ++j) {
 				auto subDomain = SubDomain{is2D(), 2};
 				subDomain.setMinCoord({0, 0, j * len});
@@ -235,7 +246,6 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
 						}
 					}
 				}
-
 				subDomainVector[j] = subDomain;
 			}
 		}
@@ -256,8 +266,6 @@ void LinkedCellContainer::setup() {
 			auto cellIndex = (*this).index(novelCellIndex);
 			p.setOldF(p.getF());
 			// here gravitational force is applied
-			// p.setF({0., p.getM() * g, 0.});
-			// set Force to baseForce + g*m
 			p.applyBaseForceAndGrav(g);
 			grid[cellIndex].emplace_back(&p);
 		}
@@ -268,27 +276,27 @@ void LinkedCellContainer::SubDomain::addIndex(const std::array<int, 3> &indexArr
 	const auto[x_min, y_min, z_min] = minCoord;
 	const auto[x_max, y_max, z_max] = maxCoord;
 	if (is2D) {
-		// we have a left border cell
+		// we have a border cell
 		if ((axis == 0 && indexArray[axis] == x_min) || (axis == 1 && indexArray[axis] == y_min) ||
 			(axis == 0 && indexArray[axis] == x_max) || (axis == 1 && indexArray[axis] == y_max)) {
 			borderCellIndices.push_back(index);
-			cell.setAllNeighbors2D();
+			cell.setRemainingNeighbors2D();
 		}
-			// we have a not-border cell
+		// we have a not-border cell
 		else {
 			cellIndices.push_back(index);
 		}
 	}
-		// We are in 3D
+	// We are in 3D
 	else {
-		// we have a left border cell
+		// we have a border cell
 		if ((axis == 0 && indexArray[axis] == x_min) || (axis == 1 && indexArray[axis] == y_min)
 			|| (axis == 2 && indexArray[axis] == z_min) || (axis == 0 && indexArray[axis] == x_max) || (axis == 1 && indexArray[axis] == y_max)
 			|| (axis == 2 && indexArray[axis] == z_max)) {
 			borderCellIndices.push_back(index);
-			cell.setAllNeighbors3D();
+			cell.setRemainingNeighbors3D();
 		}
-			// we have a not-border cell
+		// we have a not-border cell
 		else {
 			cellIndices.push_back(index);
 		}
@@ -357,7 +365,7 @@ void LinkedCellContainer::setRCut(double rCutV) {
 	LinkedCellContainer::rCut = rCutV;
 }
 
-bool LinkedCellContainer::is2D() {
+bool LinkedCellContainer::is2D() const {
     return lenDim[2] < 1.000001;
 }
 

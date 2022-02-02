@@ -13,12 +13,29 @@
 class LinkedCellContainer : public ParticleContainer {
 public:
 
+	/**
+	 * Models a subDomain in the LinkedCellContainer Domain
+	 */
 	struct SubDomain {
 
+		/**
+		 * Default constructor
+		 */
 		SubDomain();
 
+		/**
+		 * Constructor
+		 * @param is2D whether subDomain is 2D or not
+		 * @param axis in what axis the subDomain is split 0 = x, 1 = y, 2 = z
+		 */
 		explicit SubDomain(bool is2D, int axis);
 
+		/**
+		 * Constructor
+		 * @param CellIndices vector of all cellindices in the subdomain
+		 * @param MinCoord the small coordinate
+		 * @param MaxCoord the biggest coordinate
+		 */
 		SubDomain(std::vector<int> CellIndices,
 		          const std::array<int, 3> &MinCoord,
 		          const std::array<int, 3> &MaxCoord);
@@ -39,11 +56,22 @@ public:
 
 		void setIs2D(bool is_2_d);
 
+		[[nodiscard]] const std::vector<int> &getBorderCellIndices() const;
+
+		/**
+		 * Adds a cell to the subDomain
+		 * @param indexArray the index of the cell (x, y, z)
+		 * @param index the number index of the cell
+		 * @param cell the actual cell
+		 */
 		void addIndex(const std::array<int, 3> & indexArray, int index, Cell & cell);
 
+		/**
+		 * For checking if an index is in a specific subDomain
+		 * @param currentIndex the current index (x, y, z)
+		 * @return true if it is in the subDomain, false if it is not
+		 */
 		[[nodiscard]] bool isInSubdomain(const std::array<int, 3> & currentIndex) const;
-
-		[[nodiscard]] const std::vector<int> &getBorderCellIndices() const;
 
 	private:
 		/**
@@ -66,17 +94,29 @@ public:
 		 */
 		std::array<int, 3> maxCoord{};
 
+		/**
+		 * Whether domain is 2D or not
+		 */
 		bool is2D{};
 
+		/**
+		 * The axis the subDomains are parted
+		 * 0 = X, 1 = Y, 2 = Z
+		 */
 		int axis;
 	};
 
-	enum Border { outflow, periodic, reflective, none };
 	/**
-	 * primitive: we split along the greatest dimension
-	 * primitiveFit: we split along the y axis (2D) or z axis(3D) for better memory access
+	 * The kind of borders of the domain
 	 */
-	enum Strategy { primitiveX, primitiveY, primitiveZ, subDomain, naught };
+	enum Border { outflow, periodic, reflective, none };
+
+	/**
+	 * primitive(X|Y|Z): we split domain in lines and do two run partitions:
+	 * subDomain: we split the domain in subDomains
+	 * serial: we have no parallelization technique
+	 */
+	enum Strategy { primitiveX, primitiveY, primitiveZ, subDomain, serial };
 
 	/***********************************************************************/
 
@@ -97,7 +137,7 @@ public:
 	                    std::array<Border, 6> borderV = std::array<Border, 6>{
 		                    outflow, outflow, outflow, outflow, outflow, outflow},
                         std::array<double,3> g = std::array<double,3>{0.,0.,0.},
-	                    Strategy strategy = naught);
+	                    Strategy strategy = serial);
 
 	/**
 	 * Default constructor
@@ -227,8 +267,12 @@ public:
 
 	[[nodiscard]] const std::array<double, 3> &getLenDim() const;
 
-	bool is2D();
+	[[nodiscard]] bool is2D() const;
 
+	/**
+	 * Checks how many dimensions the domain has
+	 * @return number of dimensions in the domain
+	 */
 	int dimensions() override;
 
 	/***** Setters *****/
@@ -293,6 +337,10 @@ private:
 	 * lenDim[0] = X, lenDim[1] = Y, lenDim[2] = Z
 	 */
 	std::array<double, 3> lenDim{};
+
+	/**
+	 * The rCut value for the LinkedCell method
+	 */
 	double rCut{};
 
 	/**

@@ -162,7 +162,7 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
                 info.parallelization_strat = LinkedCellContainer::primitiveZ;
                 break;
             case parallel_t::none:
-                info.parallelization_strat = LinkedCellContainer::naught;
+                info.parallelization_strat = LinkedCellContainer::serial;
                 break;
         }
     }

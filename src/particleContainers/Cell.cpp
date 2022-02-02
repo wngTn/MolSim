@@ -145,13 +145,8 @@ void Cell::setIsBorderCell(bool is_border_cell) {
 	isBorderCell = is_border_cell;
 }
 
-void Cell::setAllNeighbors2D() {
-	Cell::allNeighbors2D = {
-//		std::array<int, 3>{index[0], index[1] + 1, index[2]},
-//		std::array<int, 3>{index[0] + 1, index[1], index[2]},
-//		std::array<int, 3>{index[0] + 1, index[1] + 1, index[2]},
-//		std::array<int, 3>{index[0] - 1, index[1] + 1, index[2]}
-
+void Cell::setRemainingNeighbors2D() {
+	Cell::remainingNeighbors2D = {
 		std::array<int, 3>{index[0], index[1] - 1, index[2]},
 		std::array<int, 3>{index[0] - 1, index[1], index[2]},
 		std::array<int, 3>{index[0] - 1, index[1] - 1, index[2]},
@@ -159,47 +154,30 @@ void Cell::setAllNeighbors2D() {
 	};
 }
 
-void Cell::setAllNeighbors3D() {
-	Cell::allNeighbors3D = {
-//		std::array<int, 3>{index[0] + 1, index[1], index[2]}, // right
-//		std::array<int, 3>{index[0] + 1, index[1] + 1, index[2]}, // right, down
-//		std::array<int, 3>{index[0], index[1] + 1, index[2]}, // down
-//		std::array<int, 3>{index[0] - 1, index[1] + 1, index[2]}, // left down
-//		std::array<int, 3>{index[0] + 1, index[1], index[2] - 1}, // front right
-//		std::array<int, 3>{index[0], index[1], index[2] - 1}, // front
-//		std::array<int, 3>{index[0] - 1, index[1], index[2] - 1}, // front left
-//		std::array<int, 3>{index[0] - 1, index[1] + 1, index[2] + 1}, // down back left
-//		std::array<int, 3>{index[0], index[1] + 1, index[2] + 1}, // down, back
-//		std::array<int, 3>{index[0] + 1, index[1] + 1, index[2] + 1}, // right, down, back
-//		std::array<int, 3>{index[0] - 1, index[1] + 1, index[2] - 1}, // left, down, front
-//		std::array<int, 3>{index[0], index[1] + 1, index[2] - 1}, // down, front
-//		std::array<int, 3>{index[0] + 1, index[1] + 1, index[2] - 1}, // right, down, front
-
-
-		std::array<int, 3>{index[0] - 1, index[1], index[2]}, // right
-		std::array<int, 3>{index[0] - 1, index[1] - 1, index[2]}, // right, down
-		std::array<int, 3>{index[0], index[1] - 1, index[2]}, // down
-		std::array<int, 3>{index[0] + 1, index[1] - 1, index[2]}, // left down
-		std::array<int, 3>{index[0] - 1, index[1], index[2] + 1}, // front right
-		std::array<int, 3>{index[0], index[1], index[2] + 1}, // front
-		std::array<int, 3>{index[0] + 1, index[1], index[2] + 1}, // front left
-		std::array<int, 3>{index[0] + 1, index[1] - 1, index[2] - 1}, // down back left
-		std::array<int, 3>{index[0], index[1] - 1, index[2] - 1}, // down, back
-		std::array<int, 3>{index[0] - 1, index[1] - 1, index[2] - 1}, // right, down, back
-		std::array<int, 3>{index[0] + 1, index[1] - 1, index[2] + 1}, // left, down, front
-		std::array<int, 3>{index[0], index[1] - 1, index[2] + 1}, // down, front
-		std::array<int, 3>{index[0] - 1, index[1] - 1, index[2] + 1}, // right, down, front
+void Cell::setRemainingNeighbors3D() {
+	Cell::remainingNeighbors3D = {
+		std::array<int, 3>{index[0] - 1, index[1], index[2]},
+		std::array<int, 3>{index[0] - 1, index[1] - 1, index[2]},
+		std::array<int, 3>{index[0], index[1] - 1, index[2]},
+		std::array<int, 3>{index[0] + 1, index[1] - 1, index[2]},
+		std::array<int, 3>{index[0] - 1, index[1], index[2] + 1},
+		std::array<int, 3>{index[0], index[1], index[2] + 1},
+		std::array<int, 3>{index[0] + 1, index[1], index[2] + 1},
+		std::array<int, 3>{index[0] + 1, index[1] - 1, index[2] - 1},
+		std::array<int, 3>{index[0], index[1] - 1, index[2] - 1},
+		std::array<int, 3>{index[0] - 1, index[1] - 1, index[2] - 1},
+		std::array<int, 3>{index[0] + 1, index[1] - 1, index[2] + 1},
+		std::array<int, 3>{index[0], index[1] - 1, index[2] + 1},
+		std::array<int, 3>{index[0] - 1, index[1] - 1, index[2] + 1},
 	};
-
-
 }
 
-const std::vector<std::array<int, 3>> &Cell::getAllNeighbors2D() const {
-	return allNeighbors2D;
+const std::vector<std::array<int, 3>> &Cell::getRemainingNeighbors2D() const {
+	return remainingNeighbors2D;
 }
 
-const std::vector<std::array<int, 3>> &Cell::getAllNeighbors3D() const {
-	return allNeighbors3D;
+const std::vector<std::array<int, 3>> &Cell::getRemainingNeighbors3D() const {
+	return remainingNeighbors3D;
 }
 
 

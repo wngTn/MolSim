@@ -288,10 +288,10 @@ void MainUtils::parseXML(Config& config) {
 
 void MainUtils::printConfig(Config& config) {
     std::stringstream s;
-    s << "Your configurations are:" << std::endl;
+    s << "\033[4mYour configurations are:\033[0m" << std::endl;
     s << "\u001b[36m\tParallelization:\u001b[0m ";
     switch(config.parallelization_strategy){
-        case LinkedCellContainer::naught:
+        case LinkedCellContainer::serial:
             s << "none" << std::endl;
             break;
         case LinkedCellContainer::primitiveX:
@@ -307,6 +307,15 @@ void MainUtils::printConfig(Config& config) {
             s << "subdomain" << std::endl;
             break;
     }
+
+#ifdef _OPENMP
+	if (config.parallelization_strategy != LinkedCellContainer::serial) {
+		s << "\u001b[36m\tOMP max threads:\u001b[0m " << omp_get_max_threads() << std::endl;
+	}
+#else
+	s << "\u001b[36m\tOMP max threads:\u001b[0m " << "You did not compile with OpenMP" << std::endl;
+#endif
+
     if(!config.xml_file.empty()){
         s << "\u001b[36m\tXML File:\u001b[0m " << config.xml_file << std::endl;
     }
