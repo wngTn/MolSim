@@ -15,11 +15,11 @@ void LinkedCell::calcFWithinCell(Cell &cell) {
 				if (!membrane || !(*it)->membrane || !(*it2)->membrane) {
 					if (sqrd_dist <= rCut*rCut && !((*it)->immovable && (*it2)->immovable)) {
 						if(smoothed){
-                                LinkedCell::ljforce_smoothed(*it, *it2, sqrd_dist);
-                            }else{
-                                LinkedCell::ljforce(*it, *it2, sqrd_dist);
-                            }
+                            LinkedCell::ljforce_smoothed(*it, *it2, sqrd_dist);
+                        }else{
+                            LinkedCell::ljforce(*it, *it2, sqrd_dist);
                         }
+                    }
                 }else{
                     if(sqrd_dist <= sqr(SIXTH_ROOT_OF_TWO * sigmaTable[(*it)->getSEIndex()][(*it2)->getSEIndex()])){
                         if(smoothed){

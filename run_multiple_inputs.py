@@ -1,4 +1,5 @@
 import os
+import time
 
 # run this script in the MolSimRepo/ directory!
 # this is probably simple enough for a bash script but I've never written one of those so python it is
@@ -10,7 +11,7 @@ folder_path = '../input/files/assignment_5/task4_experiments/'
 files: [(str, str)] = [(folder_path + 'task4_assignment.xml', 'assignment'),
                        (folder_path + 'task4_walls_equal_fluid.xml', 'walleqfluid'),
                        (folder_path + 'task4_higher_gravity.xml', 'highgrav'),
-                       (folder_path + 'task4_fixed_spheres.xml'), 'fixedspheres']
+                       (folder_path + 'task4_fixed_spheres.xml', 'fixedspheres')]
 
 
 def execute_file(path: str, identifier: str):
@@ -25,8 +26,17 @@ def execute_file(path: str, identifier: str):
 
 def execute_all():
     os.system('cd build/ && cmake .. && make')
-    for [path, match] in files:
-        execute_file(path, match)
+    with open('multiple_inputs_time.txt', 'a') as file:
+        for [path, match] in files:
+            t0 = time.time()
+            execute_file(path, match)
+            t1 = time.time()
+            total_min = (t1 - t0) / 60
+            file.write(f'file: {match}, time[min]: {total_min}\n')
 
 
+with open('multiple_inputs_time.txt', 'w+') as f:
+    f.write('multiple inputs:\n')
 execute_all()
+with open('multiple_inputs_time.txt', 'a') as f:
+    f.write('finished\n')
