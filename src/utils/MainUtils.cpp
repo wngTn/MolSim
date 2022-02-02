@@ -403,8 +403,8 @@ void MainUtils::printConfig(Config& config) {
     s << "\u001b[36m\tBrownianMotion:\u001b[0m " << config.brownianMotionMean << std::endl;
     s << "\u001b[36m\tEnd_time:\u001b[0m " << config.end_time << std::endl;
     s << "\u001b[36m\tDelta_t:\u001b[0m " << config.delta_t << std::endl;
-   s << "\u001b[36m\tGravitational Factor:\u001b[0m " << config.grav << std::endl;
-    std::cout << s.str() << "Calculating..." << std::endl;
+    s << "\u001b[36m\tGravitational Factor:\u001b[0m " << config.grav << std::endl;
+    std::cout << s.str();
 }
 
 void MainUtils::initializeLogger() {

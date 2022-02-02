@@ -8,8 +8,6 @@ namespace statistics {
     public:
         Thermodynamical(std::string filename, double delta_r, double maxDistance);
 
-    private:
-
         void writeStatistics(ParticleContainer &container, int iteration) override;
 
     private:
