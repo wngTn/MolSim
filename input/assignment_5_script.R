@@ -148,7 +148,7 @@ if (length(args >= 1)) {
 
 if (length(args >= 2) && args[2] == 'task5'){
   task <- 'task5'
-  path <- 'files/assignment_5/csv/task5_supercooling_statistics.csv'
+  path <- 'files/assignment_5/csv/RDF_task5_cooling_statistics.csv'
 }
 
 if (length(args == 3)) {
