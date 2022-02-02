@@ -33,7 +33,6 @@ TEST_F(StatisticsTest, ThermodynamicalStatsTest){
 
     statistics::Thermodynamical stats = statistics::Thermodynamical("testing_thermodynamical.csv", 1.0, 15);
 
-    //p.setup();
     for(int i = 1; i <= 10; i++){
         lc.calcX(p);
         p.setup();
@@ -57,4 +56,31 @@ TEST_F(StatisticsTest, ThermodynamicalStatsTest){
                                       std::istreambuf_iterator<char>(), '\n');
     ASSERT_EQ(1 + 10*15, rdf_line_count);
     ASSERT_EQ(1 + 10, diff_line_count);
+}
+
+TEST_F(StatisticsTest, DensityVelocityStatsTest){
+    int NO_BINS = 10;
+
+    calculator::LinkedCell lc = calculator::LinkedCell(1.0,1.0,3.0);
+
+    std::filesystem::create_directory(std::filesystem::path{"../statistics/"});
+
+    statistics::DensityVelocityProfile stats = statistics::DensityVelocityProfile("testing_densityVelocity.csv", NO_BINS);
+
+    for(int i = 1; i <= 10; i++){
+        lc.calcX(p);
+        p.setup();
+        lc.calcF(p);
+        lc.calcV(p);
+        stats.writeStatistics(p, i);
+    }
+    std::filesystem::path path {"../statistics/testing_densityVelocity.csv"};
+
+    std::cout << "PATH: " << path << std::endl;
+    ASSERT_TRUE(std::filesystem::exists(std::filesystem::relative(path)));
+
+    std::ifstream file{path};
+    long line_count = std::count(std::istreambuf_iterator<char>(file),
+                                      std::istreambuf_iterator<char>(), '\n');
+    ASSERT_EQ(1 + 10*NO_BINS, line_count);
 }
