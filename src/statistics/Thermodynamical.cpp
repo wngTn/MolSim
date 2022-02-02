@@ -8,13 +8,11 @@
 
 namespace statistics {
 
-    Thermodynamical::Thermodynamical(std::string file, double delta_r) : filename{std::move(file)}, delta_r{delta_r}, max_distance{50.} {
-        std::ofstream f{folder_path + filename};
-        f << "Iteration,Diffusion";
-        for(int i = 0; i*delta_r < max_distance; i++){
-            f << ",Interval [" << i * delta_r << ";" << (i+1) * delta_r << "]";
-        }
-        f << "\n";
+    Thermodynamical::Thermodynamical(std::string file, double delta_r, double maxDistance) : filename{std::move(file)}, delta_r{delta_r}, max_distance{maxDistance} {
+        std::ofstream f_rdf{folder_path + "RDF_" + filename };
+        std::ofstream f_diff{folder_path + "diffusion_" + filename};
+        f_rdf << "Iteration,Interval,Density\n";
+        f_diff << "Iteration,Diffusion\n";
     }
 
     double Thermodynamical::calculateDiffusion(ParticleContainer& container){
@@ -49,8 +47,11 @@ namespace statistics {
     void Thermodynamical::writeStatistics(ParticleContainer &container, int iteration) {
         auto& particles = static_cast<LinkedCellContainer &>(container);
 
-        std::ofstream file{folder_path + filename, std::ios::app};
-        file << iteration << "," << calculateDiffusion(particles);
+        std::ofstream file_diff{folder_path + "diffusion_" + filename, std::ios::app};
+        file_diff << iteration << "," << calculateDiffusion(particles) << "\n";
+
+        std::ofstream file_rdf{folder_path + "RDF_" + filename, std::ios::app};
+
 
         int intervals = std::floor(max_distance / delta_r);
         std::vector<int> molCounts{};
@@ -67,9 +68,8 @@ namespace statistics {
         for(int i = 0; i < (int) molCounts.size(); i++){
             // (ri + δr)^3 - ri^3 = (i*δr + δr)^3 - (i*δr)^3 = δr^3 * (3*i^2 + 3i +1)
             double local_density = molCounts[i] / (FOUR_THIRDS_PI * delta_r*delta_r*delta_r * (3*i*(i+1) + 1));
-            file << "," << local_density;
+            file_rdf << iteration << "," << i*delta_r << ";" << (i+1)*delta_r << "," << local_density << "\n";
         }
-        file << "\n";
 
     }
 

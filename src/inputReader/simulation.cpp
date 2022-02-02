@@ -1473,6 +1473,30 @@ operator= (value v)
 // statistics_t
 // 
 
+const statistics_t::maxDistance_optional& statistics_t::
+maxDistance () const
+{
+  return this->maxDistance_;
+}
+
+statistics_t::maxDistance_optional& statistics_t::
+maxDistance ()
+{
+  return this->maxDistance_;
+}
+
+void statistics_t::
+maxDistance (const maxDistance_type& x)
+{
+  this->maxDistance_.set (x);
+}
+
+void statistics_t::
+maxDistance (const maxDistance_optional& x)
+{
+  this->maxDistance_ = x;
+}
+
 const statistics_t::noBins_optional& statistics_t::
 noBins () const
 {
@@ -4070,6 +4094,7 @@ statistics_t (const file_type& file,
               const frequency_type& frequency,
               const type_type& type)
 : ::xml_schema::type (),
+  maxDistance_ (this),
   noBins_ (this),
   deltaR_ (this),
   file_ (file, this),
@@ -4083,6 +4108,7 @@ statistics_t (const statistics_t& x,
               ::xml_schema::flags f,
               ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
+  maxDistance_ (x.maxDistance_, f, this),
   noBins_ (x.noBins_, f, this),
   deltaR_ (x.deltaR_, f, this),
   file_ (x.file_, f, this),
@@ -4096,6 +4122,7 @@ statistics_t (const ::xercesc::DOMElement& e,
               ::xml_schema::flags f,
               ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  maxDistance_ (this),
   noBins_ (this),
   deltaR_ (this),
   file_ (this),
@@ -4118,6 +4145,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xercesc::DOMElement& i (p.cur_element ());
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
+
+    // maxDistance
+    //
+    if (n.name () == "maxDistance" && n.namespace_ ().empty ())
+    {
+      if (!this->maxDistance_)
+      {
+        this->maxDistance_.set (maxDistance_traits::create (i, f, this));
+        continue;
+      }
+    }
 
     // noBins
     //
@@ -4217,6 +4255,7 @@ operator= (const statistics_t& x)
   if (this != &x)
   {
     static_cast< ::xml_schema::type& > (*this) = x;
+    this->maxDistance_ = x.maxDistance_;
     this->noBins_ = x.noBins_;
     this->deltaR_ = x.deltaR_;
     this->file_ = x.file_;
@@ -6047,6 +6086,18 @@ void
 operator<< (::xercesc::DOMElement& e, const statistics_t& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
+
+  // maxDistance
+  //
+  if (i.maxDistance ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "maxDistance",
+        e));
+
+    s << ::xml_schema::as_decimal(*i.maxDistance ());
+  }
 
   // noBins
   //

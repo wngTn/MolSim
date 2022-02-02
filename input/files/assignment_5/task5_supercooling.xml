@@ -30,7 +30,8 @@
     <statistics type="thermodynamical">
         <file>task5_supercooling_statistics.csv</file>
         <frequency>1000</frequency>
-        <deltaR>1</deltaR>
+        <deltaR>0.5</deltaR>
+        <maxDistance>16</maxDistance>
     </statistics>
     <outputFile>output</outputFile>
 </simulation>

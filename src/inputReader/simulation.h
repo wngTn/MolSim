@@ -5105,6 +5105,71 @@ class statistics_t: public ::xml_schema::type
 {
   public:
   /**
+   * @name maxDistance
+   *
+   * @brief Accessor and modifier functions for the %maxDistance
+   * optional element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::decimal maxDistance_type;
+
+  /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< maxDistance_type > maxDistance_optional;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< maxDistance_type, char, ::xsd::cxx::tree::schema_type::decimal > maxDistance_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const maxDistance_optional&
+  maxDistance () const;
+
+  /**
+   * @brief Return a read-write reference to the element container.
+   *
+   * @return A reference to the optional container.
+   */
+  maxDistance_optional&
+  maxDistance ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  maxDistance (const maxDistance_type& x);
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  maxDistance (const maxDistance_optional& x);
+
+  //@}
+
+  /**
    * @name noBins
    *
    * @brief Accessor and modifier functions for the %noBins
@@ -5480,6 +5545,7 @@ class statistics_t: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
+  maxDistance_optional maxDistance_;
   noBins_optional noBins_;
   deltaR_optional deltaR_;
   ::xsd::cxx::tree::one< file_type > file_;

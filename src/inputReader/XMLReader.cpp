@@ -107,6 +107,7 @@ XMLReader::XMLInfo XMLReader::readFile(const std::string& s) {
                 info.statsType = StatisticsLogger::thermodynamic;
                 info.noBins = 0;
                 info.delta_r = sim->statistics()->deltaR().get();
+                info.maxDistance = sim->statistics()->maxDistance().get();
                 break;
             case statistics_type_t::densityVelocity:
                 info.statsType = StatisticsLogger::densityVelocityProfile;

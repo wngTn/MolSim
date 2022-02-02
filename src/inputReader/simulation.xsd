@@ -148,6 +148,7 @@
 
     <xs:complexType name="statistics_t">
         <xs:sequence>
+            <xs:element minOccurs="0" name="maxDistance" type="xs:decimal" />
             <xs:element minOccurs="0" name="noBins" type="xs:int" />
             <xs:element minOccurs="0" name="deltaR" type="xs:decimal" />
             <xs:element name="file" type="xs:string" />

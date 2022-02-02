@@ -6,7 +6,7 @@ namespace statistics {
 
     class Thermodynamical : public StatisticsLogger {
     public:
-        Thermodynamical(std::string filename, double delta_r);
+        Thermodynamical(std::string filename, double delta_r, double maxDistance);
 
     private:
 
