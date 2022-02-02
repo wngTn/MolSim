@@ -45,6 +45,9 @@ struct Cell {
      */
     [[nodiscard]] std::vector<Particle*>::const_iterator end() const;
 
+	/**
+	 * Adds a particle to the cell
+	 */
     void add_particle(Particle&);
 
     /**
@@ -158,6 +161,9 @@ private:
 	 */
 	std::vector<std::array<int, 3>> remainingNeighbors3D;
 
+	/**
+	 * Indicates whether the cel is a border cell
+	 */
     bool isBorderCell{};
 
 };

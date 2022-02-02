@@ -13,12 +13,29 @@
 class LinkedCellContainer : public ParticleContainer {
 public:
 
+	/**
+	 * Models a subDomain in the LinkedCellContainer Domain
+	 */
 	struct SubDomain {
 
+		/**
+		 * Default constructor
+		 */
 		SubDomain();
 
+		/**
+		 * Constructor
+		 * @param is2D whether subDomain is 2D or not
+		 * @param axis in what axis the subDomain is split 0 = x, 1 = y, 2 = z
+		 */
 		explicit SubDomain(bool is2D, int axis);
 
+		/**
+		 * Constructor
+		 * @param CellIndices vector of all cellindices in the subdomain
+		 * @param MinCoord the small coordinate
+		 * @param MaxCoord the biggest coordinate
+		 */
 		SubDomain(std::vector<int> CellIndices,
 		          const std::array<int, 3> &MinCoord,
 		          const std::array<int, 3> &MaxCoord);
@@ -77,6 +94,9 @@ public:
 		 */
 		std::array<int, 3> maxCoord{};
 
+		/**
+		 * Whether domain is 2D or not
+		 */
 		bool is2D{};
 
 		/**
@@ -86,8 +106,11 @@ public:
 		int axis;
 	};
 
-
+	/**
+	 * The kind of borders of the domain
+	 */
 	enum Border { outflow, periodic, reflective, none };
+
 	/**
 	 * primitive(X|Y|Z): we split domain in lines and do two run partitions:
 	 * subDomain: we split the domain in subDomains
@@ -244,8 +267,12 @@ public:
 
 	[[nodiscard]] const std::array<double, 3> &getLenDim() const;
 
-	bool is2D() const;
+	[[nodiscard]] bool is2D() const;
 
+	/**
+	 * Checks how many dimensions the domain has
+	 * @return number of dimensions in the domain
+	 */
 	int dimensions() override;
 
 	/***** Setters *****/
@@ -310,6 +337,10 @@ private:
 	 * lenDim[0] = X, lenDim[1] = Y, lenDim[2] = Z
 	 */
 	std::array<double, 3> lenDim{};
+
+	/**
+	 * The rCut value for the LinkedCell method
+	 */
 	double rCut{};
 
 	/**

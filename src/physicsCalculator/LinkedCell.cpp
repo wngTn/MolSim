@@ -22,7 +22,7 @@ void LinkedCell::calcX(ParticleContainer &container) const {
 		for (auto &curCell : gridLC.getGrid()) { // Loop through every cell
 			// If a cell is empty, skip it
 			if (curCell.getParticles().empty()) continue;
-			moveAndCalcXInCell(gridLC, curCell);
+			calcNewX(gridLC, curCell);
 		}
 	}
 	else {
@@ -32,7 +32,7 @@ void LinkedCell::calcX(ParticleContainer &container) const {
 		for (auto &curCell : gridLC.getGrid()) { // Loop through every cell
 			// If a cell is empty, skip it
 			if (curCell.getParticles().empty()) continue;
-			moveAndCalcXInCell(gridLC, curCell);
+			calcNewX(gridLC, curCell);
 		}
 	}
 }
@@ -92,21 +92,21 @@ void LinkedCell::moveParticles(LinkedCellContainer &grid) {
 	}
 }
 
-void LinkedCell::calcFSingleNeighbor(LinkedCellContainer &grid, const std::array<int, 3> &neighbors,
+void LinkedCell::calcFSingleNeighbor(LinkedCellContainer &grid, const std::array<int, 3> &neighbor,
                                      Particle *p, bool newton) {
 	// Loops through every particle of the neighbor
-	for (auto &p_other : grid.grid[grid.index(neighbors)]) {
+	for (auto &p_other : grid.grid[grid.index(neighbor)]) {
 		if (p->immovable && p_other->immovable) continue;
 		calcLJForce(p, p_other, newton);
 	}
 }
 
-void LinkedCell::reflectiveBoundary(LinkedCellContainer &grid, const std::array<int, 3> &currentIndexes) const {
+void LinkedCell::reflectiveBoundary(LinkedCellContainer &grid, const std::array<int, 3> &currentIndex) const {
 	// saves the reflective borders of the current cell
 	std::vector<int> reflBorder{};
 	// go through all three or two axis and acquire the borders of currentIndex that are reflective
 	for (int d = 0; d < (grid.is2D() ? 2 : 3); ++d) {
-		const auto[bordType, bord] = grid.getBorders(currentIndexes, d);
+		const auto[bordType, bord] = grid.getBorders(currentIndex, d);
 		if (bordType == LinkedCellContainer::reflective) {
 			reflBorder.push_back(bord);
 		}
@@ -122,7 +122,7 @@ void LinkedCell::reflectiveBoundary(LinkedCellContainer &grid, const std::array<
 	 * 5: BACK
 	 */
 	if (!reflBorder.empty()) {
-		for (auto &p : grid.grid[grid.index(currentIndexes)]) {
+		for (auto &p : grid.grid[grid.index(currentIndex)]) {
 
 			for (int bord : reflBorder) {
 				double r = grid.getDistance(p->getX(), bord);

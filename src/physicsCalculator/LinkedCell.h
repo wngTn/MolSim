@@ -74,18 +74,53 @@ private:
 
 	inline void ljforce_smoothed(Particle *p1, Particle *p2, double sqrd_dist, bool newton = true) const;
 
+	/**
+	 *
+	 * @param p1
+	 * @param p2
+	 * @param newton
+	 */
 	inline void calcLJForce(Particle *p1, Particle *p2, bool newton = true) const;
 
+	/**
+	 * Calculates the harmonic potential between two particles
+	 * @param p1 the first particle
+	 * @param p2 the second particle
+	 * @param sqrd_dist the squared distance between them
+	 * @param newton whether newton's third law should be applied
+	 */
 	void harmonic_potential(Particle *p1, Particle *p2, double sqrd_dist, bool newton = true) const;
 
-	void reflectiveBoundary(LinkedCellContainer &grid, const std::array<int, 3> &currentIndexes) const;
+	/**
+	 * Calculates the reflective boundary forces in a single cell
+	 * @param grid the domain
+	 * @param currentIndex the cell
+	 */
+	void reflectiveBoundary(LinkedCellContainer &grid, const std::array<int, 3> &currentIndex) const;
 
-	void calcFSingleNeighbor(LinkedCellContainer &grid, const std::array<int, 3> &neighbors,
+	/**
+	 * Calculates the the forces between a particle within a cell and its neighbor
+	 * @param grid the domain
+	 * @param neighbor the index of the neighbor
+	 * @param p the particle
+	 * @param newton whether newton's third law should be applied
+	 */
+	void calcFSingleNeighbor(LinkedCellContainer &grid, const std::array<int, 3> &neighbor,
 	                         Particle *p, bool newton = true);
 
+	/**
+	 * Calculates the forces within a cell
+	 * @param curCell the current cell
+	 * @param grid the domain
+	 */
 	void calcFCell(Cell &curCell, LinkedCellContainer &grid);
 
-	inline void moveAndCalcXInCell(const LinkedCellContainer & gridLC, const Cell &curCell) const;
+	/**
+	 * Calculates the new positions of the particles in a cell with regards of the borders
+	 * @param gridLC the domain
+	 * @param curCell the current cell
+	 */
+	inline void calcNewX(const LinkedCellContainer & gridLC, const Cell &curCell) const;
 
 	/**
 	 * Calculates the forces between p and its neighbor for the periodic boundary
@@ -98,28 +133,45 @@ private:
 	void calcPerNeighbors(LinkedCellContainer &grid, const std::array<int, 3> &neighbors,
 	                      Particle *p, const std::array<double, 3> &mirror, bool newton = true) const;
 
+	/**
+	 * Checks whether two cells in the grid are neighbors
+	 * @param index1 the index of the first cell
+	 * @param index2 the index of the second cell
+	 * @return true if they are neighbors, false if not
+	 */
 	static bool gridNeighbors(const std::array<int, 3> &index1, const std::array<int, 3> &index2);
 
+	/// Default sigma value
 	double sigma = 1;
 
+	/// Default epsilon value
 	double epsilon = 5;
+
+	/// Default rCut value
 	double rCut = 2.5 * epsilon;
-	// average bond length of molecule pair, used for membrane
+
+	/// average bond length of molecule pair, used for membrane
 	double rZero{};
-	// used for membrane
+
+	/// used for membrane
 	double stiffnessConstant{};
 
-	// whether any membranes exist, used only to shortcut some checks
+	/// whether any membranes exist, used only to shortcut some checks
 	bool membrane = false;
 
-	// whether smoothed LJ is used
+	/// whether smoothed LJ is used
 	bool smoothed;
 
-	// r_l used for smoothed LJ
+	/// r_l used for smoothed LJ
 	double rl;
 
+	/// The sigma table if two or more particle types exist
 	std::vector<std::vector<double>> sigmaTable = {{0.0}};
+
+	/// The epsilon table if two or more particle types exist
 	std::vector<std::vector<double>> epsilonTable = {{0.0}};
+
+	/// Mapping for sigma and epsilon values
 	std::vector<std::pair<int, std::pair<double, double>>> mapping = {};
 
 	using json = nlohmann::json;
@@ -205,7 +257,7 @@ void LinkedCell::calcLJForce(Particle *p1, Particle *p2, bool newton) const {
 	}
 }
 
-void LinkedCell::moveAndCalcXInCell(const LinkedCellContainer &gridLC, const Cell &curCell) const {
+void LinkedCell::calcNewX(const LinkedCellContainer &gridLC, const Cell &curCell) const {
 	auto currentIndexes = curCell.getIndex();
 	// checks if it is a border cell
 	if (curCell.isBorderCell1()) {
