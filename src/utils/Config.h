@@ -10,111 +10,120 @@
 struct Config {
 public:
 /// iteration to start with, used for checkpointing
-    int start_iteration;
+	int start_iteration;
 /// Default start_time (end_time - start_time = total_runtime)
-    double start_time = 0;
+	double start_time = 0;
 
 /// Default end_time (when to stop the simulation)
-    double end_time = 1000;
+	double end_time = 1000;
 
 /// Default delta t
-    double delta_t = 0.014;
+	double delta_t = 0.014;
 
 /// iteration, when baseForce is reset to 0
-    int resetBaseForceIteration;
-    ///
-    bool resetBaseForce;
+	int resetBaseForceIteration;
+	///
+	bool resetBaseForce;
 
 /// File name of the XML file specifying input parameters
-    std::string xml_file;
+	std::string xml_file;
 
 /// File name used for the input file
-    std::vector <std::string> filename{};
+	std::vector<std::string> filename{};
 
 /// File name of the input to the ParticleGenerator
-    std::vector <std::string> generator_files{};
+	std::vector<std::string> generator_files{};
 
 /// base file name of the output files
-    std::string output_file = "output";
+	std::string output_file = "output";
 
 /// whether checkpointing is used
-    bool checkpointing;
+	bool checkpointing;
 
 /// input file from a previous checkpoint
-    std::string checkpointInput;
+	std::string checkpointInput;
 
 /// filename for checkpointing output
-    std::string checkpointOutput;
+	std::string checkpointOutput;
 
 /// Default dimension
-    int DIM = 3;
+	int DIM = 3;
 
 /// Which IO method to use
-    IOWriter::iotype io_type{IOWriter::unknown};
+	IOWriter::iotype io_type{IOWriter::unknown};
 
 /// How often output files are generated (every nth file)
-    int writeFrequency = 10;
+	int writeFrequency = 10;
 
 /// Which Physics calculation method to use
-    PhysicsCalc::calctype calc_type{PhysicsCalc::unknown};
+	PhysicsCalc::calctype calc_type{PhysicsCalc::unknown};
 
 /// Whether a smoothed lennard jones potential is used
-    bool smoothed = false;
+	bool smoothed = false;
 
 /// Whether to disable logging and IO operations
-    bool benchmarking = false;
+	bool benchmarking = false;
 
 /// info for generator from XML file
-    std::vector <ParticleGenerator::ShapeInfo> generatorInfos{};
+	std::vector<ParticleGenerator::ShapeInfo> generatorInfos{};
 
 /// time steps to apply temperature
-    int nThermostat;
+	int nThermostat;
 
 /// whether a thermostat is used
-    bool useThermostat = false;
+	bool useThermostat = false;
 
 /// initial temperature
-    double initialTemperature;
+	double initialTemperature;
 
 /// temperature we want to reach
-    double targetTemperature;
+	double targetTemperature;
 
 /// whether the Y coordinate should be excluded for temperature calculations
-    bool thermostatExcludeY;
+	bool thermostatExcludeY;
 
 /// max temperature difference in one temperature calculation
-    double maxDeltaTemperature;
+	double maxDeltaTemperature;
 
+	/// whether to use random generated input
+	bool randomGen = false;
 
-    bool randomGen = false;
-    bool brownianMotion = false;
-    double brownianMotionMean;
+	/// whether to use user defined brownian motion
+	bool brownianMotion = false;
 
-    double eps = 5.;
-    double sigma = 1.;
-    std::array<double,3> grav;
+	/// the mean of the brownian motion
+	double brownianMotionMean;
 
-    // whether a membrane is used
-    bool membrane = false;
-    double rZero;
-    double stiffnessConstant;
+	/// epsilon value
+	double eps = 5.;
 
-    bool linkedCell;
-    std::array<double, 3> linkedCellSize;
-    double rCut;
-    double rl;
-    std::array<LinkedCellContainer::Border, 6> boundaryConditions;
+	/// sigma value
+	double sigma = 1.;
 
-    // stuff for statistics
-    bool useStatistics;
-    int statsFrequency;
-    std::string statsFile;
-    StatisticsLogger::statisticstype statsType;
-    // for density velocity profile
-    int noBins;
-    // for thermodynamical
-    double delta_r;
-    double maxDistance;
+	/// gravity that's applied to the domain
+	std::array<double, 3> grav;
 
-    LinkedCellContainer::Strategy parallelization_strategy;
+	// whether a membrane is used
+	bool membrane = false;
+	double rZero;
+	double stiffnessConstant;
+
+	bool linkedCell;
+	std::array<double, 3> linkedCellSize;
+	double rCut;
+	double rl;
+	std::array<LinkedCellContainer::Border, 6> boundaryConditions;
+
+	// stuff for statistics
+	bool useStatistics;
+	int statsFrequency;
+	std::string statsFile;
+	StatisticsLogger::statisticstype statsType;
+	// for density velocity profile
+	int noBins;
+	// for thermodynamical
+	double delta_r;
+	double maxDistance;
+
+	LinkedCellContainer::Strategy parallelization_strategy;
 };

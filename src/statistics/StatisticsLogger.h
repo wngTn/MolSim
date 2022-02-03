@@ -4,17 +4,18 @@
 
 class StatisticsLogger {
 public:
-    enum statisticstype{
-        densityVelocityProfile,
-        thermodynamic
-    };
+	enum statisticstype {
+		densityVelocityProfile,
+		thermodynamic
+	};
 
-    const std::string folder_path{"../statistics/"};
+	const std::string folder_path{"../statistics/"};
 
-    StatisticsLogger() = default;
-    StatisticsLogger(const StatisticsLogger &) = default;
+	StatisticsLogger() = default;
 
-    virtual void writeStatistics(ParticleContainer& container, int iteration) = 0;
+	StatisticsLogger(const StatisticsLogger &) = default;
+
+	virtual void writeStatistics(ParticleContainer &container, int iteration) = 0;
 };
 
 

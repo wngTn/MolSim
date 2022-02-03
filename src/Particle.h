@@ -10,245 +10,244 @@ class Particle {
 private:
 
 // index used for determining combined sigma/epsilon values
-    int se_index;
+	int se_index;
 
-    /**
-     * Type of the particle. Use it for whatever you want (e.g. to separate
-     * molecules belonging to different bodies, matters, and so on)
-     */
-    int type;
+	/**
+	 * Type of the particle. Use it for whatever you want (e.g. to separate
+	 * molecules belonging to different bodies, matters, and so on)
+	 */
+	int type;
 
-    /**
-     * Force effective on this particle
-     */
-    std::array<double, 3> f{};
+	/**
+	 * Force effective on this particle
+	 */
+	std::array<double, 3> f{};
 
-    /**
-     * Force which was effective on this particle
-     */
-    std::array<double, 3> old_f{};
+	/**
+	 * Force which was effective on this particle
+	 */
+	std::array<double, 3> old_f{};
 
-    /**
-     * Position of the particle
-     */
-    std::array<double, 3> x{};
+	/**
+	 * Position of the particle
+	 */
+	std::array<double, 3> x{};
 
-    /**
-     * Velocity of the particle
-     */
-    std::array<double, 3> v{};
+	/**
+	 * Velocity of the particle
+	 */
+	std::array<double, 3> v{};
 
-    /**
-     * Mass of this particle
-     */
-    double m{1};
+	/**
+	 * Mass of this particle
+	 */
+	double m{1};
 
-    /**
-     * the base force applied in each iteration
-     */
-    std::array<double,3> baseForce{};
+	/**
+	 * the base force applied in each iteration
+	 */
+	std::array<double, 3> baseForce{};
 
-    /**
-     * original index of the particle in the grid generated. used for membranes
-     */
-    std::array<int, 3> gridIndex{};
+	/**
+	 * original index of the particle in the grid generated. used for membranes
+	 */
+	std::array<int, 3> gridIndex{};
 
-    std::array<double, 3> oldX{};
+	std::array<double, 3> oldX{};
 
-    bool passedPeriodicX = false;
-    bool passedPeriodicY = false;
-    bool passedPeriodicZ = false;
+	bool passedPeriodicX = false;
+	bool passedPeriodicY = false;
+	bool passedPeriodicZ = false;
 
 public:
-    [[nodiscard]] bool isPassedPeriodicY() const;
+	[[nodiscard]] bool isPassedPeriodicY() const;
 
-    [[nodiscard]] bool isPassedPeriodicX() const;
+	[[nodiscard]] bool isPassedPeriodicX() const;
 
-    [[nodiscard]] bool isPassedPeriodicZ() const;
+	[[nodiscard]] bool isPassedPeriodicZ() const;
 
-    /**
-     * Whether this particle is still valid and should be printed/used for calculations
-     */
-    bool valid;
+	/**
+	 * Whether this particle is still valid and should be printed/used for calculations
+	 */
+	bool valid;
 
-    /**
-    * Whether this particle is fixed in position or can move
-    */
-    bool immovable = false;
+	/**
+	* Whether this particle is fixed in position or can move
+	*/
+	bool immovable = false;
 
-    /**
-     * whether the Particle is part of a membrane -> different calculation
-     */
-    bool membrane;
+	/**
+	 * whether the Particle is part of a membrane -> different calculation
+	 */
+	bool membrane;
 
-    /**
-     * @brief Default constructor
-     */
-    explicit Particle();
+	/**
+	 * @brief Default constructor
+	 */
+	explicit Particle();
 
-    /**
-     * @brief Normal constructor
-     * @param type type of the particle
-     */
-    explicit Particle(int type);
+	/**
+	 * @brief Normal constructor
+	 * @param type type of the particle
+	 */
+	explicit Particle(int type);
 
-    /**
-     * @brief Copy constructor
-     * @param other object it is copied from
-     */
-    Particle(const Particle &other);
+	/**
+	 * @brief Copy constructor
+	 * @param other object it is copied from
+	 */
+	Particle(const Particle &other);
 
-    /**
-     * @brief Copy assignment operator
-     * @param other object it is copied from
-     * @return returning the copy
-     */
-    Particle &operator=(const Particle &other);
+	/**
+	 * @brief Copy assignment operator
+	 * @param other object it is copied from
+	 * @return returning the copy
+	 */
+	Particle &operator=(const Particle &other);
 
+	/**
+	 * @brief Move constructor
+	 * @param other object it is copied from
+	 */
+	Particle(Particle &&other) noexcept;
 
-    /**
-     * @brief Move constructor
-     * @param other object it is copied from
-     */
-    Particle (Particle&& other) noexcept;
+	/**
+	 * @brief Move assignment operator
+	 * @param other object it is copied from
+	 * @return returning the copy
+	 */
+	Particle &operator=(Particle &&other) noexcept;
 
-    /**
-     * @brief Move assignment operator
-     * @param other object it is copied from
-     * @return returning the copy
-     */
-    Particle& operator=(Particle&& other) noexcept;
+	bool operator<(const Particle &other) noexcept;
 
-    bool operator<(const Particle &other) noexcept;
+	/**
+	 * @brief Overloaded constructor
+	 * @param x_arg position
+	 * @param v_arg velocity
+	 * @param m_arg mass
+	 * @param type type
+	 */
+	Particle(
+		// for visualization, we need always 3 coordinates
+		// -> in case of 2d, we use only the first and the second
+		std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg,
+		int type = 0);
 
-    /**
-     * @brief Overloaded constructor
-     * @param x_arg position
-     * @param v_arg velocity
-     * @param m_arg mass
-     * @param type type
-     */
-    Particle(
-            // for visualization, we need always 3 coordinates
-            // -> in case of 2d, we use only the first and the second
-            std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg,
-            int type = 0);
+	Particle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, int type_arg, int index);
 
-    Particle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, int type_arg, int index);
+	virtual ~Particle();
 
+	[[nodiscard]] const std::array<double, 3> &getX() const;
 
-    virtual ~Particle();
+	[[nodiscard]] const std::array<double, 3> &getV() const;
 
-    [[nodiscard]] const std::array<double, 3> &getX() const;
+	[[nodiscard]] const std::array<double, 3> &getF() const;
 
-    [[nodiscard]] const std::array<double, 3> &getV() const;
+	[[nodiscard]] const std::array<double, 3> &getOldF() const;
 
-    [[nodiscard]] const std::array<double, 3> &getF() const;
+	[[nodiscard]] double getM() const;
 
-    [[nodiscard]] const std::array<double, 3> &getOldF() const;
+	[[nodiscard]] int getType() const;
 
-    [[nodiscard]] double getM() const;
+	[[nodiscard]] int getSEIndex() const;
 
-    [[nodiscard]] int getType() const;
+	[[nodiscard]] const std::array<int, 3> &getGridIndex() const;
 
-    [[nodiscard]] int getSEIndex() const;
+	[[nodiscard]] const std::array<double, 3> &getOldX() const;
 
-    [[nodiscard]] const std::array<int,3> &getGridIndex() const;
+	[[nodiscard]] const std::array<double, 3> &getBaseForce() const;
 
-    [[nodiscard]] const std::array<double, 3> &getOldX() const;
+	void setPassedPeriodic(int d);
 
-    [[nodiscard]] const std::array<double, 3> &getBaseForce() const;
+	void setMembrane(bool membrane);
 
-    void setPassedPeriodic(int d);
+	void setGridIndex(std::array<int, 3> &index);
 
-    void setMembrane(bool membrane);
+	void setImmovable(bool immovable);
 
-    void setGridIndex(std::array<int,3>& index);
+	/**
+	 * sets the base force for a particle
+	 * @param force the base force
+	 */
+	void setBaseForce(std::array<double, 3> &force);
 
-    void setImmovable(bool immovable);
+	/**
+	 * applies the base force and a given gravity.
+	 * sets force of particle to baseForce attribute and add grav*mass in y direction
+	 * @param grav the gravity factor
+	 */
+	void applyBaseForceAndGrav(std::array<double, 3> grav);
 
-    /**
-     * sets the base force for a particle
-     * @param force the base force
-     */
-    void setBaseForce(std::array<double,3>& force);
+	/**
+	 * @param d: dimension
+	 * @param v: value
+	 */
+	void setX(int d, double v);
 
-    /**
-     * applies the base force and a given gravity.
-     * sets force of particle to baseForce attribute and add grav*mass in y direction
-     * @param grav the gravity factor
-     */
-    void applyBaseForceAndGrav(std::array<double,3> grav);
+	/**
+	 * set the position vector to some other vector
+	 * @param x the new position vector
+	 */
+	void setX(std::array<double, 3> x);
 
-    /**
-     * @param d: dimension
-     * @param v: value
-     */
-    void setX(int d, double v);
+	void setOldX(std::array<double, 3> x);
 
-    /**
-     * set the position vector to some other vector
-     * @param x the new position vector
-     */
-    void setX(std::array<double, 3> x);
+	/**
+	 * @param d: dimension
+	 * @param v: value
+	 */
+	void setV(int d, double v);
 
-    void setOldX(std::array<double, 3> x);
+	/**
+	 * set the velocity vector to some other vector
+	 * @param v the new velocity vector
+	 */
+	void setV(std::array<double, 3> v);
 
-    /**
-     * @param d: dimension
-     * @param v: value
-     */
-    void setV(int d, double v);
+	/**
+	 * @param d: dimension
+	 * @param v: value
+	 */
+	void setF(int d, double v);
 
-    /**
-     * set the velocity vector to some other vector
-     * @param v the new velocity vector
-     */
-    void setV(std::array<double, 3> v);
+	/**
+	 * set the force vector to some other vector
+	 * @param f the new force vector
+	 */
+	void setF(std::array<double, 3> f);
 
-    /**
-     * @param d: dimension
-     * @param v: value
-     */
-    void setF(int d, double v);
+	/**
+	 * @param val the old force array
+	 */
+	void setOldF(const std::array<double, 3> &val);
 
-    /**
-     * set the force vector to some other vector
-     * @param f the new force vector
-     */
-    void setF(std::array<double, 3> f);
+	void setM(double);
 
-    /**
-     * @param val the old force array
-     */
-    void setOldF(const std::array<double, 3> &val);
+	void setType(int);
 
-    void setM(double);
+	/**
+	 * @brief Class-specific equals operator
+	 * @param other object it is compared to
+	 * @return true if equal, false if not
+	 */
+	bool operator==(Particle &other);
 
-    void setType(int);
+	/**
+	 * @brief Class-specific not-equals operator
+	 * @param other object it is compared to
+	 * @return true if not equal, false if equal
+	 */
+	bool operator!=(Particle &other);
 
-    /**
-     * @brief Class-specific equals operator
-     * @param other object it is compared to
-     * @return true if equal, false if not
-     */
-    bool operator==(Particle &other);
+	/**
+	 * @brief Turns the particle into a string
+	 * @return the string
+	 */
+	[[nodiscard]] std::string toString() const;
 
-    /**
-     * @brief Class-specific not-equals operator
-     * @param other object it is compared to
-     * @return true if not equal, false if equal
-     */
-    bool operator!=(Particle &other);
+	friend void to_json(nlohmann::json &, const Particle &);
 
-    /**
-     * @brief Turns the particle into a string
-     * @return the string
-     */
-    [[nodiscard]] std::string toString() const;
-
-    friend void to_json(nlohmann::json&, const Particle&);
-    friend void from_json(const nlohmann::json&, Particle&);
+	friend void from_json(const nlohmann::json &, Particle &);
 
 };
 

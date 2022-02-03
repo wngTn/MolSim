@@ -3,8 +3,12 @@
 #include <utility>
 #include "LinkedCellContainer.h"
 
-
-LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double rCutV, std::array<Border, 6> borderV, std::array<double,3> g,
+LinkedCellContainer::LinkedCellContainer(double Xv,
+                                         double Yv,
+                                         double Zv,
+                                         double rCutV,
+                                         std::array<Border, 6> borderV,
+                                         std::array<double, 3> g,
                                          Strategy strategy) :
 	grid{std::vector<Cell>(static_cast<int>(std::floor(Xv / rCutV)) *
 		static_cast<int>(std::floor(Yv / rCutV)) *
@@ -27,28 +31,22 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
 				grid[i].setIndex(currentIndexes);
 				if (is2D()) {
 					switch (strategy) {
-						case primitiveX:
-							grid[i].setNeighbors2DInX();
+						case primitiveX: grid[i].setNeighbors2DInX();
 							break;
-						default:
-							grid[i].setNeighbors2DInY();
+						default: grid[i].setNeighbors2DInY();
 							break;
 					}
 					grid[i].setIsBorderCell(currentIndexes[0] == 0 || currentIndexes[0] == dim[0] - 1 ||
 						currentIndexes[1] == 0 || currentIndexes[1] == dim[1] - 1);
 				} else {
 					switch (strategy) {
-						case primitiveX:
-							grid[i].setNeighbors3DInX();
+						case primitiveX: grid[i].setNeighbors3DInX();
 							break;
-						case primitiveY:
-							grid[i].setNeighbors3DInY();
+						case primitiveY: grid[i].setNeighbors3DInY();
 							break;
-						case primitiveZ:
-							grid[i].setNeighbors3DInZ();
+						case primitiveZ: grid[i].setNeighbors3DInZ();
 							break;
-						default:
-							grid[i].setNeighbors3DInY();
+						default: grid[i].setNeighbors3DInY();
 							break;
 					}
 					grid[i].setIsBorderCell(currentIndexes[0] == 0 || currentIndexes[0] == dim[0] - 1 ||
@@ -123,7 +121,7 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
 
 			}
 		}
-		// We are in 3D, and we split along the Z axis
+			// We are in 3D, and we split along the Z axis
 		else {
 			indicesThreadVector = std::vector<std::vector<int>>(dim[2] / 2);
 			threadOffset = dim[0] * dim[1];
@@ -145,7 +143,7 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
 			}
 		}
 	}
-	// We have the subDomain strategy
+		// We have the subDomain strategy
 	else if (strategy == subDomain) {
 		int numThreads{};
 		// get the greatest dimension
@@ -182,7 +180,7 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
 				subDomainVector[j] = subDomain;
 			}
 		}
-		// Y is the greatest dimension
+			// Y is the greatest dimension
 		else if (dim[1] == std::max({dim[0], dim[1], dim[2]})) {
 			// If domain size is smaller than our available threads, we use domain size as number of threads
 #ifdef _OPENMP
@@ -216,7 +214,7 @@ LinkedCellContainer::LinkedCellContainer(double Xv, double Yv, double Zv, double
 				subDomainVector[j] = subDomain;
 			}
 		}
-		// Z is the greatest dimension
+			// Z is the greatest dimension
 		else if (dim[2] == std::max({dim[0], dim[1], dim[2]})) {
 			// If domain size is smaller than our available threads, we use domain size as number of threads
 #ifdef _OPENMP
@@ -282,21 +280,22 @@ void LinkedCellContainer::SubDomain::addIndex(const std::array<int, 3> &indexArr
 			borderCellIndices.push_back(index);
 			cell.setRemainingNeighbors2D();
 		}
-		// we have a not-border cell
+			// we have a not-border cell
 		else {
 			cellIndices.push_back(index);
 		}
 	}
-	// We are in 3D
+		// We are in 3D
 	else {
 		// we have a border cell
 		if ((axis == 0 && indexArray[axis] == x_min) || (axis == 1 && indexArray[axis] == y_min)
-			|| (axis == 2 && indexArray[axis] == z_min) || (axis == 0 && indexArray[axis] == x_max) || (axis == 1 && indexArray[axis] == y_max)
+			|| (axis == 2 && indexArray[axis] == z_min) || (axis == 0 && indexArray[axis] == x_max)
+			|| (axis == 1 && indexArray[axis] == y_max)
 			|| (axis == 2 && indexArray[axis] == z_max)) {
 			borderCellIndices.push_back(index);
 			cell.setRemainingNeighbors3D();
 		}
-		// we have a not-border cell
+			// we have a not-border cell
 		else {
 			cellIndices.push_back(index);
 		}
@@ -366,7 +365,7 @@ void LinkedCellContainer::setRCut(double rCutV) {
 }
 
 bool LinkedCellContainer::is2D() const {
-    return lenDim[2] < 1.000001;
+	return lenDim[2] < 1.000001;
 }
 
 const std::array<int, 3> &LinkedCellContainer::getDim() const {
@@ -374,7 +373,7 @@ const std::array<int, 3> &LinkedCellContainer::getDim() const {
 }
 
 int LinkedCellContainer::dimensions() {
-    //return dim[2] == 1 ? 2 : 3;
+	//return dim[2] == 1 ? 2 : 3;
 	return lenDim[2] < 1.000001 ? 2 : 3;
 }
 
@@ -527,12 +526,12 @@ LinkedCellContainer::getPerNeighbors(const std::array<int, 3> &currentIndex) {
 	return neighbors;
 }
 
-std::array<double,3> LinkedCellContainer::getG() const {
-    return g;
+std::array<double, 3> LinkedCellContainer::getG() const {
+	return g;
 }
 
-void LinkedCellContainer::setG(std::array<double,3> grav) {
-    LinkedCellContainer::g = grav;
+void LinkedCellContainer::setG(std::array<double, 3> grav) {
+	LinkedCellContainer::g = grav;
 }
 
 const std::vector<std::vector<int>> &LinkedCellContainer::getIndicesThreadVector() const {
@@ -540,7 +539,7 @@ const std::vector<std::vector<int>> &LinkedCellContainer::getIndicesThreadVector
 }
 
 void LinkedCellContainer::setIndicesThreadVector(const std::vector<std::vector<int>> &vec) {
-    LinkedCellContainer::indicesThreadVector = vec;
+	LinkedCellContainer::indicesThreadVector = vec;
 }
 
 int LinkedCellContainer::getThreadOffset() const {
@@ -548,7 +547,7 @@ int LinkedCellContainer::getThreadOffset() const {
 }
 
 void LinkedCellContainer::setThreadOffset(int offset) {
-    LinkedCellContainer::threadOffset = offset;
+	LinkedCellContainer::threadOffset = offset;
 }
 
 const std::vector<int> &LinkedCellContainer::getResidualThreadVector() const {
@@ -556,7 +555,7 @@ const std::vector<int> &LinkedCellContainer::getResidualThreadVector() const {
 }
 
 void LinkedCellContainer::setResidualThreadVector(const std::vector<int> &vec) {
-    LinkedCellContainer::residualThreadVector = vec;
+	LinkedCellContainer::residualThreadVector = vec;
 }
 
 LinkedCellContainer::Strategy LinkedCellContainer::getStrategy() const {
@@ -564,7 +563,7 @@ LinkedCellContainer::Strategy LinkedCellContainer::getStrategy() const {
 }
 
 void LinkedCellContainer::setStrategy(LinkedCellContainer::Strategy s) {
-    LinkedCellContainer::strategy = s;
+	LinkedCellContainer::strategy = s;
 }
 
 const std::vector<LinkedCellContainer::SubDomain> &LinkedCellContainer::getSubDomainVector() const {
