@@ -7,7 +7,7 @@
 
 class CheckpointWriter {
 public:
-    static void writeCheckpoint(std::string& filename, ParticleContainer& container, PhysicsCalc& calc, int iteration);
+	static void writeCheckpoint(std::string &filename, ParticleContainer &container, PhysicsCalc &calc, int iteration);
 
 };
 
