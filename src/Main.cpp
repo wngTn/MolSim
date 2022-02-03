@@ -34,17 +34,17 @@ int main(int argc, char *argv[]) {
     // ------ end setup ------ //
     if(config.benchmarking){
         std::cout
-                << "\u001b[31mYou have chosen the benchmark mode!\u001b[0m" << std::endl
-                << "\u001b[31mElapsed setup time [microseconds]:\u001b[0m "
+                << "\033[4mYou have chosen the benchmark mode:\033[0m" << std::endl
+                << "\u001b[31m\tElapsed setup time [microseconds]:\u001b[0m "
                 << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start_setup).count()
                 << std::endl
-                << "\u001b[31mIn total there are:\u001b[0m " << particles->size() << " particles." << std::endl;
+                << "\u001b[31m\tIn total there are:\u001b[0m " << particles->size() << " particles." << std::endl;
     }
 
     spdlog::info(
             "Start calculating particles with\n\tIO type:\t\t{:<15}\n\tcalculator type:\t{:<15}\n\tend time:\t\t{:<15}\n\ttimestep:\t\t{:<15}",
             io->toString(), calc->toString(), config.end_time, config.delta_t);
-
+    std::cout << "Calculating..." << std::endl;
     // ------ calculation ------ //
     auto start_calc = std::chrono::steady_clock::now();
     // initial setup
@@ -78,11 +78,6 @@ int main(int argc, char *argv[]) {
 
         iteration++;
 
-        // Sorting makes things kinda worse
-//        if (iteration % config.writeFrequency == 0) {
-//          std::sort(particles->begin(), particles->end());
-//        }
-
         if (!config.benchmarking && iteration % config.writeFrequency == 0) { [[unlikely]]
             particles->cleanup();
             // setup after cleanup needed to validate pointers for calcX
@@ -113,13 +108,13 @@ int main(int argc, char *argv[]) {
         double mups = static_cast<double>(particles->size()) * iteration /
                       (static_cast<double>(runtimeDuration) / 1000);
         std::cout
-                << "\u001b[31mElapsed calculation time [milliseconds]:\u001b[0m "
+                << "\u001b[31m\tElapsed calculation time [milliseconds]:\u001b[0m "
                 << runtimeDuration
                 << std::endl;
         if (mups > 1000000) {
-            std::cout<<"\u001b[31mMMUPS/s:\u001b[0m "<<mups/1000000<<std::endl;
+            std::cout<<"\u001b[31m\tMMUPS/s:\u001b[0m "<<mups/1000000<<std::endl;
         } else {
-            std::cout<<"\u001b[31mMUPS/s:\u001b[0m "<<mups<<std::endl;
+            std::cout<<"\u001b[31m\tMUPS/s:\u001b[0m "<<mups<<std::endl;
         }
     } else{
         std::cout << "All files have been written!" << std::endl;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<simulation t_end="500" delta_t="0.0005" writeFrequency="100" outputWriter="vtk" parallelization="primitiveY">
+<simulation t_end="500" delta_t="0.0005" writeFrequency="100" outputWriter="vtk" parallelization="primitiveX">
     <container type="linkedcell">
         <rCut>2.75</rCut>
         <domainSizeX>30</domainSizeX>

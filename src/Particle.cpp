@@ -256,7 +256,6 @@ void Particle::setPassedPeriodic(int d) {
         case 2: passedPeriodicZ = !passedPeriodicZ; break;
         default: ;
     }
-
 }
 
 bool Particle::isPassedPeriodicY() const {

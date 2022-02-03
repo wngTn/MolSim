@@ -210,7 +210,7 @@ MUPS/s: 804603
 Top Hotspots
 Function                                 Module  CPU Time
 ---------------------------------------  ------  --------
-calculator::LinkedCell::calcNeighbors    MolSim   28.422s
+calculator::LinkedCell::calcFSingleNeighbor    MolSim   28.422s
 calculator::LinkedCell::calcFWithinCell  MolSim    6.596s
 Particle::setF                           MolSim    5.788s
 calculator::LinkedCell::calcF            MolSim    1.728s
@@ -266,7 +266,7 @@ Flat profile:
 Each sample counts as 0.01 seconds.
   %   cumulative   self              self     total           
  time   seconds   seconds    calls   s/call   s/call  name    
- 41.40     18.57    18.57 172915200     0.00     0.00  calculator::LinkedCell::calcNeighbors(LinkedCellContainer&, std::array<int, 3ul> const&, Particle*)
+ 41.40     18.57    18.57 172915200     0.00     0.00  calculator::LinkedCell::calcFSingleNeighbor(LinkedCellContainer&, std::array<int, 3ul> const&, Particle*)
   9.67     22.91     4.34 8334359592     0.00     0.00  Particle::getX() const
   8.49     26.72     3.81                             Particle::Particle(Particle&&)
   8.48     30.53     3.81 13076712     0.00     0.00  calculator::LinkedCell::calcFWithinCell(Cell&)
@@ -343,8 +343,8 @@ In this example we have used the **Falling Drop** input file from assignment 3.
 Results are:
 
 - `calculator::LinkedCell::calcF` using ~83% of total sample time
-  - `calculator::LinkedCell::calcNeighbors` using ~75% of the sample time of its father `calcF`
-    - `calculator::LinkedCell::ljforce` using ~55% of the sample time of its father `calcNeighbors`
+  - `calculator::LinkedCell::calcFSingleNeighbor` using ~75% of the sample time of its father `calcF`
+    - `calculator::LinkedCell::ljforce` using ~55% of the sample time of its father `calcFSingleNeighbor`
 
   - `calculator::LinkedCell::calcFWithinCell` using ~18 % of the sample time of its father `calcF`
   - `calculator::LinkedCell::reflectiveBoundary` using ~7% of the sample time of its  father `calcF`
@@ -419,12 +419,12 @@ Following, we have refactored **every** *non-virtual* method in the `LinkedCellC
 
 So for instance, we have refactored this method:
 - ```cpp=
-    void calcNeighbors(LinkedCellContainer &grid, const std::array<int, 3> & neighbors, Particle* p);
+    void calcFSingleNeighbor(LinkedCellContainer &grid, const std::array<int, 3> & neighbors, Particle* p);
     ```
 To this method:
 - ```cpp=
     template<typename G, typename N, typename P>
-    void calcNeighbors(G &grid, const N & neighbors, P* p);
+    void calcFSingleNeighbor(G &grid, const N & neighbors, P* p);
     ```
 
 ### Results ###
@@ -509,7 +509,7 @@ It has:
 Results are:
 
 - `calculator::LinkedCell::calcF` using ~84% of total sample time
-  - `calculator::LinkedCell::calcNeighbors` using **~63%** of the sample time of its father `calcF`
+  - `calculator::LinkedCell::calcFSingleNeighbor` using **~63%** of the sample time of its father `calcF`
   - `calculator::LinkedCell::calcFWithinCell` using **~14%** of the sample time of its father `calcF`
   - `Particle::getX` using **~11%** of the sample time of its father `calcF`
 
@@ -550,7 +550,7 @@ Naturally, we abolished the loops and exchanged these three lines of code immedi
 
 Profiling with <tt>Dtrace</tt>, we had following results:
 - `calculator::LinkedCell::calcF` using ~86% of total sample time
-  - `calculator::LinkedCell::calcNeighbors` using **~73%** of the sample time of its father `calcF`
+  - `calculator::LinkedCell::calcFSingleNeighbor` using **~73%** of the sample time of its father `calcF`
   - `calculator::LinkedCell::calcFWithinCell` using **~12%** of the sample time of its father `calcF`
   - `Particle::getX` using **~4%** of the sample time of its father `calcF`
 

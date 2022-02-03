@@ -46,8 +46,8 @@ public:
         // base Force applied to each particle for each time step. only applied until reset
         std::array<double,3> baseForce = {0,0,0};
         // this is kind ugly but easy
-        // stores info for special particles: position (in grid), special force, special start V, special mass, immovable, membrane
-        std::vector<std::tuple<std::array<int,3>, std::array<double,3>, std::array<double,3>, double, bool, bool>> specialParticles;
+        // stores info for special particles: position (in grid), special force, special start V, special mass, immovable, membrane, type
+        std::vector<std::tuple<std::array<int,3>, std::array<double,3>, std::array<double,3>, double, bool, bool, int>> specialParticles;
     };
     static std::vector<std::pair<int, std::pair<double,double>>> generateParticles(ParticleContainer &particles, const std::vector<ShapeInfo>& infovec);
 

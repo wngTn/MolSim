@@ -303,6 +303,7 @@ TEST(LinkedCellContainer, IndicesThreadVectorPrimitiveStrategyTest) {
     }
 }
 
+#ifdef _OPENMP
 /**
  * Tests whether the indices for the threads are calculated correctly with the subdomain strategy
  */
@@ -337,17 +338,5 @@ TEST(LinkedCellContainer, SubDomainIndicesTest) {
 		ASSERT_TRUE(ref[i] == linkedCellContainer1.getSubDomainVector()[i].getCellIndices());
 		ASSERT_TRUE(ref1[i] == linkedCellContainer1.getSubDomainVector()[i].getBorderCellIndices());
 	}
-
-//	omp_set_num_threads(7);
-//	// max dimension is x
-//	LinkedCellContainer linkedCellContainer2 = LinkedCellContainer{70, 70, 70, 3., bor, {0.,0.,0.}, LinkedCellContainer::Strategy::subDomain};
-//
-//	for(auto & e : linkedCellContainer2.getSubDomainVector()) {
-//		std::cout<<e.getBorderCellIndices()<<std::endl;
-//		std::cout<<e.getCellIndices()<<std::endl;
-//		std::cout<<std::endl;
-//	}
-
-
-
 }
+#endif

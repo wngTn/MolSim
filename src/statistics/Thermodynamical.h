@@ -6,9 +6,7 @@ namespace statistics {
 
     class Thermodynamical : public StatisticsLogger {
     public:
-        Thermodynamical(std::string filename, double delta_r);
-
-    private:
+        Thermodynamical(std::string filename, double delta_r, double maxDistance);
 
         void writeStatistics(ParticleContainer &container, int iteration) override;
 

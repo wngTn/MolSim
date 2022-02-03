@@ -565,6 +565,7 @@ TEST(LinkedCellTest, PeriodicBoundaryTransitionTest) {
     ASSERT_EQ(linkedCellContainer.grid[20].getParticles().size(), 1);
 }
 
+#ifdef _OPENMP
 class LinkedCellParallelTest : public testing::Test {
 protected:
 	LinkedCellContainer lcSerial;
@@ -594,7 +595,7 @@ protected:
 		auto borders = std::array<LinkedCellContainer::Border, 6>{lcb::periodic, lcb::periodic, lcb::reflective, lcb::reflective,
 																  lcb::periodic, lcb::periodic};
 
-		lcSerial = LinkedCellContainer{x, y, z, rCut, borders, g, LinkedCellContainer::Strategy::naught};
+		lcSerial = LinkedCellContainer{x, y, z, rCut, borders, g, LinkedCellContainer::Strategy::serial};
 		lcPrimitiveX = LinkedCellContainer{x, y, z, rCut, borders, g, LinkedCellContainer::Strategy::primitiveX};
 		lcPrimitiveY = LinkedCellContainer{x, y, z, rCut, borders, g, LinkedCellContainer::Strategy::primitiveY};
 		lcPrimitiveZ = LinkedCellContainer{x, y, z, rCut, borders, g, LinkedCellContainer::Strategy::primitiveZ};
@@ -656,6 +657,9 @@ protected:
 		particleContainer.setup();
 	}
 
+	/**
+	 * Simulates the first iteration
+	 */
 	void firstIteration() {
 		lc.calcF(lcSerial);
 		lc.calcF(lcPrimitiveX);
@@ -664,6 +668,9 @@ protected:
 		lc.calcF(lcSubDomain);
 	}
 
+	/**
+	 * Simulates one iteration
+	 */
 	void oneIteration() {
 		lc.calcX(lcSerial);
 		lc.calcX(lcPrimitiveX);
@@ -690,8 +697,11 @@ protected:
 		lc.calcV(lcSubDomain);
 	}
 
+	/**
+	 * Tests whether every particle has the same force values
+	 */
 	void testEquality() {
-		for (int i = 0; i < 50; ++i) {
+		for (int i = 0; i < 1000; ++i) {
 			auto p_ref = findParticle(lcSerial, i);
 			auto p_x = findParticle(lcPrimitiveX, i);
 			auto p_y = findParticle(lcPrimitiveY, i);
@@ -719,6 +729,7 @@ protected:
 
 /*
  * Tests whether the parallelization techniques work
+ * Compares parallelization technique to the serial technique over 69 iterations with 1000 particles
  */
 TEST_F(LinkedCellParallelTest, parallelStrategyTest) {
 	for (int j = 1; j <= 8; ++j) {
@@ -726,11 +737,10 @@ TEST_F(LinkedCellParallelTest, parallelStrategyTest) {
 		firstIteration();
 		testEquality();
 
-		for(int i = 0; i < 50; ++i) {
+		for(int i = 0; i < 69; ++i) {
 			oneIteration();
 			testEquality();
 		}
 	}
-
-
 }
+#endif

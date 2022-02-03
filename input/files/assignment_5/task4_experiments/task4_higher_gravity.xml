@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<simulation t_end="250" delta_t="0.0005" writeFrequency="100" outputWriter="vtk" parallelization="primitiveX">
+    <container type="linkedcell">
+        <rCut>2.75</rCut>
+        <domainSizeX>30</domainSizeX>
+        <domainSizeY>30</domainSizeY>
+        <domainSizeZ>12</domainSizeZ>
+        <borderType>
+            <left>outflow</left>
+            <right>outflow</right>
+            <upper>periodic</upper>
+            <lower>periodic</lower>
+            <front>periodic</front>
+            <back>periodic</back>
+        </borderType>
+    </container>
+    <calculator type="lennardjones">
+        <epsilon>1</epsilon>
+        <sigma>1</sigma>
+        <brownianMotion>0.0</brownianMotion>
+        <gravityFactor x="0" y="-3" z="0" />
+    </calculator>
+    <thermostat excludeY="true">
+        <nThermostat>10</nThermostat>
+        <Tinit>40</Tinit>
+    </thermostat>
+    <statistics type="densityVelocity">
+        <noBins>50</noBins>
+        <file>statistics_t4_highgrav.csv</file>
+        <frequency>10000</frequency>
+    </statistics>
+    <outputFile>output_highgrav</outputFile>
+    <!-- left wall -->
+    <generatorInfo type="cuboid" behaviour="immovable">
+        <x>1.0</x>
+        <y>0.5</y>
+        <z>0.5</z>
+        <v1>0.0</v1>
+        <v2>0.0</v2>
+        <v3>0.0</v3>
+        <mass>1.0</mass>
+        <distance>1.0</distance>
+        <brownianFactor>0.0</brownianFactor>
+        <dim>3</dim>
+        <n1>2</n1>
+        <n2>30</n2>
+        <n3>12</n3>
+        <epsilon>2.0</epsilon>
+        <sigma>1.1</sigma>
+    </generatorInfo>
+    <!-- right wall -->
+    <generatorInfo type="cuboid" behaviour="immovable">
+        <x>27.2</x>
+        <y>0.5</y>
+        <z>0.5</z>
+        <v1>0.0</v1>
+        <v2>0.0</v2>
+        <v3>0.0</v3>
+        <mass>1.0</mass>
+        <distance>1.0</distance>
+        <brownianFactor>0.0</brownianFactor>
+        <dim>3</dim>
+        <n1>2</n1>
+        <n2>30</n2>
+        <n3>12</n3>
+        <epsilon>2.0</epsilon>
+        <sigma>1.1</sigma>
+    </generatorInfo>
+    <!-- fluid -->
+    <generatorInfo type="cuboid">
+        <x>3.2</x> <!-- keine direkte anziehung für >=3.4, anziehung für <=3.2 -->
+        <y>0.6</y>
+        <z>0.6</z>
+        <v1>0.0</v1>
+        <v2>0.0</v2>
+        <v3>0.0</v3>
+        <mass>1.0</mass>
+        <distance>1.2</distance>
+        <brownianFactor>0.0</brownianFactor>
+        <dim>3</dim>
+        <n1>20</n1>
+        <n2>25</n2>
+        <n3>10</n3>
+        <epsilon>1.0</epsilon>
+        <sigma>1.0</sigma>
+    </generatorInfo>
+</simulation>
