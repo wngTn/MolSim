@@ -112,8 +112,8 @@ task_4 <- function(n, path) {
       velY = abs(velY)
     )
   
-  # plot the first 30 iterations
-  p <- ggplot(data=bins %>% dplyr::filter(it < n), aes(x=as.factor(bin), y=velY, color = as.factor(it), group = as.factor(it))) + 
+  # plot the first n iterations
+  p <- ggplot(data=bins %>% dplyr::filter(it < n), aes(x=as.factor(bin), y=velY, color = as.factor(it), group = as.factor(it))) +
     # lines between the points
     geom_line(linetype = 'dotted') + 
     # regression line with a local regression
