@@ -20,7 +20,8 @@ if(BUILD_TEST)
             ParticleTest.cpp
             ThermostatTest.cpp
             SpecialParticleTest.cpp
-            ImmovableParticlesTest.cpp)
+            ImmovableParticlesTest.cpp
+            StatisticsTest.cpp)
 
     # add the files to our executable
     add_executable(${This} ${Test_Sources})

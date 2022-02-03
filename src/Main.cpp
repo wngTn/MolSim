@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
     spdlog::info(
             "Start calculating particles with\n\tIO type:\t\t{:<15}\n\tcalculator type:\t{:<15}\n\tend time:\t\t{:<15}\n\ttimestep:\t\t{:<15}",
             io->toString(), calc->toString(), config.end_time, config.delta_t);
-
+    std::cout << "Calculating..." << std::endl;
     // ------ calculation ------ //
     auto start_calc = std::chrono::steady_clock::now();
     // initial setup
