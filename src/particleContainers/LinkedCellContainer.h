@@ -64,14 +64,14 @@ public:
 		 * @param index the number index of the cell
 		 * @param cell the actual cell
 		 */
-		void addIndex(const std::array<int, 3> & indexArray, int index, Cell & cell);
+		void addIndex(const std::array<int, 3> &indexArray, int index, Cell &cell);
 
 		/**
 		 * For checking if an index is in a specific subDomain
 		 * @param currentIndex the current index (x, y, z)
 		 * @return true if it is in the subDomain, false if it is not
 		 */
-		[[nodiscard]] bool isInSubdomain(const std::array<int, 3> & currentIndex) const;
+		[[nodiscard]] bool isInSubdomain(const std::array<int, 3> &currentIndex) const;
 
 	private:
 		/**
@@ -136,7 +136,7 @@ public:
 	                    double rCutV,
 	                    std::array<Border, 6> borderV = std::array<Border, 6>{
 		                    outflow, outflow, outflow, outflow, outflow, outflow},
-                        std::array<double,3> g = std::array<double,3>{0.,0.,0.},
+	                    std::array<double, 3> g = std::array<double, 3>{0., 0., 0.},
 	                    Strategy strategy = serial);
 
 	/**
@@ -292,9 +292,9 @@ public:
 
 	void setBorder(const std::array<Border, 6> &border);
 
-    [[nodiscard]] std::array<double,3> getG() const;
+	[[nodiscard]] std::array<double, 3> getG() const;
 
-    void setG(std::array<double,3> g);
+	void setG(std::array<double, 3> g);
 
 	[[nodiscard]] const std::vector<std::vector<int>> &getIndicesThreadVector() const;
 
@@ -348,10 +348,10 @@ private:
 	 */
 	std::array<Border, 6> border{outflow};
 
-    /*
-     * The gravitational force that applies to the domain
-     */
-    std::array<double,3> g{};
+	/*
+	 * The gravitational force that applies to the domain
+	 */
+	std::array<double, 3> g{};
 
 	/**
 	 * Signals what multi threading strategy to use

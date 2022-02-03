@@ -4,18 +4,16 @@
 
 namespace statistics {
 
-    class DensityVelocityProfile : public StatisticsLogger {
+class DensityVelocityProfile : public StatisticsLogger {
 
-    public:
-        DensityVelocityProfile(std::string filename, int noBins);
+public:
+	DensityVelocityProfile(std::string filename, int noBins);
 
-        void writeStatistics(ParticleContainer &container, int iteration) override;
+	void writeStatistics(ParticleContainer &container, int iteration) override;
 
-
-    private:
-        std::string filename;
-        int noBins;
-    };
-
+private:
+	std::string filename;
+	int noBins;
+};
 
 } // end namespace statistics

@@ -7,7 +7,10 @@ library(tidyverse)
 # setwd(dirname(current_path))
 
 # select a lightweight ggplot theme for cleaner plotting
-theme_set(theme_minimal()) 
+theme_set(theme_minimal())
+
+# turn off warnings
+options(warn=-1)
 
 # returns the plot for task 5
 task_5 <- function(n, path) {

@@ -4,34 +4,32 @@
 
 #include <cfloat>
 
+class Thermostat {
 
+public:
+	Thermostat() = default;
 
-    class Thermostat {
+	Thermostat(double initialTemperature, double targetTemperature, double maxDeltaTemperature, bool excludeY = false);
 
-    public:
-        Thermostat() = default;
+	void setupTemperature(ParticleContainer &particles) const;
 
-        Thermostat(double initialTemperature, double targetTemperature, double maxDeltaTemperature, bool excludeY = false);
+	void applyTemperature(ParticleContainer &particles) const;
 
-        void setupTemperature(ParticleContainer &particles) const;
+private:
 
-        void applyTemperature(ParticleContainer &particles) const;
+	static double calculateKineticEnergy(ParticleContainer &particles, bool exclY);
 
+	static double calculateCurrentTemp(ParticleContainer &particles, bool exclY);
 
-    private:
+	static void scaleVelocities(ParticleContainer &particles, double beta, bool exclY);
 
-        static double calculateKineticEnergy(ParticleContainer &particles, bool exclY);
-        static double calculateCurrentTemp(ParticleContainer &particles, bool exclY);
-        static void scaleVelocities(ParticleContainer &particles, double beta, bool exclY);
+	static double calculateMeanYVelocity(ParticleContainer &container);
 
-        static double calculateMeanYVelocity(ParticleContainer &container);
+	double initialTemperature;
+	double targetTemperature;
+	double maxDeltaTemperature;
 
+	bool excludeY;
 
-        double initialTemperature;
-        double targetTemperature;
-        double maxDeltaTemperature;
-
-        bool excludeY;
-
-    };
+};
 

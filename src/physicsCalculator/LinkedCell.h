@@ -137,7 +137,6 @@ private:
 	void calcFSingleNeighbor(LinkedCellContainer &grid, const std::array<int, 3> &neighbor,
 	                         Particle *p, bool newton = true);
 
-
 	/**
 	 * Calculates the forces of a cell within a subDomain
 	 * @param curCell the current cell
@@ -158,7 +157,7 @@ private:
 	 * @param gridLC the domain
 	 * @param curCell the current cell
 	 */
-	inline void calcNewX(const LinkedCellContainer & gridLC, const Cell &curCell) const;
+	inline void calcNewX(const LinkedCellContainer &gridLC, const Cell &curCell) const;
 
 	/**
 	 * Calculates the forces between p and its neighbor for the periodic boundary
@@ -219,7 +218,6 @@ private:
 	friend void from_json(const json &, LinkedCell &p);
 
 };
-
 
 constexpr double SIXTH_ROOT_OF_TWO = 1.12246204830937298;
 

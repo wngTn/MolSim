@@ -13,8 +13,6 @@ void LinkedCell::calcFWithinCell(Cell &cell) {
 	}
 }
 
-
-
 void LinkedCell::calcX(ParticleContainer &container) const {
 	auto &gridLC = static_cast<LinkedCellContainer &>(container);
 
@@ -24,8 +22,7 @@ void LinkedCell::calcX(ParticleContainer &container) const {
 			if (curCell.getParticles().empty()) continue;
 			calcNewX(gridLC, curCell);
 		}
-	}
-	else {
+	} else {
 #ifdef _OPENMP
 #pragma omp parallel for default(none) schedule(guided) shared(gridLC)
 #endif //_OPENMP
@@ -417,7 +414,6 @@ void to_json(json &j, const LinkedCell &p) {
 
 void from_json(const nlohmann::json &j, LinkedCell &p) {
 	j.at("mapping").get_to(p.mapping);
-	//j.at("epsilonTable").get_to(p.epsilonTable);
 }
 
 }

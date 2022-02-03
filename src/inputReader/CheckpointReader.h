@@ -3,5 +3,8 @@
 
 class CheckpointReader {
 public:
-    static void readCheckpoint(std::string& inputFile, ParticleContainer& particles, std::vector<std::pair<int, std::pair<double, double>>>& mapping, Config& config);
+	static void readCheckpoint(std::string &inputFile,
+	                           ParticleContainer &particles,
+	                           std::vector<std::pair<int, std::pair<double, double>>> &mapping,
+	                           Config &config);
 };
