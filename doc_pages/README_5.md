@@ -16,7 +16,7 @@ This is a new section to enable easier testing and assessment of our assignment.
 1. Compiling the code:
     ```bash
     $ mkdir build && cd build 
-    $ cmake .. -DBUILD_TEST=ON # enable the tests
+    $ cmake .. -DBUILD_TEST=ON # enable the tests and OpenMP if installed
     $ make -j 
     ```
 2. Running the tests:
@@ -24,7 +24,7 @@ This is a new section to enable easier testing and assessment of our assignment.
     $ ctest
     ```
 3. Running input files:
-   3.1. Running task 1 - "Smulation of a membrane"
+   3.1. Running task 1 - "Simulation of a membrane"
     ```bash
     $ ./MolSim -x ../input/files/assignment_5/task1.xml # ~1min, uses primitiveY strategy
     ```
@@ -32,18 +32,21 @@ This is a new section to enable easier testing and assessment of our assignment.
     ```bash
     $ ./MolSim -x ../input/files/assignment_5/task4_experiments/task4_assignment.xml 
     ```
-   3.2.1 Running task 4 other configurations:
+   3.2.1 Running task 4 with other configurations:
     ```bash
     $ ./MolSim -x ../input/files/assignment_5/task4_experiments/task4_fixed_spheres.xml 
     $ ./MolSim -x ../input/files/assignment_5/task4_experiments/task4_higher_gravity.xml 
     $ ./MolSim -x ../input/files/assignment_5/task4_experiments/task4_walls_equal_fluid.xml
     ```
    3.3 Running task 5 - "Crystallization of Argon"
+   - `fluid` creates the quilibrated argon, choose either `cooling` or `supercooling` to continue from the checkpoint
     ```bash
-    
+    $ ./MolSim -x ../input/files/assignment_5/task5_fluid.xml
+    $ ./MolSim -x ../input/files/assignment_5/task5_cooling.xml
+    $ ./MolSim -x ../input/files/assignment_5/task5_supercooling.xml
     ```
 
-4. Trying out parallelization strategy (t_end has been adjusted to a lower number):
+4. Trying out parallelization strategy (`t_end` has been adjusted to a lower number):
    4.0 Adjust OMP environment variables:
     ```bash
     $ export OMP_NUM_THREADS=<Your_desired_number>
@@ -56,14 +59,35 @@ This is a new section to enable easier testing and assessment of our assignment.
     ```bash
     $ ./MolSim -x ../input/files/assignment_5/task1_benchmarks/task1_primitiveX.xml -m benchmark 
     ```
-   4.3 Running task 1 with *primitiveZ*:
+   4.3 Running task 1 with *primitiveY*:
+   ```bash
+      $ ./MolSim -x ../input/files/assignment_5/task1_benchmarks/task1_primitiveY.xml -m benchmark 
+   ```
+
+   4.4 Running task 1 with *primitiveZ*:
     ```bash
     $ ./MolSim -x ../input/files/assignment_5/task1_benchmarks/task1_primitiveZ.xml -m benchmark 
     ```
-   4.4 Running task 1 with *subDomain*:
+   4.5 Running task 1 with *subDomain*:
     ```bash
     $ ./MolSim -x ../input/files/assignment_5/task1_benchmarks/task1_subDomain.xml -m benchmark 
     ```
+
+5. Enjoy our videos 😊:
+   [Click me! 😇](https://nextcloud.in.tum.de/index.php/s/4A7Srgx3iNF7QT6)
+   * `task1.mp4`: Task 1 Aufgabe
+   * `task3_rayleigh_taylor.mp4`: Task 3 Aufgabe
+   * `task3_rayleigh_taylor_orbit.mp4`: Task 3 Aufgabe mit einer sehr *fancy*  Kamerabewegung
+   * `task4_fixed_spheres_orbit.mp4`: Task 4 Aufgabe mit zwei fixierten Kugeln in der Mitte + *fancy* Kamerarotationen
+   * `task4_wall_eq_fluid.mp4`: ε und σ von wand unf fluid sind gleich
+   * `task4.mp4`: Task 4 Aufgabe
+   * `task5_cooling_complete.mp4`: Task 5 alle Zeitschritte (cooling Argon) mit `velocity` als Einfärbung
+   * `task5_supercooling_complete_velocity.mp4`: Task 5 alle Zeitschritte (supercooling Argon) mit `velocity` als Einfärbung
+   * `task5_cooling_only_60_fps.mp4`: Zeitschritte ab dem das Argon gecooled wird in *60 fps*
+   * `task5_supercooling_60_fps.mp4`: Zeitschritte ab dem das Argon supergecooled wird in *60 fps*
+   * `task5_supercooling_cooling_only_veloctiy.mp4`: Zeitschritte ab dem das Argon supergecooled wird mit `velocity` als Einfärbung
+
+6. Go to the Miscellaneous section and test out our cool R script! (Optional)
 
 # Run Instructions #
 
@@ -148,16 +172,17 @@ The base force is applied to all particles for the time specified in the calcula
 Example of new XML:
 ```xml
  <generatorInfo type="cuboid" behaviour="membrane">
-        [ ... ] 
-        <special_particle immovable="true">
-            <position x="17" y="24" z="0" />
-            <mass>1.7</mass>
-            <force x="0" y="0" z="0.8" />
-        </special_particle>
-        <special_particle>
-            <position x="17" y="25" z="0" />
-            <force x="0" y="0" z="0.8" />
-        </special_particle>
+   [ ... ]
+   <special_particle immovable="true">
+      <position x="17" y="24" z="0" />
+      <mass>1.7</mass>
+      <force x="0" y="0" z="0.8" />
+   </special_particle>
+   <special_particle>
+      <position x="17" y="25" z="0" />
+      <force x="0" y="0" z="0.8" />
+   </special_particle>
+   [ ... ]
 ```
 
 It is also possible the set the base force for the whole cuboid at once using the `baseForce` element in the XML.
@@ -165,7 +190,7 @@ It is also possible the set the base force for the whole cuboid at once using th
 Sneak Peak:
 
 ![](https://codimd.s3.shivering-isles.com/demo/uploads/e76375821f940e93084addbab.16.03.png)
-
+Simulating a membrane ([video](https://nextcloud.in.tum.de/index.php/s/4A7Srgx3iNF7QT6?))
 
 
 # Task 2 - Parallelization #
@@ -243,7 +268,7 @@ The remaining problem in this approach is that that cells at the border still in
 ![](https://codimd.s3.shivering-isles.com/demo/uploads/b701362d73f35ebdd3fa8d3cd.31.41.png)
 *Figure 6: Domain split into two subdomains, darker colors depict the "actual" borders*
 
-Now, we still have to deal with the other 4 borders (two borders per sub domain).
+Now, we still have to deal with the other 4 borders (two borders per subdomain).
 Our approach **for the border cells** can be written as follows:
 ```
 For every subDomain:
@@ -262,12 +287,15 @@ For every subDomain:
 ![](https://codimd.s3.shivering-isles.com/demo/uploads/b701362d73f35ebdd3fa8d3ce.34.20.png)
 *Figure 7: Sub-domains with their cell-specific neighbors*
 
+
 The forces in the inner cells (lighter color) are calculated in the usual fashion.
 
-This way we can calculate sub domains indipendently from each other because they do not interfere with each other in any way. We do not have to synchronize anything, however, we do have some calculation overhead ad the borders, as we calculate the forces at the borders twice, since we do not use newton's third law.
+This way we can calculate subdomains independently of each other because they do not interfere with each other in any way. We do not have to synchronize anything, however, we do have some calculation overhead ad the borders, as we calculate the forces at the borders twice, since we do not use newton's third law.
 
 ### Benchmarks ###
 
+For benchmarking we ran simulations with different parallelization strategies on a single node from the [CoolMuc2](https://doku.lrz.de/display/PUBLIC/CoolMUC-2) cluster with 28 threads, thus utilizing all 28 cores.
+![](https://codimd.s3.shivering-isles.com/demo/uploads/3d6ce97c22bd22991c8989209.png)
 
 ## XML - File ##
 
@@ -287,32 +315,68 @@ If you do not include the `parallelization` attribute, you will not use any stra
 
 ## CalcX - LinkedCell ##
 
-We also parallized our calcX method in the linked cell method, since we also check in this method whether any particles need to change its cell. If you do not want this method to perform with multiple threads, simply compile the program without OpenMP.
+We also parallelized our calcX method in the linked cell method, since we also check in this method whether any particles need to change its cell. If you do not want this method to perform with multiple threads, simply compile the program without OpenMP.
 
+## Making it fast(er) ##
+
+Comparing the runtime of different thread amounts with the sequential runtime we get the following results, peaking at 14 threads:
+![](https://codimd.s3.shivering-isles.com/demo/uploads/3d6ce97c22bd22991c898920a.png)
+
+## Profiling ##
+
+We tried the MAQAO analysis framework.
+It generates nice html overviews of the results, but didn't really give us some surprising insights.
+One interesting thing was the potential speedup if fully vectorized for some loops.
+E.g. in the ljforce method one loop can apparently be sped up 3.64-fold if fully vectorized.
 
 # Task 3 - Rayleigh-Taylor instability in 3D #
 
 
+
 ## Contest 2 ##
 
-# Task 4 - Nano-scale flow simulation (Option A) #
+As in the last contest we compiled our project with g++ like this:
+```shell=
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/dss/dsshome1/lrz/sys/spack/release/21.1.1/opt/x86_64/gcc/10.2.0-gcc-ll77x2s/bin/g++ -DCMAKE_C_COMPILER=//dss/dsshome1/lrz/sys/spack/release/21.1.1/opt/x86_64/gcc/10.2.0-gcc-ll77x2s/bin/gcc ..
+```
+
+Although we got good results with icpc, we can't use it anymore, as we now use C++20 features, which Intel doesn't support.
+
+Sneak Peak:
+![](https://codimd.s3.shivering-isles.com/demo/uploads/e76375821f940e93084addbed.07.04.png)
+*Rayleigh-Taylor Instability in 3D* ([video](https://nextcloud.in.tum.de/index.php/s/4A7Srgx3iNF7QT6?))
+
+### Contest Results ###
+
+We got these results with the Rayleigh-Taylor 2D/3D input files, primitiveX parallelization and 1000 iterations.
+![](https://codimd.s3.shivering-isles.com/demo/uploads/e76375821f940e93084addbf0.png)
+
+
+| Simulation Type | Time     | MMUPS   |
+| --------------- | -------- | --------|
+| 2D              | 2937ms   | 3,40483 |
+| 3D              | 167202ms | 0,59808 |
+
+
+
+# Task 4 - Nano-Scale flow simulation (Option A) #
 
 To fix the positions of some particles, we introduced an `immovable` attribute in the `Particle` class.
 If this attribute is set, the `setF()` method does not set the force.
 
-Additionally we also check whether both particles are immovable before we calculate some things to perform less unnecessary calculations.
+Additionally, we also check whether both particles are immovable before we calculate some things to perform less unnecessary calculations.
 
 We tried both a branchless and a branched approach, but didn't see any major performance differences using QuickBench.
 For the CLang compiler the branched version is slightly faster, while the GCC compiler hasn't any significant difference since it produces almost identical assembly for both versions.
 ```cpp
 // branchless
 void Particle::setF(std::array<double, 3> force) {
-    f = !immovable*force;
-} 
+f = !immovable*force;
+}
 
 //branched
 void Particle::setF(std::array<double, 3> force) {
-    if(!immovable){  f = force; }
+if(!immovable){  f = force; }
 }
 ```
 
@@ -332,24 +396,31 @@ We also did the experiment with the following changes:
 - Walls and fluid have same σ and ε values `media/week_5/task4/walls_eq_fluid/`
 - Higher gravity `media/week_5/task4/highgrav/`
 - 2 fixed spheres in fluid `media/week_5/task4/spheres/`
-  See `input/files/assignment_5/task4_experiments/` for the corresponding input files.
+
+See `input/files/assignment_5/task4_experiments/` for the corresponding input files.
+
+Sneak Peak:
+![](https://codimd.s3.shivering-isles.com/demo/uploads/e76375821f940e93084addbef.47.48.png)
+*Nano-Scale flow simulation* ([video](https://nextcloud.in.tum.de/index.php/s/4A7Srgx3iNF7QT6?))
+
 
 # Task 5 - Crystallization of Argon (Option B) #
 
-We also implemented Task 5.
+We also implemented task 5.
 
-For the smoothed Lennard-Jones potential, we just added an attribute to the calculator class to choose between normal and smoothed LJ.
+For the smoothed Lennard-Jones potential, we simply added an attribute to the calculator class to choose between the normal and smoothed LJ.
 
-For the statistics of Task 5, we extended the `StatisticsLogger` superclass with a `Themodynamical` subclass.
+For the statistics of task 5, we extended the `StatisticsLogger` superclass with a `Themodynamical` subclass.
 
 While the radial distribution function was more straightforward, for the diffusion we needed a way to access the old position of the particles.
 
 After considering some different ideas, we settled on storing it in the particle class like the `oldF` attribute.
-To accomodate particles crossing periodic boundaries, we also added `passedPeriodic` booleans for each direction to the particle, which are flipped everytime a particle crosses the specific boundary.
+To accommodate particles crossing periodic boundaries, we also added `passedPeriodic` booleans for each direction to the particle, which are flipped everytime a particle crosses the specific boundary.
 
 Using these we can correct for higher distances due to the periodic boundaries during diffusion calculation.
 
 Below the comparison of the RDFs and the density between cooling and supercooling.
+Notice the different scales on the diffusion graphs.
 - cooling RDF
   ![](https://codimd.s3.shivering-isles.com/demo/uploads/e76375821f940e93084addbc3.jpg)
 - supercooling RDF
@@ -359,6 +430,18 @@ Below the comparison of the RDFs and the density between cooling and supercoolin
 - supercooling diffusion
   ![](https://codimd.s3.shivering-isles.com/demo/uploads/e76375821f940e93084addbc1.jpg)
 
+Like the graph already tells, it is clearly visible in the simulation that the supercooled argon is moving way less (is colder) even after merely 100.000 iterations.
+
+It is also visible that the supercooled argon freezes into a grid structure, albeit with big holes, whereas the cooled argon is not as structured.
+
+Sneak peak:
+
+![](https://codimd.s3.shivering-isles.com/demo/uploads/e76375821f940e93084addbe7.11.02.png)
+*Cooling Argon* ([video](https://nextcloud.in.tum.de/index.php/s/4A7Srgx3iNF7QT6?))
+
+
+![](https://codimd.s3.shivering-isles.com/demo/uploads/e76375821f940e93084addbe6.10.12.png)
+*Supercooling Argon* ([video](https://nextcloud.in.tum.de/index.php/s/4A7Srgx3iNF7QT6?))
 
 # Miscellaneous #
 
@@ -376,7 +459,7 @@ $ Rscript assignment_5_script.R [<iteration_num>] [<task>] [<path_to_csv>]
 
 | Args | Possible Values | Explanation | Default |
 | -------- | -------- | -------- | --- |
-| `iteration_num`     | \<integer>    | Specifies how many iterations should plotted. In case of the density plotting, it specifiese every nth iteration it should plot | 30 |
+| `iteration_num`     | \<integer>    | Specifies how many iterations should be plotted. In case of the density plotting, it specifies every nth iteration it should plot | 30 |
 | `task` | task4, task5 | Specifies what task the input file is from | task4
 | `path_to_csv` | `path/to/file` | Relative or absolute path to your `csv_file` | `files/assignment_5/csv/statistics_task4.csv`
 
@@ -403,11 +486,11 @@ $ Rscript assignment_5_script.R 25 task4 files/assignment_5/csv/statistics_task4
 ```
 
 3. Generate plot for task 5:
-   3.1 Generate Particle Density Graph of the cooling configuration (every 25th iteration!):
+   3.1 Generate Particle Density Graph of the cooling configuration (**every 25th iteration!**):
     ```bash=
     $ Rscript assignment_5_script.R 25 task5 files/assignment_5/csv/RDF_task5_cooling_statistics.csv
     ```
-   3.2 Generate Particle Density Graph of the supercooling configuration (every 25th iteration!):
+   3.2 Generate Particle Density Graph of the supercooling configuration (**every 25th iteration!**):
     ```bash=
     $ Rscript assignment_5_script.R 25 task5 files/assignment_5/csv/RDF_task5_supercooling_statistics.csv
     ```
@@ -429,6 +512,17 @@ The script plots the (absolute) falling velocities (i.e. the velocity in the y-a
 
 The solid lines represent the respective regression lines of the velocities in every iteration. We used the local regression with the locally estimated scatterplot smoothing (loess) method while using the velocity as dependent and bins as independent variables.
 
+### Task 5 ###
+
+#### Particle Density ####
+
+The dots in the particle density scatter plots are simply connected with a linear line for better visualization. The different colors also depict each iteration.
+
+#### Diffusion ####
+
+The dots in this scatter plot are connected with a black line. The blue line represents the regression line, the grey zone the confidence interval.
+The regression lines was also used with the loess method and a confidence level interval of 95%.
+
 ## Input Validation ##
 
 We added a component that tries to validate our input and catch some common mistakes. Besides basics like `end_time <= start_time`, we especially check whether any particles are outside of the LinkedCell domain, since this would lead to segmentation faults.
@@ -445,9 +539,9 @@ The `run_multiple_inputs.py` script needs `zip` to be installed on the system.
 
 In the main simulation loop, there are multiple `if` conditions that are true only very seldom (e.g. for writing statistics, output, applying the thermostat etc).
 
-In C++20 there is the `[[unlikely]]` attribute to help the branch predictor skip those seldomly used branches.
+In C++20 there is the `[[unlikely]]` attribute to help the branch predictor skip those seldom used branches.
 Unfortunately we didn't notice any real speedup, but we're not 100% sure there isn't any since things like this are hard to benchmark.
 Maybe the branch predictor is smart enough to skip those `if`s even without the attribute or maybe the compilers don't really use this new feature.
 
-
-
+## goodbye ##
+We really enjoyed the course! Thank you :)
