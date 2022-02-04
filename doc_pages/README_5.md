@@ -39,11 +39,14 @@ This is a new section to enable easier testing and assessment of our assignment.
     $ ./MolSim -x ../input/files/assignment_5/task4_experiments/task4_walls_equal_fluid.xml
     ```
    3.3 Running task 5 - "Crystallization of Argon"
+   - `fluid` creates the quilibrated argon, choose either `cooling` or `supercooling` to continue from the checkpoint
     ```bash
-    
+    $ ./MolSim -x ../input/files/assignment_5/task5_fluid.xml
+    $ ./MolSim -x ../input/files/assignment_5/task5_cooling.xml
+    $ ./MolSim -x ../input/files/assignment_5/task5_supercooling.xml
     ```
 
-4. Trying out parallelization strategy (t_end has been adjusted to a lower number):
+4. Trying out parallelization strategy (`t_end` has been adjusted to a lower number):
    4.0 Adjust OMP environment variables:
     ```bash
     $ export OMP_NUM_THREADS=<Your_desired_number>
@@ -56,14 +59,35 @@ This is a new section to enable easier testing and assessment of our assignment.
     ```bash
     $ ./MolSim -x ../input/files/assignment_5/task1_benchmarks/task1_primitiveX.xml -m benchmark 
     ```
-   4.3 Running task 1 with *primitiveZ*:
+   4.3 Running task 1 with *primitiveY*:
+   ```bash
+      $ ./MolSim -x ../input/files/assignment_5/task1_benchmarks/task1_primitiveY.xml -m benchmark 
+   ```
+
+   4.4 Running task 1 with *primitiveZ*:
     ```bash
     $ ./MolSim -x ../input/files/assignment_5/task1_benchmarks/task1_primitiveZ.xml -m benchmark 
     ```
-   4.4 Running task 1 with *subDomain*:
+   4.5 Running task 1 with *subDomain*:
     ```bash
     $ ./MolSim -x ../input/files/assignment_5/task1_benchmarks/task1_subDomain.xml -m benchmark 
     ```
+
+5. Enjoy our videos 😊:
+   [Click me! 😇](https://nextcloud.in.tum.de/index.php/s/4A7Srgx3iNF7QT6)
+   * `task1.mp4`: Task 1 Aufgabe
+   * `task3_rayleigh_taylor.mp4`: Task 3 Aufgabe
+   * `task3_rayleigh_taylor_orbit.mp4`: Task 3 Aufgabe mit einer sehr *fancy*  Kamerabewegung
+   * `task4_fixed_spheres_orbit.mp4`: Task 4 Aufgabe mit zwei fixierten Kugeln in der Mitte + *fancy* Kamerarotationen
+   * `task4_wall_eq_fluid.mp4`: ε und σ von wand unf fluid sind gleich
+   * `task4.mp4`: Task 4 Aufgabe
+   * `task5_cooling_complete.mp4`: Task 5 alle Zeitschritte (cooling Argon) mit `velocity` als Einfärbung
+   * `task5_supercooling_complete_velocity.mp4`: Task 5 alle Zeitschritte (supercooling Argon) mit `velocity` als Einfärbung
+   * `task5_cooling_only_60_fps.mp4`: Zeitschritte ab dem das Argon gecooled wird in *60 fps*
+   * `task5_supercooling_60_fps.mp4`: Zeitschritte ab dem das Argon supergecooled wird in *60 fps*
+   * `task5_supercooling_cooling_only_veloctiy.mp4`: Zeitschritte ab dem das Argon supergecooled wird mit `velocity` als Einfärbung
+
+6. Go to the Miscellaneous section and test out our cool R script! (Optional)
 
 # Run Instructions #
 
@@ -148,17 +172,17 @@ The base force is applied to all particles for the time specified in the calcula
 Example of new XML:
 ```xml
  <generatorInfo type="cuboid" behaviour="membrane">
-        [ ... ] 
-        <special_particle immovable="true">
-            <position x="17" y="24" z="0" />
-            <mass>1.7</mass>
-            <force x="0" y="0" z="0.8" />
-        </special_particle>
-        <special_particle>
-            <position x="17" y="25" z="0" />
-            <force x="0" y="0" z="0.8" />
-        </special_particle>
-        [ ... ]
+   [ ... ]
+   <special_particle immovable="true">
+      <position x="17" y="24" z="0" />
+      <mass>1.7</mass>
+      <force x="0" y="0" z="0.8" />
+   </special_particle>
+   <special_particle>
+      <position x="17" y="25" z="0" />
+      <force x="0" y="0" z="0.8" />
+   </special_particle>
+   [ ... ]
 ```
 
 It is also possible the set the base force for the whole cuboid at once using the `baseForce` element in the XML.
@@ -166,7 +190,7 @@ It is also possible the set the base force for the whole cuboid at once using th
 Sneak Peak:
 
 ![](https://codimd.s3.shivering-isles.com/demo/uploads/e76375821f940e93084addbab.16.03.png)
-
+Simulating a membrane ([video](https://nextcloud.in.tum.de/index.php/s/4A7Srgx3iNF7QT6?))
 
 
 # Task 2 - Parallelization #
@@ -263,12 +287,15 @@ For every subDomain:
 ![](https://codimd.s3.shivering-isles.com/demo/uploads/b701362d73f35ebdd3fa8d3ce.34.20.png)
 *Figure 7: Sub-domains with their cell-specific neighbors*
 
+
 The forces in the inner cells (lighter color) are calculated in the usual fashion.
 
 This way we can calculate subdomains independently of each other because they do not interfere with each other in any way. We do not have to synchronize anything, however, we do have some calculation overhead ad the borders, as we calculate the forces at the borders twice, since we do not use newton's third law.
 
 ### Benchmarks ###
 
+For benchmarking we ran simulations with different parallelization strategies on a single node from the [CoolMuc2](https://doku.lrz.de/display/PUBLIC/CoolMUC-2) cluster with 28 threads, thus utilizing all 28 cores.
+![](https://codimd.s3.shivering-isles.com/demo/uploads/3d6ce97c22bd22991c8989209.png)
 
 ## XML - File ##
 
@@ -290,6 +317,10 @@ If you do not include the `parallelization` attribute, you will not use any stra
 
 We also parallelized our calcX method in the linked cell method, since we also check in this method whether any particles need to change its cell. If you do not want this method to perform with multiple threads, simply compile the program without OpenMP.
 
+## Making it fast(er) ##
+
+Comparing the runtime of different thread amounts with the sequential runtime we get the following results, peaking at 14 threads:
+![](https://codimd.s3.shivering-isles.com/demo/uploads/3d6ce97c22bd22991c898920a.png)
 
 ## Profiling ##
 
@@ -309,11 +340,23 @@ As in the last contest we compiled our project with g++ like this:
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/dss/dsshome1/lrz/sys/spack/release/21.1.1/opt/x86_64/gcc/10.2.0-gcc-ll77x2s/bin/g++ -DCMAKE_C_COMPILER=//dss/dsshome1/lrz/sys/spack/release/21.1.1/opt/x86_64/gcc/10.2.0-gcc-ll77x2s/bin/gcc ..
 ```
 
-Although we got good results with icpc, we can't use it anymore, as we now use C++20 features ([[unlikely]]), which Intel doesn't support.
+Although we got good results with icpc, we can't use it anymore, as we now use C++20 features, which Intel doesn't support.
 
 Sneak Peak:
 ![](https://codimd.s3.shivering-isles.com/demo/uploads/e76375821f940e93084addbed.07.04.png)
-*Rayleigh-Taylor Instability in 3D*
+*Rayleigh-Taylor Instability in 3D* ([video](https://nextcloud.in.tum.de/index.php/s/4A7Srgx3iNF7QT6?))
+
+### Contest Results ###
+
+We got these results with the Rayleigh-Taylor 2D/3D input files, primitiveX parallelization and 1000 iterations.
+![](https://codimd.s3.shivering-isles.com/demo/uploads/e76375821f940e93084addbf0.png)
+
+
+| Simulation Type | Time     | MMUPS   |
+| --------------- | -------- | --------|
+| 2D              | 2937ms   | 3,40483 |
+| 3D              | 167202ms | 0,59808 |
+
 
 
 # Task 4 - Nano-Scale flow simulation (Option A) #
@@ -328,12 +371,12 @@ For the CLang compiler the branched version is slightly faster, while the GCC co
 ```cpp
 // branchless
 void Particle::setF(std::array<double, 3> force) {
-    f = !immovable*force;
-} 
+f = !immovable*force;
+}
 
 //branched
 void Particle::setF(std::array<double, 3> force) {
-    if(!immovable){  f = force; }
+if(!immovable){  f = force; }
 }
 ```
 
@@ -358,16 +401,16 @@ See `input/files/assignment_5/task4_experiments/` for the corresponding input fi
 
 Sneak Peak:
 ![](https://codimd.s3.shivering-isles.com/demo/uploads/e76375821f940e93084addbef.47.48.png)
-*Nano-Scale flow simulation*
+*Nano-Scale flow simulation* ([video](https://nextcloud.in.tum.de/index.php/s/4A7Srgx3iNF7QT6?))
 
 
 # Task 5 - Crystallization of Argon (Option B) #
 
-We also implemented Task 5.
+We also implemented task 5.
 
-For the smoothed Lennard-Jones potential, we just added an attribute to the calculator class to choose between normal and smoothed LJ.
+For the smoothed Lennard-Jones potential, we simply added an attribute to the calculator class to choose between the normal and smoothed LJ.
 
-For the statistics of Task 5, we extended the `StatisticsLogger` superclass with a `Themodynamical` subclass.
+For the statistics of task 5, we extended the `StatisticsLogger` superclass with a `Themodynamical` subclass.
 
 While the radial distribution function was more straightforward, for the diffusion we needed a way to access the old position of the particles.
 
@@ -387,18 +430,18 @@ Notice the different scales on the diffusion graphs.
 - supercooling diffusion
   ![](https://codimd.s3.shivering-isles.com/demo/uploads/e76375821f940e93084addbc1.jpg)
 
-Like the graph already tells, it's clearly visible in the simulation that the supercooled argon is moving way less (is colder) even after just 100.000 iterations.
+Like the graph already tells, it is clearly visible in the simulation that the supercooled argon is moving way less (is colder) even after merely 100.000 iterations.
 
 It is also visible that the supercooled argon freezes into a grid structure, albeit with big holes, whereas the cooled argon is not as structured.
 
 Sneak peak:
 
 ![](https://codimd.s3.shivering-isles.com/demo/uploads/e76375821f940e93084addbe7.11.02.png)
-*Cooling Argon*
+*Cooling Argon* ([video](https://nextcloud.in.tum.de/index.php/s/4A7Srgx3iNF7QT6?))
 
 
 ![](https://codimd.s3.shivering-isles.com/demo/uploads/e76375821f940e93084addbe6.10.12.png)
-*Supercooling Argon*
+*Supercooling Argon* ([video](https://nextcloud.in.tum.de/index.php/s/4A7Srgx3iNF7QT6?))
 
 # Miscellaneous #
 
@@ -416,7 +459,7 @@ $ Rscript assignment_5_script.R [<iteration_num>] [<task>] [<path_to_csv>]
 
 | Args | Possible Values | Explanation | Default |
 | -------- | -------- | -------- | --- |
-| `iteration_num`     | \<integer>    | Specifies how many iterations should plotted. In case of the density plotting, it specifies every nth iteration it should plot | 30 |
+| `iteration_num`     | \<integer>    | Specifies how many iterations should be plotted. In case of the density plotting, it specifies every nth iteration it should plot | 30 |
 | `task` | task4, task5 | Specifies what task the input file is from | task4
 | `path_to_csv` | `path/to/file` | Relative or absolute path to your `csv_file` | `files/assignment_5/csv/statistics_task4.csv`
 
@@ -443,11 +486,11 @@ $ Rscript assignment_5_script.R 25 task4 files/assignment_5/csv/statistics_task4
 ```
 
 3. Generate plot for task 5:
-   3.1 Generate Particle Density Graph of the cooling configuration (every 25th iteration!):
+   3.1 Generate Particle Density Graph of the cooling configuration (**every 25th iteration!**):
     ```bash=
     $ Rscript assignment_5_script.R 25 task5 files/assignment_5/csv/RDF_task5_cooling_statistics.csv
     ```
-   3.2 Generate Particle Density Graph of the supercooling configuration (every 25th iteration!):
+   3.2 Generate Particle Density Graph of the supercooling configuration (**every 25th iteration!**):
     ```bash=
     $ Rscript assignment_5_script.R 25 task5 files/assignment_5/csv/RDF_task5_supercooling_statistics.csv
     ```
@@ -473,7 +516,7 @@ The solid lines represent the respective regression lines of the velocities in e
 
 #### Particle Density ####
 
-The dots in the particle density scatter plots are simply connected with a linear line for better visualization.
+The dots in the particle density scatter plots are simply connected with a linear line for better visualization. The different colors also depict each iteration.
 
 #### Diffusion ####
 
@@ -500,5 +543,5 @@ In C++20 there is the `[[unlikely]]` attribute to help the branch predictor skip
 Unfortunately we didn't notice any real speedup, but we're not 100% sure there isn't any since things like this are hard to benchmark.
 Maybe the branch predictor is smart enough to skip those `if`s even without the attribute or maybe the compilers don't really use this new feature.
 
-
-
+## goodbye ##
+We really enjoyed the course! Thank you :)

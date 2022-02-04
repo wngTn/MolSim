@@ -9,8 +9,8 @@
 </div>
 
 
-> <span style="color:red">**NOTE**: This is not the README of the assignment. It is simply a README for the whole project. The READMEs
-> for the assignments can be found in the `./doc_pages` directory.</span>
+> <span style="color:red">**NOTE**: This is not the complete README. This document only contains compiling instructions. The READMEs
+> in the `./doc_pages` directory contain detailed feature overviews and examples.</span>
 
 
 # Warning # 
@@ -122,20 +122,41 @@ This will use:
 - <tt>0.1</tt> as `brownian motion velocity mean` (set in the input_file)
 - <tt>normal</tt> execution mode (default)
 
-Another example:
+You should mostly just need the XML option, which is the preferred mode of input and the only inputmode that supports all features.
+
+## Running the tests ##
+
+1. Create the build directory and cd into it:
+```shell
+mkdir build && cd build 
+``` 
+2. Build everything, including the tests in the build directory by turning on the option:
+```shell
+cmake .. -DBUILD_TEST=ON
+``` 
+
+3. Compile everything, including the tests:
+```shell
+make # use "make -j6" for faster compilation
+``` 
+
+5. Simply run `ctest`in the build directory:
+```shell
+ctest
+``` 
+
+## Disabling the tests
+
+If you do not want to compile the tests, you can turn off the build option
+in the CMake by executing cmake without any arguments (Step 2):
 
 ```shell
-./MolSim -i ../eingabe-sonne.txt -c grav -m debug
+cmake .. # Makefile won't build the tests anymore
 ```
-This will use:
-- <tt>eingabe-sonne.txt</tt> as `input_file`
-- <tt>1000</tt> as `end_time` (default)
-- <tt>0.14</tt> as `delta_t` default)
-- <tt>vtk</tt> as `writer` (default)
-- <tt>gravitation</tt> as `calculator`
-- No `brownian motion velocity mean`
-- <tt>debug</tt> execution mode
 
+## Features and Examples
+> See the different READMEs in `/doc_pages/` for an overview of all features and different examples.
+> 
 
 
 <!-- Miscellaneous -->
