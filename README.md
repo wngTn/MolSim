@@ -9,7 +9,7 @@
 </div>
 
 
-> <span style="color:red">**NOTE**: This is not the complete README. This document only contains compiling instructions. The READMEs
+> <span style="color:red">**NOTE**: This is not the complete README. This document only contains compiling instructions and an overview. The READMEs
 > in the `./doc_pages` directory contain detailed feature overviews and examples.</span>
 
 
@@ -107,6 +107,9 @@ The general program call is:
 
 > ⚠️ **Random generated files** only support the input file format of assignment 1. Also, you will need Python 3 to use it.
 
+> ⚠️ **You should mostly use XML input files only**
+
+
 Example:
 
 ```shell
@@ -155,9 +158,44 @@ cmake .. # Makefile won't build the tests anymore
 ```
 
 ## Features and Examples
-> See the different READMEs in `/doc_pages/` for an overview of all features and different examples.
-> 
+> See the different READMEs in `/doc_pages/` for in depth explanations of all features, examples, media and more.
+ 
+##### [README_1:](./doc_pages/README_1.md)
 
+- Basics with gravitational force
+
+##### [README_2:](./doc_pages/README_2.md)
+
+- GTest
+- Logging
+- LennardJonesPotential
+- JSON input files
+- First Benchmarks
+
+##### [README_3:](./doc_pages/README_3.md)
+
+- XML Parser using the xsdcxx compiler
+- Linked Cell method
+- boundary conditions 
+- more benchmarks
+
+##### [README_4:](./doc_pages/README_4.md)
+
+- Thermostat
+- Gravity
+- Checkpointing
+- Performance measurements on Linux Cluster
+- profiling & optimizations
+- Benchmarking
+
+##### [README_5:](./doc_pages/README_5.md)
+
+- Membranes
+- multiple Parallelization strategies using OpenMP
+- different statistic writers
+- immovable particles
+- smoothed LennardJones and new Thermostat
+- data plotting using R
 
 <!-- Miscellaneous -->
 ## Miscellaneous
